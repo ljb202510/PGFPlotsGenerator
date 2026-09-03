@@ -1,0 +1,18 @@
+{
+  "history_id": 64,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "图例挡住折线，把它往下移一点",
+  "ai_response": "\n\n```latex\n\\documentclass[border=10pt]{standalone}\n\\usepackage[utf8]{inputenc}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{ctex}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={中国近年出生人口统计图},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    axis lines=left,\n    xmin=2018, xmax=2023,\n    ymin=800, ymax=2000,\n    xtick={2018,2019,2020,2021,2022,2023},\n    legend pos=south east,\n    legend style={at={(1.02,1)}, anchor=north west, draw=none, fill=none},\n    width=10cm,\n    height=6cm,\n    grid=major,\n    grid style={dashed, gray!40},\n    every axis plot/.append style={ultra thick},\n    clip=false,\n]\n\n% 中国出生人口数据（来源：国家统计局）\n\\addplot[blue, mark=*, mark size=3pt] coordinates {\n    (2018, 1523)\n    (2019, 1465)\n    (2020, 1200)\n    (2021, 1062)\n    (2022, 956)\n    (2023, 902)\n};\n\\addlegendentry{出生人口}\n\n% 标注数据点\n\\addplot[only marks, nodes near coords, point meta=explicit symbolic] coordinates {\n    (2018, 1523)\n    (2019, 1465)\n    (2020, 1200)\n    (2021, 1062)\n    (2022, 956)\n    (2023, 902)\n};\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```\n\n**说明：**\n\n1. **图例位置调整**：使用 `legend pos=south east` 将图例放在右下角，并配合 `at={(1.02,1)}` 将图例稍微向外偏移，避免遮挡折线数据点\n\n2. **数据来源**：基于中国国家统计局发布的2018-2023年出生人口真实数据\n\n3. **图表优化**：\n   - 添加了数据点标记\n   - 使用 `nodes near coords` 显示具体数值\n   - 调整坐标轴范围避免图例遮挡\n   - 添加网格线增强可读性\n\n4. **编译方式**：使用 `pdflatex` 或 `xelatex` 编译，需安装 `ctex` 宏包支持中文",
+  "chart_code": "\\documentclass[border=10pt]{standalone}\n\\usepackage[utf8]{inputenc}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{ctex}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={中国近年出生人口统计图},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    axis lines=left,\n    xmin=2018, xmax=2023,\n    ymin=800, ymax=2000,\n    xtick={2018,2019,2020,2021,2022,2023},\n    legend pos=south east,\n    legend style={at={(1.02,1)}, anchor=north west, draw=none, fill=none},\n    width=10cm,\n    height=6cm,\n    grid=major,\n    grid style={dashed, gray!40},\n    every axis plot/.append style={ultra thick},\n    clip=false,\n]\n\n% 中国出生人口数据（来源：国家统计局）\n\\addplot[blue, mark=*, mark size=3pt] coordinates {\n    (2018, 1523)\n    (2019, 1465)\n    (2020, 1200)\n    (2021, 1062)\n    (2022, 956)\n    (2023, 902)\n};\n\\addlegendentry{出生人口}\n\n% 标注数据点\n\\addplot[only marks, nodes near coords, point meta=explicit symbolic] coordinates {\n    (2018, 1523)\n    (2019, 1465)\n    (2020, 1200)\n    (2021, 1062)\n    (2022, 956)\n    (2023, 902)\n};\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": " 图例挡住折线，把它往下移一点",
+  "created_at": "2026-09-03T05:24:44.530Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 1057,
+    "code_source": "from_request"
+  }
+}

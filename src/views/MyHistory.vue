@@ -528,9 +528,6 @@ const compileToPDF = async (historyId) => {
       const resp = error.response?.data
       const msg = resp?.message || error.message || 'PDF生成失败'
 
-      // Message 只显示短句
-      ElMessage.error(msg)
-
       // 详细信息放 Dialog
       const details = resp?.details || resp?.message || error.message || ''
       compileErrorTitle.value = msg

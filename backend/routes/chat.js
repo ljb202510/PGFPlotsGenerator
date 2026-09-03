@@ -359,8 +359,9 @@ router.post('/', authenticateToken, async (req, res) => {
         model: 'Qwen3.5',
         messages: messages,
         temperature: 0.7,
-        max_tokens: 4096,
-        stream: false
+        max_tokens: 8192, // 提高输出预算，防止思考/长代码耗尽额度导致 content 为空
+        stream: false,
+        thinking: { type: 'disabled' } // 关闭深度思考（实测 enable_thinking 参数无效），避免思考耗尽预算后最终答案未产出
       });
 
       console.log(`用户 ${req.user.user_id} 调用了 Qwen3.5 API，附带数据集: ${data_ids || '无'}`);
@@ -370,8 +371,12 @@ router.post('/', authenticateToken, async (req, res) => {
 
       // 健壮性：content 为空/null 时记录原始响应并返回明确错误，绝不静默返回空
       if (!aiReply || typeof aiReply !== 'string' || !aiReply.trim()) {
+        const emptyChoice = completion.choices?.[0];
+        const emptyMsg = emptyChoice?.message || {};
+        const emptyReasoning = emptyMsg.reasoning ?? emptyMsg.reasoning_content ?? '';
         console.error('⚠️ Qwen 返回内容为空，原始响应:', JSON.stringify(completion).slice(0, 1000));
-        await writeSystemLog('error', `[CHAT] Qwen 返回内容为空 (用户 ${req.user?.user_id || '未知'})`);
+        console.error('   finish_reason:', emptyChoice?.finish_reason, '| reasoning 长度:', String(emptyReasoning).length);
+        await writeSystemLog('error', `[CHAT] Qwen 返回内容为空 (用户 ${req.user?.user_id || '未知'}) finish_reason=${emptyChoice?.finish_reason || '未知'}`);
         return res.status(502).json({
           success: false,
           message: 'AI 返回内容为空，请重试或检查模型配置'

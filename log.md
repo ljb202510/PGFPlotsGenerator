@@ -572,6 +572,20 @@ cd install-tl-*
 
 #### 更新本周最新readme.md
 
+### 2026年9月3日
+
+#### 修复错误提示弹窗bug
+- 已删除：// Message 只显示短句 与 ElMessage.error(msg)（原先会弹出红色、无关闭按钮、内容为完整 XeLaTeX 编译日志的提示）。
+- 保留：compileErrorTitle / compileErrorDetails / compileErrorDialogVisible 赋值逻辑 —— 编译失败时仅弹出那个可正常关闭的黑白详情弹窗（含「关闭 / 复制日志」按钮），行为不变。
+
+#### 修复提示词过长导致AI回复为空的问题
+- 代码改动（仅 hello/backend/routes/chat.js，Qwen 分支）
+关闭深度思考 + 提高预算（第 358-365 行）：
+
+- 新增 thinking: { type: 'disabled' }（关键修复）
+max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易截断）
+- 空内容日志增强（第 373-384 行）：content 为空时额外打印 finish_reason 与 reasoning 长度，便于后续区分"思考截断/平台无内容"。
+
    
 
 

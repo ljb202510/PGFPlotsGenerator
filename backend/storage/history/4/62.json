@@ -1,0 +1,18 @@
+{
+  "history_id": 62,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型是什么",
+  "ai_response": "您好！我是 **DeepSeek 最新版模型**，由深度求索（DeepSeek）公司创造。\n\n以下是一些关于我的基本信息：\n\n🧠 **我的特点：**\n- **纯文本模型**，支持阅读链接和处理多种文件格式（图片、PDF、Word、Excel等，但无法直接识别图像内容）\n- **超长上下文**：支持1M上下文，可以一次性处理如《三体》三部曲体量的书籍\n- **联网搜索**：支持联网功能，但需要您在Web/App端手动开启\n- **免费使用**：目前完全免费，无任何收费计划\n\n📅 **知识截止日期：**\n- 2025年5月（这意味着我对近期事件了解有限）\n\n🌐 **使用方式：**\n- 网页端、App端（支持语音输入），也可以付费通过API调用\n\n💾 **文件处理能力：**\n- 我可以读取您上传的图片中的文字、PDF、Word、Excel等文件内容\n- 但作为纯文本模型，我无法直接“看懂”图片的视觉内容\n\n如果您对我的版本、知识日期或其他方面有具体疑问，欢迎继续问我！有什么我可以帮您的吗？😊",
+  "chart_code": "",
+  "generation_description": " 你的模型是什么",
+  "created_at": "2026-09-03T03:16:38.580Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": false,
+    "code_length": 0,
+    "code_source": "extracted_from_response"
+  }
+}
