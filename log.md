@@ -580,9 +580,9 @@ cd install-tl-*
 
 #### 修复提示词过长导致AI回复为空的问题
 - 代码改动（仅 hello/backend/routes/chat.js，Qwen 分支）
-关闭深度思考 + 提高预算（第 358-365 行）：
-
-- 新增 thinking: { type: 'disabled' }（关键修复）
+- 原因：模型默认进入深度思考模式，提示词过长时会把max_tokens耗尽。
+- 关闭深度思考 + 提高预算（第 358-365 行）：
+新增 thinking: { type: 'disabled' }（关键修复）
 max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易截断）
 - 空内容日志增强（第 373-384 行）：content 为空时额外打印 finish_reason 与 reasoning 长度，便于后续区分"思考截断/平台无内容"。
 

@@ -232,6 +232,31 @@ PDF 通过 `app.use('/storage', express.static(...))`（`app.js:41`）静态托�
 | `conversations` | conversation_id, user_id, title(default '新对话'), created_at, updated_at | `backend/migrations/001_conversations.js:8` |
 | `conversation_messages` | message_id, conversation_id, user_id, role, content(text), chart_code, history_id, selected_files, created_at | `backend/migrations/001_conversations.js:19` |
 
+#### 对话持久化两表字段说明（`backend/migrations/001_conversations.js`）
+
+| 表 | 列 | 含义 / 说明 |
+|---|---|---|
+| `conversations` | `conversation_id` | 会话主键（自增） |
+| | `user_id` | 会话属主；查询 / 删除均按 `user_id` 隔离 |
+| | `title` | 会话标题，默认 `'新对话'`；首条消息后自动回填用户输入前 20 字 |
+| | `created_at` / `updated_at` | 创建 / 更新时间；`updated_at` 随行更新自动刷新 |
+| `conversation_messages` | `message_id` | 消息主键（自增） |
+| | `conversation_id` | 所属会话（索引列） |
+| | `user_id` | 消息属主 |
+| | `role` | 消息角色：`user`（用户输入）或 `assistant`（AI 回复） |
+| | `content` | TEXT；用户消息为输入原文，AI 消息为完整回复文本 |
+| | `chart_code` | TEXT；该轮从 AI 回复提取的 PGFPlots 代码，纯问答（无代码）为 NULL |
+| | `history_id` | 关联 `generation_history.history_id`，无历史生成时为 NULL |
+| | `selected_files` | TEXT；发送时勾选的数据集快照（JSON 数组字符串），供前端回显"该轮使用了哪些文件" |
+| | `created_at` | 消息写入时间 |
+
+> 两表均**不设外键约束**：会话删除由代码在事务内先删 `conversation_messages` 再删 `conversations`（`conversations.js:83-116`）。
+
+**读写行为**：
+- **写入**：AI 生成成功后，`chat.js:persistConversation()`（L284-316）向 `conversation_messages` 一次写入 user + assistant 两条消息（assistant 消息带 `chart_code` / `history_id`）；若会话标题仍为默认 `'新对话'`，自动取该用户输入前 20 字回填为标题（L304-312）。
+- **读取**：`GET /:id/messages`（`conversations.js:119-149`）按 `message_id` 正序返回消息（含 `content` / `chart_code` / `history_id` / `selected_files`），前端 `ChartGenerator.vue` 切换会话时据此恢复聊天记录。
+- **删除**：`DELETE /:id`（`conversations.js:83-116`）在事务内先删该会话全部消息，再删会话本身。
+
 **部署执行顺序（建表/迁移）**：
 ```bash
 mysql -u root -p000 X < 1.sql
