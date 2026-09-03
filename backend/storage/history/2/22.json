@@ -1,0 +1,18 @@
+{
+  "history_id": 22,
+  "user_id": 2,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "是粉红色，你的不是",
+  "ai_response": "我理解您想要粉红色的图表。让我为您生成一个使用粉红色主题的LaTeX PGFPlots图表代码：\n\n```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={粉红色主题数据图表},\n    xlabel={X轴标签},\n    ylabel={Y轴标签},\n    xmin=0, xmax=10,\n    ymin=0, ymax=100,\n    xtick={0,2,4,6,8,10},\n    ytick={0,20,40,60,80,100},\n    legend pos=north west,\n    grid=major,\n    grid style={dashed, gray!30},\n    width=12cm,\n    height=8cm,\n    % 粉红色主题设置\n    axis background/.style={fill=pink!5},\n    axis line style={pink!80!black},\n    tick style={pink!80!black},\n    title style={color=pink!70!red},\n    xlabel style={color=pink!70!red},\n    ylabel style={color=pink!70!red},\n    legend style={fill=pink!10, draw=pink!50}\n]\n\n% 第一条曲线 - 深粉红色\n\\addplot [\n    domain=0:10,\n    samples=100,\n    color=pink!80!red,\n    thick\n] {x^2};\n\\addlegendentry{二次函数 $y = x^2$}\n\n% 第二条曲线 - 浅粉红色\n\\addplot [\n    domain=0:10,\n    samples=100,\n    color=pink!50,\n    thick,\n    dashed\n] {10*x};\n\\addlegendentry{线性函数 $y = 10x$}\n\n% 散点数据点 - 使用不同的粉红色调\n\\addplot[\n    only marks,\n    mark=*,\n    mark size=3pt,\n    color=pink!60!purple,\n    fill=pink!30\n] coordinates {\n    (1,1) (2,4) (3,9) (4,16) (5,25)\n    (6,36) (7,49) (8,64) (9,81) (10,100)\n};\n\n\\addlegendentry{数据点}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```\n\n这个图表具有以下粉红色主题特征：\n\n1. **背景颜色**：浅粉红色背景（pink!5）\n2. **坐标轴颜色**：粉红色边框（pink!80!black）\n3. **刻度颜色**：粉红色刻度\n4. **标题和标签**：粉红色文字\n5. **图例**：粉红色背景边框\n6. **曲线颜色**：\n   - 第一条曲线：深粉红色（pink!80!red）\n   - 第二条曲线：浅粉红色（pink!50）\n   - 散点：紫粉色（pink!60!purple）\n\n您可以根据需要调整：\n- 将 `pink!5` 中的数字改为0-100之间的值来调整颜色深浅（数字越小颜色越浅）\n- 使用不同的粉红色变体：`pink!50!red`、`pink!50!purple`、`hotpink`、`magenta`等\n- 调整线条粗细、标记大小等参数\n\n如果您有特定的数据集需要可视化，请提供数据，我可以为您生成包含实际数据的粉红色主题图表。",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={粉红色主题数据图表},\n    xlabel={X轴标签},\n    ylabel={Y轴标签},\n    xmin=0, xmax=10,\n    ymin=0, ymax=100,\n    xtick={0,2,4,6,8,10},\n    ytick={0,20,40,60,80,100},\n    legend pos=north west,\n    grid=major,\n    grid style={dashed, gray!30},\n    width=12cm,\n    height=8cm,\n    % 粉红色主题设置\n    axis background/.style={fill=pink!5},\n    axis line style={pink!80!black},\n    tick style={pink!80!black},\n    title style={color=pink!70!red},\n    xlabel style={color=pink!70!red},\n    ylabel style={color=pink!70!red},\n    legend style={fill=pink!10, draw=pink!50}\n]\n\n% 第一条曲线 - 深粉红色\n\\addplot [\n    domain=0:10,\n    samples=100,\n    color=pink!80!red,\n    thick\n] {x^2};\n\\addlegendentry{二次函数 $y = x^2$}\n\n% 第二条曲线 - 浅粉红色\n\\addplot [\n    domain=0:10,\n    samples=100,\n    color=pink!50,\n    thick,\n    dashed\n] {10*x};\n\\addlegendentry{线性函数 $y = 10x$}\n\n% 散点数据点 - 使用不同的粉红色调\n\\addplot[\n    only marks,\n    mark=*,\n    mark size=3pt,\n    color=pink!60!purple,\n    fill=pink!30\n] coordinates {\n    (1,1) (2,4) (3,9) (4,16) (5,25)\n    (6,36) (7,49) (8,64) (9,81) (10,100)\n};\n\n\\addlegendentry{数据点}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": " 是粉红色，你的不是",
+  "created_at": "2025-12-17T09:11:05.908Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 1271,
+    "code_source": "from_request"
+  }
+}

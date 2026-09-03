@@ -1,0 +1,20 @@
+{
+  "history_id": 5,
+  "user_id": 1,
+  "data_id": 2,
+  "file_name": "test.xlsx",
+  "dataset_name": "test",
+  "user_input": "生成柱状图，绿色",
+  "ai_response": "根据您提供的数据，我将生成一个绿色柱状图，展示2021年至2026年的数据变化趋势。\n\n```latex\n\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xeCJK}\n\\setCJKmainfont{SimSun}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    ybar,\n    bar width=20pt,\n    ymajorgrids=true,\n    grid style=dashed,\n    ylabel={数值（万）},\n    xlabel={年份},\n    symbolic x coords={2021年,2022年,2023年,2024年,2025年,2026年},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    every node near coord/.style={\n        font=\\small,\n        yshift=5pt,\n        rotate=0\n    },\n    title={2021-2026年数据统计},\n    ymin=300,\n    ymax=500,\n    ytick={300,350,400,450,500},\n    enlarge x limits=0.15,\n    legend style={\n        at={(0.5,-0.15)},\n        anchor=north,\n        legend columns=-1\n    }\n]\n\n% 绿色柱状图数据\n\\addplot[fill=green!70!black, draw=green!90!black] coordinates {\n    (2021年, 377)\n    (2022年, 457)\n    (2023年, 474)\n    (2024年, 438)\n    (2025年, 388)\n    (2026年, 343)\n};\n\n\\legend{数据统计}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```\n\n**代码说明：**\n\n1. **数据转换**：将原始数据中的\"万\"字去除，只保留数值部分（如\"377万\"转换为377）\n\n2. **图表特性**：\n   - 使用绿色主题（`fill=green!70!black, draw=green!90!black`）\n   - 柱状图上方显示具体数值\n   - 添加了垂直网格线便于读数\n   - 设置了合适的Y轴范围（300-500）\n   - 图例位于图表下方居中位置\n\n3. **中文支持**：使用xeCJK包和SimSun字体支持中文显示\n\n4. **布局优化**：\n   - 柱状图宽度适中（20pt）\n   - X轴标签自动旋转避免重叠\n   - 图表尺寸为12cm×8cm\n\n要使用此代码，您需要：\n1. 确保LaTeX环境支持xeCJK\n2. 安装SimSun字体或更改为您系统中可用的中文字体\n3. 使用XeLaTeX或LuaLaTeX编译\n\n如果您需要调整颜色深浅、柱状图宽度或其他样式，请告诉我，我可以进一步修改代码。",
+  "chart_code": "\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xeCJK}\n\\setCJKmainfont{SimSun}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    ybar,\n    bar width=20pt,\n    ymajorgrids=true,\n    grid style=dashed,\n    ylabel={数值（万）},\n    xlabel={年份},\n    symbolic x coords={2021年,2022年,2023年,2024年,2025年,2026年},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    every node near coord/.style={\n        font=\\small,\n        yshift=5pt,\n        rotate=0\n    },\n    title={2021-2026年数据统计},\n    ymin=300,\n    ymax=500,\n    ytick={300,350,400,450,500},\n    enlarge x limits=0.15,\n    legend style={\n        at={(0.5,-0.15)},\n        anchor=north,\n        legend columns=-1\n    }\n]\n\n% 绿色柱状图数据\n\\addplot[fill=green!70!black, draw=green!90!black] coordinates {\n    (2021年, 377)\n    (2022年, 457)\n    (2023年, 474)\n    (2024年, 438)\n    (2025年, 388)\n    (2026年, 343)\n};\n\n\\legend{数据统计}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 生成柱状图，绿色",
+  "created_at": "2025-12-17T03:08:05.773Z",
+  "metadata": {
+    "data_ids": [
+      2
+    ],
+    "has_chart_code": true,
+    "code_length": 1023,
+    "code_source": "from_request"
+  }
+}

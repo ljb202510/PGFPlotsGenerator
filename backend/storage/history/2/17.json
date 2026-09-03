@@ -1,0 +1,20 @@
+{
+  "history_id": 17,
+  "user_id": 2,
+  "data_id": 6,
+  "file_name": "test.txt",
+  "dataset_name": "test",
+  "user_input": "柱状图，粉色",
+  "ai_response": "```latex\n\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xeCJK}\n\\setCJKmainfont{SimSun}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    ybar,\n    bar width=20pt,\n    ymajorgrids=true,\n    grid style={dashed, lightgray},\n    ylabel={数量（万）},\n    xlabel={年份},\n    symbolic x coords={2021年,2022年,2023年,2024年,2025年,2026年},\n    xtick=data,\n    xticklabel style={rotate=0},\n    nodes near coords,\n    nodes near coords align={vertical},\n    nodes near coords style={font=\\small},\n    title={年度数据统计},\n    legend style={at={(0.5,-0.15)}, anchor=north, legend columns=-1},\n    ymin=0,\n    ymax=500,\n    ytick={0,100,200,300,400,500},\n    axis lines=left,\n    tick style={black, thin},\n    every axis plot/.append style={\n        fill=magenta!70,\n        draw=magenta!90,\n        line width=0.5pt\n    }\n]\n\n\\addplot coordinates {\n    (2021年,377)\n    (2022年,457)\n    (2023年,474)\n    (2024年,438)\n    (2025年,388)\n    (2026年,343)\n};\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```\n\n这个柱状图的特点：\n\n1. **粉色主题**：使用 `magenta!70` 作为填充色，`magenta!90` 作为边框色\n2. **数据标签**：每个柱子上方显示具体数值\n3. **网格线**：添加了水平网格线便于读数\n4. **坐标轴设置**：\n   - X轴：年份标签（2021年-2026年）\n   - Y轴：数量（万），范围0-500\n5. **图表尺寸**：12cm×8cm，适合嵌入文档\n6. **中文字体**：使用xeCJK包支持中文显示\n\n如果需要调整粉色深浅，可以修改：\n- `magenta!70` 中的数字（0-100）控制透明度\n- 或者使用其他粉色系颜色如 `pink!80`、`violet!60` 等",
+  "chart_code": "\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xeCJK}\n\\setCJKmainfont{SimSun}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    ybar,\n    bar width=20pt,\n    ymajorgrids=true,\n    grid style={dashed, lightgray},\n    ylabel={数量（万）},\n    xlabel={年份},\n    symbolic x coords={2021年,2022年,2023年,2024年,2025年,2026年},\n    xtick=data,\n    xticklabel style={rotate=0},\n    nodes near coords,\n    nodes near coords align={vertical},\n    nodes near coords style={font=\\small},\n    title={年度数据统计},\n    legend style={at={(0.5,-0.15)}, anchor=north, legend columns=-1},\n    ymin=0,\n    ymax=500,\n    ytick={0,100,200,300,400,500},\n    axis lines=left,\n    tick style={black, thin},\n    every axis plot/.append style={\n        fill=magenta!70,\n        draw=magenta!90,\n        line width=0.5pt\n    }\n]\n\n\\addplot coordinates {\n    (2021年,377)\n    (2022年,457)\n    (2023年,474)\n    (2024年,438)\n    (2025年,388)\n    (2026年,343)\n};\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 柱状图，粉色",
+  "created_at": "2025-12-17T08:53:36.207Z",
+  "metadata": {
+    "data_ids": [
+      6
+    ],
+    "has_chart_code": true,
+    "code_length": 1043,
+    "code_source": "from_request"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "history_id": 20,
+  "user_id": 1,
+  "data_id": 7,
+  "file_name": "test.txt",
+  "dataset_name": "test",
+  "user_input": "柱状图\n",
+  "ai_response": "根据您提供的数据，我将生成一个展示2021-2026年数据的柱状图。数据包含6个年份的数值（单位：万）。\n\n以下是完整的LaTeX PGFPlots代码：\n\n```latex\n\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xeCJK}\n\\setCJKmainfont{SimSun} % 请根据您的系统选择合适的字体，如SimSun, SimHei, Microsoft YaHei等\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    ybar,\n    bar width=20pt,\n    ymajorgrids=true,\n    grid style=dashed,\n    ylabel={数值（万）},\n    xlabel={年份},\n    symbolic x coords={2021年,2022年,2023年,2024年,2025年,2026年},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    every node near coord/.style={\n        font=\\small,\n        yshift=5pt,\n        /pgf/number format/fixed,\n        /pgf/number format/precision=0\n    },\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=500,\n    title={2021-2026年数据统计},\n    legend style={\n        at={(0.5,-0.15)},\n        anchor=north,\n        legend columns=-1\n    }\n]\n\n% 添加柱状图数据\n\\addplot[fill=blue!50] coordinates {\n    (2021年, 377)\n    (2022年, 457)\n    (2023年, 474)\n    (2024年, 438)\n    (2025年, 388)\n    (2026年, 343)\n};\n\n\\legend{数据值}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```\n\n**代码说明：**\n\n1. **数据表示**：使用坐标对 `(年份, 数值)` 的形式表示数据，数值已从\"万\"单位转换为纯数字\n2. **图表特性**：\n   - 蓝色柱状图，宽度为20pt\n   - 每个柱子上方显示具体数值\n   - Y轴网格线（虚线样式）\n   - Y轴范围设置为0-500，以容纳所有数据\n   - 图例位于图表下方居中位置\n3. **中文字体支持**：使用xeCJK包支持中文显示，请确保您的LaTeX编译器支持XeLaTeX\n4. **字体设置**：代码中使用SimSun字体，您可以根据需要更改为系统中可用的中文字体\n\n**使用建议：**\n1. 如果您使用Overleaf，请将编译器设置为XeLaTeX\n2. 如果字体显示有问题，可以尝试将`SimSun`改为`SimHei`、`Microsoft YaHei`或您系统中安装的其他中文字体\n3. 如需调整颜色，可以修改`fill=blue!50`中的颜色值\n\n这个柱状图清晰地展示了2021-2026年数据的变化趋势，最高值出现在2023年（474万），之后呈下降趋势。",
+  "chart_code": "\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xeCJK}\n\\setCJKmainfont{SimSun} % 请根据您的系统选择合适的字体，如SimSun, SimHei, Microsoft YaHei等\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    ybar,\n    bar width=20pt,\n    ymajorgrids=true,\n    grid style=dashed,\n    ylabel={数值（万）},\n    xlabel={年份},\n    symbolic x coords={2021年,2022年,2023年,2024年,2025年,2026年},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    every node near coord/.style={\n        font=\\small,\n        yshift=5pt,\n        /pgf/number format/fixed,\n        /pgf/number format/precision=0\n    },\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=500,\n    title={2021-2026年数据统计},\n    legend style={\n        at={(0.5,-0.15)},\n        anchor=north,\n        legend columns=-1\n    }\n]\n\n% 添加柱状图数据\n\\addplot[fill=blue!50] coordinates {\n    (2021年, 377)\n    (2022年, 457)\n    (2023年, 474)\n    (2024年, 438)\n    (2025年, 388)\n    (2026年, 343)\n};\n\n\\legend{数据值}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": "用户查询: 柱状图\n",
+  "created_at": "2025-12-12T14:42:51.664Z",
+  "metadata": {
+    "data_ids": [
+      7
+    ],
+    "has_chart_code": true,
+    "code_length": 1068,
+    "code_source": "from_request"
+  }
+}

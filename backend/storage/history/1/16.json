@@ -1,0 +1,18 @@
+{
+  "history_id": 16,
+  "user_id": 1,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你是谁\n搜索",
+  "ai_response": "我是DeepSeek，一个由深度求索公司开发的AI助手！😊\n\n我可以帮你处理各种任务，包括：\n- 回答问题和提供信息\n- 协助写作和编程\n- 分析文档和数据\n- 生成图表代码（特别是LaTeX PGFPlots图表）\n- 文件处理（支持上传图像、txt、pdf、ppt、word、excel等格式）\n\n如果你有需要生成图表的数据文件，可以上传给我，我会帮你分析数据并生成相应的LaTeX代码！\n\n有什么我可以帮助你的吗？",
+  "chart_code": "我是DeepSeek，一个由深度求索公司开发的AI助手！😊\n\n我可以帮你处理各种任务，包括：\n- 回答问题和提供信息\n- 协助写作和编程\n- 分析文档和数据\n- 生成图表代码（特别是LaTeX PGFPlots图表）\n- 文件处理（支持上传图像、txt、pdf、ppt、word、excel等格式）\n\n如果你有需要生成图表的数据文件，可以上传给我，我会帮你分析数据并生成相应的LaTeX代码！\n\n有什么我可以帮助你的吗？",
+  "generation_description": " 你是谁\n搜索",
+  "created_at": "2025-12-17T02:37:27.409Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 211,
+    "code_source": "extracted_from_response"
+  }
+}

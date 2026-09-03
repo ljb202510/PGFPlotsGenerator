@@ -1,0 +1,18 @@
+{
+  "history_id": "hist_1_1765249710384_177",
+  "user_id": 1,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "基于我国近五年人口普查的数据，绘制直方图",
+  "ai_response": "由于我无法直接访问您上传的数据文件，我将提供一个通用的LaTeX PGFPlots代码模板，用于绘制近五年人口普查数据的直方图。您可以根据实际数据调整年份和人口数量。\n\n```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{width=10cm,compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    enlargelimits=0.15,\n    legend style={at={(0.5,-0.15)},\n      anchor=north,legend columns=-1},\n    ylabel={人口数量（百万）},\n    xlabel={年份},\n    symbolic x coords={2019,2020,2021,2022,2023},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    ]\n\\addplot coordinates {(2019,1400) (2020,1412) (2021,1417) (2022,1411) (2023,1409)};\n\\legend{人口数量}\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```\n\n**使用说明：**\n1. 将示例坐标数据 `(2019,1400) (2020,1412) ...` 替换为您的实际人口普查数据\n2. 如果需要调整年份，请修改 `symbolic x coords` 和坐标中的年份标签\n3. 可以调整 `ylabel` 中的单位（如改为“万人”或“亿人”）\n4. 如需添加标题，可以在 `axis` 选项中添加 `title={我国近五年人口普查数据}`\n\n**数据替换示例：**\n如果您的实际数据是：\n- 2019: 14.000亿\n- 2020: 14.120亿  \n- 2021: 14.177亿\n- 2022: 14.118亿\n- 2023: 14.096亿\n\n可以将坐标替换为：\n```latex\n\\addplot coordinates {(2019,14.000) (2020,14.120) (2021,14.177) (2022,14.118) (2023,14.096)};\n\\legend{人口数量（亿）}\n```\n\n请提供具体数据，我可以为您生成更精确的图表代码。",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{width=10cm,compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    enlargelimits=0.15,\n    legend style={at={(0.5,-0.15)},\n      anchor=north,legend columns=-1},\n    ylabel={人口数量（百万）},\n    xlabel={年份},\n    symbolic x coords={2019,2020,2021,2022,2023},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    ]\n\\addplot coordinates {(2019,1400) (2020,1412) (2021,1417) (2022,1411) (2023,1409)};\n\\legend{人口数量}\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": "用户查询: 基于我国近五年人口普查的数据，绘制直方图",
+  "created_at": "2025-12-09T03:08:30.417Z",
+  "metadata": {
+    "chart_type": "bar",
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 589
+  }
+}

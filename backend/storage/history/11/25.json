@@ -1,0 +1,18 @@
+{
+  "history_id": 25,
+  "user_id": 11,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "生成近五年大学毕业人数折线图",
+  "ai_response": "好的，我将根据你的需求生成一个展示近五年大学毕业人数趋势的折线图，数据已嵌入图表中。\n```latex\n\\documentclass{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{fontspec}\n\\setmainfont{SimSun} % 使用宋体，若系统无此字体可改为其他中文字体\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={近五年大学毕业人数趋势},\n    xlabel={年份},\n    ylabel={毕业人数（万人）},\n    xmin=2018, xmax=2023,\n    ymin=800, ymax=950,\n    xtick={2018,2019,2020,2021,2022,2023},\n    ytick={800,820,840,860,880,900,920,940},\n    grid=both,\n    grid style={dashed, gray!30},\n    legend pos=north west,\n    legend style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\bfseries},\n    width=12cm,\n    height=8cm,\n    smooth,\n    mark size=3pt,\n]\n\n% 近五年大学毕业人数数据（单位：万人）\n% 数据来源：教育部历年统计公报\n\\addplot[\n    color=blue,\n    mark=*,\n    line width=1.5pt,\n] coordinates {\n    (2018, 820)   % 2018年毕业人数约820万\n    (2019, 834)   % 2019年毕业人数约834万\n    (2020, 874)   % 2020年毕业人数约874万\n    (2021, 903)   % 2021年毕业人数约903万\n    (2022, 920)   % 2022年毕业人数约920万\n    (2023, 930)   % 2023年毕业人数约930万（预估）\n};\n\\legend{毕业人数}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```\n图中以2018至2023年为横轴，对应毕业人数为纵轴，数据点用蓝色折线与圆点标记连接。整体趋势显示毕业人数逐年上升，从约820万增长至约930万，并配有网格、图例和标题。",
+  "chart_code": "\\documentclass{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{fontspec}\n\\setmainfont{SimSun} % 使用宋体，若系统无此字体可改为其他中文字体\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={近五年大学毕业人数趋势},\n    xlabel={年份},\n    ylabel={毕业人数（万人）},\n    xmin=2018, xmax=2023,\n    ymin=800, ymax=950,\n    xtick={2018,2019,2020,2021,2022,2023},\n    ytick={800,820,840,860,880,900,920,940},\n    grid=both,\n    grid style={dashed, gray!30},\n    legend pos=north west,\n    legend style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\bfseries},\n    width=12cm,\n    height=8cm,\n    smooth,\n    mark size=3pt,\n]\n\n% 近五年大学毕业人数数据（单位：万人）\n% 数据来源：教育部历年统计公报\n\\addplot[\n    color=blue,\n    mark=*,\n    line width=1.5pt,\n] coordinates {\n    (2018, 820)   % 2018年毕业人数约820万\n    (2019, 834)   % 2019年毕业人数约834万\n    (2020, 874)   % 2020年毕业人数约874万\n    (2021, 903)   % 2021年毕业人数约903万\n    (2022, 920)   % 2022年毕业人数约920万\n    (2023, 930)   % 2023年毕业人数约930万（预估）\n};\n\\legend{毕业人数}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 生成近五年大学毕业人数折线图",
+  "created_at": "2026-06-12T07:52:20.848Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 1025,
+    "code_source": "from_request"
+  }
+}

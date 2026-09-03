@@ -1,0 +1,18 @@
+{
+  "history_id": "hist_1_1765207202219_6608",
+  "user_id": 1,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "基于近我国五次人口普查的数据，绘制折线图",
+  "ai_response": "由于我无法直接访问您上传的数据文件，我将提供一个基于LaTeX PGFPlots的通用折线图模板，您可以根据实际数据修改。请将以下代码复制到LaTeX文档中，并根据您的数据调整坐标点、标签和样式。\n\n```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{width=10cm,compat=1.18}\n\\usepackage[utf8]{inputenc}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={我国近五次人口普查数据折线图},\n    xlabel={人口普查年份},\n    ylabel={人口数量（亿）},\n    xmin=1953, xmax=2020,\n    ymin=0, ymax=15,\n    xtick={1953, 1964, 1982, 1990, 2000, 2010, 2020},\n    ytick={0,2,4,6,8,10,12,14},\n    legend pos=north west,\n    ymajorgrids=true,\n    grid style=dashed,\n]\n\n% 示例数据点（请根据实际数据修改）\n\\addplot[\n    color=blue,\n    mark=square,\n    ]\n    coordinates {\n    (1953, 5.94)(1964, 6.95)(1982, 10.08)(1990, 11.34)(2000, 12.67)(2010, 13.40)(2020, 14.12)\n    };\n    \\legend{人口数量}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```\n\n**使用说明：**\n1. 将上述代码保存为`.tex`文件，使用支持PGFPlots的LaTeX编译器（如Overleaf、TeXLive等）编译。\n2. **关键修改部分**：`coordinates`中的数据点需要替换为您的实际普查数据。格式为`(年份, 人口数)`。\n3. 您可以根据需要调整以下参数：\n   - `xmin`/`xmax`：X轴范围\n   - `ymin`/`ymax`：Y轴范围\n   - `xtick`/`ytick`：坐标轴刻度\n   - 颜色、标记样式等\n\n**注意事项：**\n- 如果您的数据包含更多年份或不同指标（如城乡人口），可添加多个`\\addplot`命令。\n- 如需添加数据标签，可在`\\addplot`后使用`node[pos=位置]{标签}`。\n- 建议使用实际普查年份（如1953、1964、1982、1990、2000、2010、2020）作为X轴坐标。\n\n请提供具体数据，我可以为您生成更精确的图表代码。",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{width=10cm,compat=1.18}\n\\usepackage[utf8]{inputenc}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={我国近五次人口普查数据折线图},\n    xlabel={人口普查年份},\n    ylabel={人口数量（亿）},\n    xmin=1953, xmax=2020,\n    ymin=0, ymax=15,\n    xtick={1953, 1964, 1982, 1990, 2000, 2010, 2020},\n    ytick={0,2,4,6,8,10,12,14},\n    legend pos=north west,\n    ymajorgrids=true,\n    grid style=dashed,\n]\n\n% 示例数据点（请根据实际数据修改）\n\\addplot[\n    color=blue,\n    mark=square,\n    ]\n    coordinates {\n    (1953, 5.94)(1964, 6.95)(1982, 10.08)(1990, 11.34)(2000, 12.67)(2010, 13.40)(2020, 14.12)\n    };\n    \\legend{人口数量}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": "用户查询: 基于近我国五次人口普查的数据，绘制折线图",
+  "created_at": "2025-12-08T15:20:02.231Z",
+  "metadata": {
+    "chart_type": "line",
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 693
+  }
+}

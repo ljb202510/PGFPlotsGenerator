@@ -1,0 +1,20 @@
+{
+  "history_id": "hist_1_1765267811988_900",
+  "user_id": 1,
+  "data_id": 8,
+  "file_name": "test.xlsx",
+  "dataset_name": "测试数据",
+  "user_input": "标题为“人数变化图”，X轴为年份，Y轴为人数",
+  "ai_response": "由于无法读取您上传的 Excel 文件内容，我将基于您的要求“人数变化图，X轴为年份，Y轴为人数”提供一个通用的 LaTeX PGFPlots 代码模板。您需要将数据替换为实际值。\n\n```latex\n\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={人数变化图},\n    xlabel={年份},\n    ylabel={人数},\n    xmin=2010, xmax=2023,\n    ymin=0, ymax=120,\n    xtick={2010,2012,2014,2016,2018,2020,2022},\n    ytick={0,20,40,60,80,100,120},\n    legend pos=north west,\n    grid=major,\n    grid style={dashed,gray!30},\n    width=12cm,\n    height=8cm,\n    tick label style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\large\\bfseries}\n]\n\n% 示例数据 - 请替换为您的实际数据\n\\addplot[\n    color=blue,\n    mark=square,\n    line width=1pt,\n    mark size=2pt\n    ]\n    coordinates {\n    (2010, 50)\n    (2012, 65)\n    (2014, 78)\n    (2016, 85)\n    (2018, 92)\n    (2020, 105)\n    (2022, 98)\n    };\n    \\addlegendentry{人数变化}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```\n\n**使用说明：**\n\n1. **数据替换**：将 `coordinates` 部分替换为您的实际数据，格式为 `(年份, 人数)`\n\n2. **坐标轴范围调整**：\n   - 修改 `xmin`、`xmax` 调整年份范围\n   - 修改 `ymin`、`ymax` 调整人数范围\n   - 调整 `xtick` 和 `ytick` 设置刻度显示\n\n3. **样式自定义**：\n   - 修改 `color` 改变线条颜色\n   - 修改 `mark` 改变数据点形状（可选：*, square, triangle, diamond等）\n   - 调整 `line width` 改变线条粗细\n   - 修改 `grid style` 调整网格线样式\n\n4. **如果数据较多**，建议使用外部数据文件：\n```latex\n% 将数据保存为 data.csv 文件（格式：年份,人数）\n\\addplot table[x=year, y=population, col sep=comma] {data.csv};\n```\n\n请将您的实际数据填入坐标点中，如果需要进一步调整图表样式或处理特定数据格式，请提供更多详细信息。",
+  "chart_code": "\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={人数变化图},\n    xlabel={年份},\n    ylabel={人数},\n    xmin=2010, xmax=2023,\n    ymin=0, ymax=120,\n    xtick={2010,2012,2014,2016,2018,2020,2022},\n    ytick={0,20,40,60,80,100,120},\n    legend pos=north west,\n    grid=major,\n    grid style={dashed,gray!30},\n    width=12cm,\n    height=8cm,\n    tick label style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\large\\bfseries}\n]\n\n% 示例数据 - 请替换为您的实际数据\n\\addplot[\n    color=blue,\n    mark=square,\n    line width=1pt,\n    mark size=2pt\n    ]\n    coordinates {\n    (2010, 50)\n    (2012, 65)\n    (2014, 78)\n    (2016, 85)\n    (2018, 92)\n    (2020, 105)\n    (2022, 98)\n    };\n    \\addlegendentry{人数变化}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": "用户查询: 标题为“人数变化图”，X轴为年份，Y轴为人数",
+  "created_at": "2025-12-09T08:10:11.992Z",
+  "metadata": {
+    "chart_type": "line",
+    "data_ids": [
+      8
+    ],
+    "has_chart_code": true,
+    "code_length": 875
+  }
+}

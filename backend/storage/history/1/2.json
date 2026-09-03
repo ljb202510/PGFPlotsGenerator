@@ -1,0 +1,18 @@
+{
+  "history_id": 2,
+  "user_id": 1,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "生成一个饼图示例",
+  "ai_response": "我将为您生成一个简单的饼图示例，使用PGFPlots的`pie`库。以下是完整的LaTeX代码：\n\n```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\usepgfplotslibrary{pie}\n\\usepackage{tikz}\n\n\\begin{document}\n\n\\begin{figure}[h]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    pie,\n    text=legend,\n    radius=3,\n    scale font,\n    legend style={at={(1.2,0.5)}, anchor=west},\n    title={2023年公司各部门预算分配},\n    title style={yshift=10pt}\n]\n\n\\pie[\n    text=inside,\n    color={blue!30, red!30, green!30, yellow!30, orange!30}\n]{\n    35/研发部门,\n    25/市场部门,\n    20/行政部门,\n    12/人力资源,\n    8/其他\n}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{公司各部门预算分配饼图}\n\\end{figure}\n\n\\end{document}\n```\n\n这个饼图展示了以下特点：\n\n1. **数据**：包含5个部门的预算分配比例：\n   - 研发部门：35%\n   - 市场部门：25%\n   - 行政部门：20%\n   - 人力资源：12%\n   - 其他：8%\n\n2. **样式设置**：\n   - 饼图半径为3\n   - 使用图例显示标签（而不是直接在饼图上）\n   - 设置了不同颜色的扇形区域\n   - 添加了标题和图表标题\n\n3. **编译要求**：\n   - 需要安装PGFPlots包（通常TeX发行版已包含）\n   - 需要启用`pie`库\n\n如果您有特定的数据想要可视化，请提供数据文件或详细描述，我可以为您生成相应的饼图代码。",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\usepgfplotslibrary{pie}\n\\usepackage{tikz}\n\n\\begin{document}\n\n\\begin{figure}[h]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    pie,\n    text=legend,\n    radius=3,\n    scale font,\n    legend style={at={(1.2,0.5)}, anchor=west},\n    title={2023年公司各部门预算分配},\n    title style={yshift=10pt}\n]\n\n\\pie[\n    text=inside,\n    color={blue!30, red!30, green!30, yellow!30, orange!30}\n]{\n    35/研发部门,\n    25/市场部门,\n    20/行政部门,\n    12/人力资源,\n    8/其他\n}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{公司各部门预算分配饼图}\n\\end{figure}\n\n\\end{document}",
+  "generation_description": " 生成一个饼图示例",
+  "created_at": "2025-12-17T03:03:28.243Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 565,
+    "code_source": "from_request"
+  }
+}

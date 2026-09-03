@@ -1,0 +1,18 @@
+{
+  "history_id": "hist_1_1765208684905_4279",
+  "user_id": 1,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "基于近我国近五年考研人数的数据，绘制折线图",
+  "ai_response": "由于我无法直接访问您上传的数据文件，我将提供一个基于近五年（2019-2023年）考研人数的示例数据来生成折线图的LaTeX PGFPlots代码。您可以根据实际数据修改数据表中的数值。\n\n以下是LaTeX代码：\n\n```latex\n\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xeCJK}\n\\setCJKmainfont{SimSun} % 设置中文字体，请根据您的系统调整\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    title={近五年我国考研人数变化趋势（2019-2023年）},\n    xlabel={年份},\n    ylabel={考研人数（万人）},\n    xmin=2018.5, xmax=2023.5,\n    ymin=200, ymax=500,\n    xtick={2019,2020,2021,2022,2023},\n    ytick={200,250,300,350,400,450,500},\n    legend pos=north west,\n    grid=major,\n    grid style={dashed,gray!30},\n    tick label style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\large\\bfseries},\n    x tick label style={/pgf/number format/1000 sep=},\n    nodes near coords, % 显示每个点的数值\n    every node near coord/.append style={font=\\tiny, yshift=-8pt}\n]\n\n% 示例数据，请根据实际数据修改\n\\addplot[color=blue, mark=*, thick] coordinates {\n    (2019, 290)\n    (2020, 341)\n    (2021, 377)\n    (2022, 457)\n    (2023, 474)\n};\n\n\\legend{考研人数}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```\n\n**说明：**\n\n1. **数据部分**：代码中的坐标点 `(2019, 290)` 等是示例数据，分别表示2019年290万人、2020年341万人等。请根据您的实际数据修改这些数值。\n\n2. **中文字体**：代码中使用了 `xeCJK` 包来支持中文，并设置了 `SimSun`（宋体）作为中文字体。您可能需要根据您的LaTeX环境和系统安装的字体进行调整，例如改为 `Microsoft YaHei`（微软雅黑）或其他中文字体。\n\n3. **图表样式**：\n   - 折线为蓝色，带有星形标记点\n   - 在每个数据点上方显示具体数值\n   - 包含网格线以便于读数\n   - 坐标轴范围根据示例数据设置，您可能需要根据实际数据调整 `xmin`、`xmax`、`ymin`、`ymax` 的值\n\n4. **使用建议**：\n   - 如果您没有安装中文字体包，可以移除中文相关内容，将标题和标签改为英文\n   - 如果您使用的是Overleaf等在线LaTeX编辑器，请确保编译器设置为XeLaTeX以支持中文字体\n\n请将代码中的示例数据替换为您的实际数据，并根据需要调整图表样式。如果您能提供具体的数据，我可以为您生成更准确的代码。",
+  "chart_code": "\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xeCJK}\n\\setCJKmainfont{SimSun} % 设置中文字体，请根据您的系统调整\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    title={近五年我国考研人数变化趋势（2019-2023年）},\n    xlabel={年份},\n    ylabel={考研人数（万人）},\n    xmin=2018.5, xmax=2023.5,\n    ymin=200, ymax=500,\n    xtick={2019,2020,2021,2022,2023},\n    ytick={200,250,300,350,400,450,500},\n    legend pos=north west,\n    grid=major,\n    grid style={dashed,gray!30},\n    tick label style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\large\\bfseries},\n    x tick label style={/pgf/number format/1000 sep=},\n    nodes near coords, % 显示每个点的数值\n    every node near coord/.append style={font=\\tiny, yshift=-8pt}\n]\n\n% 示例数据，请根据实际数据修改\n\\addplot[color=blue, mark=*, thick] coordinates {\n    (2019, 290)\n    (2020, 341)\n    (2021, 377)\n    (2022, 457)\n    (2023, 474)\n};\n\n\\legend{考研人数}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": "用户查询: 基于近我国近五年考研人数的数据，绘制折线图",
+  "created_at": "2025-12-08T15:44:44.938Z",
+  "metadata": {
+    "chart_type": "line",
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 995
+  }
+}

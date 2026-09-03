@@ -1,0 +1,18 @@
+{
+  "history_id": 23,
+  "user_id": 11,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "5",
+  "ai_response": "好的，我是您的专业图表生成助手。我已经准备好根据您的需求和数据生成LaTeX PGFPlots代码。\n\n请提供以下信息：\n\n1.  **图表类型**：您需要哪种图表？例如：折线图、柱状图、散点图、饼图、箱线图、热力图等。\n2.  **数据文件**：请上传您的Excel文件（.xlsx）或CSV文件。我将解析其中的数据。\n3.  **具体需求**：\n    *   X轴和Y轴分别代表什么？（例如：时间、类别、数值）\n    *   需要多条数据线/柱吗？分别对应哪些列？\n    *   图表标题、坐标轴标签、图例文字是什么？\n    *   是否需要网格线、误差线、标记点等特殊样式？\n    *   是否需要调整颜色、线型、柱状图宽度等？\n\n**一旦您提供了这些信息，我将立即生成包含实际数据的完整LaTeX代码。**\n\n---\n\n**示例流程：**\n\n假设您上传了一个包含“月份”和“销售额”两列的Excel文件，并希望生成一个折线图。\n\n**我将会生成类似这样的代码：**\n\n```latex\n\\documentclass{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={月度销售额趋势},\n    xlabel={月份},\n    ylabel={销售额 (万元)},\n    grid=major,\n    legend pos=north west,\n    width=12cm,\n    height=8cm,\n    xtick=data,\n    x tick label style={rotate=45, anchor=east},\n]\n\\addplot[color=blue, mark=square] coordinates {\n    (1, 12.5)\n    (2, 15.3)\n    (3, 18.7)\n    (4, 22.1)\n    (5, 25.6)\n    (6, 28.9)\n    (7, 32.4)\n    (8, 35.8)\n    (9, 38.2)\n    (10, 41.5)\n    (11, 45.1)\n    (12, 48.6)\n};\n\\legend{销售额}\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```\n\n**请提供您的数据和需求，我将为您生成精确的图表代码！**",
+  "chart_code": "\\documentclass{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={月度销售额趋势},\n    xlabel={月份},\n    ylabel={销售额 (万元)},\n    grid=major,\n    legend pos=north west,\n    width=12cm,\n    height=8cm,\n    xtick=data,\n    x tick label style={rotate=45, anchor=east},\n]\n\\addplot[color=blue, mark=square] coordinates {\n    (1, 12.5)\n    (2, 15.3)\n    (3, 18.7)\n    (4, 22.1)\n    (5, 25.6)\n    (6, 28.9)\n    (7, 32.4)\n    (8, 35.8)\n    (9, 38.2)\n    (10, 41.5)\n    (11, 45.1)\n    (12, 48.6)\n};\n\\legend{销售额}\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 5",
+  "created_at": "2026-06-12T07:51:34.539Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 608,
+    "code_source": "from_request"
+  }
+}

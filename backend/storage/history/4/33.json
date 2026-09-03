@@ -1,0 +1,18 @@
+{
+  "history_id": 33,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型是什么",
+  "ai_response": "我是基于深度求索（DeepSeek）公司开发的 **DeepSeek 最新版模型**。具体版本信息建议查阅官方文档和公告获取最新详情。\n\n我的核心特点包括：\n- **文本对话**：支持自然语言交互\n- **文件处理**：可上传并读取图像、txt、pdf、ppt、word、excel等文件中的文字信息\n- **联网搜索**：支持联网查询（需手动开启）\n- **长上下文**：1M token上下文窗口，可处理超长文本\n- **免费使用**：目前完全免费\n\n如果您想了解更详细的技术规格或版本号，建议访问DeepSeek官方网站或查阅相关技术文档。有其他问题我可以帮您解答吗？😊",
+  "chart_code": "我是基于深度求索（DeepSeek）公司开发的 **DeepSeek 最新版模型**。具体版本信息建议查阅官方文档和公告获取最新详情。\n\n我的核心特点包括：\n- **文本对话**：支持自然语言交互\n- **文件处理**：可上传并读取图像、txt、pdf、ppt、word、excel等文件中的文字信息\n- **联网搜索**：支持联网查询（需手动开启）\n- **长上下文**：1M token上下文窗口，可处理超长文本\n- **免费使用**：目前完全免费\n\n如果您想了解更详细的技术规格或版本号，建议访问DeepSeek官方网站或查阅相关技术文档。有其他问题我可以帮您解答吗？😊",
+  "generation_description": " 你的模型是什么",
+  "created_at": "2026-07-09T07:53:26.004Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 289,
+    "code_source": "extracted_from_response"
+  }
+}

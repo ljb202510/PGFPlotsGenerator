@@ -1,0 +1,18 @@
+{
+  "history_id": 14,
+  "user_id": 2,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "生成折线图",
+  "ai_response": "由于您没有提供具体的数据集，我将为您生成一个通用的折线图LaTeX PGFPlots代码模板。您可以根据需要修改数据、标签和样式。\n\n```latex\n\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=6cm,\n    title={示例折线图},\n    xlabel={X轴标签},\n    ylabel={Y轴标签},\n    xmin=0, xmax=10,\n    ymin=0, ymax=100,\n    xtick={0,2,4,6,8,10},\n    ytick={0,20,40,60,80,100},\n    legend pos=north west,\n    grid=major,\n    grid style={dashed,gray!30},\n]\n\n% 第一条折线\n\\addplot[\n    color=blue,\n    mark=square,\n    ]\n    coordinates {\n    (1,20)\n    (2,35)\n    (3,45)\n    (4,60)\n    (5,75)\n    (6,85)\n    (7,90)\n    };\n    \\addlegendentry{数据集A}\n\n% 第二条折线\n\\addplot[\n    color=red,\n    mark=triangle,\n    ]\n    coordinates {\n    (1,10)\n    (2,25)\n    (3,40)\n    (4,55)\n    (5,65)\n    (6,70)\n    (7,80)\n    };\n    \\addlegendentry{数据集B}\n\n% 第三条折线\n\\addplot[\n    color=green,\n    mark=*,\n    ]\n    coordinates {\n    (1,30)\n    (2,50)\n    (3,60)\n    (4,70)\n    (5,80)\n    (6,90)\n    (7,95)\n    };\n    \\addlegendentry{数据集C}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```\n\n如果您有具体的数据文件（如Excel、CSV等），请上传文件，我可以：\n1. 解析您的实际数据\n2. 根据数据特点调整图表类型和样式\n3. 生成包含您实际数据的完整LaTeX代码\n\n请提供您的数据文件或详细描述您的数据结构和需求，我将为您生成更精确的图表代码。",
+  "chart_code": "\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=6cm,\n    title={示例折线图},\n    xlabel={X轴标签},\n    ylabel={Y轴标签},\n    xmin=0, xmax=10,\n    ymin=0, ymax=100,\n    xtick={0,2,4,6,8,10},\n    ytick={0,20,40,60,80,100},\n    legend pos=north west,\n    grid=major,\n    grid style={dashed,gray!30},\n]\n\n% 第一条折线\n\\addplot[\n    color=blue,\n    mark=square,\n    ]\n    coordinates {\n    (1,20)\n    (2,35)\n    (3,45)\n    (4,60)\n    (5,75)\n    (6,85)\n    (7,90)\n    };\n    \\addlegendentry{数据集A}\n\n% 第二条折线\n\\addplot[\n    color=red,\n    mark=triangle,\n    ]\n    coordinates {\n    (1,10)\n    (2,25)\n    (3,40)\n    (4,55)\n    (5,65)\n    (6,70)\n    (7,80)\n    };\n    \\addlegendentry{数据集B}\n\n% 第三条折线\n\\addplot[\n    color=green,\n    mark=*,\n    ]\n    coordinates {\n    (1,30)\n    (2,50)\n    (3,60)\n    (4,70)\n    (5,80)\n    (6,90)\n    (7,95)\n    };\n    \\addlegendentry{数据集C}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 生成折线图",
+  "created_at": "2025-12-29T04:23:47.377Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 1005,
+    "code_source": "from_request"
+  }
+}

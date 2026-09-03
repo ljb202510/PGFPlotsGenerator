@@ -1,0 +1,18 @@
+{
+  "history_id": 9,
+  "user_id": 2,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "生成饼图，大一30%，大二20%，大三25%，大四25%",
+  "ai_response": "```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{tikz}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n    \\begin{axis}[\n        axis equal,\n        hide axis,\n        enlargelimits=false,\n        clip=false,\n        title={各年级学生比例分布},\n        title style={yshift=1cm, font=\\large\\bfseries}\n    ]\n    \n    \\addplot[\n        pie,\n        text=legend,\n        slice type={freshman},\n        pie values/.style={font=\\small},\n        color={blue!60},\n        explode={0.05}\n    ]\n    coordinates{\n        (30,大一)\n        (20,大二)\n        (25,大三)\n        (25,大四)\n    };\n    \n    \\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```\n\n这个LaTeX代码生成一个饼图，显示各年级学生比例分布：\n- 大一：30%（蓝色）\n- 大二：20%\n- 大三：25%\n- 大四：25%\n\n图表特点：\n1. 使用`pgfplots`的饼图功能\n2. 设置等比例坐标轴确保圆形\n3. 隐藏坐标轴，只显示饼图\n4. 添加标题\"各年级学生比例分布\"\n5. 使用图例显示各部分的标签\n6. 设置轻微爆炸效果（0.05）增强可读性\n7. 使用蓝色调作为主色\n\n要使用此代码，需要确保LaTeX环境中安装了pgfplots包。编译后即可得到清晰的饼图。",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{tikz}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n    \\begin{axis}[\n        axis equal,\n        hide axis,\n        enlargelimits=false,\n        clip=false,\n        title={各年级学生比例分布},\n        title style={yshift=1cm, font=\\large\\bfseries}\n    ]\n    \n    \\addplot[\n        pie,\n        text=legend,\n        slice type={freshman},\n        pie values/.style={font=\\small},\n        color={blue!60},\n        explode={0.05}\n    ]\n    coordinates{\n        (30,大一)\n        (20,大二)\n        (25,大三)\n        (25,大四)\n    };\n    \n    \\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": " 生成饼图，大一30%，大二20%，大三25%，大四25%",
+  "created_at": "2025-12-21T13:30:38.133Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 643,
+    "code_source": "from_request"
+  }
+}

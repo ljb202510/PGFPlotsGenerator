@@ -1,0 +1,20 @@
+{
+  "history_id": "hist_1_1765282137303_4985",
+  "user_id": 1,
+  "data_id": 10,
+  "file_name": "test.xlsx",
+  "dataset_name": "测试",
+  "user_input": "基于“测试”数据，生成折线图",
+  "ai_response": "由于您的数据文件过大，我无法直接读取其内容。不过，我可以为您提供一个通用的折线图LaTeX PGFPlots代码模板，您可以根据实际数据修改其中的数据点和标签。\n\n```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{filecontents}\n\n\\begin{filecontents*}{data.csv}\nx, y\n1, 2\n2, 3.5\n3, 2.8\n4, 4.2\n5, 3.9\n6, 5.1\n7, 4.5\n8, 6.3\n9, 5.7\n10, 7.2\n\\end{filecontents*}\n\n\\begin{document}\n\n\\begin{figure}[htbp]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=0.8\\textwidth,\n    height=0.6\\textwidth,\n    xlabel={X轴标签},\n    ylabel={Y轴标签},\n    title={折线图标题},\n    grid=major,\n    legend pos=north west,\n    xmin=0, xmax=11,\n    ymin=0, ymax=8,\n    xtick={0,2,4,6,8,10},\n    ytick={0,2,4,6,8},\n    tick label style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\large\\bfseries},\n    legend style={font=\\small}\n]\n\n\\addplot[\n    color=blue,\n    mark=*,\n    mark size=2pt,\n    line width=1pt\n] table[x=x, y=y, col sep=comma] {data.csv};\n\\addlegendentry{数据系列1}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{折线图示例说明}\n\\label{fig:line_chart}\n\\end{figure}\n\n\\end{document}\n```\n\n**使用说明：**\n\n1. **数据准备**：\n   - 将您的Excel数据导出为CSV格式\n   - 修改`data.csv`部分，替换为您的实际数据\n   - 确保第一行是列标题（如示例中的`x, y`）\n\n2. **图表定制**：\n   - 修改`xlabel`、`ylabel`、`title`为您的实际标签\n   - 调整`xmin`、`xmax`、`ymin`、`ymax`设置坐标轴范围\n   - 修改`xtick`和`ytick`设置刻度位置\n   - 如需多条折线，复制`\\addplot`部分并修改数据文件和样式\n\n3. **样式调整**：\n   - 颜色：修改`color`参数（如red, green, cyan等）\n   - 标记点：修改`mark`参数（如`*`星形, `o`圆形, `square`方形等）\n   - 线宽：调整`line width`值\n   - 标记大小：调整`mark size`值\n\n4. **编译要求**：\n   - 需要安装LaTeX发行版（如TeX Live或MiKTeX）\n   - 编译时需要添加`-shell-escape`参数以支持外部数据文件\n\n如果您能提供数据的具体信息（如列名、数据范围等），我可以为您生成更贴合的代码。",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{filecontents}\n\n\\begin{filecontents*}{data.csv}\nx, y\n1, 2\n2, 3.5\n3, 2.8\n4, 4.2\n5, 3.9\n6, 5.1\n7, 4.5\n8, 6.3\n9, 5.7\n10, 7.2\n\\end{filecontents*}\n\n\\begin{document}\n\n\\begin{figure}[htbp]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=0.8\\textwidth,\n    height=0.6\\textwidth,\n    xlabel={X轴标签},\n    ylabel={Y轴标签},\n    title={折线图标题},\n    grid=major,\n    legend pos=north west,\n    xmin=0, xmax=11,\n    ymin=0, ymax=8,\n    xtick={0,2,4,6,8,10},\n    ytick={0,2,4,6,8},\n    tick label style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\large\\bfseries},\n    legend style={font=\\small}\n]\n\n\\addplot[\n    color=blue,\n    mark=*,\n    mark size=2pt,\n    line width=1pt\n] table[x=x, y=y, col sep=comma] {data.csv};\n\\addlegendentry{数据系列1}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{折线图示例说明}\n\\label{fig:line_chart}\n\\end{figure}\n\n\\end{document}",
+  "generation_description": "用户查询: 基于“测试”数据，生成折线图",
+  "created_at": "2025-12-09T12:08:57.338Z",
+  "metadata": {
+    "chart_type": "line",
+    "data_ids": [
+      10
+    ],
+    "has_chart_code": true,
+    "code_length": 935
+  }
+}

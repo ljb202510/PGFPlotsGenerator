@@ -1,0 +1,18 @@
+{
+  "history_id": 30,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你是谁",
+  "ai_response": "你好！我是你的图表生成助手，专门根据你的需求和数据集生成LaTeX PGFPlots代码。你可以告诉我你想要的图表类型（如折线图、柱状图、散点图等），并上传数据文件（如Excel或CSV），我会解析数据并为你生成可直接使用的LaTeX代码。\n\n请随时提出你的需求，比如：\n- “请根据这个Excel文件生成一个折线图，X轴是日期，Y轴是销售额。”\n- “我想用这些数据做一个柱状图，比较不同产品的销量。”\n\n如果你有数据文件，请上传，我会立即处理并生成代码！",
+  "chart_code": "你好！我是你的图表生成助手，专门根据你的需求和数据集生成LaTeX PGFPlots代码。你可以告诉我你想要的图表类型（如折线图、柱状图、散点图等），并上传数据文件（如Excel或CSV），我会解析数据并为你生成可直接使用的LaTeX代码。\n\n请随时提出你的需求，比如：\n- “请根据这个Excel文件生成一个折线图，X轴是日期，Y轴是销售额。”\n- “我想用这些数据做一个柱状图，比较不同产品的销量。”\n\n如果你有数据文件，请上传，我会立即处理并生成代码！",
+  "generation_description": " 你是谁",
+  "created_at": "2026-07-09T07:52:52.005Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 229,
+    "code_source": "extracted_from_response"
+  }
+}

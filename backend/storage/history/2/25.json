@@ -1,0 +1,18 @@
+{
+  "history_id": 25,
+  "user_id": 2,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=6cm,\n    xlabel={X轴},\n    ylabel={Y轴},\n    title={粉红色折线图示例},\n    grid=major,\n    legend style={at={(0.98,0.02)}, anchor=south east},\n    xmin=0, xmax=10,\n    ymin=0, ymax=100,\n    xtick={0,2,4,6,8,10},\n    ytick={0,20,40,60,80,100},\n]\n\n% 粉红色折线数据\n\\addplot[\n    color=pink!80!red,\n    mark=*,\n    mark options={fill=pink!50},\n    thick,\n    smooth\n] coordinates {\n    (0, 10)\n    (1, 25)\n    (2, 45)\n    (3, 30)\n    (4, 60)\n    (5, 75)\n    (6, 50)\n    (7, 85)\n    (8, 65)\n    (9, 95)\n    (10, 70)\n};\n\n\\addlegendentry{粉红色折线}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}修改为红色",
+  "ai_response": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=6cm,\n    xlabel={X轴},\n    ylabel={Y轴},\n    title={红色折线图示例},\n    grid=major,\n    legend style={at={(0.98,0.02)}, anchor=south east},\n    xmin=0, xmax=10,\n    ymin=0, ymax=100,\n    xtick={0,2,4,6,8,10},\n    ytick={0,20,40,60,80,100},\n]\n\n% 红色折线数据\n\\addplot[\n    color=red,\n    mark=*,\n    mark options={fill=red!50},\n    thick,\n    smooth\n] coordinates {\n    (0, 10)\n    (1, 25)\n    (2, 45)\n    (3, 30)\n    (4, 60)\n    (5, 75)\n    (6, 50)\n    (7, 85)\n    (8, 65)\n    (9, 95)\n    (10, 70)\n};\n\n\\addlegendentry{红色折线}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=6cm,\n    xlabel={X轴},\n    ylabel={Y轴},\n    title={红色折线图示例},\n    grid=major,\n    legend style={at={(0.98,0.02)}, anchor=south east},\n    xmin=0, xmax=10,\n    ymin=0, ymax=100,\n    xtick={0,2,4,6,8,10},\n    ytick={0,20,40,60,80,100},\n]\n\n% 红色折线数据\n\\addplot[\n    color=red,\n    mark=*,\n    mark options={fill=red!50},\n    thick,\n    smooth\n] coordinates {\n    (0, 10)\n    (1, 25)\n    (2, 45)\n    (3, 30)\n    (4, 60)\n    (5, 75)\n    (6, 50)\n    (7, 85)\n    (8, 65)\n    (9, 95)\n    (10, 70)\n};\n\n\\addlegendentry{红色折线}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": " \\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}...",
+  "created_at": "2025-12-17T10:50:58.403Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 734,
+    "code_source": "extracted_from_response"
+  }
+}

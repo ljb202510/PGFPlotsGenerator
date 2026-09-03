@@ -1,0 +1,20 @@
+{
+  "history_id": 16,
+  "user_id": 2,
+  "data_id": 4,
+  "file_name": "test.xlsx",
+  "dataset_name": "test",
+  "user_input": "折线图",
+  "ai_response": "根据您提供的数据，我将生成一个展示2021-2026年数据变化的折线图。以下是完整的LaTeX PGFPlots代码：\n\n```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{geometry}\n\\geometry{a4paper, margin=1in}\n\n\\begin{document}\n\n\\begin{figure}[htbp]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    title={2021-2026年数据变化趋势},\n    xlabel={年份},\n    ylabel={数值（万）},\n    xmin=2021, xmax=2026,\n    ymin=300, ymax=500,\n    xtick={2021,2022,2023,2024,2025,2026},\n    xticklabels={2021年,2022年,2023年,2024年,2025年,2026年},\n    ymajorgrids=true,\n    grid style=dashed,\n    legend pos=north east,\n    legend style={cells={anchor=west}},\n    tick label style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\large\\bfseries}\n]\n\n% 绘制折线图\n\\addplot[\n    color=blue,\n    mark=*,\n    mark size=2.5pt,\n    line width=1.2pt,\n    smooth\n] coordinates {\n    (2021, 377)\n    (2022, 457)\n    (2023, 474)\n    (2024, 438)\n    (2025, 388)\n    (2026, 343)\n};\n\n% 在数据点上添加数值标签\n\\addplot[\n    nodes near coords,\n    only marks,\n    point meta=explicit symbolic,\n    mark=none,\n    font=\\small\n] coordinates {\n    (2021, 377) [377万]\n    (2022, 457) [457万]\n    (2023, 474) [474万]\n    (2024, 438) [438万]\n    (2025, 388) [388万]\n    (2026, 343) [343万]\n};\n\n\\legend{数据趋势}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{2021年至2026年数据变化趋势折线图。数据显示在2023年达到峰值474万，随后呈下降趋势。}\n\\label{fig:line_chart}\n\\end{figure}\n\n\\end{document}\n```\n\n## 图表特点说明：\n\n1. **数据转换**：将\"377万\"等字符串转换为数值377，便于绘图\n2. **坐标轴设置**：\n   - X轴：年份标签（2021年-2026年）\n   - Y轴：数值范围300-500万，显示网格线\n3. **视觉效果**：\n   - 蓝色折线，带圆点标记\n   - 平滑曲线连接数据点\n   - 每个数据点上方显示具体数值\n4. **布局**：\n   - 图表尺寸：12cm × 8cm\n   - 标题居中加粗\n   - 包含图例和说明文字\n\n## 使用说明：\n\n1. 将代码保存为`.tex`文件\n2. 使用支持PGFPlots的LaTeX编译器编译（如TeX Live、MiKTeX）\n3. 需要安装`pgfplots`包\n\n图表清晰地展示了数据先上升后下降的趋势，2023年为峰值（474万），2026年降至最低（343万）。",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{geometry}\n\\geometry{a4paper, margin=1in}\n\n\\begin{document}\n\n\\begin{figure}[htbp]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    title={2021-2026年数据变化趋势},\n    xlabel={年份},\n    ylabel={数值（万）},\n    xmin=2021, xmax=2026,\n    ymin=300, ymax=500,\n    xtick={2021,2022,2023,2024,2025,2026},\n    xticklabels={2021年,2022年,2023年,2024年,2025年,2026年},\n    ymajorgrids=true,\n    grid style=dashed,\n    legend pos=north east,\n    legend style={cells={anchor=west}},\n    tick label style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\large\\bfseries}\n]\n\n% 绘制折线图\n\\addplot[\n    color=blue,\n    mark=*,\n    mark size=2.5pt,\n    line width=1.2pt,\n    smooth\n] coordinates {\n    (2021, 377)\n    (2022, 457)\n    (2023, 474)\n    (2024, 438)\n    (2025, 388)\n    (2026, 343)\n};\n\n% 在数据点上添加数值标签\n\\addplot[\n    nodes near coords,\n    only marks,\n    point meta=explicit symbolic,\n    mark=none,\n    font=\\small\n] coordinates {\n    (2021, 377) [377万]\n    (2022, 457) [457万]\n    (2023, 474) [474万]\n    (2024, 438) [438万]\n    (2025, 388) [388万]\n    (2026, 343) [343万]\n};\n\n\\legend{数据趋势}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{2021年至2026年数据变化趋势折线图。数据显示在2023年达到峰值474万，随后呈下降趋势。}\n\\label{fig:line_chart}\n\\end{figure}\n\n\\end{document}",
+  "generation_description": " 折线图",
+  "created_at": "2025-12-17T08:04:08.080Z",
+  "metadata": {
+    "data_ids": [
+      4
+    ],
+    "has_chart_code": true,
+    "code_length": 1334,
+    "code_source": "from_request"
+  }
+}

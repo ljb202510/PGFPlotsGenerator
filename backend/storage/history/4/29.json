@@ -1,0 +1,18 @@
+{
+  "history_id": 29,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型是什么",
+  "ai_response": "我是基于深度求索（DeepSeek）公司开发的 **DeepSeek-R1** 模型。这是一个专注于推理和对话能力的大语言模型，能够处理复杂的任务，包括代码生成、数据分析、图表绘制等。\n\n如果你有具体需求（比如生成 LaTeX PGFPlots 图表代码），请提供数据或描述，我会尽力帮你完成！",
+  "chart_code": "我是基于深度求索（DeepSeek）公司开发的 **DeepSeek-R1** 模型。这是一个专注于推理和对话能力的大语言模型，能够处理复杂的任务，包括代码生成、数据分析、图表绘制等。\n\n如果你有具体需求（比如生成 LaTeX PGFPlots 图表代码），请提供数据或描述，我会尽力帮你完成！",
+  "generation_description": " 你的模型是什么",
+  "created_at": "2026-07-09T07:29:40.322Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 147,
+    "code_source": "extracted_from_response"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "history_id": 12,
+  "user_id": 2,
+  "data_id": 3,
+  "file_name": "test1.xlsx",
+  "dataset_name": "考研",
+  "user_input": "柱状图",
+  "ai_response": "根据您提供的考研报名人数数据，我将生成一个展示2011-2026年考研报名人数变化的柱状图。以下是完整的LaTeX PGFPlots代码：\n\n```latex\n\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xeCJK}\n\\setCJKmainfont{SimSun}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    ybar,\n    bar width=15pt,\n    ymajorgrids=true,\n    ylabel={报名人数},\n    xlabel={年份},\n    symbolic x coords={2021,2022,2023,2024,2025,2026},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    every node near coord/.append style={\n        font=\\small,\n        yshift=5pt,\n        rotate=90\n    },\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=500,\n    title={2011-2026年考研报名人数变化趋势},\n    title style={yshift=10pt, font=\\large\\bfseries},\n    tick label style={font=\\small},\n    label style={font=\\small},\n    legend style={font=\\small}\n]\n\n% 添加数据柱\n\\addplot[fill=blue!50] coordinates {\n    (2021, 377)\n    (2022, 457)\n    (2023, 474)\n    (2024, 438)\n    (2025, 388)\n    (2026, 343)\n};\n\n% 添加趋势线（可选）\n\\addplot[red, thick, dashed, mark=none] coordinates {\n    (2021, 377)\n    (2022, 457)\n    (2023, 474)\n    (2024, 438)\n    (2025, 388)\n    (2026, 343)\n};\n\n\\legend{报名人数, 趋势线}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```\n\n**代码说明：**\n\n1. **图表类型**：使用 `ybar` 创建垂直柱状图\n2. **数据点**：包含2021-2026年共6个数据点\n3. **数据标签**：每个柱子上方显示具体数值（旋转90度以便阅读）\n4. **坐标轴**：\n   - X轴：年份（2021-2026）\n   - Y轴：报名人数（单位：万），范围0-500万\n5. **视觉元素**：\n   - 蓝色柱状图表示各年份报名人数\n   - 红色虚线显示人数变化趋势\n   - 添加网格线便于读数\n6. **中文字体**：使用xeCJK包支持中文显示\n\n**使用说明：**\n1. 需要安装LaTeX发行版（如TeX Live或MiKTeX）\n2. 需要安装中文字体（代码中使用SimSun，可根据需要修改）\n3. 编译时使用XeLaTeX以支持中文\n\n如果您需要调整颜色、柱宽、字体大小或其他样式，请告诉我，我可以进一步修改代码。",
+  "chart_code": "\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xeCJK}\n\\setCJKmainfont{SimSun}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    ybar,\n    bar width=15pt,\n    ymajorgrids=true,\n    ylabel={报名人数},\n    xlabel={年份},\n    symbolic x coords={2021,2022,2023,2024,2025,2026},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    every node near coord/.append style={\n        font=\\small,\n        yshift=5pt,\n        rotate=90\n    },\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=500,\n    title={2011-2026年考研报名人数变化趋势},\n    title style={yshift=10pt, font=\\large\\bfseries},\n    tick label style={font=\\small},\n    label style={font=\\small},\n    legend style={font=\\small}\n]\n\n% 添加数据柱\n\\addplot[fill=blue!50] coordinates {\n    (2021, 377)\n    (2022, 457)\n    (2023, 474)\n    (2024, 438)\n    (2025, 388)\n    (2026, 343)\n};\n\n% 添加趋势线（可选）\n\\addplot[red, thick, dashed, mark=none] coordinates {\n    (2021, 377)\n    (2022, 457)\n    (2023, 474)\n    (2024, 438)\n    (2025, 388)\n    (2026, 343)\n};\n\n\\legend{报名人数, 趋势线}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 柱状图",
+  "created_at": "2025-12-22T07:52:12.967Z",
+  "metadata": {
+    "data_ids": [
+      3
+    ],
+    "has_chart_code": true,
+    "code_length": 1159,
+    "code_source": "from_request"
+  }
+}

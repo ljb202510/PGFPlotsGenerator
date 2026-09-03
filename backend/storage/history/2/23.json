@@ -1,0 +1,18 @@
+{
+  "history_id": 23,
+  "user_id": 2,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "是粉红色，你的不是",
+  "ai_response": "好的，我理解您需要生成一个粉红色的图表。由于您没有提供具体的数据集和图表类型，我将基于常见的柱状图示例，使用粉红色主题为您生成完整的 LaTeX PGFPlots 代码。\n\n您可以将以下代码复制到 LaTeX 文档中编译，它会生成一个粉红色系的柱状图。如果您有具体的数据文件或需求，请提供给我，我可以为您定制。\n\n```latex\n\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xcolor}\n\n% 定义粉红色系\n\\definecolor{myPink}{RGB}{255, 182, 193} % 浅粉红\n\\definecolor{myDarkPink}{RGB}{219, 112, 147} % 中粉红\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={粉红色主题示例柱状图},\n    xlabel={类别},\n    ylabel={数值},\n    ymin=0, ymax=120,\n    symbolic x coords={A, B, C, D, E, F},\n    xtick=data,\n    nodes near coords, % 在柱子上方显示数值\n    nodes near coords align={vertical},\n    every axis plot/.append style={thick},\n    major grid style={dashed, myPink!30},\n    grid=major,\n    ymajorgrids=true,\n    enlargelimits=0.15,\n    bar width=30pt,\n    % 使用粉红色填充和边框\n    fill=myPink,\n    draw=myDarkPink,\n]\n\n% 示例数据 - 如果您有自己的数据，请替换这里的坐标\n\\addplot[ybar, fill=myPink, draw=myDarkPink] coordinates {\n    (A, 42)\n    (B, 78)\n    (C, 95)\n    (D, 63)\n    (E, 110)\n    (F, 56)\n};\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```\n\n**代码说明：**\n1. 使用 `\\definecolor` 定义了两个粉红色调：`myPink`（浅粉）和 `myDarkPink`（深粉）。\n2. 图表样式：\n   - 柱子填充为浅粉红 (`fill=myPink`)\n   - 柱子边框为深粉红 (`draw=myDarkPink`)\n   - 网格线为浅粉红半透明 (`myPink!30`)\n3. 这是一个简单的柱状图，包含 A-F 六个类别的示例数据。\n\n**如果您有具体需求，请告诉我：**\n- 您想绘制什么类型的图表？（折线图、散点图、饼图等）\n- 您是否有数据文件？可以上传或提供数据内容。\n- 您对图表样式有什么特殊要求？\n\n我可以根据您的具体数据和需求生成完全定制的粉红色主题图表代码。",
+  "chart_code": "\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xcolor}\n\n% 定义粉红色系\n\\definecolor{myPink}{RGB}{255, 182, 193} % 浅粉红\n\\definecolor{myDarkPink}{RGB}{219, 112, 147} % 中粉红\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={粉红色主题示例柱状图},\n    xlabel={类别},\n    ylabel={数值},\n    ymin=0, ymax=120,\n    symbolic x coords={A, B, C, D, E, F},\n    xtick=data,\n    nodes near coords, % 在柱子上方显示数值\n    nodes near coords align={vertical},\n    every axis plot/.append style={thick},\n    major grid style={dashed, myPink!30},\n    grid=major,\n    ymajorgrids=true,\n    enlargelimits=0.15,\n    bar width=30pt,\n    % 使用粉红色填充和边框\n    fill=myPink,\n    draw=myDarkPink,\n]\n\n% 示例数据 - 如果您有自己的数据，请替换这里的坐标\n\\addplot[ybar, fill=myPink, draw=myDarkPink] coordinates {\n    (A, 42)\n    (B, 78)\n    (C, 95)\n    (D, 63)\n    (E, 110)\n    (F, 56)\n};\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 是粉红色，你的不是",
+  "created_at": "2025-12-17T09:12:27.697Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 912,
+    "code_source": "from_request"
+  }
+}

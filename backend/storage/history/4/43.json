@@ -1,0 +1,18 @@
+{
+  "history_id": 43,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "PLAYWRIGHT_SEED_TEST_柱状图",
+  "ai_response": "好的！我将根据你的要求生成一个柱状图的LaTeX PGFPlots代码示例，并附上可直接编译的完整文档结构。\n```latex\n\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    bar width=20pt,\n    width=\\textwidth,\n    height=0.6\\textwidth,\n    symbolic x coords={A, B, C, D, E},\n    xtick=data,\n    xlabel={类别},\n    ylabel={数值},\n    title={柱状图示例},\n    nodes near coords,\n    nodes near coords align={vertical},\n    every node near coord/.append style={font=\\small},\n    enlarge x limits=0.2,\n    enlarge y limits=0.1,\n    legend style={at={(0.5,1.05)}, anchor=south, legend columns=-1},\n    ymajorgrids=true,\n    grid style=dashed,\n]\n\\addplot[fill=blue!60!white] coordinates {\n    (A, 23)\n    (B, 45)\n    (C, 56)\n    (D, 18)\n    (E, 72)\n};\n\\addlegendentry{数据系列 1}\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```\n### 图表功能与定制说明\n\n您可以通过调整代码中的关键参数，快速定制图表样式：\n\n- **数据与标签**：`symbolic x coords` 定义横轴类别（A~E），`coordinates` 中的数值对 `(类别, 数值)` 对应柱状图高度，`xlabel` 和 `ylabel` 可修改轴标签。\n- **视觉风格**：`bar width` 控制柱宽，`fill=blue!60!white` 设置填充色，`grid style=dashed` 添加虚线网格，`enlarge x/y limits` 调整图表边距。\n- **数值显示**：`nodes near coords` 在柱顶显示具体数值，`legend` 控制图例位置与排列方式。",
+  "chart_code": "\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    bar width=20pt,\n    width=\\textwidth,\n    height=0.6\\textwidth,\n    symbolic x coords={A, B, C, D, E},\n    xtick=data,\n    xlabel={类别},\n    ylabel={数值},\n    title={柱状图示例},\n    nodes near coords,\n    nodes near coords align={vertical},\n    every node near coord/.append style={font=\\small},\n    enlarge x limits=0.2,\n    enlarge y limits=0.1,\n    legend style={at={(0.5,1.05)}, anchor=south, legend columns=-1},\n    ymajorgrids=true,\n    grid style=dashed,\n]\n\\addplot[fill=blue!60!white] coordinates {\n    (A, 23)\n    (B, 45)\n    (C, 56)\n    (D, 18)\n    (E, 72)\n};\n\\addlegendentry{数据系列 1}\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " PLAYWRIGHT_SEED_TEST_柱状图",
+  "created_at": "2026-07-14T05:00:48.110Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 784,
+    "code_source": "from_request"
+  }
+}

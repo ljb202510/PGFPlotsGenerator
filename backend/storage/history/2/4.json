@@ -1,0 +1,20 @@
+{
+  "history_id": 4,
+  "user_id": 2,
+  "data_id": 2,
+  "file_name": "test.txt",
+  "dataset_name": "考公",
+  "user_input": "柱状图",
+  "ai_response": "根据您提供的数据，我将生成一个展示国家公务员考试近五年招录人数的柱状图。以下是完整的LaTeX PGFPlots代码：\n\n```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{geometry}\n\\geometry{a4paper, margin=1in}\n\n\\begin{document}\n\n\\begin{figure}[htbp]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=0.8\\textwidth,\n    height=0.6\\textwidth,\n    ybar,\n    bar width=20pt,\n    ymajorgrids=true,\n    grid style=dashed,\n    ylabel={招录人数},\n    xlabel={年份},\n    symbolic x coords={2021,2022,2023,2024,2025},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=45000,\n    title={国家公务员考试近五年招录人数},\n    legend style={at={(0.5,-0.15)}, anchor=north, legend columns=-1}\n]\n\n% 添加数据柱\n\\addplot[fill=blue!50] coordinates {\n    (2021, 25726)\n    (2022, 31200)\n    (2023, 37100)\n    (2024, 39561)\n    (2025, 39721)\n};\n\n\\legend{招录人数}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{国家公务员考试近五年招录人数变化趋势（2021-2025年）}\n\\end{figure}\n\n\\end{document}\n```\n\n## 图表特点说明：\n\n1. **数据可视化**：使用蓝色柱状图清晰展示2021-2025年国家公务员考试招录人数的变化趋势\n\n2. **关键设计元素**：\n   - 每个柱子上方显示具体数值\n   - 添加了垂直网格线便于读数\n   - 设置了合适的Y轴范围（0-45000）\n   - 柱状图宽度适中，视觉效果清晰\n\n3. **数据趋势分析**：\n   - 从2021年的25,726人开始逐年增长\n   - 2025年达到最高值39,721人\n   - 整体呈现稳定增长趋势，2024-2025年增长放缓\n\n4. **使用说明**：\n   - 可以直接编译此LaTeX代码生成图表\n   - 如需调整颜色，可修改`fill=blue!50`中的颜色值\n   - 如需调整图表尺寸，可修改`width`和`height`参数\n\n这个柱状图清晰地展示了国家公务员考试招录人数在过去五年的增长趋势，特别是2022-2023年增长较为明显，而最近两年增长趋于平稳。",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{geometry}\n\\geometry{a4paper, margin=1in}\n\n\\begin{document}\n\n\\begin{figure}[htbp]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=0.8\\textwidth,\n    height=0.6\\textwidth,\n    ybar,\n    bar width=20pt,\n    ymajorgrids=true,\n    grid style=dashed,\n    ylabel={招录人数},\n    xlabel={年份},\n    symbolic x coords={2021,2022,2023,2024,2025},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=45000,\n    title={国家公务员考试近五年招录人数},\n    legend style={at={(0.5,-0.15)}, anchor=north, legend columns=-1}\n]\n\n% 添加数据柱\n\\addplot[fill=blue!50] coordinates {\n    (2021, 25726)\n    (2022, 31200)\n    (2023, 37100)\n    (2024, 39561)\n    (2025, 39721)\n};\n\n\\legend{招录人数}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{国家公务员考试近五年招录人数变化趋势（2021-2025年）}\n\\end{figure}\n\n\\end{document}",
+  "generation_description": " 柱状图",
+  "created_at": "2025-12-18T15:36:31.990Z",
+  "metadata": {
+    "data_ids": [
+      2
+    ],
+    "has_chart_code": true,
+    "code_length": 908,
+    "code_source": "from_request"
+  }
+}

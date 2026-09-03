@@ -1,0 +1,18 @@
+{
+  "history_id": 35,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型是什么",
+  "ai_response": "我是由深度求索（DeepSeek）公司开发的AI助手，具体是**DeepSeek最新版本模型**。DeepSeek是一家中国的人工智能公司，专注于大语言模型和AI技术的研发。\n\n我的特点包括：\n- **纯文本模型**，支持阅读链接和上传文件（图像、txt、pdf、ppt、word、excel等）\n- **上下文长度1M**，可以一次性处理如《三体》三部曲体量的书籍\n- **支持联网搜索**（需手动开启）\n- **完全免费**，App端支持语音输入\n- **知识截止日期**：2025年5月\n\n我的模型版本是DeepSeek系列的最新版本，具体名称可能为DeepSeek-V3或DeepSeek-R1等。如果你想了解更详细的版本信息，建议查阅深度求索的官方文档和公告。\n\n有什么我可以帮你的吗？",
+  "chart_code": "我是由深度求索（DeepSeek）公司开发的AI助手，具体是**DeepSeek最新版本模型**。DeepSeek是一家中国的人工智能公司，专注于大语言模型和AI技术的研发。\n\n我的特点包括：\n- **纯文本模型**，支持阅读链接和上传文件（图像、txt、pdf、ppt、word、excel等）\n- **上下文长度1M**，可以一次性处理如《三体》三部曲体量的书籍\n- **支持联网搜索**（需手动开启）\n- **完全免费**，App端支持语音输入\n- **知识截止日期**：2025年5月\n\n我的模型版本是DeepSeek系列的最新版本，具体名称可能为DeepSeek-V3或DeepSeek-R1等。如果你想了解更详细的版本信息，建议查阅深度求索的官方文档和公告。\n\n有什么我可以帮你的吗？",
+  "generation_description": " 你的模型是什么",
+  "created_at": "2026-07-09T08:17:23.086Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 348,
+    "code_source": "extracted_from_response"
+  }
+}

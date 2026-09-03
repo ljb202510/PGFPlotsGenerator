@@ -1,0 +1,144 @@
+/* ============================================================
+   设计系统 tokens — 单一视觉真相源
+   主题：白底 + 蓝色功能色（参考 DeepSeek 主页）
+   全站色值 / 间距 / 圆角 / 阴影统一引用本文件，消灭散点硬编码。
+   ============================================================ */
+
+:root {
+  /* ============ 字体 ============ */
+  --font-sans: Inter, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
+  /* 字重 */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ============ 品牌蓝（参考 DeepSeek 电光蓝 #4D6BFE） ============ */
+  --brand: #4D6BFE;
+  --brand-hover: #3A55E0;
+  --brand-active: #2E46C4;
+  --brand-light: #6E8BFF;
+  --brand-gradient: linear-gradient(135deg, #4D6BFE 0%, #6E8BFF 100%);
+  --brand-soft: #EEF1FF;        /* 浅蓝底 */
+  --brand-soft-hover: #E2E7FF;
+
+  /* ============ 背景：白底为主 ============ */
+  --bg-page: #FFFFFF;
+  --bg-soft: #F7F8FA;           /* 区块浅灰底 */
+  --bg-softer: #F2F3F5;         /* 更浅灰（抽屉/侧栏底） */
+  --bg-surface: #FFFFFF;        /* 卡片表面 */
+  --bg-hover: #EEF1F5;          /* 中性 hover 底 */
+  --bg-active: #EEF1FF;         /* 选中/激活浅蓝底 */
+
+  /* ============ 文字：近黑，清晰 ============ */
+  --text-strong: #1A1A1A;
+  --text-regular: #41464C;
+  --text-muted: #8A8F99;
+
+  /* 反色文字（品牌蓝 / 深色背景上的白字） */
+  --on-brand: #FFFFFF;
+  --on-dark: #FFFFFF;
+
+  /* ============ 边框 ============ */
+  --border: #E5E7EB;
+  --border-strong: #D0D5DD;
+
+  /* ============ 功能色（语义，保持标准） ============ */
+  --success: #67C23A;
+  --warning: #E6A23C;
+  --danger:  #F56C6C;
+  --info:    #8A8F99;
+
+  /* 语义浅底（提示 / 空态 / 成败背景） */
+  --success-soft: #E8F5E8;
+  --warning-soft: #FDF3E6;
+  --danger-soft:  #FDECEC;
+  --info-soft:    #F2F3F5;
+
+  /* ============ 间距 ramp（4 的倍数，单一来源） ============ */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+
+  /* ============ 字号 ramp ============ */
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;   /* 页面/区块标题 */
+  --text-2xl: 24px;
+  --text-3xl: 28px;
+  --text-4xl: 32px;
+
+  /* ============ 圆角分档 ============ */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-base: 8px;   /* 输入框 / 按钮 */
+  --radius-md: 10px;
+  --radius-lg: 12px;    /* 卡片 */
+  --radius-xl: 16px;
+  --radius-full: 999px;
+
+  /* ============ 阴影分档（轻，非重投影） ============ */
+  --shadow-xs:  0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-sm:  0 1px 3px rgba(16, 24, 40, 0.06);
+  --shadow-base: 0 1px 3px rgba(16, 24, 40, 0.06), 0 4px 16px rgba(16, 24, 40, 0.04);
+  --shadow-lg:  0 8px 28px rgba(16, 24, 40, 0.08);
+  --shadow-brand: 0 4px 14px rgba(77, 107, 254, 0.20);
+
+  /* 旧名保留：避免历史引用断链 */
+  --radius-card: var(--radius-lg);
+  --shadow-card: var(--shadow-base);
+  --shadow-hover: var(--shadow-brand);
+
+  /* ============ 过渡 / z-index 层级 ============ */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+
+  --z-base: 1;
+  --z-nav: 100;
+  --z-dropdown: 200;
+  --z-drawer: 999;
+  --z-overlay: 1000;
+  --z-modal: 1001;
+  --z-toast: 2000;
+
+  /* ---- ElementPlus 主题对齐：让原生 el-button / el-tag 等自动用品牌蓝 ---- */
+  --el-color-primary: #4D6BFE;
+  --el-color-primary-light-3: #8297FE;
+  --el-color-primary-light-5: #A6B5FE;
+  --el-color-primary-light-7: #CAD3FE;
+  --el-color-primary-light-8: #DBE1FE;
+  --el-color-primary-light-9: #EDF0FE;
+  --el-color-primary-dark-2: #3E56CB;
+
+  --el-color-success: #67C23A;
+  --el-color-warning: #E6A23C;
+  --el-color-danger:  #F56C6C;
+  --el-color-error:   #F56C6C;
+  --el-color-info:    #8A8F99;
+
+  --el-bg-color: #FFFFFF;
+  --el-bg-color-page: #F7F8FA;
+  --el-fill-color-blank: #FFFFFF;
+
+  --el-text-color-primary: #1A1A1A;
+  --el-text-color-regular: #41464C;
+  --el-text-color-secondary: #8A8F99;
+
+  --el-border-color: #E5E7EB;
+  --el-border-color-light: #E5E7EB;
+  --el-border-radius-base: 8px;
+}

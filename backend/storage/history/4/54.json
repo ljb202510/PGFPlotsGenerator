@@ -1,0 +1,18 @@
+{
+  "history_id": 54,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": " 你使用的模型是V1还是V4-Pro还是其他",
+  "ai_response": "我使用的是**V4-Pro**版本。这是当前最新的版本，具备更强的图表生成能力和对复杂数据结构的理解能力，能够更准确地解析用户上传的数据文件并生成高质量的LaTeX PGFPlots代码。\n\n请问您需要生成什么样的图表？请提供数据文件或描述数据内容，我将为您生成相应的代码。",
+  "chart_code": "我使用的是**V4-Pro**版本。这是当前最新的版本，具备更强的图表生成能力和对复杂数据结构的理解能力，能够更准确地解析用户上传的数据文件并生成高质量的LaTeX PGFPlots代码。\n\n请问您需要生成什么样的图表？请提供数据文件或描述数据内容，我将为您生成相应的代码。",
+  "generation_description": "  你使用的模型是V1还是V4-Pro还是其他",
+  "created_at": "2026-07-15T01:50:53.671Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 137,
+    "code_source": "extracted_from_response"
+  }
+}

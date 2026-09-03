@@ -1,0 +1,20 @@
+{
+  "history_id": 8,
+  "user_id": 2,
+  "data_id": 4,
+  "file_name": "test1.xlsx",
+  "dataset_name": "test1",
+  "user_input": "柱状图",
+  "ai_response": "根据您提供的数据，我将生成一个展示2021-2026年数据的柱状图。以下是完整的LaTeX PGFPlots代码：\n\n```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{geometry}\n\\geometry{a4paper, margin=1in}\n\n\\begin{document}\n\n\\begin{figure}[ht]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=0.8\\textwidth,\n    height=0.6\\textwidth,\n    ybar,\n    bar width=15pt,\n    ymajorgrids=true,\n    grid style=dashed,\n    ylabel={数量（万）},\n    xlabel={年份},\n    symbolic x coords={2021年,2022年,2023年,2024年,2025年,2026年},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    every node near coord/.style={\n        font=\\small,\n        yshift=-8pt,\n        rotate=90\n    },\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=500,\n    title={2021-2026年数据统计},\n    legend style={\n        at={(0.5,-0.15)},\n        anchor=north,\n        legend columns=-1\n    }\n]\n\n% 添加柱状图数据\n\\addplot[fill=blue!50] coordinates {\n    (2021年, 377)\n    (2022年, 457)\n    (2023年, 474)\n    (2024年, 438)\n    (2025年, 388)\n    (2026年, 343)\n};\n\n\\legend{数据值}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{2021-2026年数据柱状图展示}\n\\end{figure}\n\n\\end{document}\n```\n\n代码说明：\n\n1. **图表类型**：使用`ybar`创建垂直柱状图\n2. **数据设置**：\n   - X轴：年份（2021年-2026年）\n   - Y轴：数量（单位：万）\n   - 数据点：使用实际数据值（已去除\"万\"字，仅保留数值）\n3. **可视化特性**：\n   - 每个柱子上方显示具体数值\n   - 添加了垂直网格线便于读数\n   - 设置了合适的Y轴范围（0-500）\n   - 柱状图使用蓝色填充\n4. **布局优化**：\n   - 数值标签旋转90度以避免重叠\n   - 图例位于图表下方居中位置\n   - 设置了合适的图表尺寸\n\n您可以直接编译此LaTeX代码生成柱状图。图表清晰地展示了数据在2023年达到峰值（474万），随后呈下降趋势。",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{geometry}\n\\geometry{a4paper, margin=1in}\n\n\\begin{document}\n\n\\begin{figure}[ht]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=0.8\\textwidth,\n    height=0.6\\textwidth,\n    ybar,\n    bar width=15pt,\n    ymajorgrids=true,\n    grid style=dashed,\n    ylabel={数量（万）},\n    xlabel={年份},\n    symbolic x coords={2021年,2022年,2023年,2024年,2025年,2026年},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    every node near coord/.style={\n        font=\\small,\n        yshift=-8pt,\n        rotate=90\n    },\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=500,\n    title={2021-2026年数据统计},\n    legend style={\n        at={(0.5,-0.15)},\n        anchor=north,\n        legend columns=-1\n    }\n]\n\n% 添加柱状图数据\n\\addplot[fill=blue!50] coordinates {\n    (2021年, 377)\n    (2022年, 457)\n    (2023年, 474)\n    (2024年, 438)\n    (2025年, 388)\n    (2026年, 343)\n};\n\n\\legend{数据值}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{2021-2026年数据柱状图展示}\n\\end{figure}\n\n\\end{document}",
+  "generation_description": " 柱状图",
+  "created_at": "2025-12-19T00:25:56.865Z",
+  "metadata": {
+    "data_ids": [
+      4
+    ],
+    "has_chart_code": true,
+    "code_length": 1048,
+    "code_source": "from_request"
+  }
+}

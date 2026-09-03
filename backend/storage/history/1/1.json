@@ -1,0 +1,20 @@
+{
+  "history_id": 1,
+  "user_id": 1,
+  "data_id": 1,
+  "file_name": "test.xlsx",
+  "dataset_name": "近五年数据",
+  "user_input": "生成折线图，粉色",
+  "ai_response": "```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{geometry}\n\\geometry{a4paper, margin=1in}\n\n\\begin{document}\n\n\\begin{figure}[htbp]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=0.8\\textwidth,\n    height=0.6\\textwidth,\n    xlabel={年份},\n    ylabel={数值（万）},\n    title={近五年数据折线图},\n    xmin=2021, xmax=2026,\n    ymin=300, ymax=500,\n    xtick={2021,2022,2023,2024,2025,2026},\n    grid=both,\n    grid style={line width=.1pt, draw=gray!20},\n    major grid style={line width=.2pt,draw=gray!50},\n    legend style={at={(0.5,-0.15)}, anchor=north, legend columns=-1},\n    tick label style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\large\\bfseries}\n]\n\n% 绘制折线\n\\addplot[\n    color=pink!80!red,\n    thick,\n    mark=*,\n    mark size=2.5pt,\n    mark options={fill=pink!50!white}\n] coordinates {\n    (2021, 377)\n    (2022, 457)\n    (2023, 474)\n    (2024, 438)\n    (2025, 388)\n    (2026, 343)\n};\n\n% 添加数据标签\n\\addplot[\n    nodes near coords,\n    only marks,\n    point meta=explicit symbolic,\n    mark=none,\n    every node near coord/.style={\n        anchor=south,\n        yshift=8pt,\n        font=\\footnotesize\n    }\n] coordinates {\n    (2021, 377) [377万]\n    (2022, 457) [457万]\n    (2023, 474) [474万]\n    (2024, 438) [438万]\n    (2025, 388) [388万]\n    (2026, 343) [343万]\n};\n\n\\legend{数据趋势}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{2021-2026年数据变化趋势折线图。数据在2023年达到峰值474万，随后呈下降趋势。}\n\\label{fig:line_chart}\n\\end{figure}\n\n\\end{document}\n```\n\n**代码说明：**\n\n1. **颜色设置**：使用 `color=pink!80!red` 创建粉色系折线，标记点填充为浅粉色\n2. **数据点**：使用 `coordinates` 直接输入6个年份的数据点\n3. **数据标签**：通过第二个 `\\addplot` 在数据点上方显示具体数值（带\"万\"单位）\n4. **坐标轴**：\n   - X轴：年份从2021到2026\n   - Y轴：数值范围300-500万，覆盖所有数据点\n5. **网格**：添加主次网格线增强可读性\n6. **图例**：放置在图表下方居中位置\n7. **标题和说明**：包含主标题和详细的图表说明\n\n**使用建议：**\n- 如需调整粉色深浅，可修改 `pink!80!red` 中的百分比（如 `pink!60!red` 更粉，`pink!100!red` 更红）\n- 如需调整图表尺寸，修改 `width` 和 `height` 参数\n- 编译时需要安装完整的TeX发行版（如TeX Live或MiKTeX）并包含pgfplots包",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{geometry}\n\\geometry{a4paper, margin=1in}\n\n\\begin{document}\n\n\\begin{figure}[htbp]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=0.8\\textwidth,\n    height=0.6\\textwidth,\n    xlabel={年份},\n    ylabel={数值（万）},\n    title={近五年数据折线图},\n    xmin=2021, xmax=2026,\n    ymin=300, ymax=500,\n    xtick={2021,2022,2023,2024,2025,2026},\n    grid=both,\n    grid style={line width=.1pt, draw=gray!20},\n    major grid style={line width=.2pt,draw=gray!50},\n    legend style={at={(0.5,-0.15)}, anchor=north, legend columns=-1},\n    tick label style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\large\\bfseries}\n]\n\n% 绘制折线\n\\addplot[\n    color=pink!80!red,\n    thick,\n    mark=*,\n    mark size=2.5pt,\n    mark options={fill=pink!50!white}\n] coordinates {\n    (2021, 377)\n    (2022, 457)\n    (2023, 474)\n    (2024, 438)\n    (2025, 388)\n    (2026, 343)\n};\n\n% 添加数据标签\n\\addplot[\n    nodes near coords,\n    only marks,\n    point meta=explicit symbolic,\n    mark=none,\n    every node near coord/.style={\n        anchor=south,\n        yshift=8pt,\n        font=\\footnotesize\n    }\n] coordinates {\n    (2021, 377) [377万]\n    (2022, 457) [457万]\n    (2023, 474) [474万]\n    (2024, 438) [438万]\n    (2025, 388) [388万]\n    (2026, 343) [343万]\n};\n\n\\legend{数据趋势}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{2021-2026年数据变化趋势折线图。数据在2023年达到峰值474万，随后呈下降趋势。}\n\\label{fig:line_chart}\n\\end{figure}\n\n\\end{document}",
+  "generation_description": " 生成折线图，粉色",
+  "created_at": "2025-12-17T02:59:05.923Z",
+  "metadata": {
+    "data_ids": [
+      1
+    ],
+    "has_chart_code": true,
+    "code_length": 1472,
+    "code_source": "from_request"
+  }
+}

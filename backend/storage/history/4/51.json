@@ -1,0 +1,18 @@
+{
+  "history_id": 51,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "绘制近五年出生人口条形图",
+  "ai_response": null,
+  "chart_code": "",
+  "generation_description": " 绘制近五年出生人口条形图",
+  "created_at": "2026-07-14T08:23:57.111Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": false,
+    "code_length": 0,
+    "code_source": "extracted_from_response"
+  }
+}

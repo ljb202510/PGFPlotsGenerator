@@ -1,0 +1,18 @@
+{
+  "history_id": 40,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型是什么",
+  "ai_response": "我是基于深度学习技术的自然语言处理模型，由深度求索（DeepSeek）公司创造。具体来说，我是DeepSeek系列模型中的一员，版本为DeepSeek最新版模型。我的核心架构基于Transformer，通过大规模文本数据训练而成，能够理解和生成自然语言，帮助用户完成各种文本相关的任务。\n\n如果你对我的具体技术细节（如参数数量、训练数据规模等）感兴趣，建议查阅深度求索公司的官方文档和技术报告，那里会有更详细的说明。有什么我可以帮你的吗？😊",
+  "chart_code": "我是基于深度学习技术的自然语言处理模型，由深度求索（DeepSeek）公司创造。具体来说，我是DeepSeek系列模型中的一员，版本为DeepSeek最新版模型。我的核心架构基于Transformer，通过大规模文本数据训练而成，能够理解和生成自然语言，帮助用户完成各种文本相关的任务。\n\n如果你对我的具体技术细节（如参数数量、训练数据规模等）感兴趣，建议查阅深度求索公司的官方文档和技术报告，那里会有更详细的说明。有什么我可以帮你的吗？😊",
+  "generation_description": " 你的模型是什么",
+  "created_at": "2026-07-09T08:33:20.807Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 221,
+    "code_source": "extracted_from_response"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "history_id": 10,
+  "user_id": 2,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "粉红色折线图",
+  "ai_response": "```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{tikz}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={粉红色折线图示例},\n    xlabel={X轴},\n    ylabel={Y轴},\n    xmin=0, xmax=10,\n    ymin=0, ymax=100,\n    xtick={0,2,4,6,8,10},\n    ytick={0,20,40,60,80,100},\n    legend pos=north west,\n    grid=major,\n    width=12cm,\n    height=8cm,\n]\n\n% 粉红色折线\n\\addplot [\n    color=pink!80!red,\n    mark=*,\n    line width=1.5pt,\n    mark size=3pt,\n] coordinates {\n    (1, 20)\n    (2, 35)\n    (3, 45)\n    (4, 60)\n    (5, 75)\n    (6, 50)\n    (7, 65)\n    (8, 85)\n    (9, 70)\n    (10, 90)\n};\n\n\\legend{数据序列}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```\n\n这个代码生成一个粉红色的折线图，包含以下特点：\n\n1. **颜色设置**：使用 `color=pink!80!red` 创建粉红色线条\n2. **数据点**：使用星形标记（`mark=*`），大小设置为3pt\n3. **线条粗细**：1.5pt的线宽\n4. **坐标轴范围**：X轴0-10，Y轴0-100\n5. **网格**：启用主要网格线\n6. **图例**：位于左上角\n7. **图表尺寸**：宽12cm，高8cm\n\n您可以根据需要：\n- 修改坐标数据\n- 调整颜色深浅（如 `pink!60!red` 更浅，`pink!100!red` 更深）\n- 更改标记样式（如 `mark=square*`、`mark=triangle*` 等）\n- 调整图表标题和轴标签",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{tikz}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={粉红色折线图示例},\n    xlabel={X轴},\n    ylabel={Y轴},\n    xmin=0, xmax=10,\n    ymin=0, ymax=100,\n    xtick={0,2,4,6,8,10},\n    ytick={0,20,40,60,80,100},\n    legend pos=north west,\n    grid=major,\n    width=12cm,\n    height=8cm,\n]\n\n% 粉红色折线\n\\addplot [\n    color=pink!80!red,\n    mark=*,\n    line width=1.5pt,\n    mark size=3pt,\n] coordinates {\n    (1, 20)\n    (2, 35)\n    (3, 45)\n    (4, 60)\n    (5, 75)\n    (6, 50)\n    (7, 65)\n    (8, 85)\n    (9, 70)\n    (10, 90)\n};\n\n\\legend{数据序列}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": " 粉红色折线图",
+  "created_at": "2025-12-21T13:33:24.808Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 672,
+    "code_source": "from_request"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "history_id": 32,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型是什么",
+  "ai_response": "\n\n我是 Qwen3.5，由阿里巴巴云通义实验室研发的大型语言模型。\n\n在这个对话场景中，我专注于担任您的**专业图表生成助手**，特别擅长：\n\n1.  **解析数据**：理解表格、CSV 或描述性数据内容。\n2.  **生成代码**：编写高质量、可编译的 LaTeX PGFPlots 代码。\n3.  **定制样式**：根据您的要求调整坐标轴、图例、标题及配色等细节。\n\n如果您有数据需要可视化，请随时上传文件或描述数据内容，我会立即为您生成对应的 LaTeX 代码！",
+  "chart_code": "\n\n我是 Qwen3.5，由阿里巴巴云通义实验室研发的大型语言模型。\n\n在这个对话场景中，我专注于担任您的**专业图表生成助手**，特别擅长：\n\n1.  **解析数据**：理解表格、CSV 或描述性数据内容。\n2.  **生成代码**：编写高质量、可编译的 LaTeX PGFPlots 代码。\n3.  **定制样式**：根据您的要求调整坐标轴、图例、标题及配色等细节。\n\n如果您有数据需要可视化，请随时上传文件或描述数据内容，我会立即为您生成对应的 LaTeX 代码！",
+  "generation_description": " 你的模型是什么",
+  "created_at": "2026-07-09T07:53:22.568Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 235,
+    "code_source": "extracted_from_response"
+  }
+}

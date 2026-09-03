@@ -1,0 +1,20 @@
+{
+  "history_id": 58,
+  "user_id": 4,
+  "data_id": 6,
+  "file_name": "test1.xlsx",
+  "dataset_name": "test1",
+  "user_input": "折线图",
+  "ai_response": "\n\n```latex\n\\documentclass[tikz, border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n    \\begin{axis}[\n        width=12cm,\n        height=7cm,\n        xlabel={年份},\n        ylabel={数值（万）},\n        title={2021-2026年数据趋势},\n        xmin=0, xmax=5,\n        ymin=300, ymax=500,\n        xtick={0,1,2,3,4,5},\n        xticklabels={2021年, 2022年, 2023年, 2024年, 2025年, 2026年},\n        ytick={300,350,400,450,500},\n        grid=major,\n        grid style={dashed, gray!30},\n        legend pos=north east,\n        smooth,\n        mark=*,\n        mark options={fill=white, thick},\n    ]\n    \n    \\addplot[blue, thick, mark=*] coordinates {\n        (0, 377)\n        (1, 457)\n        (2, 474)\n        (3, 438)\n        (4, 388)\n        (5, 343)\n    };\n    \n    \\addlegendentry{数据趋势}\n    \n    \\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```",
+  "chart_code": "\\documentclass[tikz, border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n    \\begin{axis}[\n        width=12cm,\n        height=7cm,\n        xlabel={年份},\n        ylabel={数值（万）},\n        title={2021-2026年数据趋势},\n        xmin=0, xmax=5,\n        ymin=300, ymax=500,\n        xtick={0,1,2,3,4,5},\n        xticklabels={2021年, 2022年, 2023年, 2024年, 2025年, 2026年},\n        ytick={300,350,400,450,500},\n        grid=major,\n        grid style={dashed, gray!30},\n        legend pos=north east,\n        smooth,\n        mark=*,\n        mark options={fill=white, thick},\n    ]\n    \n    \\addplot[blue, thick, mark=*] coordinates {\n        (0, 377)\n        (1, 457)\n        (2, 474)\n        (3, 438)\n        (4, 388)\n        (5, 343)\n    };\n    \n    \\addlegendentry{数据趋势}\n    \n    \\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": " 折线图",
+  "created_at": "2026-09-03T02:30:58.939Z",
+  "metadata": {
+    "data_ids": [
+      6
+    ],
+    "has_chart_code": true,
+    "code_length": 865,
+    "code_source": "from_request"
+  }
+}

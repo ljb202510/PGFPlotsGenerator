@@ -1,0 +1,18 @@
+{
+  "history_id": 24,
+  "user_id": 2,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "粉红色折线图",
+  "ai_response": "```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=6cm,\n    xlabel={X轴},\n    ylabel={Y轴},\n    title={粉红色折线图示例},\n    grid=major,\n    legend style={at={(0.98,0.02)}, anchor=south east},\n    xmin=0, xmax=10,\n    ymin=0, ymax=100,\n    xtick={0,2,4,6,8,10},\n    ytick={0,20,40,60,80,100},\n]\n\n% 粉红色折线数据\n\\addplot[\n    color=pink!80!red,\n    mark=*,\n    mark options={fill=pink!50},\n    thick,\n    smooth\n] coordinates {\n    (0, 10)\n    (1, 25)\n    (2, 45)\n    (3, 30)\n    (4, 60)\n    (5, 75)\n    (6, 50)\n    (7, 85)\n    (8, 65)\n    (9, 95)\n    (10, 70)\n};\n\n\\addlegendentry{粉红色折线}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```\n\n这个LaTeX代码生成一个粉红色的折线图，包含以下特点：\n\n1. **颜色设置**：使用 `color=pink!80!red` 创建粉红色线条\n2. **数据点标记**：使用星形标记点，填充为浅粉色\n3. **平滑曲线**：设置 `smooth` 参数使折线更平滑\n4. **坐标轴设置**：\n   - X轴范围：0-10\n   - Y轴范围：0-100\n   - 显示网格\n   - 添加图例\n5. **示例数据**：包含11个数据点，展示一个波动上升的趋势\n\n您可以根据需要：\n- 修改坐标轴标签和标题\n- 调整颜色深浅（如 `pink!60!red` 或 `pink!100!red`）\n- 更换数据点标记样式\n- 修改数据坐标值\n\n要使用此代码，您需要安装支持PGFPlots的LaTeX发行版（如TeX Live或MiKTeX）。",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=6cm,\n    xlabel={X轴},\n    ylabel={Y轴},\n    title={粉红色折线图示例},\n    grid=major,\n    legend style={at={(0.98,0.02)}, anchor=south east},\n    xmin=0, xmax=10,\n    ymin=0, ymax=100,\n    xtick={0,2,4,6,8,10},\n    ytick={0,20,40,60,80,100},\n]\n\n% 粉红色折线数据\n\\addplot[\n    color=pink!80!red,\n    mark=*,\n    mark options={fill=pink!50},\n    thick,\n    smooth\n] coordinates {\n    (0, 10)\n    (1, 25)\n    (2, 45)\n    (3, 30)\n    (4, 60)\n    (5, 75)\n    (6, 50)\n    (7, 85)\n    (8, 65)\n    (9, 95)\n    (10, 70)\n};\n\n\\addlegendentry{粉红色折线}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": " 粉红色折线图",
+  "created_at": "2025-12-17T09:16:12.526Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 746,
+    "code_source": "from_request"
+  }
+}

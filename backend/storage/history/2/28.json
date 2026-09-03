@@ -1,0 +1,18 @@
+{
+  "history_id": 28,
+  "user_id": 2,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "334\nmmm",
+  "ai_response": "看起来您只发送了一个数字\"334\"，没有提供具体的图表需求或数据文件。\n\n为了帮助您生成LaTeX PGFPlots图表代码，我需要更多信息：\n\n1. **图表类型**：您想要什么类型的图表？\n   - 折线图\n   - 柱状图\n   - 散点图\n   - 饼图\n   - 其他类型\n\n2. **数据**：\n   - 您可以上传数据文件（Excel、CSV等）\n   - 或者直接描述您的数据结构\n\n3. **图表要求**：\n   - 坐标轴标签\n   - 标题\n   - 图例\n   - 颜色偏好\n   - 其他特殊要求\n\n请提供更多详细信息，我将为您生成专业的LaTeX PGFPlots代码。",
+  "chart_code": "看起来您只发送了一个数字\"334\"，没有提供具体的图表需求或数据文件。\n\n为了帮助您生成LaTeX PGFPlots图表代码，我需要更多信息：\n\n1. **图表类型**：您想要什么类型的图表？\n   - 折线图\n   - 柱状图\n   - 散点图\n   - 饼图\n   - 其他类型\n\n2. **数据**：\n   - 您可以上传数据文件（Excel、CSV等）\n   - 或者直接描述您的数据结构\n\n3. **图表要求**：\n   - 坐标轴标签\n   - 标题\n   - 图例\n   - 颜色偏好\n   - 其他特殊要求\n\n请提供更多详细信息，我将为您生成专业的LaTeX PGFPlots代码。",
+  "generation_description": "用户查询: 334\nmmm",
+  "created_at": "2025-12-15T07:16:48.610Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 299,
+    "code_source": "extracted_from_response"
+  }
+}

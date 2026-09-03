@@ -1,0 +1,18 @@
+{
+  "history_id": 21,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "生成散点图",
+  "ai_response": "由于您没有提供具体的数据集，我将为您生成一个通用的散点图LaTeX PGFPlots代码模板。您可以根据需要替换数据点、坐标轴标签和标题。\n\n```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{filecontents}\n\n\\begin{document}\n\n% 示例数据\n\\begin{filecontents*}{scatter_data.csv}\nx, y\n1.0, 2.1\n1.5, 2.8\n2.0, 3.5\n2.5, 4.2\n3.0, 4.9\n3.5, 5.6\n4.0, 6.3\n4.5, 7.0\n5.0, 7.7\n5.5, 8.4\n\\end{filecontents*}\n\n\\begin{figure}[htbp]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=0.8\\textwidth,\n    height=0.6\\textwidth,\n    xlabel={X轴标签},\n    ylabel={Y轴标签},\n    title={散点图示例},\n    grid=major,\n    legend pos=north west,\n    scatter/classes={\n        a={mark=*,blue}\n    }\n]\n\n% 从CSV文件加载数据\n\\addplot[scatter,only marks,scatter src=explicit symbolic]\ntable[x=x, y=y, meta=label] {scatter_data.csv};\n\n% 或者直接使用数据点\n% \\addplot[only marks, mark=*, blue] coordinates {\n%     (1.0, 2.1)\n%     (1.5, 2.8)\n%     (2.0, 3.5)\n%     (2.5, 4.2)\n%     (3.0, 4.9)\n%     (3.5, 5.6)\n%     (4.0, 6.3)\n%     (4.5, 7.0)\n%     (5.0, 7.7)\n%     (5.5, 8.4)\n% };\n\n% 添加趋势线（可选）\n\\addplot[red, thick, domain=1:6] {1.4*x + 0.7};\n\n\\legend{数据点, 趋势线}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{这是一个散点图示例，展示了X和Y变量之间的关系。}\n\\end{figure}\n\n\\end{document}\n```\n\n如果您有具体的数据文件，请上传Excel或CSV文件，我可以：\n1. 解析您的实际数据\n2. 根据数据特点调整图表样式\n3. 生成包含您实际数据的完整LaTeX代码\n\n请提供您的数据文件，我将为您生成定制化的散点图代码。",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{filecontents}\n\n\\begin{document}\n\n% 示例数据\n\\begin{filecontents*}{scatter_data.csv}\nx, y\n1.0, 2.1\n1.5, 2.8\n2.0, 3.5\n2.5, 4.2\n3.0, 4.9\n3.5, 5.6\n4.0, 6.3\n4.5, 7.0\n5.0, 7.7\n5.5, 8.4\n\\end{filecontents*}\n\n\\begin{figure}[htbp]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=0.8\\textwidth,\n    height=0.6\\textwidth,\n    xlabel={X轴标签},\n    ylabel={Y轴标签},\n    title={散点图示例},\n    grid=major,\n    legend pos=north west,\n    scatter/classes={\n        a={mark=*,blue}\n    }\n]\n\n% 从CSV文件加载数据\n\\addplot[scatter,only marks,scatter src=explicit symbolic]\ntable[x=x, y=y, meta=label] {scatter_data.csv};\n\n% 或者直接使用数据点\n% \\addplot[only marks, mark=*, blue] coordinates {\n%     (1.0, 2.1)\n%     (1.5, 2.8)\n%     (2.0, 3.5)\n%     (2.5, 4.2)\n%     (3.0, 4.9)\n%     (3.5, 5.6)\n%     (4.0, 6.3)\n%     (4.5, 7.0)\n%     (5.0, 7.7)\n%     (5.5, 8.4)\n% };\n\n% 添加趋势线（可选）\n\\addplot[red, thick, domain=1:6] {1.4*x + 0.7};\n\n\\legend{数据点, 趋势线}\n\n\\end{axis}\n\\end{tikzpicture}\n\\caption{这是一个散点图示例，展示了X和Y变量之间的关系。}\n\\end{figure}\n\n\\end{document}",
+  "generation_description": " 生成散点图",
+  "created_at": "2026-01-01T15:34:33.302Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 1084,
+    "code_source": "from_request"
+  }
+}

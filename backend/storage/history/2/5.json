@@ -1,0 +1,18 @@
+{
+  "history_id": 5,
+  "user_id": 2,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "生成一个简单的3D图示例",
+  "ai_response": "我将为您生成一个简单的3D曲面图示例。这里使用正弦函数和余弦函数的组合来创建一个漂亮的3D曲面。\n\n```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{tikz}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={简单的3D曲面图示例},\n    xlabel={$x$},\n    ylabel={$y$},\n    zlabel={$z$},\n    view={60}{30},\n    colormap/viridis,\n    grid=major,\n    width=10cm,\n    height=8cm\n]\n\n\\addplot3[\n    surf,\n    samples=25,\n    domain=-3:3,\n    domain y=-3:3\n] \n{sin(deg(x)) * cos(deg(y))};\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```\n\n这个示例创建了一个基于函数 $z = \\sin(x) \\cdot \\cos(y)$ 的3D曲面图，其中：\n- `view={60}{30}` 设置了观察角度（方位角60°，仰角30°）\n- `colormap/viridis` 使用了viridis色彩映射\n- `samples=25` 控制了曲面的分辨率\n- `domain=-3:3` 定义了x和y的取值范围\n\n您可以根据需要调整：\n1. 函数表达式\n2. 观察角度（view参数）\n3. 色彩映射（colormap）\n4. 采样密度（samples）\n5. 坐标轴范围（domain）",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{tikz}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={简单的3D曲面图示例},\n    xlabel={$x$},\n    ylabel={$y$},\n    zlabel={$z$},\n    view={60}{30},\n    colormap/viridis,\n    grid=major,\n    width=10cm,\n    height=8cm\n]\n\n\\addplot3[\n    surf,\n    samples=25,\n    domain=-3:3,\n    domain y=-3:3\n] \n{sin(deg(x)) * cos(deg(y))};\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": " 生成一个简单的3D图示例",
+  "created_at": "2025-12-18T15:38:15.590Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 461,
+    "code_source": "from_request"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "history_id": 56,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": " 你使用的模型是V1还是V4-Pro还是V4-flash",
+  "ai_response": "您好，我作为 AI 助手，并没有关于自身具体模型版本（如 V1、V4-Pro、V4-flash）的公开信息。我是根据您当前的任务需求配置的“专业的图表生成助手”，专注于解析数据并生成 LaTeX PGFPlots 代码。如果您有数据文件或图表需求，请直接提供，我将尽力协助您生成高质量的图表。",
+  "chart_code": "您好，我作为 AI 助手，并没有关于自身具体模型版本（如 V1、V4-Pro、V4-flash）的公开信息。我是根据您当前的任务需求配置的“专业的图表生成助手”，专注于解析数据并生成 LaTeX PGFPlots 代码。如果您有数据文件或图表需求，请直接提供，我将尽力协助您生成高质量的图表。",
+  "generation_description": "  你使用的模型是V1还是V4-Pro还是V4-flash",
+  "created_at": "2026-07-15T01:54:42.734Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 146,
+    "code_source": "extracted_from_response"
+  }
+}

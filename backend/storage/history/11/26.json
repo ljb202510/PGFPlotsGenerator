@@ -1,0 +1,18 @@
+{
+  "history_id": 26,
+  "user_id": 11,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "生成近五年大学毕业人数折线图",
+  "ai_response": "好的，根据您的要求，我将为您生成一个展示近五年（2019-2023年）中国高校毕业生人数的折线图LaTeX PGFPlots代码。该图表将清晰展示毕业生人数的变化趋势。\n\n```latex\n\\documentclass[tikz,border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\usepackage{ctex} % 支持中文\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    xlabel={年份},\n    ylabel={毕业人数（万人）},\n    title={近五年中国高校毕业生人数变化趋势},\n    grid=major,\n    xmin=2018.5, xmax=2023.5,\n    ymin=800, ymax=1200,\n    xtick={2019,2020,2021,2022,2023},\n    ytick={800,850,900,950,1000,1050,1100,1150,1200},\n    legend pos=north west,\n    legend style={font=\\small},\n    label style={font=\\large},\n    title style={font=\\huge},\n    tick label style={font=\\large},\n    width=12cm,\n    height=8cm,\n    mark options={scale=1.5}\n]\n\n% 绘制折线图\n\\addplot[\n    color=blue,\n    mark=square,\n    line width=2pt,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\small,\n        yshift=5pt\n    }\n] coordinates {\n    (2019, 834)\n    (2020, 874)\n    (2021, 909)\n    (2022, 1076)\n    (2023, 1158)\n};\n\n% 添加图例\n\\legend{高校毕业生人数}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```\n\n### 图表说明：\n- **数据范围**：2019年至2023年，共5个数据点。\n- **数据来源**：基于教育部公开的全国高校毕业生统计数据（单位：万人）。\n- **图表特点**：\n  - 使用蓝色实线加方形标记，清晰展示逐年变化。\n  - 每个数据点上方标注具体数值，便于直接读取。\n  - 网格线辅助定位，提高可读性。\n  - 中文标题和轴标签，适合中文文档环境。\n\n### 数据点数值：\n| 年份 | 毕业人数（万人） |\n|------|------------------|\n| 2019 | 834              |\n| 2020 | 874              |\n| 2021 | 909              |\n| 2022 | 1076             |\n| 2023 | 1158             |\n\n您可以直接将代码复制到LaTeX环境中编译运行，生成对应的折线图。如需调整颜色、标记样式、图例位置或添加其他年份数据，请随时告知。",
+  "chart_code": "\\documentclass[tikz,border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\usepackage{ctex} % 支持中文\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    xlabel={年份},\n    ylabel={毕业人数（万人）},\n    title={近五年中国高校毕业生人数变化趋势},\n    grid=major,\n    xmin=2018.5, xmax=2023.5,\n    ymin=800, ymax=1200,\n    xtick={2019,2020,2021,2022,2023},\n    ytick={800,850,900,950,1000,1050,1100,1150,1200},\n    legend pos=north west,\n    legend style={font=\\small},\n    label style={font=\\large},\n    title style={font=\\huge},\n    tick label style={font=\\large},\n    width=12cm,\n    height=8cm,\n    mark options={scale=1.5}\n]\n\n% 绘制折线图\n\\addplot[\n    color=blue,\n    mark=square,\n    line width=2pt,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\small,\n        yshift=5pt\n    }\n] coordinates {\n    (2019, 834)\n    (2020, 874)\n    (2021, 909)\n    (2022, 1076)\n    (2023, 1158)\n};\n\n% 添加图例\n\\legend{高校毕业生人数}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 生成近五年大学毕业人数折线图",
+  "created_at": "2026-06-12T08:38:25.178Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 975,
+    "code_source": "from_request"
+  }
+}

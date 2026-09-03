@@ -1,0 +1,18 @@
+{
+  "history_id": 36,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型是什么",
+  "ai_response": "\n\n我是 **Qwen3.5**，是通义千问系列的大语言模型。\n\n不过，在当前对话场景中，我主要担任",
+  "chart_code": "\n\n我是 **Qwen3.5**，是通义千问系列的大语言模型。\n\n不过，在当前对话场景中，我主要担任",
+  "generation_description": " 你的模型是什么",
+  "created_at": "2026-07-09T08:17:40.801Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 50,
+    "code_source": "extracted_from_response"
+  }
+}

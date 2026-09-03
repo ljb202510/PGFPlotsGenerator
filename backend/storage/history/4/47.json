@@ -1,0 +1,18 @@
+{
+  "history_id": 47,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "基于 sales.csv，绘制各地区销售额占比的饼图",
+  "ai_response": "\n\n```latex\n\\documentclass[tikz]{standalone}\n\\usepackage{pgf-pie}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{fontspec}\n\\usepackage{xeCJK}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\pie[\n    text=legend,\n    sum=auto,\n    radius=3,\n    explode=0.1,\n    color={\n        orange!70, \n        blue!70, \n        green!70, \n        red!70, \n        purple!70, \n        teal!70\n    },\n    legend pos=outer north,\n    style={font=\\small},\n    text width=2cm\n]{\n    28.5/华东地区,\n    22.3/华南地区,\n    18.7/华北地区,\n    15.2/西南地区,\n    10.1/西北地区,\n    5.2/东北地区\n}\n\\node at (0, -3.5) [font=\\small] {各地区销售额占比};\n\\end{tikzpicture}\n\n\\end{document}\n```\n\n**说明：**\n\n1. **数据结构**：代码基于假设的 sales.csv 数据，包含 6 个地区的销售额占比（总和为 100%）\n   - 华东地区：28.5%\n   - 华南地区：22.3%\n   - 华北地区：18.7%\n   - 西南地区：15.2%\n   - 西北地区：10.1%\n   - 东北地区：5.2%\n\n2. **图表特点**：\n   - 使用 `\\pie` 宏包绘制饼图\n   - 每个扇区有轻微分离效果（`explode=0.1`）\n   - 显示图例和百分比\n   - 设置合适的颜色和字体\n\n3. **编译要求**：\n   - 需要使用 XeLaTeX 编译器\n   - 需要安装 `pgf-pie` 宏包\n\n4. **如需修改数据**：\n   - 请提供实际的 sales.csv 文件内容\n   - 我可以将示例数据替换为真实数据\n\n如果您有实际的 sales.csv 数据，请提供文件内容，我可以为您生成包含真实数据的图表代码。",
+  "chart_code": "\\documentclass[tikz]{standalone}\n\\usepackage{pgf-pie}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{fontspec}\n\\usepackage{xeCJK}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\pie[\n    text=legend,\n    sum=auto,\n    radius=3,\n    explode=0.1,\n    color={\n        orange!70, \n        blue!70, \n        green!70, \n        red!70, \n        purple!70, \n        teal!70\n    },\n    legend pos=outer north,\n    style={font=\\small},\n    text width=2cm\n]{\n    28.5/华东地区,\n    22.3/华南地区,\n    18.7/华北地区,\n    15.2/西南地区,\n    10.1/西北地区,\n    5.2/东北地区\n}\n\\node at (0, -3.5) [font=\\small] {各地区销售额占比};\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": " 基于 sales.csv，绘制各地区销售额占比的饼图",
+  "created_at": "2026-07-14T07:50:44.014Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 622,
+    "code_source": "from_request"
+  }
+}

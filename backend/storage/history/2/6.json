@@ -1,0 +1,20 @@
+{
+  "history_id": 6,
+  "user_id": 2,
+  "data_id": 3,
+  "file_name": "test1.xlsx",
+  "dataset_name": "考研",
+  "user_input": "折线图，绿色",
+  "ai_response": "```latex\n\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xcolor}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=6cm,\n    xlabel={年份},\n    ylabel={考研人数},\n    title={历年考研人数变化趋势},\n    x tick label style={rotate=45, anchor=east},\n    xtick=data,\n    xticklabels={2021年, 2022年, 2023年, 2024年, 2025年, 2026年},\n    grid=major,\n    grid style={dashed, gray!30},\n    legend style={at={(0.5,-0.2)}, anchor=north},\n    ymin=300,\n    ymax=500,\n    ytick={300,350,400,450,500},\n    yticklabels={300万,350万,400万,450万,500万}\n]\n\n% 绘制绿色折线图\n\\addplot[\n    color=green!70!black,\n    mark=*,\n    mark size=2pt,\n    line width=1.5pt,\n    smooth\n] coordinates {\n    (1, 377)\n    (2, 457)\n    (3, 474)\n    (4, 438)\n    (5, 388)\n    (6, 343)\n};\n\n% 添加数据标签\n\\addplot[\n    nodes near coords,\n    only marks,\n    point meta=explicit symbolic,\n    mark=none,\n    text=black,\n    font=\\small\n] coordinates {\n    (1, 377) [377万]\n    (2, 457) [457万]\n    (3, 474) [474万]\n    (4, 438) [438万]\n    (5, 388) [388万]\n    (6, 343) [343万]\n};\n\n\\legend{考研人数}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```\n\n**代码说明：**\n\n1. **数据转换**：将原始数据中的\"万\"字去除，只保留数字部分用于绘图，在坐标轴标签和数据显示中重新添加\"万\"单位\n\n2. **图表特性**：\n   - 使用绿色主题（`color=green!70!black`）\n   - 包含平滑的折线（`smooth`选项）\n   - 每个数据点用星形标记（`mark=*`）\n   - 添加了数据标签显示具体数值\n   - 设置了合适的坐标轴范围（300-500万）\n   - 包含网格线便于读数\n\n3. **坐标轴设置**：\n   - X轴标签旋转45度避免重叠\n   - Y轴显示带\"万\"单位的标签\n   - 图例位于图表下方\n\n4. **数据趋势**：图表清晰显示了考研人数从2021年到2026年的变化趋势，特别是2023年达到峰值后逐年下降的趋势。",
+  "chart_code": "\\documentclass[border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{xcolor}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=6cm,\n    xlabel={年份},\n    ylabel={考研人数},\n    title={历年考研人数变化趋势},\n    x tick label style={rotate=45, anchor=east},\n    xtick=data,\n    xticklabels={2021年, 2022年, 2023年, 2024年, 2025年, 2026年},\n    grid=major,\n    grid style={dashed, gray!30},\n    legend style={at={(0.5,-0.2)}, anchor=north},\n    ymin=300,\n    ymax=500,\n    ytick={300,350,400,450,500},\n    yticklabels={300万,350万,400万,450万,500万}\n]\n\n% 绘制绿色折线图\n\\addplot[\n    color=green!70!black,\n    mark=*,\n    mark size=2pt,\n    line width=1.5pt,\n    smooth\n] coordinates {\n    (1, 377)\n    (2, 457)\n    (3, 474)\n    (4, 438)\n    (5, 388)\n    (6, 343)\n};\n\n% 添加数据标签\n\\addplot[\n    nodes near coords,\n    only marks,\n    point meta=explicit symbolic,\n    mark=none,\n    text=black,\n    font=\\small\n] coordinates {\n    (1, 377) [377万]\n    (2, 457) [457万]\n    (3, 474) [474万]\n    (4, 438) [438万]\n    (5, 388) [388万]\n    (6, 343) [343万]\n};\n\n\\legend{考研人数}\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": " 折线图，绿色",
+  "created_at": "2025-12-18T23:58:26.873Z",
+  "metadata": {
+    "data_ids": [
+      3
+    ],
+    "has_chart_code": true,
+    "code_length": 1130,
+    "code_source": "from_request"
+  }
+}

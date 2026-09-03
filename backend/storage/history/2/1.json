@@ -1,0 +1,18 @@
+{
+  "history_id": 1,
+  "user_id": 2,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你是谁",
+  "ai_response": "我是一个专业的图表生成助手，专门根据用户的需求和数据集生成LaTeX PGFPlots代码。如果你有数据文件（比如Excel文件）和图表需求，我可以帮你生成相应的LaTeX代码，包括分析数据结构、选择合适的图表类型，并设置坐标轴标签、标题和图例等。请提供你的数据和具体要求，我会直接生成完整的LaTeX代码。",
+  "chart_code": "我是一个专业的图表生成助手，专门根据用户的需求和数据集生成LaTeX PGFPlots代码。如果你有数据文件（比如Excel文件）和图表需求，我可以帮你生成相应的LaTeX代码，包括分析数据结构、选择合适的图表类型，并设置坐标轴标签、标题和图例等。请提供你的数据和具体要求，我会直接生成完整的LaTeX代码。",
+  "generation_description": " 你是谁",
+  "created_at": "2025-12-18T11:19:46.948Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 154,
+    "code_source": "extracted_from_response"
+  }
+}

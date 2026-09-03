@@ -1,0 +1,18 @@
+{
+  "history_id": 42,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "请画一个柱状图展示A、B、C三组数据",
+  "ai_response": "好的！我将为你生成一个展示 A、B、C 三组数据的柱状图 LaTeX PGFPlots 代码。\n```latex\n\\documentclass{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    symbolic x coords={A, B, C},\n    xtick=data,\n    ylabel={数值},\n    xlabel={组别},\n    title={A、B、C三组数据柱状图},\n    bar width=0.6,\n    nodes near coords,\n    nodes near coords align=vertical,\n    enlarge x limits=0.3,\n    ymin=0,\n    grid=major,\n    grid style={dashed, gray!30}\n]\n\\addplot[fill=blue!60] coordinates {(A, 12) (B, 19) (C, 7)};\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```\n图中使用蓝色柱体分别展示 A、B、C 三组的数值，并在每个柱顶直接标注对应数据。坐标轴标签、标题和网格线已一并设置，便于直接查看各组间的数值对比。",
+  "chart_code": "\\documentclass{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    symbolic x coords={A, B, C},\n    xtick=data,\n    ylabel={数值},\n    xlabel={组别},\n    title={A、B、C三组数据柱状图},\n    bar width=0.6,\n    nodes near coords,\n    nodes near coords align=vertical,\n    enlarge x limits=0.3,\n    ymin=0,\n    grid=major,\n    grid style={dashed, gray!30}\n]\n\\addplot[fill=blue!60] coordinates {(A, 12) (B, 19) (C, 7)};\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 请画一个柱状图展示A、B、C三组数据",
+  "created_at": "2026-07-14T04:44:03.598Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 519,
+    "code_source": "from_request"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "history_id": "hist_1_1765252347630_2901",
+  "user_id": 1,
+  "data_id": 7,
+  "file_name": "test.xlsx",
+  "dataset_name": "test",
+  "user_input": "标题为近五年考研人数图，帮我绘制直方图",
+  "ai_response": "由于我无法直接读取您上传的 Excel 文件内容，我将提供一个通用的 LaTeX PGFPlots 代码模板，用于绘制近五年考研人数的直方图。您可以根据实际数据修改代码中的数据点。\n\n```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{width=10cm,compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\n\\begin{figure}[ht]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    enlargelimits=0.15,\n    legend style={at={(0.5,-0.15)},\n      anchor=north,legend columns=-1},\n    ylabel={人数（万）},\n    xlabel={年份},\n    symbolic x coords={2019,2020,2021,2022,2023},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    ]\n\\addplot coordinates {(2019,290) (2020,341) (2021,377) (2022,457) (2023,474)};\n\\legend{考研报名人数}\n\\end{axis}\n\\end{tikzpicture}\n\\caption{近五年考研人数图}\n\\end{figure}\n\n\\end{document}\n```\n\n**使用说明：**\n1. 将代码中的坐标数据 `(2019,290) (2020,341) ...` 替换为您的实际数据（单位：万）。\n2. 如果数据单位不同，请调整 `ylabel` 中的单位。\n3. 编译时需要添加 `-shell-escape` 参数，或使用支持 PGFPlots 的编辑器（如 Overleaf）。\n\n如果需要调整颜色、柱宽或添加更多自定义样式，请告诉我具体需求。",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\pgfplotsset{width=10cm,compat=1.18}\n\\usepackage{pgfplotstable}\n\n\\begin{document}\n\n\\begin{figure}[ht]\n\\centering\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    enlargelimits=0.15,\n    legend style={at={(0.5,-0.15)},\n      anchor=north,legend columns=-1},\n    ylabel={人数（万）},\n    xlabel={年份},\n    symbolic x coords={2019,2020,2021,2022,2023},\n    xtick=data,\n    nodes near coords,\n    nodes near coords align={vertical},\n    ]\n\\addplot coordinates {(2019,290) (2020,341) (2021,377) (2022,457) (2023,474)};\n\\legend{考研报名人数}\n\\end{axis}\n\\end{tikzpicture}\n\\caption{近五年考研人数图}\n\\end{figure}\n\n\\end{document}",
+  "generation_description": "用户查询: 标题为近五年考研人数图，帮我绘制直方图",
+  "created_at": "2025-12-09T03:52:27.663Z",
+  "metadata": {
+    "chart_type": "bar",
+    "data_ids": [
+      7
+    ],
+    "has_chart_code": true,
+    "code_length": 645
+  }
+}

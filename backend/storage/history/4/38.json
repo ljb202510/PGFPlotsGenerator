@@ -1,0 +1,18 @@
+{
+  "history_id": 38,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型是什么",
+  "ai_response": "我是由深度求索（DeepSeek）公司开发的AI助手，具体模型版本为DeepSeek最新版大语言模型。我专注于自然语言处理、代码生成、数据分析等任务，能够根据用户需求生成LaTeX PGFPlots图表代码、处理Excel数据等。\n\n如果你有具体的数据文件或图表需求，请上传文件或描述数据内容，我会为你生成相应的LaTeX代码。",
+  "chart_code": "我是由深度求索（DeepSeek）公司开发的AI助手，具体模型版本为DeepSeek最新版大语言模型。我专注于自然语言处理、代码生成、数据分析等任务，能够根据用户需求生成LaTeX PGFPlots图表代码、处理Excel数据等。\n\n如果你有具体的数据文件或图表需求，请上传文件或描述数据内容，我会为你生成相应的LaTeX代码。",
+  "generation_description": " 你的模型是什么",
+  "created_at": "2026-07-09T08:33:07.346Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 164,
+    "code_source": "extracted_from_response"
+  }
+}
