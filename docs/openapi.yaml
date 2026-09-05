@@ -1,0 +1,1350 @@
+# PGFPlotsGenerator REST API 契约（OpenAPI 3.0）
+#
+# 范围：后端实际存在的主要接口（backend/app.js 挂载的 13 个前缀）。
+# 依据：2026-09-05 对 backend/routes/*.js 的逐文件核实，与 docs/architecture.md 一致。
+# 说明：
+#   - 本项目响应存在两种风格：{success, data?, message} 与 {code, message, data?}，下方如实标注。
+#   - 未实现的接口（如 /api/chat/fix、/api/compile 的 body.code 覆盖）不在此列。
+#   - /api/admin/* 四个模块服务端【未挂载鉴权中间件】，安全属性如实标注 security: []。
+openapi: 3.0.3
+info:
+  title: PGFPlotsGenerator API
+  description: '智能图表生成系统后端接口。除标注外均需 `Authorization: Bearer <token>`。'
+  version: "1.0"
+  contact:
+    name: PGFPlotsGenerator
+servers:
+  - url: http://localhost:3000
+    description: 本地默认后端地址（见 src/config.js）
+tags:
+  - name: 认证
+  - name: AI 生成
+  - name: 编译
+  - name: 历史
+  - name: 数据集
+  - name: 对话
+  - name: 反馈
+  - name: 通知
+  - name: 验证码
+  - name: 管理员
+security:
+  - BearerAuth: []
+paths:
+  # ===================== 认证 /api/auth =====================
+  /api/auth/admin/login:
+    post:
+      tags: [认证]
+      summary: 管理员登录
+      description: 校验 role=admin 的账号密码，返回 7 天有效期的 JWT。免 token。
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [adminAccount, password]
+              properties:
+                adminAccount: { type: string, example: admin123 }
+                password: { type: string, example: "666666" }
+      responses:
+        "200":
+          description: 成功，返回用户信息与 token
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthSuccess" }
+        "400":
+          description: 账号不存在/权限不足或密码错误
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+  /api/auth/register:
+    post:
+      tags: [认证]
+      summary: 用户注册
+      description: 需先调用验证码发送接口；验证码一次性且 10 分钟有效。
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, password, verificationCode]
+              properties:
+                username: { type: string, maxLength: 10, example: zhangsan }
+                email: { type: string, format: email, example: user@example.com }
+                password: { type: string, description: "仅字母数字 1-8 位", example: "abc123" }
+                verificationCode: { type: string, example: "123456" }
+      responses:
+        "200":
+          description: 注册成功并自动登录
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthSuccess" }
+        "400":
+          description: 字段缺失/格式错误/用户名或邮箱已注册/验证码错误
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+  /api/auth/login:
+    post:
+      tags: [认证]
+      summary: 用户登录
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email, example: user@example.com }
+                password: { type: string, example: "abc123" }
+      responses:
+        "200":
+          description: 登录成功，返回 24h JWT
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthSuccess" }
+        "400":
+          description: 用户不存在或密码错误
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+  /api/auth/change-password:
+    post:
+      tags: [认证]
+      summary: 修改密码
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPassword, newPassword]
+              properties:
+                currentPassword: { type: string, example: "abc123" }
+                newPassword: { type: string, description: "仅字母数字 1-8 位", example: "abc456" }
+      responses:
+        "200":
+          description: 修改成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageSuccess" }
+        "400":
+          description: 当前密码错误/新密码格式不符/新旧相同
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+  /api/auth/change-username:
+    post:
+      tags: [认证]
+      summary: 修改用户名
+      description: 仅字母数字下划线中文，1-10 字符。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [newUsername]
+              properties:
+                newUsername: { type: string, example: lisi }
+      responses:
+        "200":
+          description: 修改成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageSuccess" }
+        "400":
+          description: 格式错误或用户名已被占用
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+  /api/auth/change-email:
+    post:
+      tags: [认证]
+      summary: 修改邮箱
+      description: 需先向新邮箱发送验证码并校验。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [newEmail, verificationCode]
+              properties:
+                newEmail: { type: string, format: email, example: new@example.com }
+                verificationCode: { type: string, example: "123456" }
+      responses:
+        "200":
+          description: 修改成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageSuccess" }
+        "400":
+          description: 格式错误/验证码错误/邮箱被占用
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+  /api/auth/validate:
+    get:
+      tags: [认证]
+      summary: 校验 token
+      description: 返回当前登录用户（仅 user_id/username/email）。
+      responses:
+        "200":
+          description: token 有效
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  user: { $ref: "#/components/schemas/User" }
+        "401":
+          description: 未提供或 token 无效/用户不存在
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+
+  # ===================== AI 生成 /api/chat =====================
+  /api/chat:
+    post:
+      tags: [AI 生成]
+      summary: 生成图表代码
+      description: 用自然语言（可带数据集）调用 DeepSeek/Qwen 生成 PGFPlots 代码并落库；若传 conversation_id 同时写入对话消息。模型空回复时返回 502。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message: { type: string, example: 绘制近五年出生人口条形图 }
+                data_ids: { type: array, items: { type: integer }, example: [1, 2] }
+                chart_code: { type: string, description: 可选，直接指定代码则不再从回复提取 }
+                model:
+                  type: string
+                  description: qwen=Qwen3.5(NSCC)；其他值走 DeepSeek deepseek-v4-flash
+                  enum: [qwen, deepseek]
+                  default: qwen
+                conversation_id: { type: integer, description: 传入则将本轮消息持久化到该会话 }
+                selected_files:
+                  type: array
+                  description: 本轮选中的数据文件快照（JSON 序列化后入库）
+                  items: { type: object }
+      responses:
+        "200":
+          description: 生成成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ChatSuccess" }
+        "400":
+          description: message 缺失
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+        "502":
+          description: AI 返回内容为空（写系统日志）
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+
+  # ===================== 编译 /api/compile =====================
+  /api/compile/{history_id}/pdf-url:
+    get:
+      tags: [编译]
+      summary: 获取历史记录已生成 PDF 的访问 URL
+      parameters:
+        - name: history_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 返回 pdf_url 与文件是否存在
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  data:
+                    type: object
+                    properties:
+                      pdf_url: { type: string, example: "/storage/generated_charts/user1/hist1.pdf" }
+                      exists: { type: boolean }
+        "404":
+          description: 历史不存在/无权访问或尚未生成 PDF
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+  /api/compile/{history_id}:
+    post:
+      tags: [编译]
+      summary: 编译历史代码为 PDF
+      description: 只读取库内 generation_code 编译（不接受 body 覆盖代码）；成功则移动到 storage/generated_charts 并更新 generation_path。
+      parameters:
+        - name: history_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 编译成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  message: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      history_id: { type: integer }
+                      pdf_path: { type: string }
+                      pdf_url: { type: string, example: "/storage/generated_charts/user1/hist1.pdf" }
+                      file_size: { type: integer }
+        "400":
+          description: 历史无效或无可用图表代码
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+        "404":
+          description: 历史不存在或无权访问
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+        "500":
+          description: XeLaTeX 编译失败（含 stderr）
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+
+  # ===================== 历史 /api/history =====================
+  /api/history:
+    get:
+      tags: [历史]
+      summary: 历史列表（分页/搜索/日期过滤）
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+        - name: search
+          in: query
+          schema: { type: string, description: 匹配描述或数据集名 }
+        - name: start_date
+          in: query
+          schema: { type: string, format: date }
+        - name: end_date
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  data:
+                    type: object
+                    properties:
+                      records:
+                        type: array
+                        items: { $ref: "#/components/schemas/HistoryRecord" }
+                      total: { type: integer }
+                      page: { type: integer }
+                      limit: { type: integer }
+                      total_pages: { type: integer }
+        "400":
+          description: 分页参数无效
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+  /api/history/{id}:
+    get:
+      tags: [历史]
+      summary: 历史详情
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  data: { $ref: "#/components/schemas/HistoryRecord" }
+        "404":
+          description: 不存在或无权访问
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+    delete:
+      tags: [历史]
+      summary: 删除历史（事务内级联删除 api_log）
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 删除成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageSuccess" }
+        "404":
+          description: 不存在
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+  /api/history/stats/summary:
+    get:
+      tags: [历史]
+      summary: 本周/总数统计
+      description: 返回体为统计对象（供历史页顶部展示）。
+      responses:
+        "200":
+          description: 成功（字段以实际为准：周/总计数）
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /api/history/export/csv:
+    get:
+      tags: [历史]
+      summary: 导出历史 CSV
+      responses:
+        "200":
+          description: 返回 CSV 文件
+          content:
+            text/csv: {}
+
+  # ===================== 数据集 /api/datasets =====================
+  /api/datasets:
+    get:
+      tags: [数据集]
+      summary: 我的数据集列表（关键词搜索）
+      parameters:
+        - name: keyword
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: 成功（code 风格）
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: integer, example: 200 }
+                  message: { type: string }
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/DataFile" }
+    post:
+      tags: [数据集]
+      summary: 上传数据集（multipart/form-data，≤100MB）
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [name, description, file]
+              properties:
+                name: { type: string, example: 全国人口数据 }
+                description: { type: string }
+                file: { type: string, format: binary }
+      responses:
+        "200":
+          description: 上传成功（code 风格）
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: integer, example: 200 }
+                  message: { type: string }
+                  data: { $ref: "#/components/schemas/DataFile" }
+        "400":
+          description: 名称/描述为空或未选择文件
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CodeFail" }
+  /api/datasets/{id}/update:
+    post:
+      tags: [数据集]
+      summary: 修改数据集名称/描述
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                description: { type: string }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: integer, example: 200 }
+                  message: { type: string }
+                  data: { type: object }
+        "400":
+          description: 未提供任何可更新字段
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CodeFail" }
+  /api/datasets/{id}:
+    delete:
+      tags: [数据集]
+      summary: 删除数据集（级联删除文件）
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 删除成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CodeSuccess" }
+  /api/datasets/download/{id}:
+    get:
+      tags: [数据集]
+      summary: 下载数据集原文件
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 文件下载
+          content:
+            application/octet-stream: {}
+
+  # ===================== 对话 /api/conversations =====================
+  /api/conversations:
+    get:
+      tags: [对话]
+      summary: 会话列表（含消息数与最后一条预览）
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/ConversationItem" }
+    post:
+      tags: [对话]
+      summary: 新建会话
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string, default: 新对话, maxLength: 255 }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  data:
+                    type: object
+                    properties:
+                      conversation_id: { type: integer }
+                      title: { type: string }
+  /api/conversations/{id}:
+    put:
+      tags: [对话]
+      summary: 重命名会话
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title: { type: string, maxLength: 255 }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageSuccess" }
+    delete:
+      tags: [对话]
+      summary: 删除会话（事务先删消息再删会话）
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageSuccess" }
+        "404":
+          description: 会话不存在
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+  /api/conversations/{id}/messages:
+    get:
+      tags: [对话]
+      summary: 获取会话消息（按时间正序）
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/ConversationMessage" }
+
+  # ===================== 反馈 /api/feedback =====================
+  /api/feedback:
+    post:
+      tags: [反馈]
+      summary: 用户提交反馈
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type, content]
+              properties:
+                type:
+                  type: string
+                  enum: [suggestion, ui, bug, other]
+                  description: 建议/界面/缺陷/其他
+                content: { type: string, maxLength: 100 }
+      responses:
+        "201":
+          description: 提交成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  message: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      feedback_id: { type: integer }
+        "400":
+          description: 类型/内容为空、超长或类型非法
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+    get:
+      tags: [反馈]
+      summary: 管理员获取全部反馈（筛选 type/日期，分页）
+      description: 需管理员权限（服务端 checkAdmin 校验 role=admin）。
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: type
+          in: query
+          schema: { type: string, enum: [suggestion, ui, bug, other] }
+        - name: startDate
+          in: query
+          schema: { type: string, format: date }
+        - name: endDate
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        "200":
+          description: 成功（含用户名字段）
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FeedbackListResponse" }
+  /api/feedback/user/my-feedbacks:
+    get:
+      tags: [反馈]
+      summary: 用户查看自己的反馈（含已回复/待回复状态）
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 10 }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FeedbackListResponse" }
+  /api/feedback/{id}:
+    get:
+      tags: [反馈]
+      summary: 管理员查看反馈详情
+      description: 需管理员权限。
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  message: { type: string }
+                  data: { $ref: "#/components/schemas/FeedbackItem" }
+        "404":
+          description: 反馈不存在
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+    delete:
+      tags: [反馈]
+      summary: 管理员删除反馈
+      description: 需管理员权限。
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 删除成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageSuccess" }
+  /api/feedback/{id}/reply:
+    put:
+      tags: [反馈]
+      summary: 管理员回复反馈
+      description: 回复后自动向反馈者写入一条定向 notice（feedback_id 唯一索引幂等）。需管理员权限。
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answer]
+              properties:
+                answer: { type: string, maxLength: 500 }
+      responses:
+        "200":
+          description: 回复成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  message: { type: string }
+                  data: { $ref: "#/components/schemas/FeedbackItem" }
+        "400":
+          description: 回复为空或超 500 字
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+        "404":
+          description: 反馈不存在
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+
+  # ===================== 通知 /api/notice =====================
+  /api/notice:
+    get:
+      tags: [通知]
+      summary: 通知列表（系统广播 + 反馈回复）+ unreadCount
+      description: 返回 code 风格；isRead 由 LEFT JOIN notice_read 判定。
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: integer, example: 200 }
+                  message: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      notices:
+                        type: array
+                        items: { $ref: "#/components/schemas/NoticeItem" }
+                      unreadCount: { type: integer }
+                      totalCount: { type: integer }
+  /api/notice/read/{id}:
+    post:
+      tags: [通知]
+      summary: 标记单条已读
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CodeSuccess" }
+  /api/notice/read-all:
+    post:
+      tags: [通知]
+      summary: 全部标记已读
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CodeSuccess" }
+  /api/notice/unread-count:
+    get:
+      tags: [通知]
+      summary: 未读计数（供导航栏红点）
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: integer, example: 200 }
+                  message: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      unreadCount: { type: integer }
+                      feedbackUnread: { type: integer }
+                      systemUnread: { type: integer }
+
+  # ===================== 验证码 /api/verification =====================
+  /api/verification/send-register-code:
+    post:
+      tags: [验证码]
+      summary: 发送注册验证码邮件
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        "200":
+          description: 发送成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageSuccess" }
+        "400":
+          description: 邮箱格式错误/已注册
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+        "429":
+          description: 发送过于频繁
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+  /api/verification/verify-register-code:
+    post:
+      tags: [验证码]
+      summary: 校验注册验证码（一次性）
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, code]
+              properties:
+                email: { type: string, format: email }
+                code: { type: string, example: "123456" }
+      responses:
+        "200":
+          description: 校验成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageSuccess" }
+        "400":
+          description: 验证码错误或已过期
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+
+  # ===================== 管理员 /api/admin/*（服务端未强制鉴权，如实标注） =====================
+  /api/admin/static:
+    get:
+      tags: [管理员]
+      summary: 全库计数概览（users/files/generations/feedback）
+      security: []
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users: { type: integer }
+                  files: { type: integer }
+                  generations: { type: integer }
+                  feedback: { type: integer }
+  /api/admin/users:
+    get:
+      tags: [管理员]
+      summary: 用户列表
+      security: []
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /api/admin/users/{id}/reset-password:
+    patch:
+      tags: [管理员]
+      summary: 重置用户密码为 666666
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /api/admin/users/{id}:
+    delete:
+      tags: [管理员]
+      summary: 删除用户（代码内级联删除关联数据）
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /api/admin/users/statistics/overview:
+    get:
+      tags: [管理员]
+      summary: 用户统计总览
+      security: []
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /api/admin/notices:
+    get:
+      tags: [管理员]
+      summary: 系统通知列表（已排除反馈通知，含已读统计）
+      security: []
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+    post:
+      tags: [管理员]
+      summary: 发布系统通知（广播 target_user_id=NULL）
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, content]
+              properties:
+                title: { type: string, maxLength: 100 }
+                content: { type: string }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /api/admin/notices/{id}:
+    get:
+      tags: [管理员]
+      summary: 通知详情
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+    put:
+      tags: [管理员]
+      summary: 更新通知
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string }
+                content: { type: string }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+    delete:
+      tags: [管理员]
+      summary: 删除通知
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /api/admin/notices/statistics/overview:
+    get:
+      tags: [管理员]
+      summary: 通知统计总览
+      security: []
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /api/admin/log/api-stats:
+    get:
+      tags: [管理员]
+      summary: API 调用统计
+      security: []
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /api/admin/log/system-logs:
+    get:
+      tags: [管理员]
+      summary: 系统日志列表
+      security: []
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /api/admin/log/health-overview:
+    get:
+      tags: [管理员]
+      summary: 健康概览
+      security: []
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /api/admin/log/tables-status:
+    get:
+      tags: [管理员]
+      summary: 数据表状态检查
+      security: []
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /api/admin/log/add-test-log:
+    post:
+      tags: [管理员]
+      summary: 添加一条测试系统日志
+      security: []
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: '用户/管理员登录返回的 JWT（请求头 `Authorization: Bearer <token>`）'
+  schemas:
+    User:
+      type: object
+      properties:
+        user_id: { type: integer }
+        username: { type: string }
+        email: { type: string }
+        role: { type: string, enum: [user, admin], description: 管理员登录返回中携带 }
+    AuthSuccess:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string }
+        user: { $ref: "#/components/schemas/User" }
+        token: { type: string, description: JWT，用户 24h / 管理员 7d 有效 }
+    MessageSuccess:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string }
+    MessageFail:
+      type: object
+      properties:
+        success: { type: boolean, example: false }
+        message: { type: string }
+    CodeSuccess:
+      type: object
+      properties:
+        code: { type: integer, example: 200 }
+        message: { type: string }
+        data: { nullable: true }
+    CodeFail:
+      type: object
+      properties:
+        code: { type: integer, example: 400 }
+        message: { type: string }
+    ChatSuccess:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        data:
+          type: object
+          properties:
+            reply: { type: string, description: AI 完整回复文本 }
+            chart_code: { type: string, description: 提取出的 PGFPlots 代码 }
+            usage:
+              type: object
+              description: 模型 usage（total_tokens 等，不同模型字段略异）
+            dataset_count: { type: integer }
+            history_id: { type: integer, nullable: true }
+            chart_code_length: { type: integer }
+    HistoryRecord:
+      type: object
+      description: 历史记录条目（历史页返回字段）
+      properties:
+        id: { type: integer }
+        history_id: { type: integer }
+        user_id: { type: integer }
+        data_id: { type: integer, nullable: true }
+        description: { type: string }
+        chart_code: { type: string }
+        generation_path: { type: string, nullable: true }
+        file_name: { type: string }
+        created_at: { type: string }
+    DataFile:
+      type: object
+      description: 数据集条目（列表/上传返回字段）
+      properties:
+        data_id: { type: integer }
+        user_id: { type: integer }
+        data_name: { type: string }
+        data_size: { type: integer }
+        size: { type: string, description: 格式化后的可读大小 }
+        description: { type: string, nullable: true }
+        upload_time: { type: string }
+        update_time: { type: string }
+        file_name: { type: string }
+        file_path: { type: string }
+        mimetype: { type: string }
+    ConversationItem:
+      type: object
+      properties:
+        conversation_id: { type: integer }
+        title: { type: string }
+        message_count: { type: integer }
+        last_message: { type: string }
+        created_at: { type: string }
+        updated_at: { type: string }
+    ConversationMessage:
+      type: object
+      properties:
+        message_id: { type: integer }
+        role: { type: string, enum: [user, assistant] }
+        content: { type: string, nullable: true }
+        chart_code: { type: string, nullable: true }
+        history_id: { type: integer, nullable: true }
+        selected_files: { type: string, nullable: true, description: 数据集快照 JSON 字符串 }
+        created_at: { type: string }
+    FeedbackItem:
+      type: object
+      description: 反馈条目（管理员列表额外含 username）
+      properties:
+        feedback_id: { type: integer }
+        user_id: { type: integer }
+        username: { type: string, description: 管理员视角返回 }
+        type: { type: string, enum: [suggestion, ui, bug, other] }
+        content: { type: string }
+        answer: { type: string, nullable: true }
+        status: { type: string, description: 用户视角：已回复/待回复 }
+        feedback_time: { type: string }
+        answer_time: { type: string, nullable: true }
+    FeedbackListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string }
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/FeedbackItem" }
+        pagination:
+          type: object
+          properties:
+            page: { type: integer }
+            limit: { type: integer }
+            total: { type: integer }
+            pages: { type: integer }
+    NoticeItem:
+      type: object
+      properties:
+        id: { type: integer }
+        type: { type: string, enum: [system, feedback] }
+        title: { type: string }
+        content: { type: string }
+        time: { type: string }
+        isRead: { type: boolean }
+        feedbackTime: { type: string, nullable: true }
+        feedbackType: { type: string, nullable: true }
+        reply: { type: string, nullable: true }
