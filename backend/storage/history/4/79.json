@@ -1,0 +1,18 @@
+{
+  "history_id": 79,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "生成高考人数变化取数折线图",
+  "ai_response": "\n\n```latex\n\\documentclass[tikz,border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{ctex}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    title={\\textbf{2017-2024年中国高考报名人数变化趋势}},\n    xlabel={年份},\n    ylabel={报名人数（万人）},\n    xmin=2016.5, xmax=2024.5,\n    ymin=900, ymax=1400,\n    xtick={2017,2018,2019,2020,2021,2022,2023,2024},\n    xticklabels={2017,2018,2019,2020,2021,2022,2023,2024},\n    ytick={900,1000,1100,1200,1300,1400},\n    grid=both,\n    grid style={dashed, gray!30},\n    legend style={\n        at={(1.03,0.5)}, \n        anchor=west, \n        draw=black, \n        fill=white,\n        font=\\small\n    },\n    nodes near coords style={font=\\tiny, anchor=south},\n    every axis plot/.append style={line width=2pt},\n    axis line style={black},\n]\n\n% 高考报名人数数据\n\\addplot+[\n    mark=*,\n    mark options={scale=1.5},\n    mark size=3pt,\n    color=blue!60!black,\n    nodes near coords,\n    point meta=explicit symbolic\n] \ncoordinates {\n    (2017,940) [940万]\n    (2018,975) [975万]\n    (2019,1031) [1031万]\n    (2020,1071) [1071万]\n    (2021,1078) [1078万]\n    (2022,1193) [1193万]\n    (2023,1291) [1291万]\n    (2024,1342) [1342万]\n};\n\n\\legend{高考报名人数}\n\n% 数据来源注记（写在axis内部）\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.12) {数据来源：教育部及各省教育考试院公开数据};\n\n% 趋势说明\n\\node[anchor=north east, font=\\scriptsize] at (axis description cs:1.0,-0.12) {数据来源说明：2017-2024年};\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```\n\n该代码生成了2017-2024年中国高考报名人数变化的折线图，包含以下特点：\n\n1. **图例位置**：位于图表外右侧，避免遮挡数据点\n2. **数据标注**：每个数据点显示具体数值\n3. **数据来源**：在坐标轴下方标注数据来源\n4. **视觉效果**：使用网格线、清晰的颜色、合适的坐标范围\n\n编译后即可得到完整的趋势图表。",
+  "chart_code": "\\documentclass[tikz,border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{ctex}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    title={\\textbf{2017-2024年中国高考报名人数变化趋势}},\n    xlabel={年份},\n    ylabel={报名人数（万人）},\n    xmin=2016.5, xmax=2024.5,\n    ymin=900, ymax=1400,\n    xtick={2017,2018,2019,2020,2021,2022,2023,2024},\n    xticklabels={2017,2018,2019,2020,2021,2022,2023,2024},\n    ytick={900,1000,1100,1200,1300,1400},\n    grid=both,\n    grid style={dashed, gray!30},\n    legend style={\n        at={(1.03,0.5)}, \n        anchor=west, \n        draw=black, \n        fill=white,\n        font=\\small\n    },\n    nodes near coords style={font=\\tiny, anchor=south},\n    every axis plot/.append style={line width=2pt},\n    axis line style={black},\n]\n\n% 高考报名人数数据\n\\addplot+[\n    mark=*,\n    mark options={scale=1.5},\n    mark size=3pt,\n    color=blue!60!black,\n    nodes near coords,\n    point meta=explicit symbolic\n] \ncoordinates {\n    (2017,940) [940万]\n    (2018,975) [975万]\n    (2019,1031) [1031万]\n    (2020,1071) [1071万]\n    (2021,1078) [1078万]\n    (2022,1193) [1193万]\n    (2023,1291) [1291万]\n    (2024,1342) [1342万]\n};\n\n\\legend{高考报名人数}\n\n% 数据来源注记（写在axis内部）\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.12) {数据来源：教育部及各省教育考试院公开数据};\n\n% 趋势说明\n\\node[anchor=north east, font=\\scriptsize] at (axis description cs:1.0,-0.12) {数据来源说明：2017-2024年};\n\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": " 生成高考人数变化取数折线图",
+  "created_at": "2026-09-05T12:01:04.670Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 1477,
+    "code_source": "from_request"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "history_id": 69,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型是什么",
+  "ai_response": "\n\n```latex\n% 说明：此代码块仅用于回答模型身份问题，实际图表生成需用户提供具体数据\n\\begin{center}\n\\textbf{关于模型身份} \\\\\n我是通义千问系列中的 \\textbf{Qwen3.5}，由通义实验室开发。  \n支持复杂任务处理、多语言交互及专业领域分析。  \n如需生成图表，请提供具体数据或明确需求。\n\\end{center}\n```",
+  "chart_code": "% 说明：此代码块仅用于回答模型身份问题，实际图表生成需用户提供具体数据\n\\begin{center}\n\\textbf{关于模型身份} \\\\\n我是通义千问系列中的 \\textbf{Qwen3.5}，由通义实验室开发。  \n支持复杂任务处理、多语言交互及专业领域分析。  \n如需生成图表，请提供具体数据或明确需求。\n\\end{center}",
+  "generation_description": " 你的模型是什么",
+  "created_at": "2026-09-05T11:18:26.148Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 169,
+    "code_source": "from_request"
+  }
+}

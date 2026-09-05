@@ -1,0 +1,18 @@
+{
+  "history_id": 81,
+  "user_id": 1,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "请绘制近五年中国出生人口柱状图",
+  "ai_response": "\n\n```latex\n\\documentclass{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=7cm,\n    ybar,\n    bar width=35pt,\n    ymin=700, ymax=1300,\n    xmin=2019.5, xmax=2024.5,\n    xtick={2020,2021,2022,2023,2024},\n    xticklabels={2020,2021,2022,2023,2024},\n    ylabel={出生人口（万人）},\n    xlabel={年份},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    nodes near coords,\n    nodes near coords align={vertical},\n    nodes near coords style={font=\\small},\n    every axis y label/.style={at={(current axis.above origin)},anchor=south},\n    every axis x label/.style={at={(current axis.right of origin)},anchor=west},\n]\n\\addplot[fill=steelblue, draw=black] coordinates {\n    (2020,1200)\n    (2021,1062)\n    (2022,956)\n    (2023,902)\n    (2024,850)\n};\n\\legend{出生人口}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```\n\n**代码说明：**\n\n| 规则项 | 实现方式 |\n|--------|----------|\n| 图例位置 | 外置右侧 `at={(1.03,0.5)}`，不遮挡数据 |\n| 单位统一 | ylabel与data均使用「万人」，ymin/ymax匹配 |\n| 数值标注 | `nodes near coords` 显示每根柱子的具体数值 |\n| 数据来源 | 写在axis内部，坐标使用`axis description cs` |\n| 无浮动体 | 使用standalone文档类，无figure环境 |\n\n**数据说明：**\n- 2020-2023年数据来自国家统计局官方公布值\n- 2024年为初步预估数据（国家统计局尚未最终公布）",
+  "chart_code": "\\documentclass{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=7cm,\n    ybar,\n    bar width=35pt,\n    ymin=700, ymax=1300,\n    xmin=2019.5, xmax=2024.5,\n    xtick={2020,2021,2022,2023,2024},\n    xticklabels={2020,2021,2022,2023,2024},\n    ylabel={出生人口（万人）},\n    xlabel={年份},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    nodes near coords,\n    nodes near coords align={vertical},\n    nodes near coords style={font=\\small},\n    every axis y label/.style={at={(current axis.above origin)},anchor=south},\n    every axis x label/.style={at={(current axis.right of origin)},anchor=west},\n]\n\\addplot[fill=steelblue, draw=black] coordinates {\n    (2020,1200)\n    (2021,1062)\n    (2022,956)\n    (2023,902)\n    (2024,850)\n};\n\\legend{出生人口}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 请绘制近五年中国出生人口柱状图",
+  "created_at": "2026-09-05T12:37:45.322Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 989,
+    "code_source": "from_request"
+  }
+}

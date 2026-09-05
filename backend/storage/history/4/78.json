@@ -1,0 +1,18 @@
+{
+  "history_id": 78,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "折线图",
+  "ai_response": "\n\n```latex\n\\documentclass[tikz, border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7cm,\n    title={\\textbf{中国近五年出生人口变化趋势}},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    xtick={2019,2020,2021,2022,2023},\n    xticklabels={2019,2020,2021,2022,2023},\n    grid=major,\n    grid style={dashed, gray!30},\n    ymin=800,\n    ymax=1200,\n    legend style={\n        at={(1.03,0.5)},\n        anchor=west,\n        draw=black,\n        fill=white,\n        font=\\small\n    },\n    nodes near coords={\\pgfmathprintnumber\\pgfplotspointmeta},\n    nodes near coords align={above},\n    every node near coord/.append style={font=\\scriptsize},\n    mark size=4pt,\n    mark options={solid},\n]\n\\addplot[\n    color=blue,\n    mark=*,\n    line width=1.5pt,\n]\ncoordinates {\n    (2019, 1062)\n    (2020, 956)\n    (2021, 950)\n    (2022, 956)\n    (2023, 902)\n};\n\\addlegendentry{出生人口}\n\\addplot[\n    color=red,\n    mark=*,\n    line width=1.5pt,\n    dashed\n]\ncoordinates {\n    (2019, 1100)\n    (2020, 1050)\n    (2021, 1000)\n    (2022, 950)\n    (2023, 900)\n};\n\\addlegendentry{预测值}\n\\node[anchor=north west, font=\\small] at (axis description cs:0.0,-0.15) {数据来源：国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```\n\n**说明：**\n- 图表展示了2019-2023年中国出生人口的实际数据与预测趋势对比\n- 图例置于图表外右侧，避免遮挡数据点\n- 每个数据点均标注具体数值\n- 数据来源注记位于图表底部内部\n- 使用蓝色实线表示实际数据，红色虚线表示预测趋势",
+  "chart_code": "\\documentclass[tikz, border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7cm,\n    title={\\textbf{中国近五年出生人口变化趋势}},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    xtick={2019,2020,2021,2022,2023},\n    xticklabels={2019,2020,2021,2022,2023},\n    grid=major,\n    grid style={dashed, gray!30},\n    ymin=800,\n    ymax=1200,\n    legend style={\n        at={(1.03,0.5)},\n        anchor=west,\n        draw=black,\n        fill=white,\n        font=\\small\n    },\n    nodes near coords={\\pgfmathprintnumber\\pgfplotspointmeta},\n    nodes near coords align={above},\n    every node near coord/.append style={font=\\scriptsize},\n    mark size=4pt,\n    mark options={solid},\n]\n\\addplot[\n    color=blue,\n    mark=*,\n    line width=1.5pt,\n]\ncoordinates {\n    (2019, 1062)\n    (2020, 956)\n    (2021, 950)\n    (2022, 956)\n    (2023, 902)\n};\n\\addlegendentry{出生人口}\n\\addplot[\n    color=red,\n    mark=*,\n    line width=1.5pt,\n    dashed\n]\ncoordinates {\n    (2019, 1100)\n    (2020, 1050)\n    (2021, 1000)\n    (2022, 950)\n    (2023, 900)\n};\n\\addlegendentry{预测值}\n\\node[anchor=north west, font=\\small] at (axis description cs:0.0,-0.15) {数据来源：国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": " 折线图",
+  "created_at": "2026-09-05T11:57:51.542Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 1261,
+    "code_source": "from_request"
+  }
+}

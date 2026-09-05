@@ -1,0 +1,18 @@
+{
+  "history_id": 68,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型是什么",
+  "ai_response": "我是 DeepSeek 最新版模型，由深度求索公司（DeepSeek）开发。我是一个纯文本模型，支持处理你上传的图像、PDF、Word、Excel 等文件（从中读取文字信息），但不支持多模态识别（比如看懂图片内容本身）。\n\n如果你问的是具体版本号，建议你查阅 DeepSeek 官方文档或公告，那里会有最新的版本说明。\n\n有什么图表生成或数据分析需求，随时告诉我就好。",
+  "chart_code": "",
+  "generation_description": " 你的模型是什么",
+  "created_at": "2026-09-05T11:15:46.033Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": false,
+    "code_length": 0,
+    "code_source": "extracted_from_response"
+  }
+}

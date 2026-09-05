@@ -1,0 +1,18 @@
+{
+  "history_id": 90,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "折线图",
+  "ai_response": "```latex\n\\documentclass[tikz,border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.16}\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={2019--2023年中国出生人口变化},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    xmin=2018.5, xmax=2023.5,\n    ymin=800, ymax=1600,\n    xtick={2019,2020,2021,2022,2023},\n    ytick={800,1000,1200,1400,1600},\n    grid=both,\n    grid style={gray!30},\n    every axis plot/.append style={line width=1.2pt},\n    mark options={scale=1.2},\n    mark=*,\n    nodes near coords,\n    nodes near coords style={\n        font=\\small,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south,\n        yshift=2pt\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n]\n\\addplot coordinates {\n    (2019,1465)\n    (2020,1200)\n    (2021,1062)\n    (2022,956)\n    (2023,902)\n};\n\\addlegendentry{出生人口}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.16) {数据来源：国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```",
+  "chart_code": "\\documentclass[tikz,border=5pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.16}\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={2019--2023年中国出生人口变化},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    xmin=2018.5, xmax=2023.5,\n    ymin=800, ymax=1600,\n    xtick={2019,2020,2021,2022,2023},\n    ytick={800,1000,1200,1400,1600},\n    grid=both,\n    grid style={gray!30},\n    every axis plot/.append style={line width=1.2pt},\n    mark options={scale=1.2},\n    mark=*,\n    nodes near coords,\n    nodes near coords style={\n        font=\\small,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south,\n        yshift=2pt\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n]\n\\addplot coordinates {\n    (2019,1465)\n    (2020,1200)\n    (2021,1062)\n    (2022,956)\n    (2023,902)\n};\n\\addlegendentry{出生人口}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.16) {数据来源：国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 折线图",
+  "created_at": "2026-09-05T13:11:24.830Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 1002,
+    "code_source": "from_request"
+  }
+}

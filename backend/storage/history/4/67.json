@@ -1,0 +1,18 @@
+{
+  "history_id": 67,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你使用的模型是什么",
+  "ai_response": "我使用的是基于 GPT 架构的大语言模型，由 OpenAI 提供。  \n\n不过，在这个对话环境中，我被配置为专门生成 LaTeX PGFPlots 图表代码的助手。如果你需要基于真实统计数据生成图表，可以告诉我具体的主题（如人口、GDP、气温等），我会使用公开权威数据来生成带年份标注的真实图表代码。是否需要我绘制某类图表？",
+  "chart_code": "",
+  "generation_description": " 你使用的模型是什么",
+  "created_at": "2026-09-05T11:15:23.954Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": false,
+    "code_length": 0,
+    "code_source": "extracted_from_response"
+  }
+}

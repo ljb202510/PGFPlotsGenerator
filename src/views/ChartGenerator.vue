@@ -282,7 +282,7 @@
               size="small"
             >
               <el-icon><Switch /></el-icon>
-              当前模型：{{ currentModel === 'deepseek' ? 'deepseek-v4-flash' : 'Qwen3.5' }}
+              当前模型：{{ currentModel === 'deepseek' ? 'Deepseek-V4-Flash' : 'Qwen3.5' }}
             </el-button>
           </div>
         </div>

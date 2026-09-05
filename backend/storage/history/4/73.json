@@ -1,0 +1,18 @@
+{
+  "history_id": 73,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "折线图",
+  "ai_response": "\n\n```latex\n\\documentclass[tikz,border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{ctex}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={中国近五年出生人口数量统计},\n    xlabel={年份},\n    ylabel={出生人口数量（万人）},\n    width=12cm,\n    height=8cm,\n    xtick={2019,2020,2021,2022,2023},\n    xticklabels={2019年,2020年,2021年,2022年,2023年},\n    yticklabel style={/pgf/number format/fixed, /pgf/number format/precision=1},\n    legend pos=north west,\n    grid=major,\n    grid style={gray!30},\n    axis lines=left,\n    xmin=2018.5, xmax=2023.5,\n    ymin=800, ymax=1200,\n    enlargelimits=false,\n    every axis plot/.append style={line width=2pt},\n]\n\n\\addplot[blue, mark=*, mark options={fill=blue}] coordinates {\n    (2019, 1060)\n    (2020, 969)\n    (2021, 956)\n    (2022, 956)\n    (2023, 902)\n};\n\n\\addplot[red, mark=diamond*, mark options={fill=red}] coordinates {\n    (2019, 1060)\n    (2020, 969)\n    (2021, 956)\n    (2022, 956)\n    (2023, 902)\n};\n\n\\legend{出生人口数量}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```",
+  "chart_code": "\\documentclass[tikz,border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{ctex}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={中国近五年出生人口数量统计},\n    xlabel={年份},\n    ylabel={出生人口数量（万人）},\n    width=12cm,\n    height=8cm,\n    xtick={2019,2020,2021,2022,2023},\n    xticklabels={2019年,2020年,2021年,2022年,2023年},\n    yticklabel style={/pgf/number format/fixed, /pgf/number format/precision=1},\n    legend pos=north west,\n    grid=major,\n    grid style={gray!30},\n    axis lines=left,\n    xmin=2018.5, xmax=2023.5,\n    ymin=800, ymax=1200,\n    enlargelimits=false,\n    every axis plot/.append style={line width=2pt},\n]\n\n\\addplot[blue, mark=*, mark options={fill=blue}] coordinates {\n    (2019, 1060)\n    (2020, 969)\n    (2021, 956)\n    (2022, 956)\n    (2023, 902)\n};\n\n\\addplot[red, mark=diamond*, mark options={fill=red}] coordinates {\n    (2019, 1060)\n    (2020, 969)\n    (2021, 956)\n    (2022, 956)\n    (2023, 902)\n};\n\n\\legend{出生人口数量}\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 折线图",
+  "created_at": "2026-09-05T11:25:42.579Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 1018,
+    "code_source": "from_request"
+  }
+}

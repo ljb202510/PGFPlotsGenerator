@@ -1,0 +1,18 @@
+{
+  "history_id": 83,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "请基于我上传的数据绘制柱状图，比较各类别的数值大小；添加图表标题、坐标轴标签（含单位）与数值标注，使用清晰的配色并加上图例。",
+  "ai_response": "\n\n```latex\n\\documentclass[border=5mm]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    bar width=18pt,\n    width=11cm,\n    height=7cm,\n    enlarge x limits=0.2,\n    symbolic x coords={2019, 2020, 2021, 2022, 2023},\n    xtick=data,\n    ylabel={出生人口（万人）},\n    ymin=0,\n    ymax=1600,\n    nodes near coords,\n    nodes near coords align={vertical},\n    nodes near coords style={font=\\footnotesize, /pgf/number format/.cd, fixed, precision=0},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white, font=\\small},\n    title={中国近年出生人口统计（2019-2023 年）},\n    title style={at={(0.5,1.05)}, anchor=south, font=\\bfseries\\small},\n    xticklabel style={font=\\small},\n    ylabel style={font=\\small},\n    xlabel={年份},\n    xlabel style={at={(0.5,-0.15)}, anchor=north},\n]\n\\addplot[fill=steelblue, draw=black] coordinates {\n    (2019, 1465)\n    (2020, 1200)\n    (2021, 1062)\n    (2022, 956)\n    (2023, 902)\n};\n\\addlegendentry{出生人口};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```",
+  "chart_code": "\\documentclass[border=5mm]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    bar width=18pt,\n    width=11cm,\n    height=7cm,\n    enlarge x limits=0.2,\n    symbolic x coords={2019, 2020, 2021, 2022, 2023},\n    xtick=data,\n    ylabel={出生人口（万人）},\n    ymin=0,\n    ymax=1600,\n    nodes near coords,\n    nodes near coords align={vertical},\n    nodes near coords style={font=\\footnotesize, /pgf/number format/.cd, fixed, precision=0},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white, font=\\small},\n    title={中国近年出生人口统计（2019-2023 年）},\n    title style={at={(0.5,1.05)}, anchor=south, font=\\bfseries\\small},\n    xticklabel style={font=\\small},\n    ylabel style={font=\\small},\n    xlabel={年份},\n    xlabel style={at={(0.5,-0.15)}, anchor=north},\n]\n\\addplot[fill=steelblue, draw=black] coordinates {\n    (2019, 1465)\n    (2020, 1200)\n    (2021, 1062)\n    (2022, 956)\n    (2023, 902)\n};\n\\addlegendentry{出生人口};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 请基于我上传的数据绘制柱状图，比较各类别的数值大小；添加图表标题、坐标轴标签（含单位）与数值标注，使用清晰的配色并加上图例。",
+  "created_at": "2026-09-05T12:42:02.816Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 1130,
+    "code_source": "from_request"
+  }
+}

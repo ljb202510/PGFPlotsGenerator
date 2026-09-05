@@ -1,0 +1,18 @@
+{
+  "history_id": 76,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "折线图",
+  "ai_response": "\n\n```latex\n\\documentclass{article}\n\\usepackage{pgfplots}\n\\usepackage{ctex} % 支持中文\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={中国近年出生人口变化趋势},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    xmin=2017, xmax=2024,\n    ymin=0, ymax=1600,\n    xtick={2018,2019,2020,2021,2022,2023},\n    grid=none,\n    width=12cm,\n    height=7cm,\n    % 规则1：图例放在图表外右侧\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white, font=\\small},\n    % 规则3：数据点标记与数值标注成对出现\n    mark=*,\n    mark size=3pt,\n    nodes near coords,\n    every node near coord/.style={\n        font=\\tiny,\n        anchor=south,\n        fill=white,\n        inner sep=1pt\n    }\n]\n\\addplot[\n    color=blue,\n    thick,\n    % 数据来源：国家统计局 (2018-2023 年)\n] coordinates {\n    (2018, 1523)\n    (2019, 1465)\n    (2020, 1200)\n    (2021, 1062)\n    (2022, 956)\n    (2023, 902)\n};\n\\legend{全国出生人口}\n\n% 规则2：数据来源等注记一律写在 axis 内部\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}\n```",
+  "chart_code": "\\documentclass{article}\n\\usepackage{pgfplots}\n\\usepackage{ctex} % 支持中文\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={中国近年出生人口变化趋势},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    xmin=2017, xmax=2024,\n    ymin=0, ymax=1600,\n    xtick={2018,2019,2020,2021,2022,2023},\n    grid=none,\n    width=12cm,\n    height=7cm,\n    % 规则1：图例放在图表外右侧\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white, font=\\small},\n    % 规则3：数据点标记与数值标注成对出现\n    mark=*,\n    mark size=3pt,\n    nodes near coords,\n    every node near coord/.style={\n        font=\\tiny,\n        anchor=south,\n        fill=white,\n        inner sep=1pt\n    }\n]\n\\addplot[\n    color=blue,\n    thick,\n    % 数据来源：国家统计局 (2018-2023 年)\n] coordinates {\n    (2018, 1523)\n    (2019, 1465)\n    (2020, 1200)\n    (2021, 1062)\n    (2022, 956)\n    (2023, 902)\n};\n\\legend{全国出生人口}\n\n% 规则2：数据来源等注记一律写在 axis 内部\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\n\\end{document}",
+  "generation_description": " 折线图",
+  "created_at": "2026-09-05T11:53:42.301Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 1033,
+    "code_source": "from_request"
+  }
+}

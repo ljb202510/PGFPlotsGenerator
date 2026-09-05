@@ -1,0 +1,18 @@
+{
+  "history_id": 82,
+  "user_id": 1,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "请绘制近五年中国出生人口柱状图",
+  "ai_response": "\n\n```latex\n\\documentclass{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=7cm,\n    ybar,\n    bar width=25pt,\n    enlarge x limits=0.15,\n    ymin=800,\n    ymax=1500,\n    ylabel={出生人口（万人）},\n    xlabel={年份},\n    symbolic x coords={2019, 2020, 2021, 2022, 2023},\n    xtick=data,\n    nodes near coords,\n    nodes near coords style={anchor=south, font=\\small},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white, legend columns=1},\n    legend to name=chart_legend, % 虽然不使用外部引用，但设置样式以符合规范\n    % 注：根据规则 1，图例必须放在外右侧或右下，此处使用外右侧\n]\n\\addplot[fill=blue!70, draw=black] coordinates {\n    (2019, 1465)\n    (2020, 1200)\n    (2021, 1062)\n    (2022, 956)\n    (2023, 902)\n};\n\\addlegendentry{出生人口}\n\\node[anchor=north west, font=\\tiny] at (axis description cs:0.01,0.01) {数据来源：国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```",
+  "chart_code": "\\documentclass{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=7cm,\n    ybar,\n    bar width=25pt,\n    enlarge x limits=0.15,\n    ymin=800,\n    ymax=1500,\n    ylabel={出生人口（万人）},\n    xlabel={年份},\n    symbolic x coords={2019, 2020, 2021, 2022, 2023},\n    xtick=data,\n    nodes near coords,\n    nodes near coords style={anchor=south, font=\\small},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white, legend columns=1},\n    legend to name=chart_legend, % 虽然不使用外部引用，但设置样式以符合规范\n    % 注：根据规则 1，图例必须放在外右侧或右下，此处使用外右侧\n]\n\\addplot[fill=blue!70, draw=black] coordinates {\n    (2019, 1465)\n    (2020, 1200)\n    (2021, 1062)\n    (2022, 956)\n    (2023, 902)\n};\n\\addlegendentry{出生人口}\n\\node[anchor=north west, font=\\tiny] at (axis description cs:0.01,0.01) {数据来源：国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 请绘制近五年中国出生人口柱状图",
+  "created_at": "2026-09-05T12:38:47.346Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 906,
+    "code_source": "from_request"
+  }
+}

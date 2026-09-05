@@ -1,0 +1,18 @@
+{
+  "history_id": 71,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型是什么",
+  "ai_response": "\n\n我是 Qwen3.5，阿里巴巴最新推出的通义千问大语言模型。我具备强大的逻辑推理、代码生成、长上下文处理及多模态分析能力，能够协助您完成各类任务。如果您有具体问题或需要帮助，欢迎随时告诉我！ 😊",
+  "chart_code": "",
+  "generation_description": " 你的模型是什么",
+  "created_at": "2026-09-05T11:18:44.981Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": false,
+    "code_length": 0,
+    "code_source": "extracted_from_response"
+  }
+}

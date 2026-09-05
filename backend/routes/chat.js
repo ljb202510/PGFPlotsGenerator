@@ -102,6 +102,39 @@ const buildMessagesWithDataset = async (userMessage, dataIds, userId) => {
 
 请根据用户的描述和上传的数据文件，生成相应的图表代码。
 
+【图表渲染规则】（除非用户消息中明确指定了具体数值/颜色/位置，否则必须遵守）
+1. 禁止图例出现在数据上方：
+   - 不要使用 legend pos=north west 或 legend pos=north east（左上/右上会遮挡最高点数据）；
+   - 默认改为图例放在图表外右侧：
+     legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},
+   - 若无法外置，则放 axis 内右下角，并给图例加白色不透明背景：
+     legend style={at={(0.98,0.02)}, anchor=south east, draw=black, fill=white},
+2. 禁止在 axis 外添加任何文字：
+   - 不要使用 \\node at (current bounding box.*)（该写法在部分编译器下会漂移到图外）；
+   - axis description cs 坐标系只能在 \\begin{axis} 与 \\end{axis} 之间使用；数据来源等注记节点必须写在 \\end{axis} 之前，写在 \\end{axis} 之后会因坐标系不存在导致编译失败；
+   - 数据来源等注记一律写在 axis 内部（\\end{axis} 之前），例如：
+     \\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：×××};
+3. 数据点标记与数值标注成对出现：
+   - 若图中有 mark=* 等数据点标记，必须同时加 nodes near coords 显示数值；
+   - 若坐标过多（>12 个点），可改为每 n 个显示一个数值，并在代码注释中说明。
+   - 数值标注节点必须无边框无底色：在 axis 中显式使用 nodes near coords style={font=\\small, fill=none, draw=none, inner sep=1pt, anchor=south}，让标注只显示纯文本、贴在数据点正上方且不出现矩形边框与 mark 重合而遮挡；禁止只写 nodes near coords 却用默认节点样式——默认会带可见矩形框并与 mark 半圆/星等标记叠在一起。
+4. 数值与坐标轴范围必须单位一致、量级一致：
+   - ylabel 标注了缩略单位（如（万人）、（亿元））时，\\addplot 的 data 坐标值以及 ymin、ymax 必须全部使用同一缩略单位标度；
+   - 正确示例：ylabel={出生人口（万人）} 时写 coordinates {(2019,1000)}，并配 ymin=800、ymax=1200；
+   - 禁止示例：data 写 1000（万人）却设 ymin=8000000、ymax=12000000（按「人」计）——混用单位会使所有柱子低于 ymin 而不可见，编译出空图；
+   - 原始数值较大（100000 及以上）时，先除以 10000 换算成「万」级，再写入 data 与 ymin/ymax，并在 ylabel 中标注对应单位。
+5. 数据不含误差/区间时不启用 error bars：
+   - 禁止仅凭 (x, y) 坐标就在 \\addplot 中使用 error bars/.cd、y dir=both、y explicit 等参数；
+   - y explicit 要求坐标为 (x, y, 误差) 三元组，缺少误差列会导致 pgfplots 编译失败或整图空白；
+   - 普通柱状图/折线图应使用默认 ybar/fill/mark 绘制；仅当数据集真实包含误差列时才启用误差线。
+6. 输出只保留单个 tikzpicture/axis，禁止浮动体与交叉引用：
+   - 禁止出现 \\begin{figure}、\\end{figure}、\\caption{}、\\ref{}；
+   - 服务端统一使用 standalone 文档类编译，figure 浮动体与 \\ref 交叉引用不生效（\\ref 会显示 ??）；
+   - 图例必须按规则 1 就地显示（legend style 外置右侧或 axis 内右下加白底），禁止 legend to name=... 暂存后另处引用（无人引用时图例不显示）。
+7. 如果用户消息明确给出了颜色、字体、图表类型等，一律以用户指定为准，并覆盖上述默认值。
+
+
+
 如果用户上传的是Excel文件，我会将文件内容解析为表格格式提供给你。你需要：
 1. 分析数据结构和内容
 2. 根据数据特点生成合适的图表
