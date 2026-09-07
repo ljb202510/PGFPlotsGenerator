@@ -66,7 +66,7 @@
           id="password"
           v-model="form.password"
           type="text"
-        placeholder="字母或数字，长度1-8位"
+        placeholder="字母或数字，长度6-16位"
         autocomplete="new-password"
           required
           :class="{ 
@@ -84,7 +84,7 @@
         </button>
       </div>
       <span v-if="errors.password" class="error-text">{{ errors.password }}</span>
-      <span class="hint-text">密码只能包含字母和数字，长度 1-8 位</span>
+      <span class="hint-text">密码只能包含字母和数字，长度 6-16 位</span>
     </div>
 
     <div class="form-group">
@@ -308,12 +308,12 @@ export default {
         this.errors.verificationCode = '验证码必须是6位数字'
       }
 
-      // 密码验证（仅字母和数字，长度 1-8 位）
-      const passwordRegex = /^[a-zA-Z0-9]{1,8}$/;
+      // 密码验证（仅字母和数字，长度 6-16 位）
+      const passwordRegex = /^[a-zA-Z0-9]{6,16}$/;
       if (!this.form.password) {
         this.errors.password = '密码不能为空'
       } else if (!passwordRegex.test(this.form.password)) {
-        this.errors.password = '密码只能包含字母和数字，长度 1-8 位'
+        this.errors.password = '密码只能包含字母和数字，长度 6-16 位'
       }
 
       // 确认密码验证

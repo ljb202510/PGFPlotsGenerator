@@ -436,6 +436,7 @@ import CodeBlock from '@/components/ui/CodeBlock.vue'
 
 // API配置
 import { API_BASE_URL } from '@/config';
+import { fetchPdfBlobUrl } from '@/utils/pdf';
 
 // 获取token
 const getAuthToken = () => {
@@ -983,17 +984,18 @@ const compileToPDF = async (message) => {
       return
     }
     
-    const response = await axios.post(`${API_BASE_URL}/api/compile/${message.historyId}`, {}, {
+    await axios.post(`${API_BASE_URL}/api/compile/${message.historyId}`, {}, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     })
     
-    const pdfUrl = response.data.data.pdf_url
-    
     ElMessage.success('PDF生成成功！')
-    await showPdfPreview(pdfUrl)
-    
+
+    // 通过鉴权接口获取 PDF Blob 并预览
+    const blobUrl = await fetchPdfBlobUrl(message.historyId, token)
+    await showPdfPreview(blobUrl)
+
   } catch (error) {
     console.error('编译失败:', error)
     
@@ -1010,20 +1012,10 @@ const compileToPDF = async (message) => {
   }
 }
 
-// 浏览器显示PDF预览
-const showPdfPreview = async (pdfUrl) => {
-  try {
-    let fullPdfUrl = pdfUrl
-    if (!pdfUrl.startsWith('http')) {
-      fullPdfUrl = `${API_BASE_URL}${pdfUrl}`
-    }
-    
-    currentPdfUrl.value = fullPdfUrl
-    pdfDialogVisible.value = true
-    
-  } catch (error) {
-    console.error('显示PDF预览失败:', error)
-  }
+// 显示PDF预览（Blob URL，关闭时由 cleanupPdfUrl 回收）
+const showPdfPreview = async (blobUrl) => {
+  currentPdfUrl.value = blobUrl
+  pdfDialogVisible.value = true
 }
 
 // 清理PDF URL

@@ -61,9 +61,9 @@ cd hello/backend
 cp .env.example .env     # 模板键位与本文件一致，值是占位符
 ```
 
-按模板逐项填写：`JWT_SECRET`、`SMTP_USER/PASS/FROM`、`DEEPSEEK_API_KEY/URL`、`NSCC_API_KEY/URL`。键的用途与读取模块见 `.env.example` 内注释。
+按模板逐项填写：`JWT_SECRET`、`DB_HOST/DB_USER/DB_PASSWORD/DB_NAME`、`SMTP_USER/PASS/FROM`、`DEEPSEEK_API_KEY/URL`、`NSCC_API_KEY/URL`。键的用途与读取模块见 `.env.example` 内注释。
 
-> 数据库相关 `DB_*` 目前是占位备用——后端实际读 `db.js` 硬编码连接（见 2.6），改库凭据必须同步改 `db.js`。
+> 数据库 `DB_*` 由 `backend/db.js` 读取（缺省回退 `localhost/root/000/X`），服务器部署请直接在 `.env` 填线上真实凭据，无需改代码。
 
 ### 2.5 初始化数据库（库名 `X`）
 
@@ -80,15 +80,11 @@ node migrations/001_conversations.js     # 建 conversations / conversation_mess
 
 > 部署常踩坑（log.md）：`1.sql` 首行是 `DROP DATABASE IF EXISTS X;`，会**清空重建**，切勿在生产已有数据时直接执行；建议导出为纯建表语句或先备份。
 
-### 2.6 同步 db.js 数据库凭据
+### 2.6 配置数据库凭据
 
-`hello/backend/db.js` 顶部硬编码：
+`backend/db.js` 读取环境变量 `DB_HOST/DB_USER/DB_PASSWORD/DB_NAME`，未设置时回退本地默认 `localhost/root/000/X`。
 
-```js
-host: 'localhost', user: 'root', password: '000', database: 'X'
-```
-
-服务器上若库名/账号不同，直接改这里（log.md 曾因 db.js 与宝塔建库不一致导致登录后接口 500）。文件底部注释有「服务器版本」示例可参考。
+服务器上若库名/账号不同，在 `backend/.env` 填写对应值即可（log.md 曾因 db.js 与宝塔建库不一致导致登录后接口 500）。
 
 ### 2.7 安装 XeLaTeX（Debian/Ubuntu）
 
@@ -123,7 +119,7 @@ pm2 logs pgfplots-backend    # 查看日志
 
 ### 2.9 nginx 站点配置
 
-前端是 history 路由 SPA，需要把静态 `dist/` + 反向代理 `/api`、`/storage` 到后端，并做刷新回退：
+前端是 history 路由 SPA，需要把静态 `dist/` + 反向代理 `/api` 到后端，并做刷新回退（PDF 走 `/api/compile/:id/pdf`，无需额外 location）：
 
 ```nginx
 server {
@@ -140,11 +136,6 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_read_timeout 90s;           # AI 生成/编译可能较慢
-    }
-
-    # PDF 静态文件（compile 产物）转发后端 /storage
-    location /storage/ {
-        proxy_pass http://127.0.0.1:3000;
     }
 
     # 刷新不 404（history 路由回退到 index.html）
@@ -227,7 +218,7 @@ pm2 restart pgfplots-backend
 |---|---|---|---|
 | 1 | 后端启动报「Cannot find module 'cors'/'multer'」 | `backend/package.json` 未声明这两个运行时依赖，node_modules 不完整 | 本地装好后整体上传 node_modules；或服务器 `npm install` 后确认两包存在 |
 | 2 | 前端部分页面/接口仍连不上后端，报网络错误 | `src/config.js` 里 `API_BASE_URL` 漏改/有的文件仍用反引号拼接不一致 | 全局替换为 `config.js` 统一地址，重新 `npm run build` |
-| 3 | 能登录但业务接口 500「数据库无法连接」 | `db.js` 硬编码凭据与服务器 MySQL 不一致（log.md：需与宝塔数据库统一 + 导入 1.sql） | 改 `db.js` 的 host/user/password/database，重启 pm2 |
+| 3 | 能登录但业务接口 500「数据库无法连接」 | `.env` 中 `DB_*` 与服务器 MySQL 不一致（log.md：需与宝塔数据库统一 + 导入 1.sql） | 在 `backend/.env` 填 host/user/password/database，重启 pm2 |
 | 4 | 删除用户/关联数据报「外键依赖错误」 | `users` 被多表 FK 引用，未按代码级联删除路径操作 | 用 AdminUser 删除接口（代码内级联）；或先清子表 |
 | 5 | 图表编译失败「缺宏包」/某 package not found | XeLaTeX 安装不完整（apt 约 1G 精简版） | 补装 texlive-latex-extra / texlive-fonts-extra / texlive-lang-chinese，或装完整 TeX Live（约 3G） |
 | 6 | 编译后中文不显示/乱码 | Linux 无 `SimSun`/`Times New Roman` 字体 | 装 `fonts-noto-cjk` 或导入字体并改 `compile.js` 的 `\setCJKmainfont`，`fc-cache -f` 后重启 |
@@ -236,8 +227,9 @@ pm2 restart pgfplots-backend
 | 9 | AI 回复为空（空气泡） | 模型空 content：推理/超长提示词耗尽 max_tokens（log.md 2026-09-03） | 已加兜底：Qwen 关闭 thinking + `max_tokens:8192`；空返回会得到 502「AI 返回内容为空」明确错误 |
 | 10 | 邮箱验证码收不到 | SMTP 授权码错误 / 465 端口不通 / 发信被拒 | 核对 `.env` SMTP_*；QQ 邮箱需「授权码」非登录密码；`verificationService.js` 启动时控制台有 `邮件服务已就绪` 提示 |
 | 11 | 上传 >100MB 失败 | multer `limits.fileSize` 100MB（datasets.js:33） | 前端可提示；需放宽则改后端限制并同步 nginx `client_max_body_size` |
-| 12 | 管理员接口可被直接访问 | 四个 `/api/admin/*` 模块未挂 JWT 鉴权中间件（architecture.md §8 事实） | 生产建议补齐服务端鉴权或限制来源 IP/内网访问 |
+| 12 | 管理员接口可被直接访问 | 曾因四个 `/api/admin/*` 模块未挂 JWT 鉴权中间件（2026-09-07 已修复） | 现由 `app.js` 统一挂 `authenticateToken + requireAdmin`；若仍异常先确认已更新至最新代码并重启 pm2 |
 | 13 | `system_log`/`api_log` 无数据 | 仅有 API 失败/异常才写；`AdminLog` 页有「添加测试日志」可验证链路 | 在管理端系统监控点「添加测试日志」再查表 |
+| 14 | 本地启动登录报 `Access denied for user 'root'@'localhost'` | `.env` 中 `DB_*` 是旧模板占位（`your-*`）或与本地库不一致（db.js 自 2026-09-07 起读取 `.env`） | 把 `DB_PASSWORD/DB_NAME` 改为本机真实值（本地默认 `000`/`X`），重启后端 |
 
 ## 6. 上线检查清单（Checklist）
 
@@ -245,11 +237,11 @@ pm2 restart pgfplots-backend
 - [ ] `backend/.env` 全部真实值，`JWT_SECRET` 已改随机
 - [ ] `src/config.js` 指向线上地址并重新 build
 - [ ] 数据库 11 张表齐全（含迁移）
-- [ ] `db.js` 凭据与线上库一致
+- [ ] `backend/.env` 的 `DB_*` 与线上库一致
 - [ ] `xelatex --version` 通过；`fc-list :lang=zh` 有中文字体
 - [ ] pm2 自启已配置（`pm2 save && pm2 startup`）
-- [ ] nginx 已配 `/api`、`/storage` 反代与 `try_files`
+- [ ] nginx 已配 `/api` 反代与 `try_files`
 - [ ] 走完 §2.10 浏览器验证清单
 
 ---
-**文档版本**：1.0　**基准日期**：2026-09-05　**经验来源**：docs/log.md（2025-12 ~ 2026-09 部署记录）
+**文档版本**：1.1　**基准日期**：2026-09-07　**经验来源**：docs/log.md（2025-12 ~ 2026-09 部署记录）

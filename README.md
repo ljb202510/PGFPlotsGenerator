@@ -9,7 +9,7 @@
 - **管理员**：用户管理、系统通知发布、反馈处理、系统日志与 API 统计
 - **核心链路**：`自然语言(±数据集) → AI 生成 LaTeX → XeLaTeX 编译 → PDF 预览/下载`
 
-> **版本**：本文档 v3.0，实证基准 2026-09-05，结论以 `hello/` 下源码为准。
+> **版本**：本文档 v3.1，实证基准 2026-09-07，结论以 `hello/` 下源码为准。
 
 ## 1. 文档导航
 
@@ -61,8 +61,8 @@ hello/
 │   ├── components/          # TheAuth/Login/Register/AdminLogin/CommonNavbar/AdminNavbar/AdminSidebar + ui/（AppCard 等）
 │   └── views/               # ChartGenerator、MyHistory、DataUpload、MyFeedback、MyNotice、ChangeInformation、AdminFeedback/AdminLog/AdminNotice/AdminUser
 └── backend/                 # 后端 Express
-    ├── app.js               # 入口：中间件 + 13 个路由前缀 + /storage 静态（app.js:27-41）
-    ├── db.js                # mysql2/promise 连接池（硬编码 localhost/root/000/X，导出 promisePool）
+    ├── app.js               # 入口：中间件 + 13 个路由前缀（/api/admin/* 统一挂 JWT + 管理员角色鉴权）
+    ├── db.js                # mysql2/promise 连接池（读 .env 的 DB_*，缺省回退 localhost/root/000/X，导出 promisePool）
     ├── .env.example / .env  # 环境变量模板 / 实际配置（勿提交 .env）
     ├── middleware/auth.js   # JWT 校验 authenticateToken
     ├── services/            # 业务服务（verificationService.js 邮件验证码）
@@ -100,6 +100,7 @@ cd ..
 ```bash
 cd backend
 copy .env.example .env        # Windows；Linux/macOS 用 cp。至少填写 JWT_SECRET
+# 若复制的是旧模板：确认 DB_PASSWORD/DB_NAME 不是 your-* 占位符，否则会报 Access denied；本地默认库为 localhost/root/000/X（见 backend/db.js 回退值）
 npm install
 npm run dev                   # nodemon 开发模式（或 npm run start / node app.js），默认 http://localhost:3000
 ```
@@ -153,27 +154,29 @@ npm run serve   # Vue CLI 开发服务器，默认 http://localhost:8080
 |---|---|---|
 | 环境变量 | `backend/.env.example` → 复制为 `backend/.env` | `JWT_SECRET`、SMTP_*（QQ 授权码）、`DEEPSEEK_API_KEY/URL`、`NSCC_API_KEY/URL`；各键用途见模板注释 |
 | 后端地址 | `src/config.js` 的 `API_BASE_URL` | 默认 `http://localhost:3000`；前端所有页面统一从这里取值 |
-| 数据库连接 | `backend/db.js` | **硬编码** `localhost/root/000/X`，**不读取 `.env` 的 `DB_*`**；改库需直接改 `db.js` |
+| 数据库连接 | `backend/db.js` | 读取 `.env` 的 `DB_HOST/DB_USER/DB_PASSWORD/DB_NAME`，未设置时回退本地默认值 `localhost/root/000/X` |
 
 ## 7. 安全与错误处理要点
 
 - JWT 鉴权：`middleware/auth.js` 验签并查库注入 `req.user`（不含 role）；数据隔离按 `user_id = ?`
-- 密码：bcrypt 哈希；规则「仅字母数字、1–8 位」（`auth.js:12-20`）
+- 密码：bcrypt 哈希；规则「仅字母数字、6–16 位」（`auth.js` `validatePassword`）
 - SQL：全部参数化查询
 - AI 空回复兜底：Qwen/DeepSeek 返回空 content 时记录原始响应、写系统日志并返回 `502`（`chat.js:372-384 / 421-429`）
 - 编译失败：返回 stderr、临时目录 `safeCleanup` 必清理
-- ⚠️ 已知待加固（事实，详见 `docs/architecture.md` §8）：`/api/admin/*` 四个模块**未挂服务端鉴权中间件**；`db.js` 凭据硬编码；`.env` 含明文密钥；`1.sql` 预置管理员哈希未经明文验证（重置密码统一 `666666` 见 `AdminUser.js:96`）
+- ✅ 已加固（2026-09-07，详见 `docs/log.md`）：`/api/admin/*` 四个模块统一挂 `authenticateToken + requireAdmin`；PDF 移除 `/storage` 无鉴权静态托管，改 `GET /api/compile/:id/pdf` 归属校验流式返回；LaTeX 编译前危险序列校验；`db.js` 凭据改读 `.env`；JWT 去除兜底密钥（缺失启动即退出）；密码下限 6 位
+- ⚠️ 运维注意：`.env` 含 SMTP/LLM 密钥须保密勿提交；`1.sql` 预置管理员哈希未经明文验证（重置密码统一 `666666` 见 `AdminUser.js:96`）
 
 ## 8. 版本说明
 
 | 版本 | 日期 | 说明 |
 |---|---|---|
+| v3.1 | 2026-09-07 | **全量 P0 安全加固 + 配置修复**：`/api/admin/*` 统一挂 `authenticateToken + requireAdmin`；PDF 移除无鉴权静态托管改归属校验流式返回（前端 Blob 预览）；LaTeX 编译前危险序列校验；`db.js` 凭据改读 `.env`（缺省回退本地默认）；JWT 去除兜底密钥（缺失启动即退出）；密码 6-16 位；修复 `.env` 旧占位 `DB_*` 导致的本地连库失败（详见 `docs/log.md` 2026-09-07） |
 | v3.0 | 2026-09-05 | **精简重构为总入口**；修正与代码不一致处（如后端路由前缀实为 **13 个**，非 v2.0 所述 14 个）；详细 API/部署/架构内容迁至 docs/ 专项文档，避免多份重复维护 |
 | v2.0 | 2026-07-16 | 旧版主文档（API 明细等已迁移，其「与旧文档差异」并入 `docs/architecture.md` §7） |
 
 **预置管理员账号**：`admin123` / `666666`（`1.sql:14-20`）。
 
 ---
-**文档版本**：3.0
-**最后更新**：2026-09-05
+**文档版本**：3.1
+**最后更新**：2026-09-07
 **基准**：`hello/` 下实际源码与 SQL/迁移文件（行号引用同 `docs/architecture.md`）

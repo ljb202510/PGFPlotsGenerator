@@ -72,16 +72,16 @@ hello/
 │   ├── components/            # TheAuth、Login/Register/AdminLogin、Common/Admin Navbar+Sidebar、ui/ 通用组件
 │   └── views/                 # ChartGenerator、MyHistory、DataUpload、MyFeedback、MyNotice、ChangeInformation、Admin* 共 10 页
 └── backend/                   # ★ 后端 Express
-    ├── app.js                 # 入口：挂载 13 个路由前缀 + /storage 静态
-    ├── db.js                  # mysql2/promise 连接池（硬编码凭据），导出 { promisePool }
+    ├── app.js                 # 入口：挂载 13 个路由前缀（/api/admin/* 统一挂 authenticateToken+requireAdmin）
+    ├── db.js                  # mysql2/promise 连接池（读 .env DB_*，缺省回退默认），导出 { promisePool }
     ├── .env(.example)         # 环境变量（勿提交 .env）
-    ├── middleware/auth.js     # JWT 校验 authenticateToken
+    ├── middleware/auth.js     # JWT 校验 authenticateToken + 管理员校验 requireAdmin
     ├── routes/                # 13 个路由文件（auth/chat/compile/history/datasets/conversations/feedback/notice/verification/Admin*）
     ├── services/              # 非 HTTP 业务（verificationService.js 邮件+验证码）
     ├── utils/systemLog.js     # writeSystemLog 写 system_log（副作用，不抛异常）
     ├── migrations/            # 001_conversations.js（两对话表）
     ├── uploads/               # 数据集文件（multer）
-    └── storage/               # history/{uid}/{id}.json、generated_charts/user{uid}/hist{id}.pdf（/storage 托管）
+    └── storage/               # history/{uid}/{id}.json、generated_charts/user{uid}/hist{id}.pdf（仅服务端内部读写，经鉴权接口访问）
 ```
 
 对应模块/路由/数据流细节见 `docs/architecture.md` §3–§5。
@@ -95,7 +95,7 @@ hello/
 - 全库为**参数化查询**（`?` 占位），禁止字符串拼接 SQL（防注入）。
 - **数据隔离**：所有按用户查询/删除必须带 `user_id = ?` 条件；越权一律返回 404/403。
 - 业务代码中的异常/越权统一调 `writeSystemLog(status, message)`（`backend/utils/systemLog.js`）记录，message 会被截断 500 字；该函数只作为副作用，失败不影响主流程。
-- 密码规则（`routes/auth.js` `validatePassword`）：**仅字母数字、长度 1–8 位**；存取用 bcryptjs。
+- 密码规则（`routes/auth.js` `validatePassword`）：**仅字母数字、长度 6–16 位**；存取用 bcryptjs。
 - 响应风格注意（前后端分别处理两种）：部分接口 `{ success, data?, message }`；部分 `{ code, message, data }`（如 notice.js、Admin*）。**新增接口建议统一 `{ success, data, message }`**。
 
 ### 3.2 后端约定
@@ -103,7 +103,7 @@ hello/
 - **路由**：新增路由文件 `backend/routes/xxx.js`，在 `backend/app.js` 用 `app.use('/api/xxx', require('./routes/xxx'))` 挂载（`.github/copilot-instructions.md`）。
 - **业务逻辑**：涉及 DB/外部服务的逻辑放 `backend/services/`（参照 `verificationService.js`），路由文件保持薄。
 - **DB 访问**：`const db = require('../db').promisePool;` 然后 `await db.query(sql, params)`。
-- **鉴权**：需要登录的接口挂 `authenticateToken`（`middleware/auth.js`）；管理员校验：反馈模块用 `feedback.js` 内 `checkAdmin`（查库 role），`Admin*` 模块当前无鉴权（生产需自行加固）。
+- **鉴权**：需要登录的接口挂 `authenticateToken`（`middleware/auth.js`）；管理员校验：`/api/admin/*` 在 `app.js` 统一挂 `authenticateToken + requireAdmin`，反馈管理接口在 `feedback.js` 挂 `checkAdmin`（均为查库校验 role）。新增管理员接口应参照此模式。
 - 删除级联等跨表操作使用**事务**（`getConnection + beginTransaction + commit/rollback + release`，参照 `history.js:253-292`、`conversations.js:90-111`）。
 - 编译等外部命令用 `util.promisify(exec)` 并设 timeout（参照 `compile.js` 30s）。
 
@@ -212,4 +212,4 @@ cd <temp> && xelatex -interaction=nonstopmode test.tex
 - 对话持久化只有传 `conversation_id` 才会写入（`chat.js:451`）；纯单轮生成不会进 `conversation_messages`。
 
 ---
-**文档版本**：1.0　**基准日期**：2026-09-05　**交叉引用**：docs/architecture.md、README.md、.github/copilot-instructions.md
+**文档版本**：1.1　**基准日期**：2026-09-07　**交叉引用**：docs/architecture.md、README.md、.github/copilot-instructions.md

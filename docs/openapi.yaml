@@ -5,7 +5,8 @@
 # 说明：
 #   - 本项目响应存在两种风格：{success, data?, message} 与 {code, message, data?}，下方如实标注。
 #   - 未实现的接口（如 /api/chat/fix、/api/compile 的 body.code 覆盖）不在此列。
-#   - /api/admin/* 四个模块服务端【未挂载鉴权中间件】，安全属性如实标注 security: []。
+#   - 2026-09-07 起 /api/admin/* 四个模块已在 app.js 统一挂 authenticateToken + requireAdmin（服务端强制）。
+#     下方管理端 operations 的 security 标注为历史遗留，语义上均需管理员 Bearer token，后续宜统一收敛。
 openapi: 3.0.3
 info:
   title: PGFPlotsGenerator API
@@ -255,10 +256,11 @@ paths:
               schema: { $ref: "#/components/schemas/MessageFail" }
 
   # ===================== 编译 /api/compile =====================
-  /api/compile/{history_id}/pdf-url:
+  /api/compile/{history_id}/pdf:
     get:
       tags: [编译]
-      summary: 获取历史记录已生成 PDF 的访问 URL
+      summary: 获取已生成 PDF 文件（鉴权 + 归属校验）
+      description: 校验 generation_history 归属当前用户后 res.sendFile 流式返回 PDF，替代原 /storage 无鉴权静态托管。
       parameters:
         - name: history_id
           in: path
@@ -266,20 +268,14 @@ paths:
           schema: { type: integer }
       responses:
         "200":
-          description: 返回 pdf_url 与文件是否存在
+          description: 返回 PDF 二进制流（application/pdf）
           content:
-            application/json:
+            application/pdf:
               schema:
-                type: object
-                properties:
-                  success: { type: boolean, example: true }
-                  data:
-                    type: object
-                    properties:
-                      pdf_url: { type: string, example: "/storage/generated_charts/user1/hist1.pdf" }
-                      exists: { type: boolean }
+                type: string
+                format: binary
         "404":
-          description: 历史不存在/无权访问或尚未生成 PDF
+          description: 历史不存在/无权访问/未生成或文件缺失
           content:
             application/json:
               schema: { $ref: "#/components/schemas/MessageFail" }
@@ -308,7 +304,6 @@ paths:
                     properties:
                       history_id: { type: integer }
                       pdf_path: { type: string }
-                      pdf_url: { type: string, example: "/storage/generated_charts/user1/hist1.pdf" }
                       file_size: { type: integer }
         "400":
           description: 历史无效或无可用图表代码
@@ -949,7 +944,7 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/MessageFail" }
 
-  # ===================== 管理员 /api/admin/*（服务端未强制鉴权，如实标注） =====================
+  # ===================== 管理员 /api/admin/*（2026-09-07 起服务端强制 authenticateToken + requireAdmin） =====================
   /api/admin/static:
     get:
       tags: [管理员]

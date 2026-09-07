@@ -274,6 +274,7 @@ import {
 } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import { API_BASE_URL } from '@/config';
+import { adminAuthHeader } from '@/utils/adminToken';
 
 // 响应式数据
 const loading = ref(false)
@@ -407,7 +408,9 @@ const initChart = () => {
 // 获取系统健康概览
 const fetchHealthOverview = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/admin/log/health-overview`)
+    const response = await fetch(`${API_BASE_URL}/api/admin/log/health-overview`, {
+      headers: adminAuthHeader()
+    })
     const result = await response.json()
     
     if (result.success) {
@@ -440,7 +443,9 @@ const fetchApiStats = async () => {
       url += `?${params.join('&')}`
     }
     
-    const response = await fetch(url)
+    const response = await fetch(url, {
+      headers: adminAuthHeader()
+    })
     const result = await response.json()
     
     if (result.success) {
@@ -478,7 +483,9 @@ const fetchSystemLogs = async () => {
     params.push(`pageSize=${logFilters.pageSize}`)
     
     const url = `${API_BASE_URL}/api/admin/log/system-logs?${params.join('&')}`
-    const response = await fetch(url)
+    const response = await fetch(url, {
+      headers: adminAuthHeader()
+    })
     const result = await response.json()
     
     if (result.success) {

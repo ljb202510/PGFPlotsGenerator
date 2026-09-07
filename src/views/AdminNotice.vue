@@ -176,6 +176,7 @@ import {
   Edit
 } from '@element-plus/icons-vue'
 import { API_BASE_URL } from '@/config';
+import { adminAuthHeader } from '@/utils/adminToken';
 // 状态管理
 const loading = ref(false)
 const dialogVisible = ref(false)
@@ -286,7 +287,9 @@ const loadNotices = async () => {
       }
     })
     
-    const response = await fetch(`${API_BASE_URL}/api/admin/notices?${queryParams}`)
+    const response = await fetch(`${API_BASE_URL}/api/admin/notices?${queryParams}`, {
+      headers: adminAuthHeader()
+    })
     const result = await response.json()
     
     if (result.code === 200) {
@@ -400,7 +403,8 @@ const handleDelete = async (row) => {
     )
 
     const response = await fetch(`${API_BASE_URL}/api/admin/notices/${row.notice_id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: adminAuthHeader()
     })
     const result = await response.json()
 
@@ -439,7 +443,8 @@ const handleBatchDelete = async () => {
     const response = await fetch(`${API_BASE_URL}/api/admin/notices`, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...adminAuthHeader()
       },
       body: JSON.stringify({ ids: selectedIds.value })
     })
@@ -478,7 +483,8 @@ const handleSubmit = async () => {
     const response = await fetch(url, {
       method,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...adminAuthHeader()
       },
       body: JSON.stringify({
         title: noticeForm.title,

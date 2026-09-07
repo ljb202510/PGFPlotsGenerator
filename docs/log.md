@@ -628,6 +628,26 @@ max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易�
 6. 输出只保留单个 tikzpicture/axis，禁止浮动体与交叉引用：
 7. 如果用户消息明确给出了颜色、字体、图表类型等，一律以用户指定为准，并覆盖上述默认值。
 
+---
+
+### 2026年9月7日（全量 P0 安全加固，README/architecture §8 已同步）
+
+> 目标：一次性填上 README v3.0 / architecture.md §8 承认的安全待加固项，防止面试/上线暴露硬伤。
+
+1. **管理员后台鉴权**：`/api/admin/*` 四个模块（AdminUser/AdminNotice/AdminLog/AdminStatic）此前无任何服务端鉴权，仅靠前端隐藏。
+   - 修复：`middleware/auth.js` 新增 `requireAdmin`（查库校验 `users.role=admin`，不信任 JWT payload 角色声明）；`app.js` 对 4 个前缀统一挂 `authenticateToken + requireAdmin`，路由文件零改动。
+   - 前端：Admin.vue / AdminUser.vue / AdminNotice.vue / AdminLog.vue 全部 admin 请求补 `Authorization: Bearer <adminToken>`；新增公共工具 `src/utils/adminToken.js`（getAdminToken/adminAuthHeader）。
+2. **PDF 越权 / 静态目录泄露**：删除 `app.js` 的 `/storage` 无鉴权静态托管（原 `history/{uid}/*.json` 与 PDF 都可被枚举访问）。
+   - 修复：compile.js 原 `GET /:id/pdf-url` 改造为 `GET /:id/pdf`——按 `history_id + user_id` 归属校验、`storage` 前缀防穿越后 `res.sendFile` 流式返回。
+   - 前端：新增 `src/utils/pdf.js`（fetch + Bearer → blob → objectURL）；ChartGenerator / MyHistory 预览改走 Blob，绕开 iframe 无法带 Authorization 的限制，避免把 JWT 拼进 URL。编译接口响应移除失效的 `pdf_url`。
+3. **LaTeX 编译注入加固**：compile.js 新增 `validateLatexCode`，编译前拦截 `\write18`/`\shellescape`/`\input`/`\include`/`\openin`/`\read`/`\includegraphics`/`\usepackage`/`\RequirePackage`/`\lstinputlisting`/`\verbatiminput` 及超长代码（>50KB），命中返回 400。
+4. **配置与密钥**：db.js 凭据改读 `.env` 的 `DB_*`（缺省回退 localhost/root/000/X），服务器改库不再动代码；`.env.example` 同步。
+   - JWT：移除 auth.js ×3 与 middleware/auth.js 共 4 处 `|| 'your-secret-key'` 兜底；app.js 启动校验 `JWT_SECRET` 缺失即 fail-fast。
+5. **密码策略**：`validatePassword` 由「字母数字 1-8 位」收紧为「6-16 位」（`/^[a-zA-Z0-9]{6,16}$/`），前端 RegisterForm / ChangeInformation 的 placeholder/hint/正则同步；登录仅非空校验不变。预置管理员 `admin123/666666` 与重置密码 `666666` 均满足新规则，无需迁移数据。
+6. **文档同步**：README §6/§7、architecture §2/§3.2.10/§4/§8、development、deployment（nginx 移除 `/storage` 反代）、openapi.yaml（pdf 接口、admin 鉴权说明）已按现状更新。
+7. **遗留提醒**：密码 6-16 位字母数字仍未含特殊字符，是「兼容预置账号/控制改动面」的有意取舍；`.env` 含明文密钥须保密；`1.sql` 预置管理员哈希未经明文验证。
+8. **db.js env 化暴露的存量占位修复**：改读 `.env` 后，用户 `backend/.env` 中 `DB_PASSWORD=your-mysql-password`、`DB_NAME=your-database-name`（旧模板占位）被真实读取，导致登录报 `Access denied for user 'root'@'localhost'`。修复：`.env` 两行改为本机真实值 `000`/`X`（`.env` 不入 git）；随后用「先 `dotenv.config()` 再 `require('./app')`」的**真实启动路径**跑冒烟 A0-A7 全 PASS（A0 连库成功、无 token 401、管理员 200、普通用户 403、越权 PDF 404），临时脚本与测试用户已清理。
+
 
 
 

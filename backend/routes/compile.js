@@ -11,13 +11,20 @@ const { exec } = require('child_process');
 const util = require('util');
 const execPromise = util.promisify(exec);
 
-// 获取PDF URL接口 这里构建的URL跟generation_path保持部分一致
-router.get('/:history_id/pdf-url', authenticateToken, async (req, res) => {
+// 鉴权获取 PDF 文件：校验历史归属后流式返回，替代原 /storage 无鉴权静态托管（防止越权枚举他人 PDF）
+router.get('/:history_id/pdf', authenticateToken, async (req, res) => {
   try {
     const { history_id } = req.params;
     const user_id = req.user.user_id;
 
-    // 查询历史记录
+    if (!history_id || isNaN(parseInt(history_id))) {
+      return res.status(400).json({
+        success: false,
+        message: '无效的历史记录ID'
+      });
+    }
+
+    // 查询历史记录（校验归属）
     const query = `
       SELECT generation_path 
       FROM generation_history 
@@ -29,12 +36,12 @@ router.get('/:history_id/pdf-url', authenticateToken, async (req, res) => {
     if (records.length === 0) {
       return res.status(404).json({
         success: false,
-        message: '历史记录不存在'
+        message: '历史记录不存在或无权访问'
       });
     }
 
     const record = records[0];
-    
+
     if (!record.generation_path) {
       return res.status(404).json({
         success: false,
@@ -42,20 +49,22 @@ router.get('/:history_id/pdf-url', authenticateToken, async (req, res) => {
       });
     }
 
-    // 构建完整的PDF URL
-    const pdfUrl = `/storage/generated_charts/user${user_id}/hist${history_id}.pdf`;
+    // 仅允许访问 storage 目录内的文件，防止路径穿越
+    const absolutePath = path.resolve(__dirname, '..', '..', record.generation_path);
+    const storageRoot = path.resolve(__dirname, '..', 'storage');
 
-    res.json({
-      success: true,
-      data: {
-        pdf_url: pdfUrl,
-        exists: fs.existsSync(path.join(__dirname, '..', '..', record.generation_path))
-      }
-    });
+    if (!absolutePath.startsWith(storageRoot) || !fs.existsSync(absolutePath)) {
+      return res.status(404).json({
+        success: false,
+        message: 'PDF文件不存在'
+      });
+    }
+
+    res.sendFile(absolutePath);
 
   } catch (error) {
-    console.error('获取PDF URL失败:', error);
-    await writeSystemLog('error', `[COMPILE] 获取PDF URL失败: ${error.message}`);
+    console.error('获取PDF失败:', error);
+    await writeSystemLog('error', `[COMPILE] 获取PDF失败: ${error.message}`);
     res.status(500).json({
       success: false,
       message: error.message
@@ -130,7 +139,17 @@ router.post('/:history_id', authenticateToken, async (req, res) => {
 
     // 预处理LaTeX代码 - 提取图表内容
     const processedLatexCode = preprocessLatexCode(historyRecord.generation_code);
-    
+
+    // 注入加固：编译前校验危险 LaTeX 序列（\write18 可执行系统命令、\input/\include 可读任意本地文件等）
+    const latexCheck = validateLatexCode(processedLatexCode);
+    if (!latexCheck.valid) {
+      await safeCleanup(tempDir);
+      return res.status(400).json({
+        success: false,
+        message: latexCheck.message
+      });
+    }
+
     // 创建支持中文的LaTeX文档
     const latexDocument = createChineseLatexDocument(processedLatexCode);
     const texFileName = `hist${history_id}.tex`;  // 修改为hist前缀
@@ -177,14 +196,13 @@ router.post('/:history_id', authenticateToken, async (req, res) => {
     const relativePath = path.relative(path.join(__dirname, '..', '..'), finalPdfPath);
     await db.query(updateQuery, [relativePath, history_id, user_id]);
 
-    // 返回成功响应
+    // 返回成功响应（PDF 不再暴露静态 URL，前端通过 GET /api/compile/:id/pdf 携带 JWT 获取 Blob 预览）
     res.json({
       success: true,
       message: '编译成功',
       data: {
         history_id: parseInt(history_id),
         pdf_path: relativePath,
-        pdf_url: `/storage/generated_charts/user${user_id}/hist${history_id}.pdf`, // 添加访问URL
         file_size: fs.statSync(finalPdfPath).size
       }
     });
@@ -286,6 +304,38 @@ async function compileLatexWithXeLaTeX(texFilePath, outputDir) {
       stderr: error.stderr || ''
     };
   }
+}
+
+// 编译前校验 LaTeX 代码：拦截可执行系统命令/读写本地文件/加载未知宏包的危险序列
+function validateLatexCode(code) {
+  if (!code || typeof code !== 'string') {
+    return { valid: false, message: '图表代码为空，无法编译' };
+  }
+  if (code.length > 50000) {
+    return { valid: false, message: '图表代码过长（超过 50000 字符），请重新生成后再试' };
+  }
+
+  const dangerousPatterns = [
+    { pattern: /\\write18/, desc: '\\write18（执行系统命令）' },
+    { pattern: /\\shellescape/, desc: '\\shellescape（shell 转义）' },
+    { pattern: /\\openin/, desc: '\\openin（打开外部文件）' },
+    { pattern: /\\input/, desc: '\\input（读取外部文件）' },
+    { pattern: /\\include/, desc: '\\include（读取外部文件）' },
+    { pattern: /\\read/, desc: '\\read（读取外部文件）' },
+    { pattern: /\\includegraphics/, desc: '\\includegraphics（引用外部图片）' },
+    { pattern: /\\usepackage/, desc: '\\usepackage（加载宏包）' },
+    { pattern: /\\RequirePackage/, desc: '\\RequirePackage（加载宏包）' },
+    { pattern: /\\lstinputlisting/, desc: '\\lstinputlisting（读取外部文件）' },
+    { pattern: /\\verbatiminput/, desc: '\\verbatiminput（读取外部文件）' }
+  ];
+
+  for (const item of dangerousPatterns) {
+    if (item.pattern.test(code)) {
+      return { valid: false, message: `检测到不安全的 LaTeX 指令 ${item.desc}，已阻止编译` };
+    }
+  }
+
+  return { valid: true, message: '' };
 }
 
 // 安全清理函数

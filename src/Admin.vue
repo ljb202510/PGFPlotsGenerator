@@ -76,6 +76,7 @@
 <script>
 import axios from 'axios';
 import { API_BASE_URL } from '@/config';
+import { adminAuthHeader } from '@/utils/adminToken';
 import { User, Folder, Document, ChatDotRound } from '@element-plus/icons-vue';
 
 export default {
@@ -146,7 +147,9 @@ export default {
       this.error = null
       
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/admin/static`)
+        const response = await axios.get(`${API_BASE_URL}/api/admin/static`, {
+          headers: adminAuthHeader()
+        })
         
         if (response.data.success) {
           this.stats = response.data.data

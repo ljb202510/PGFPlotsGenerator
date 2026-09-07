@@ -111,6 +111,7 @@ import {
 } from '@element-plus/icons-vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config';
+import { adminAuthHeader } from '@/utils/adminToken';
 
 // 状态管理
 const loading = ref(false)
@@ -140,7 +141,8 @@ const fetchUsers = async () => {
         keyword: searchKeyword.value,
         sortField: sortField.value,
         sortOrder: sortOrder.value
-      }
+      },
+      headers: adminAuthHeader()
     })
     
     if (response.data.success) {
@@ -202,7 +204,9 @@ const handleCurrentChange = (val) => {
 const resetPassword = async (userId) => {
   try {
     // 调用重置密码接口
-    const response = await axios.patch(`${API_BASE_URL}/api/admin/users/${userId}/reset-password`);
+    const response = await axios.patch(`${API_BASE_URL}/api/admin/users/${userId}/reset-password`, null, {
+      headers: adminAuthHeader()
+    });
     
     if (response.data.success) {
       ElMessage({
@@ -228,7 +232,9 @@ const resetPassword = async (userId) => {
 // 删除用户
 const deleteUser = async (userId) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/api/admin/users/${userId}`)
+    const response = await axios.delete(`${API_BASE_URL}/api/admin/users/${userId}`, {
+      headers: adminAuthHeader()
+    })
     
     if (response.data.success) {
       ElMessage.success('用户删除成功')

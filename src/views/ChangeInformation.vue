@@ -168,7 +168,7 @@
                 id="newPassword"
                 v-model="passwordForm.newPassword"
                 :type="showNewPassword ? 'text' : 'password'"
-                placeholder="字母或数字，长度1-8位"
+                placeholder="字母或数字，长度6-16位"
                 @blur="validateNewPassword"
               />
               <button
@@ -183,7 +183,7 @@
             <div v-if="passwordErrors.newPassword" class="error-text">
               {{ passwordErrors.newPassword }}
             </div>
-            <span class="hint-text">密码只能包含字母和数字，长度 1-8 位</span>
+            <span class="hint-text">密码只能包含字母和数字，长度 6-16 位</span>
           </div>
 
           <!-- 确认新密码 -->
@@ -611,11 +611,11 @@ export default {
     },
     
     validateNewPassword() {
-      const passwordRegex = /^[a-zA-Z0-9]{1,8}$/;
+      const passwordRegex = /^[a-zA-Z0-9]{6,16}$/;
       if (!this.passwordForm.newPassword) {
         this.passwordErrors.newPassword = '';
       } else if (!passwordRegex.test(this.passwordForm.newPassword)) {
-        this.passwordErrors.newPassword = '密码只能包含字母和数字，长度 1-8 位';
+        this.passwordErrors.newPassword = '密码只能包含字母和数字，长度 6-16 位';
       } else {
         this.passwordErrors.newPassword = '';
       }

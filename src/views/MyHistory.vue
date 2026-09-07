@@ -287,6 +287,7 @@ import CodeBlock from '@/components/ui/CodeBlock.vue'
 
 // API配置
 import { API_BASE_URL } from '@/config';
+import { fetchPdfBlobUrl } from '@/utils/pdf';
 const previewingPdfId = ref(null)
 
 const compileErrorDialogVisible = ref(false)
@@ -502,20 +503,18 @@ const compileToPDF = async (historyId) => {
     }
     
     // 调用后端编译接口
-    const response = await axios.post(`${API_BASE_URL}/api/compile/${historyId}`, {}, {
+    await axios.post(`${API_BASE_URL}/api/compile/${historyId}`, {}, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     })
     
-    // 从响应中获取PDF URL
-    const pdfUrl = response.data.data.pdf_url
-    
     // 显示成功消息
     ElMessage.success('PDF生成成功！')
     
-    // 显示PDF预览
-    await showPdfPreview(pdfUrl)
+    // 通过鉴权接口获取 PDF Blob 并预览
+    const blobUrl = await fetchPdfBlobUrl(historyId, token)
+    await showPdfPreview(blobUrl)
     
   } catch (error) {
     console.error('编译失败:', error)
@@ -556,47 +555,27 @@ const previewExistingPdf = async (historyId) => {
       return;
     }
     
-    // 先获取PDF URL
-    const response = await axios.get(`${API_BASE_URL}/api/compile/${historyId}/pdf-url`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    
-    if (response.data.success && response.data.data.exists) {
-      const pdfUrl = response.data.data.pdf_url;
-      await showPdfPreview(pdfUrl);
-    } else {
-      ElMessage.warning('PDF文件不存在，请先生成PDF');
-    }
+    // 通过鉴权接口获取 PDF Blob（校验归属，防止越权访问他人文件）
+    const blobUrl = await fetchPdfBlobUrl(historyId, token)
+    await showPdfPreview(blobUrl)
     
   } catch (error) {
     console.error('预览PDF失败:', error);
     
-    if (error.response?.status === 404) {
+    if (error.status === 404) {
       ElMessage.error('PDF文件不存在，请先生成PDF');
     } else {
-      ElMessage.error('预览失败: ' + (error.response?.data?.message || error.message));
+      ElMessage.error('预览失败: ' + error.message);
     }
   } finally {
     previewingPdfId.value = null;
   }
 };
 
-// 显示PDF预览，使用服务器返回的URL或Blob URL
-const showPdfPreview = async (pdfUrl) => {
-  try {
-    let fullPdfUrl = pdfUrl
-    if (!pdfUrl.startsWith('http')) {
-      fullPdfUrl = `${API_BASE_URL}${pdfUrl}`
-    }
-    
-    currentPdfUrl.value = fullPdfUrl
-    pdfDialogVisible.value = true
-    
-  } catch (error) {
-    console.error('显示PDF预览失败:', error)
-  }
+// 显示PDF预览（Blob URL，关闭时由 cleanupPdfUrl 回收）
+const showPdfPreview = async (blobUrl) => {
+  currentPdfUrl.value = blobUrl
+  pdfDialogVisible.value = true
 }
 
 // 清理PDF URL

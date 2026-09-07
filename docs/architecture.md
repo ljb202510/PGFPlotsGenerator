@@ -68,7 +68,7 @@ flowchart TD
     R2 -- "axios / OpenAI SDK" --> LLM
     R6 -- "xelatex -interaction=nonstopmode" --> TEX
     R4 -- "nodemailer" --> SMTP
-    Express -- "静态托管 /storage (app.js:41)" --> FS
+    Express -- "读写 storage/uploads（服务端内部，无公开静态托管）" --> FS
     R5 -- "multer 上传" --> FS
 ```
 
@@ -79,13 +79,13 @@ flowchart LR
     subgraph Dev["开发机"]
         FE["npm run serve<br/>(vue-cli-service, 8080)"]
         BE["cd backend && node app.js<br/>(:3000, 0.0.0.0)"]
-        MYSQL_LOCAL["MySQL localhost/root/000/X<br/>(db.js 硬编码)"]
+        MYSQL_LOCAL["MySQL localhost/root/000/X<br/>(db.js 读 env/默认)"]
         TEX_LOCAL["TeX Live：xelatex + SimSun/Times New Roman"]
     end
     FE -- "API_BASE_URL 代理目标 :3000" --> BE
     BE --> MYSQL_LOCAL
     BE --> TEX_LOCAL
-    BE -- "静态 /storage → PDF 预览" --> FE
+    FE -- "GET /api/compile/:id/pdf（Bearer 鉴权，Blob 预览）" --> BE
     BE -- "SMTP QQ / DeepSeek / NSCC-Qwen" --> EXT["互联网服务"]
 ```
 
@@ -119,11 +119,11 @@ flowchart LR
 - 接口：`POST /admin/login`(:21)、`POST /register`(:97)、`POST /login`(:196)、`POST /change-password`(:262)、`POST /change-username`(:340)、`POST /change-email`(:440)、`GET /validate`(:544)
 - 关键逻辑：
   - 密码统一 `bcryptjs.hash(pwd, 10)` 存储、`bcrypt.compare` 校验（如 `auth.js:150,296`）
-  - 密码格式校验 `validatePassword`：**仅字母与数字、长度 1–8 位**（`auth.js:12-20`，注册/改密共用）
+  - 密码格式校验 `validatePassword`：**仅字母与数字、长度 6–16 位**（`auth.js` 顶部，注册/改密共用）
   - JWT 签发：管理员 token 7 天（`auth.js:60-69`，payload 含 userId），用户 token 24h（`auth.js:164-168, 232-236`）
 - 鉴权校验在 `backend/middleware/auth.js:7-38`：取 `Authorization: Bearer` → `jwt.verify`（密钥来自 `process.env.JWT_SECRET`）→ 按 `decoded.userId` 查 `users` 表 → 注入 `req.user`（仅 user_id/username/email，**不含 role**）
 
-> 角色判断注意：`authenticateToken` 不回填 role。管理员接口分两类——`feedback.js` 内部自定义 `checkAdmin`（查库校验 role=admin，`feedback.js:10-42`），四个 `Admin*.js` 模块则**未挂任何鉴权中间件**（见 §7 安全提示）。
+> 角色判断注意：`authenticateToken` 不回填 role。管理员接口统一为 `feedback.js` 内部自定义 `checkAdmin`（查库校验 role=admin，`feedback.js:10-42`）与 `app.js` 对四个 `/api/admin/*` 前缀统一挂载的 `authenticateToken + requireAdmin`（middleware/auth.js，同样查库校验 role）两种实现，均不信任 JWT payload 中的角色声明。
 
 #### 3.2.2 AI 生成（chat）
 
@@ -143,14 +143,14 @@ flowchart LR
 #### 3.2.3 编译（compile）
 
 - 入口：`backend/routes/compile.js`
-- 接口：`GET /:history_id/pdf-url`（:15-64）、`POST /:history_id`（:67-205，均需认证）
+- 接口：`GET /:history_id/pdf`（鉴权流式返回 PDF 文件）、`POST /:history_id`（编译，均需认证）
 - 关键事实：
   - **POST 只读取库内 `generation_history.generation_code`**（:132），**不接受请求体 code 覆盖**；先校验历史存在且属于当前用户（:93-110）
   - `preprocessLatexCode`（:208-233）：若代码含完整 `document` 结构则抽取文档体并清理 documentclass/usepackage
   - `createChineseLatexDocument`（:236-255）：用 `standalone` 文档类 + `pgfplots/compat=1.18` + `xeCJK`，**中文字体 SimSun、西文 Times New Roman**
   - `compileLatexWithXeLaTeX`（:258-289）：`xelatex -interaction=nonstopmode`，超时 **30s**；以 PDF 是否存在判成败
   - 成功：PDF 移动至 `storage/generated_charts/user{userId}/hist{historyId}.pdf`，更新 `generation_path`（相对路径，:171-178）；失败走 `safeCleanup` 清理临时目录（:292-317）
-- PDF 访问：`GET pdf-url` 返回 `/storage/generated_charts/user{uid}/hist{hid}.pdf`，经 `app.js:41` 静态托管，前端 `<iframe>` 预览
+- PDF 访问：已移除 `/storage` 无鉴权静态托管；前端通过 `GET /api/compile/:id/pdf` 携带 JWT，服务端按 `user_id` 校验归属后 `res.sendFile` 流式返回，前端 `fetch → blob → objectURL` 预览（`src/utils/pdf.js`）
 
 #### 3.2.4 历史（history）
 
@@ -189,7 +189,7 @@ flowchart LR
 - `services/verificationService.js`：生成 6 位随机码（:39-46）、SMTP 发送（nodemailer，:49-60）、落 `email_verification_codes`（10 分钟过期、一次性）
 - 注册与改邮箱前校验（auth.js:97 register / :440 change-email）
 
-#### 3.2.10 管理员后台（Admin*，无鉴权中间件，均独立路由）
+#### 3.2.10 管理员后台（Admin*，app.js 统一挂 `authenticateToken + requireAdmin`）
 
 | 模块 | 主要接口 | 备注 |
 |---|---|---|
@@ -202,7 +202,7 @@ flowchart LR
 
 | 文件 | 职责 |
 |---|---|
-| `backend/db.js` | `mysql2/promise` 连接池，**硬编码** `localhost/root/000/X`、connectionLimit 10，导出 `{ promisePool }`（:3-13）；不读 `.env` 的 DB_* |
+| `backend/db.js` | `mysql2/promise` 连接池，读取 `.env` 的 `DB_HOST/DB_USER/DB_PASSWORD/DB_NAME`（缺省回退 `localhost/root/000/X`）、connectionLimit 10，导出 `{ promisePool }` |
 | `backend/middleware/auth.js` | JWT 校验中间件（见 3.2.1） |
 | `backend/utils/systemLog.js` | `writeSystemLog(status, message)` 写 `system_log`（error 截断 500 字；自身失败仅 console，不抛异常，:12-22） |
 | `backend/services/verificationService.js` | 验证码生成/发信/落库 |
@@ -269,7 +269,7 @@ sequenceDiagram
     else 成功
         COM->>FS: hist{id}.pdf → user{uid}/ 目录，更新 generation_path
         COM-->>CG: {pdf_url}
-        CG->>FS: GET /storage/generated_charts/user{uid}/hist{id}.pdf（iframe 预览）
+        CG->>CG: fetch GET /api/compile/:id/pdf（Bearer）→ blob objectURL 预览
     end
 ```
 
@@ -284,7 +284,7 @@ flowchart LR
     E --> F["jwt.verify → 查 users → 注入 req.user<br/>(user_id/username/email)"]
     F --> G["业务路由按 user_id=? 隔离数据"]
     E -. "管理员接口" .-> H["feedback: checkAdmin 查库 role=admin"]
-    E -. "Admin*.js" .-> X["❌ 无鉴权中间件（安全缺口）"]
+    E -. "Admin*.js (app.js)" .-> H["requireAdmin 查库 role=admin"]
 ```
 
 ### 4.3 对话持久化数据流
@@ -325,7 +325,7 @@ sequenceDiagram
 | `backend/uploads/` | 数据集原始文件（multer diskStorage） | datasets.js:13-35 |
 | `backend/storage/history/{userId}/{historyId}.json` | 完整对话/生成记录（含 ai_response） | chat.js:228-254 |
 | `backend/storage/generated_charts/user{userId}/hist{historyId}.pdf` | 编译产物（`generation_path` 相对项目根） | compile.js:159-178 |
-| `/storage` 静态根 | PDF 在线预览 | app.js:41 |
+| `GET /api/compile/:id/pdf` | PDF 鉴权流式返回（按 user_id 归属校验） | compile.js |
 
 ## 5. 数据存储设计
 
@@ -493,11 +493,14 @@ node backend/migrations/001_conversations.js   # 需在 backend/ 目录执行（
 | 9 | 前端路由数 | （README 未列路由明细） | router 实际 **14 条记录**（含 `/` redirect），13 个页面组件；无路由守卫，鉴权由 App.vue 条件渲染 + 后端 JWT 兜底 |
 | 10 | 依赖声明 | README 称 cors/multer 未声明于 backend/package.json | 仍属实：backend/package.json 无 cors/multer（运行时依赖已装 node_modules），部署需注意 |
 
-## 8. 安全与可运维性提示（事实而非建议项）
+## 8. 安全与可运维性提示（2026-09-07 已加固，下述为当前状态与运维注意）
 
-- `/api/admin/*` 四个模块（AdminUser/AdminNotice/AdminLog/AdminStatic）**未挂 JWT/管理员鉴权中间件**（见 §3.2.10），仅前端路由 `requiresAdmin` meta 与 App.vue 条件渲染限制；feedback 的管理员接口则有 `authenticateToken + checkAdmin` 双校验
-- `backend/db.js` 数据库口令硬编码、`backend/.env` 明文含 SMTP 授权码与两家 LLM API Key（README §10 同述）
-- 密码规则较宽松（1–8 位字母数字，`auth.js:12-20`）
+- ✅ `/api/admin/*` 四个模块（AdminUser/AdminNotice/AdminLog/AdminStatic）由 `app.js` 统一挂 `authenticateToken + requireAdmin`（middleware/auth.js，查库校验 role=admin）；feedback 管理员接口保留 `authenticateToken + checkAdmin` 双校验；均为服务端强制鉴权，不再依赖前端隐藏
+- ✅ PDF 已移除 `/storage` 静态托管与 `/storage` 反代，改 `GET /api/compile/:id/pdf` 按 user_id 归属校验后 `res.sendFile`（history JSON 目录不再可被 HTTP 访问）
+- ✅ LaTeX 编译前 `validateLatexCode` 拦截 `\write18`/`\input`/`\include`/`\usepackage` 等危险序列并限制长度
+- ✅ `backend/db.js` 凭据改读 `.env`（缺省回退本地默认值）；JWT 去除 `'your-secret-key'` 兜底，`app.js` 启动时校验 `JWT_SECRET` 缺失即退出
+- ✅ 密码规则收紧为仅字母数字 6–16 位（`auth.js` `validatePassword`），预置管理员 `admin123/666666` 与重置密码均满足
+- ⚠️ 运维注意：`backend/.env` 明文含 SMTP 授权码与两家 LLM API Key，须加入 `.gitignore` 且勿提交；`1.sql` 预置管理员哈希未经明文验证（重置密码统一 `666666` 见 `AdminUser.js:96`）
 - 系统日志与 API 日志分离：`system_log` 记录服务端异常/越权告警，`api_log` 记录每次 AI 调用成败
 
 ## 9. 参考文档
@@ -510,6 +513,6 @@ node backend/migrations/001_conversations.js   # 需在 backend/ 目录执行（
 | `hello/1.sql`、`hello/migrations/`、`hello/backend/migrations/001_conversations.js` | 数据库 schema 与迁移 |
 
 ---
-**文档版本**：1.0（架构视图）
-**基准日期**：2026-09-05
+**文档版本**：1.1（架构视图）
+**基准日期**：2026-09-07
 **基准**：`hello/` 下源码实证（行号引用如上）

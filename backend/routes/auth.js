@@ -9,11 +9,11 @@ const { authenticateToken } = require('../middleware/auth');
 const verificationService = require('../services/verificationService');
 const { writeSystemLog } = require('../utils/systemLog');
 
-// 密码校验：仅字母和数字，长度 1-8 位
+// 密码校验：仅字母和数字，长度 6-16 位（弱规则会显著降低暴力破解成本，故提高下限）
 function validatePassword(pwd) {
   if (!pwd) return { valid: false, message: '密码不能为空' };
-  if (!/^[a-zA-Z0-9]{1,8}$/.test(pwd)) {
-    return { valid: false, message: '密码只能包含字母和数字，长度 1-8 位' };
+  if (!/^[a-zA-Z0-9]{6,16}$/.test(pwd)) {
+    return { valid: false, message: '密码只能包含字母和数字，长度 6-16 位' };
   }
   return { valid: true, message: '' };
 }
@@ -64,7 +64,7 @@ router.post('/admin/login', async (req, res) => {
         role: user.role,  // 添加角色信息
         isAdmin: true     // 添加管理员标识
       },
-      process.env.JWT_SECRET || 'your-secret-key',
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }  // 管理员token有效期更长
     );
     
@@ -163,7 +163,7 @@ router.post('/register', async (req, res) => {
     // 生成JWT token
     const token = jwt.sign(
       { userId: userId, email: email },
-      process.env.JWT_SECRET || 'your-secret-key',
+      process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -231,7 +231,7 @@ router.post('/login', async (req, res) => {
     // 生成JWT token
     const token = jwt.sign(
       { userId: user.user_id, email: user.email },
-      process.env.JWT_SECRET || 'your-secret-key',
+      process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
     // 添加系统日志 - 用户登录成功

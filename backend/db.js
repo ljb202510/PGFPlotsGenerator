@@ -1,29 +1,14 @@
 // db.js - 共享连接池
 const mysql = require('mysql2/promise');
+
+// 凭据优先读 .env（服务器/多环境），未配置时回退本地开发默认值，本地开箱即用
 const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '000',
-  // 密码有改动
-  database: 'X',
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '000',
+  database: process.env.DB_NAME || 'X',
   connectionLimit: 10, // 控制最大连接数
   waitForConnections: true
 });
 
 module.exports = { promisePool: pool };
-
-
-// 服务器版本，在宝塔面板里面修改了数据库名和密码
-/* db.js - 共享连接池
-const mysql = require('mysql2/promise');
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'mydb',
-  password: 'mydb',
-  database: 'X',
-  connectionLimit: 10, // 控制最大连接数
-  waitForConnections: true
-});
-
-module.exports = { promisePool: pool };
-*/
