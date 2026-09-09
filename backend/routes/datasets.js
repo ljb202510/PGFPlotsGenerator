@@ -43,6 +43,14 @@ const formatFileSize = (bytes) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
+// 数据集名称兜底：data_name 列上限 50，超长时截断；Array.from 避免截断代理对（如 emoji）
+const DATA_NAME_MAX = 50;
+const truncateName = (value) => {
+  const s = String(value || '').trim();
+  const chars = Array.from(s);
+  return chars.length > DATA_NAME_MAX ? chars.slice(0, DATA_NAME_MAX).join('') : s;
+};
+
 // 获取所有数据集 - 添加认证
 router.get('/', authenticateToken, async (req, res) => {
   const { keyword } = req.query;
@@ -114,6 +122,9 @@ router.post('/', authenticateToken, upload.single('file'), async (req, res) => {
       message: '请选择要上传的文件'
     });
   }
+
+  // 名称兜底：trim 并截断到列上限，避免 “Data too long” 入库报错
+  const dataName = truncateName(name);
   
   try {
     // 插入数据到数据库（不再插入load_time，使用默认值）
@@ -124,7 +135,7 @@ router.post('/', authenticateToken, upload.single('file'), async (req, res) => {
     
     const [result] = await db.execute(query, [
       user_id,
-      name,
+      dataName,
       file.size,
       description,
       file.originalname,
@@ -194,9 +205,8 @@ router.post('/:id/update', authenticateToken, async (req, res) => {
           message: '数据集名称不能为空'
         });
       }
-      const trimmedName = name.trim();
       updateFields.push('data_name = ?');
-      params.push(trimmedName);
+      params.push(truncateName(name));
     }
 
     if (description !== undefined) {

@@ -22,7 +22,7 @@ VALUES (
 CREATE TABLE data_file (
     data_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,  
-    data_name VARCHAR(20) NOT NULL,
+    data_name VARCHAR(50) NOT NULL,
     data_size INT NOT NULL,
     description TEXT,
     load_time DATETIME DEFAULT CURRENT_TIMESTAMP,

@@ -1,0 +1,20 @@
+{
+  "history_id": 105,
+  "user_id": 4,
+  "data_id": 23,
+  "file_name": "07-stackedbar-regions.xlsx",
+  "dataset_name": "07-stackedbar-regions",
+  "user_input": "请根据我上传的数据绘制堆积柱状图，展示北区、中区、南区三个区域各季度的销量累计情况；三个区域使用不同颜色分段堆积并加上图例；添加图表标题、X 轴（季度）与 Y 轴（销量/万吨）标签。",
+  "ai_response": "\n\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar stacked,\n    title={各区域季度销量累计情况},\n    ylabel={销量（万吨）},\n    symbolic x coords={一季度,二季度,三季度,四季度},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    ymin=0,\n    ymax=200,\n    width=10cm,\n    height=6cm\n]\n\\addplot[fill=blue!40] coordinates {(一季度,35) (二季度,45) (三季度,52) (四季度,60)};\n\\addplot[fill=green!40] coordinates {(一季度,42) (二季度,48) (三季度,55) (四季度,63)};\n\\addplot[fill=red!40] coordinates {(一季度,28) (二季度,36) (三季度,44) (四季度,51)};\n\\legend{北区,中区,南区}\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar stacked,\n    title={各区域季度销量累计情况},\n    ylabel={销量（万吨）},\n    symbolic x coords={一季度,二季度,三季度,四季度},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    ymin=0,\n    ymax=200,\n    width=10cm,\n    height=6cm\n]\n\\addplot[fill=blue!40] coordinates {(一季度,35) (二季度,45) (三季度,52) (四季度,60)};\n\\addplot[fill=green!40] coordinates {(一季度,42) (二季度,48) (三季度,55) (四季度,63)};\n\\addplot[fill=red!40] coordinates {(一季度,28) (二季度,36) (三季度,44) (四季度,51)};\n\\legend{北区,中区,南区}\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制堆积柱状图，展示北区、中区、南区三个区域各季度的销量累计情况；三个区域使用不同颜色分段堆积并加上图例；添加图表标题、X 轴（季度）与 Y 轴（销量/万吨）标签。",
+  "created_at": "2026-09-09T15:06:29.622Z",
+  "metadata": {
+    "data_ids": [
+      23
+    ],
+    "has_chart_code": true,
+    "code_length": 689,
+    "code_source": "from_request"
+  }
+}

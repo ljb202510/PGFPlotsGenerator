@@ -11,6 +11,7 @@
             v-model="uploadForm.name" 
             placeholder="请输入名称"
             clearable
+            maxlength="50"
           />
         </el-form-item>
         
@@ -167,6 +168,7 @@
             v-model="editForm.name" 
             placeholder="请输入数据集名称"
             clearable
+            maxlength="50"
           />
         </el-form-item>
         

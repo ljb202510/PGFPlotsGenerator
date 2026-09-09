@@ -1,7 +1,7 @@
 # 开发日志 — PGFPlotsGenerator
 > 本日志为历史记录，权威技术文档以 README.md 为准
 > 项目：PGFPlotsGenerator（前端 Vue3 + 后端 Node/Express + MySQL）
-> 记录区间：2025-12-03 ～ 2026-07-16
+> 记录区间：2025-12-03 ～ 2026-09-09
 
 ## 目录
 - 一、前期已完成项
@@ -652,7 +652,38 @@ max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易�
 
 
 
-## 三、会议汇报
+### 2026年9月9日
+
+> 当日会话集中交付：生成等待体验、错误提示体验、AI 生成/编译链路多类修复与首轮全量测试。详见 `docs/manual-test-cases.md` §7.1 与对应代码文件。
+
+#### 1. 生成等待提示 + 可停止
+- 思考气泡：等待 AI 生成期间聊天区显示转圈 + 「正在使用 {模型} 生成图表代码，请稍候…」。
+- 停止生成：发送按钮生成期变为“停止”方块；前端 AbortController 取消请求，后端 `chat.js` 以 `res.on('close')` 联动中止 Qwen/DeepSeek 上游调用，避免额度浪费与多余落库；生成期防并发发送，组件卸载自动中止。
+
+#### 2. 错误提示体验
+- 全局 ElMessage 默认 `duration: 5000ms` + `showClose: true`（可点击关闭，App.vue `el-config-provider`）。
+- 编译失败 Toast 不再截断 300 字符，完整展示后端信息。
+- 编译失败样本与日志自动留档 `backend/storage/debug/hist{id}_{时间戳}.tex(.log)`，控制台仅提示文件位置。
+
+#### 3. 界面问题修复
+- 首屏“快速开始模版”遮挡 AI 助手初始消息并阻断拖拽 → `guide-area` 移入 `.chat-messages` 容器。
+
+#### 4. AI 生成/编译链路修复（双端防御 + 提示词 PE 重构）
+- AI 输出完整文档（`\documentclass`/`\usepackage`/`\begin{document}`…）被再包裹 → 提示词禁止输出文档脚手架；`preprocessLatexCode` 无条件清理；编译外壳预置 `pgf-pie`。
+- 数值标注旧无效键 `nodes near coords style=` → 改正确键 `every node near coord/.append style={font=\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}`，并强制“有 mark 必配标注”（R3）。
+- `symbolic x coords` 误用全角逗号 → 强约束英文半角逗号（R7），附正反例。
+- 多系列折线标注重叠 → 按系列错开锚点 `anchor=south/north`、字号 `\tiny/\scriptsize`（R8）。
+- 提示词整体按 PE 分层重构：输出边界 / 渲染规则 MUST / 正例 / 反例 / 输出前自检。
+
+#### 5. data_name 列长修复
+- `data_file.data_name` `VARCHAR(20)→50`（新增 `migrations/alter_data_file_data_name.sql`，存量库已执行；`1.sql` 同步）；`datasets.js` 上传/改名超长兜底截断；`DataUpload.vue` 名称输入框 `maxlength=50`。
+
+#### 6. 测试文档与数据
+- 新增 `docs/manual-test-cases.md`（10 个手动测试样例）与 `docs/testdata/`（8 个配套 CSV/XLSX + 2 个无文件用例）；首轮实测 10/10 通过，问题与修复记录见文档 §7.1。
+
+---
+
+## 其他
 
 ### 十三周周一会议汇报
 本周进度：修复了上周演示的 API 调用不稳定和无法读取 Excel 文件问题，在本地安装 XeLaTeX 环境，目前能在前端调用正常编译并显示 pdf，优化了 AI 对话界面和提示词。
@@ -680,8 +711,8 @@ max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易�
 - 用户等待时间界面没有明显提示，只有一个转圈圈的图标，没有文字提示；用户也不能主动停止生成过程。
 - 没有去做迭代读取上下文（如果你不给原代码让它修改颜色等信息）
 - 没有去做AI自修正的过程（自己尝试编译不成功自动重试）
-- JWT后端有，前端当时因为一直报错没有去做适配
-- 对话按最近使用时间排序；以及添加置顶功能
+- JWT后端有，前端当时因为一直报错没有去做适配（
+- 且按最近使用时间排序；以及添加置顶/收藏历史记录功能
 
 ### 废除的一些可能优化
 1. 图表生成界面应该是有一个，重试的按钮（再发一遍），
@@ -699,7 +730,7 @@ max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易�
 
 ### Question 后端
 
-- 服务器端代码应该与本地不一致（由于windows和linux区别），如何保存
+- 服务器端代码/server应该与本地/backend不一致（由于windows和linux区别），如何保存
 
 还有一些功能要细化，
 
@@ -719,7 +750,7 @@ max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易�
 
 ### 说明
 1. 下载 texstudio 即可（下载 arm 版本会导致无法运行），overleaf 有免费限制，已经超了
-2. 使用 `response=fetch api` 和 `axios` 两种方式（还要调研一下）
+2. 使用 `response=fetch api` 和 `axios` 两种方式（目前没感受到区别）
 
 axios：AI 和历史记录
 其他使用：fetch

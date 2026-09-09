@@ -1,0 +1,20 @@
+{
+  "history_id": 101,
+  "user_id": 4,
+  "data_id": 21,
+  "file_name": "05-groupedbar-products.xlsx",
+  "dataset_name": "05-groupedbar-products",
+  "user_input": "请根据我上传的数据绘制分组柱状图，对比产品A与产品B在各季度的销量；两类产品使用不同颜色并在柱顶标注销量数值（单位：万件）；添加图表标题、X 轴（季度）与 Y 轴（销量/万件）标签，并加上图例。",
+  "ai_response": "\n\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=10cm,\n    height=6cm,\n    title={各季度产品销量对比},\n    ylabel={销量（万件）},\n    xlabel={季度},\n    symbolic x coords={一季度，二季度，三季度，四季度},\n    xtick=data,\n    ymin=0,\n    ymax=80,\n    bar width=12pt,\n    enlarge x limits=0.2,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    legend cell align={left}\n]\n\\addplot[fill=blue!60, draw=blue!60] coordinates {(一季度,45) (二季度,52) (三季度,60) (四季度,68)};\n\\addplot[fill=orange!60, draw=orange!60] coordinates {(一季度,38) (二季度,55) (三季度,58) (四季度,74)};\n\\legend{产品 A, 产品 B}\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=10cm,\n    height=6cm,\n    title={各季度产品销量对比},\n    ylabel={销量（万件）},\n    xlabel={季度},\n    symbolic x coords={一季度，二季度，三季度，四季度},\n    xtick=data,\n    ymin=0,\n    ymax=80,\n    bar width=12pt,\n    enlarge x limits=0.2,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    legend cell align={left}\n]\n\\addplot[fill=blue!60, draw=blue!60] coordinates {(一季度,45) (二季度,52) (三季度,60) (四季度,68)};\n\\addplot[fill=orange!60, draw=orange!60] coordinates {(一季度,38) (二季度,55) (三季度,58) (四季度,74)};\n\\legend{产品 A, 产品 B}\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制分组柱状图，对比产品A与产品B在各季度的销量；两类产品使用不同颜色并在柱顶标注销量数值（单位：万件）；添加图表标题、X 轴（季度）与 Y 轴（销量/万件）标签，并加上图例。",
+  "created_at": "2026-09-09T14:57:18.836Z",
+  "metadata": {
+    "data_ids": [
+      21
+    ],
+    "has_chart_code": true,
+    "code_length": 731,
+    "code_source": "from_request"
+  }
+}

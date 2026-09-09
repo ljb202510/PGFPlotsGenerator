@@ -1,5 +1,7 @@
 <!-- src/App.vue -->
 <template>
+  <!-- 全局消息默认：5 秒自动消失 + 可点击关闭按钮 -->
+  <el-config-provider :message="messageConfig">
   <div id="app">
     <!-- 根据认证状态显示不同的顶部导航栏 -->
     <!-- 普通用户登录后显示普通导航栏 -->
@@ -65,6 +67,7 @@
       </div>
     </main>
   </div>
+  </el-config-provider>
 </template>
 
 <script>
@@ -86,6 +89,8 @@ export default {
   },
   data() {
     return {
+      // 全局 ElMessage 默认：5 秒自动消失 + 显示可点击关闭按钮
+      messageConfig: { duration: 5000, showClose: true },
       isAdminSidebarCollapsed: false,
       isAdminAuthenticated: false,
       currentAdmin: null,

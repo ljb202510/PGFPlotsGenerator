@@ -1,0 +1,20 @@
+{
+  "history_id": 100,
+  "user_id": 4,
+  "data_id": 18,
+  "file_name": "08-budget-city.csv",
+  "dataset_name": "08-budget-city",
+  "user_input": "请根据我上传的数据绘制柱状图，展示各城市的一般公共预算收入；在每根柱子上方标注收入数值（单位：亿元）；添加图表标题、X 轴（城市）与 Y 轴（一般公共预算收入/亿元）标签，并加上图例。请确保 Y 轴数值与数据保持同一单位量级。",
+  "ai_response": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={各城市一般公共预算收入（亿元）},\n    ylabel={一般公共预算收入（亿元）},\n    xlabel={城市},\n    ybar,\n    bar width=28pt,\n    symbolic x coords={上海,北京,深圳,苏州,杭州,广州},\n    xtick=data,\n    ymin=0,\n    ymax=9000,\n    nodes near coords,\n    nodes near coords style={font=\\small, fill=none, draw=none, inner sep=1pt, anchor=south},\n    every axis plot/.append style={fill=blue!60, draw=blue!60},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    legend cell align=left,\n    area legend\n]\n\\addplot coordinates {(上海,8313) (北京,6182) (深圳,3712) (苏州,2456) (杭州,2017) (广州,1979)};\n\\addlegendentry{一般公共预算收入}\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    title={各城市一般公共预算收入（亿元）},\n    ylabel={一般公共预算收入（亿元）},\n    xlabel={城市},\n    ybar,\n    bar width=28pt,\n    symbolic x coords={上海,北京,深圳,苏州,杭州,广州},\n    xtick=data,\n    ymin=0,\n    ymax=9000,\n    nodes near coords,\n    nodes near coords style={font=\\small, fill=none, draw=none, inner sep=1pt, anchor=south},\n    every axis plot/.append style={fill=blue!60, draw=blue!60},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    legend cell align=left,\n    area legend\n]\n\\addplot coordinates {(上海,8313) (北京,6182) (深圳,3712) (苏州,2456) (杭州,2017) (广州,1979)};\n\\addlegendentry{一般公共预算收入}\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制柱状图，展示各城市的一般公共预算收入；在每根柱子上方标注收入数值（单位：亿元）；添加图表标题、X 轴（城市）与 Y 轴（一般公共预算收入/亿元）标签，并加上图例。请确保 Y 轴数值与数据保持同一单位量级。",
+  "created_at": "2026-09-09T14:16:31.993Z",
+  "metadata": {
+    "data_ids": [
+      18
+    ],
+    "has_chart_code": true,
+    "code_length": 661,
+    "code_source": "from_request"
+  }
+}

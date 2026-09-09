@@ -1,0 +1,20 @@
+{
+  "history_id": 92,
+  "user_id": 4,
+  "data_id": 14,
+  "file_name": "01-line-sales.csv",
+  "dataset_name": "01-line-sales",
+  "user_input": "请根据我上传的数据绘制折线图，展示 1—12 月销售额的变化趋势；折线添加数据点标记并在每个数据点上方标注销售额数值（单位：万元）；添加图表标题、X 轴（月份）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "ai_response": "\n\n```latex\n\\documentclass[border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{CJKutf8}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    title={月度销售额变化趋势图},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    xmin=0.5, xmax=12.5,\n    ymin=50, ymax=200,\n    xtick={1,2,3,4,5,6,7,8,9,10,11,12},\n    xticklabels={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    grid=major,\n    grid style={dashed, gray!50},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    nodes near coords style={font=\\small, fill=none, draw=none, inner sep=1pt, anchor=south},\n    every node near coord/.append style={font=\\small},\n]\n\\addplot[\n    color=blue,\n    thick,\n    mark=*,\n    mark size=2.5pt,\n    mark options={solid, fill=blue}\n] coordinates {\n    (1,86) (2,92) (3,105) (4,98) (5,112) (6,126)\n    (7,119) (8,138) (9,150) (10,143) (11,162) (12,175)\n};\n\\addplot[\n    color=blue,\n    thick,\n    mark=none\n] coordinates {\n    (1,86) (2,92) (3,105) (4,98) (5,112) (6,126)\n    (7,119) (8,138) (9,150) (10,143) (11,162) (12,175)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：公司内部销售数据};\n\\legend{销售额}\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```",
+  "chart_code": "\\documentclass[border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\\usepackage{CJKutf8}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=8cm,\n    title={月度销售额变化趋势图},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    xmin=0.5, xmax=12.5,\n    ymin=50, ymax=200,\n    xtick={1,2,3,4,5,6,7,8,9,10,11,12},\n    xticklabels={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    grid=major,\n    grid style={dashed, gray!50},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    nodes near coords style={font=\\small, fill=none, draw=none, inner sep=1pt, anchor=south},\n    every node near coord/.append style={font=\\small},\n]\n\\addplot[\n    color=blue,\n    thick,\n    mark=*,\n    mark size=2.5pt,\n    mark options={solid, fill=blue}\n] coordinates {\n    (1,86) (2,92) (3,105) (4,98) (5,112) (6,126)\n    (7,119) (8,138) (9,150) (10,143) (11,162) (12,175)\n};\n\\addplot[\n    color=blue,\n    thick,\n    mark=none\n] coordinates {\n    (1,86) (2,92) (3,105) (4,98) (5,112) (6,126)\n    (7,119) (8,138) (9,150) (10,143) (11,162) (12,175)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：公司内部销售数据};\n\\legend{销售额}\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 请根据我上传的数据绘制折线图，展示 1—12 月销售额的变化趋势；折线添加数据点标记并在每个数据点上方标注销售额数值（单位：万元）；添加图表标题、X 轴（月份）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "created_at": "2026-09-09T13:50:03.931Z",
+  "metadata": {
+    "data_ids": [
+      14
+    ],
+    "has_chart_code": true,
+    "code_length": 1230,
+    "code_source": "from_request"
+  }
+}

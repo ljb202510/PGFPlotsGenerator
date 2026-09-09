@@ -152,55 +152,63 @@
             </div>
           </div>
         </div>
-      </div>
-      
-      <!-- 首屏引导区：用户尚未发送任何消息时显示（仅有欢迎语也算首屏） -->
-      <div v-if="showTemplateGuide" class="guide-area">
-        <div class="guide-hero">
-          <span class="guide-hero__badge"><el-icon><MagicStick /></el-icon></span>
-          <h2 class="guide-hero__title">用数据，一句话生成学术级图表</h2>
-          <p class="guide-hero__subtitle">上传数据文件，选择下方模板或描述需求，AI 帮您生成 PGFPlots 代码并一键导出 PDF。</p>
-        </div>
 
-        <div class="guide-steps">
-          <div class="guide-step">
-            <span class="guide-step__icon"><el-icon><UploadFilled /></el-icon></span>
-            <div class="guide-step__body">
-              <div class="guide-step__title">上传 / 选择数据</div>
-              <div class="guide-step__desc">支持 CSV、Excel，自动识别字段</div>
-            </div>
-          </div>
-          <el-icon class="guide-step__arrow"><Right /></el-icon>
-          <div class="guide-step">
-            <span class="guide-step__icon"><el-icon><EditPen /></el-icon></span>
-            <div class="guide-step__body">
-              <div class="guide-step__title">选模板或描述需求</div>
-              <div class="guide-step__desc">一句话说清想要的图表</div>
-            </div>
-          </div>
-          <el-icon class="guide-step__arrow"><Right /></el-icon>
-          <div class="guide-step">
-            <span class="guide-step__icon"><el-icon><Download /></el-icon></span>
-            <div class="guide-step__body">
-              <div class="guide-step__title">一键生成 PDF</div>
-              <div class="guide-step__desc">导出可发表的图表</div>
-            </div>
+        <!-- AI 思考中提示（等待生成期间显示在消息流末尾） -->
+        <div v-if="loading" class="message-item assistant thinking-bubble">
+          <div class="message-content thinking-content">
+            <AppSpinner size="18px" />
+            <span class="thinking-text">正在使用 {{ currentModelName }} 生成图表代码，请稍候…</span>
           </div>
         </div>
 
-        <h3 class="guide-templates__title">或从模板快速开始</h3>
-        <div class="template-cards">
-          <button
-            v-for="t in templates"
-            :key="t.key"
-            class="template-card"
-            type="button"
-            @click="useTemplate(t)"
-          >
-            <span class="template-card__icon"><el-icon><component :is="t.icon" /></el-icon></span>
-            <span class="template-card__title">{{ t.title }}</span>
-            <span class="template-card__desc">{{ t.desc }}</span>
-          </button>
+        <!-- 首屏引导区：用户尚未发送任何消息时显示（与 AI 初始消息同容器堆叠，避免遮挡并支持整区拖拽） -->
+        <div v-if="showTemplateGuide" class="guide-area">
+          <div class="guide-hero">
+            <span class="guide-hero__badge"><el-icon><MagicStick /></el-icon></span>
+            <h2 class="guide-hero__title">用数据，一句话生成学术级图表</h2>
+            <p class="guide-hero__subtitle">上传数据文件，选择下方模板或描述需求，AI 帮您生成 PGFPlots 代码并一键导出 PDF。</p>
+          </div>
+
+          <div class="guide-steps">
+            <div class="guide-step">
+              <span class="guide-step__icon"><el-icon><UploadFilled /></el-icon></span>
+              <div class="guide-step__body">
+                <div class="guide-step__title">上传 / 选择数据</div>
+                <div class="guide-step__desc">支持 CSV、Excel，自动识别字段</div>
+              </div>
+            </div>
+            <el-icon class="guide-step__arrow"><Right /></el-icon>
+            <div class="guide-step">
+              <span class="guide-step__icon"><el-icon><EditPen /></el-icon></span>
+              <div class="guide-step__body">
+                <div class="guide-step__title">选模板或描述需求</div>
+                <div class="guide-step__desc">一句话说清想要的图表</div>
+              </div>
+            </div>
+            <el-icon class="guide-step__arrow"><Right /></el-icon>
+            <div class="guide-step">
+              <span class="guide-step__icon"><el-icon><Download /></el-icon></span>
+              <div class="guide-step__body">
+                <div class="guide-step__title">一键生成 PDF</div>
+                <div class="guide-step__desc">导出可发表的图表</div>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="guide-templates__title">或从模板快速开始</h3>
+          <div class="template-cards">
+            <button
+              v-for="t in templates"
+              :key="t.key"
+              class="template-card"
+              type="button"
+              @click="useTemplate(t)"
+            >
+              <span class="template-card__icon"><el-icon><component :is="t.icon" /></el-icon></span>
+              <span class="template-card__title">{{ t.title }}</span>
+              <span class="template-card__desc">{{ t.desc }}</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -249,12 +257,12 @@
             />
             <el-button 
               type="primary" 
-              @click="sendMessage"
-              :disabled="!inputMessage.trim()"
-              class="send-btn"
+              :class="['send-btn', { 'is-stopping': loading }]"
+              @click="loading ? stopGeneration() : sendMessage()"
+              :disabled="!loading && !inputMessage.trim()"
             >
               <el-icon v-if="!loading"><Promotion /></el-icon>
-              <el-icon v-else class="loading-icon"><Loading /></el-icon>
+              <span v-else class="stop-icon"></span>
             </el-button>
           </div>
           
@@ -410,7 +418,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { 
   Document,
@@ -418,7 +426,6 @@ import {
   Folder,
   Close,
   Promotion,
-  Loading,
   Top,
   Switch,
   CopyDocument, // 新增复制图标
@@ -433,6 +440,7 @@ import {
 } from '@element-plus/icons-vue'
 import axios from 'axios'
 import CodeBlock from '@/components/ui/CodeBlock.vue'
+import AppSpinner from '@/components/ui/AppSpinner.vue'
 
 // API配置
 import { API_BASE_URL } from '@/config';
@@ -458,6 +466,8 @@ const inputMessage = ref('')
 const messages = ref([])
 const loading = ref(false)
 const loadingFiles = ref(false)
+// 当前生成请求的中止控制器（用于“停止生成”）
+let generationAbortController = null
 const fileList = ref([])
 const selectedFiles = ref([])
 const messagesContainer = ref(null)
@@ -497,6 +507,11 @@ const currentModel = ref('qwen')
 const toggleModel = () => {
   currentModel.value = currentModel.value === 'deepseek' ? 'qwen' : 'deepseek'
 }
+
+// 当前模型展示名（与底部按钮文案保持一致）
+const currentModelName = computed(() =>
+  currentModel.value === 'deepseek' ? 'Deepseek-V4-Flash' : 'Qwen3.5'
+)
 
 // PDF相关
 const pdfDialogVisible = ref(false)
@@ -845,6 +860,8 @@ const handleKeydown = (event) => {
 }
 // 发送消息
 const sendMessage = async () => {
+  // 生成期间禁止再次发送，避免并发请求交错
+  if (loading.value) return
   if (!inputMessage.value.trim()) return
   
   const currentSelectedFiles = [...selectedFiles.value]
@@ -866,7 +883,8 @@ const sendMessage = async () => {
   const currentInput = inputMessage.value || ''
   inputMessage.value = ''
   loading.value = true
-  
+  scrollToBottom()
+
   try {
     const token = getAuthToken()
     if (!token) {
@@ -881,6 +899,9 @@ const sendMessage = async () => {
       if (!convId) return
     }
 
+    // 创建本次生成请求的中止控制器（点击“停止”时 abort）
+    generationAbortController = new AbortController()
+
     const response = await axios.post(`${API_BASE_URL}/api/chat`, {
       message: currentInput,
       data_ids: currentSelectedFiles.length > 0 ?
@@ -891,7 +912,8 @@ const sendMessage = async () => {
     }, {
       headers: {
         'Authorization': `Bearer ${token}`
-      }
+      },
+      signal: generationAbortController.signal
     })
     
     const aiResponse = response.data.data.reply
@@ -931,6 +953,13 @@ const sendMessage = async () => {
     
   } catch (error) {
     console.error('发送消息失败:', error)
+
+    // 用户主动停止生成：提示后直接返回，不当作错误气泡
+    if (axios.isCancel(error)) {
+      ElMessage.info('已停止生成')
+      return
+    }
+
     // 错误处理，与后端保持一致（按实际模型动态显示）
     const modelName = currentModel.value === 'qwen' ? 'Qwen' : 'DeepSeek'
     let errorMessage = ''
@@ -959,6 +988,15 @@ const sendMessage = async () => {
     scrollToBottom()
   } finally {
     loading.value = false
+    generationAbortController = null
+  }
+}
+
+
+// 停止生成：前端取消请求，后端联动中止 AI 调用
+const stopGeneration = () => {
+  if (generationAbortController) {
+    generationAbortController.abort()
   }
 }
 
@@ -1005,7 +1043,7 @@ const compileToPDF = async (message) => {
       ElMessage.error('该历史记录没有可编译的图表代码')
     } else {
       const rawMsg = error.response?.data?.message || error.message || '未知错误'
-      ElMessage.error('PDF生成失败: ' + String(rawMsg).slice(0, 300))
+      ElMessage.error('PDF生成失败: ' + String(rawMsg))
     }
   } finally {
     compiling.value = false
@@ -1183,6 +1221,13 @@ onMounted(async () => {
   document.addEventListener('drop', (e) => {
     e.preventDefault()
   })
+})
+
+// 组件卸载时中止未完成的生成请求，避免悬空请求
+onUnmounted(() => {
+  if (generationAbortController) {
+    generationAbortController.abort()
+  }
 })
 </script>
 
@@ -2065,13 +2110,34 @@ onMounted(async () => {
   color: var(--brand);
 }
 
-.loading-icon {
-  animation: rotate 1s linear infinite;
+/* 生成期间的“停止”按钮态 */
+.send-btn.is-stopping {
+  background: var(--danger);
+  box-shadow: var(--shadow-hover);
+}
+.send-btn.is-stopping:hover:not(.is-disabled) {
+  transform: translateY(-1px);
+  background: var(--danger);
 }
 
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+/* 思考中气泡：转圈 + 文字，复用 AI 消息气泡底色 */
+.thinking-bubble .message-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.thinking-text {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* 发送按钮在生成期间切换为“停止”方块 */
+.stop-icon {
+  width: 14px;
+  height: 14px;
+  background: var(--bg-surface);
+  border-radius: 2px;
+  display: inline-block;
 }
 
 /* 按钮容器 */

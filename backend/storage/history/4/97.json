@@ -1,0 +1,20 @@
+{
+  "history_id": 97,
+  "user_id": 4,
+  "data_id": 16,
+  "file_name": "03-pie-share.xlsx",
+  "dataset_name": "03-pie-share",
+  "user_input": "请根据我上传的数据绘制饼图，展示各品牌市场份额占比；为每个扇区标注品牌名称与百分比数值；添加图表标题与图例。",
+  "ai_response": "\n\n```latex\n\\documentclass{standalone}\n\\usepackage{pgf-pie}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.17}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\pie[\n    text=legend,\n    legend style={at={(1.1,0.5)}, anchor=west, draw=black, fill=white},\n    radius=2,\n    text width=2.5cm,\n    color={red!60, orange!60, yellow!60, green!60, blue!60}\n]\n{\n    32/品牌A,\n    26/品牌B,\n    18/品牌C,\n    14/品牌D,\n    10/品牌E\n}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：行业调研数据};\n\\end{tikzpicture}\n\\end{document}\n```\n\n```latex\n\\documentclass{standalone}\n\\usepackage{pgf-pie}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.17}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\pie[\n    text=legend,\n    legend style={at={(1.1,0.5)}, anchor=west, draw=black, fill=white},\n    radius=2,\n    text width=2.5cm,\n    color={red!60, orange!60, yellow!60, green!60, blue!60}\n]\n{\n    32/品牌A,\n    26/品牌B,\n    18/品牌C,\n    14/品牌D,\n    10/品牌E\n}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：行业调研数据};\n\\end{tikzpicture}\n\\end{document}\n```",
+  "chart_code": "\\documentclass{standalone}\n\\usepackage{pgf-pie}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.17}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\pie[\n    text=legend,\n    legend style={at={(1.1,0.5)}, anchor=west, draw=black, fill=white},\n    radius=2,\n    text width=2.5cm,\n    color={red!60, orange!60, yellow!60, green!60, blue!60}\n]\n{\n    32/品牌A,\n    26/品牌B,\n    18/品牌C,\n    14/品牌D,\n    10/品牌E\n}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：行业调研数据};\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 请根据我上传的数据绘制饼图，展示各品牌市场份额占比；为每个扇区标注品牌名称与百分比数值；添加图表标题与图例。",
+  "created_at": "2026-09-09T14:07:26.843Z",
+  "metadata": {
+    "data_ids": [
+      16
+    ],
+    "has_chart_code": true,
+    "code_length": 517,
+    "code_source": "from_request"
+  }
+}

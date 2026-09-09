@@ -167,6 +167,8 @@ router.post('/:history_id', authenticateToken, async (req, res) => {
 
     // 在编译错误处理部分修改
     if (!pdfExists) {
+      // 保留失败样本供复检（仅提示文件位置，不输出具体报错）
+      saveCompileFailure(history_id, texFilePath, compileResult);
       await safeCleanup(tempDir);
       return res.status(500).json({
         success: false,
@@ -225,26 +227,29 @@ router.post('/:history_id', authenticateToken, async (req, res) => {
 // 预处理LaTeX代码 - 提取图表内容
 function preprocessLatexCode(originalCode) {
   try {
-    // 如果代码包含完整的文档结构，提取begin{document}和end{document}之间的内容
-    if (originalCode.includes('\\begin{document}') && originalCode.includes('\\end{document}')) {
-      const start = originalCode.indexOf('\\begin{document}') + '\\begin{document}'.length;
-      const end = originalCode.indexOf('\\end{document}');
-      const content = originalCode.substring(start, end).trim();
-      
-      // 清理可能的多余文档结构
-      let cleanedContent = content
-        .replace(/\\documentclass\{.*?\}/g, '')
-        .replace(/\\usepackage.*?\{.*?\}/g, '')
-        .replace(/\\begin\{document\}/g, '')
-        .replace(/\\end\{document\}/g, '')
-        .trim();
-      
-      if (cleanedContent) {
-        return cleanedContent;
-      }
+    if (typeof originalCode !== 'string' || !originalCode.trim()) {
+      return originalCode;
     }
-    
-    return originalCode;
+
+    let code = originalCode;
+
+    // 若包含完整文档结构，先截取 begin{document} 与 end{document} 之间的主体
+    const docStart = code.indexOf('\\begin{document}');
+    const docEnd = code.indexOf('\\end{document}');
+    if (docStart !== -1 && docEnd !== -1 && docEnd > docStart) {
+      code = code.substring(docStart + '\\begin{document}'.length, docEnd);
+    }
+
+    // 无论是否截取过，一律行级清除文档脚手架，防止双层 documentclass / 宏包重复引入
+    const cleaned = code
+      .replace(/\\documentclass(?:\[[^\]]*\])?\{[^}]*\}.*$/gm, '')
+      .replace(/\\usepackage(?:\[[^\]]*\])?\{[^}]*\}.*$/gm, '')
+      .replace(/\\begin\{document\}/g, '')
+      .replace(/\\end\{document\}/g, '')
+      .trim();
+
+    // 清理结果为空时回退原始内容（保持容错，不破坏原样）
+    return cleaned || originalCode;
   } catch (error) {
     return originalCode;
   }
@@ -254,6 +259,7 @@ function preprocessLatexCode(originalCode) {
 function createChineseLatexDocument(chartCode) {
   return `\\documentclass[border=5pt]{standalone}
 \\usepackage{pgfplots}
+\\usepackage{pgf-pie} % 饼图：AI 代码可直接使用 \\pie
 \\pgfplotsset{compat=1.18}
 \\usepackage{amsmath}
 \\usepackage{amssymb}
@@ -336,6 +342,33 @@ function validateLatexCode(code) {
   }
 
   return { valid: true, message: '' };
+}
+
+// 编译失败时保留失败样本供复检；控制台仅提示文件位置，不输出具体报错内容
+function saveCompileFailure(historyId, texFilePath, compileResult) {
+  try {
+    if (!texFilePath || !fs.existsSync(texFilePath)) {
+      return null;
+    }
+    const debugDir = path.join(__dirname, '..', 'storage', 'debug');
+    if (!fs.existsSync(debugDir)) {
+      fs.mkdirSync(debugDir, { recursive: true });
+    }
+    const base = `hist${historyId}_${Date.now()}`;
+    const texTarget = path.join(debugDir, `${base}.tex`);
+    fs.copyFileSync(texFilePath, texTarget);
+    const logText =
+      ((compileResult && compileResult.stdout) || '') +
+      ((compileResult && compileResult.stderr) || '');
+    if (logText) {
+      fs.writeFileSync(path.join(debugDir, `${base}.log`), logText, 'utf8');
+    }
+    console.error(`[COMPILE] LaTeX 编译失败，失败样本已保存至: ${texTarget}`);
+    return texTarget;
+  } catch (error) {
+    console.error(`[COMPILE] 保存编译失败样本出错: ${error.message}`);
+    return null;
+  }
 }
 
 // 安全清理函数

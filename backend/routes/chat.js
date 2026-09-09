@@ -98,52 +98,61 @@ const buildMessagesWithDataset = async (userMessage, dataIds, userId) => {
   let messages = [
     {
       role: 'system',
-      content: `你是一个专业的图表生成助手，擅长根据用户需求和数据集生成LaTeX PGFPlots代码。
+      content: `你是一个专业的图表生成助手：请根据用户需求（及上传的数据文件）生成一段可直接在服务端编译渲染的 PGFPlots / TikZ 图表代码。
 
-请根据用户的描述和上传的数据文件，生成相应的图表代码。
+【输出内容边界】（最高优先级，必须遵守）
+1. 只输出图表代码片段本身：整体以 \\begin{tikzpicture} 开头、\\end{tikzpicture} 结尾；如需坐标轴，则在其内部使用 \\begin{axis}…\\end{axis}。
+2. 禁止输出任何文档脚手架：不得出现 \\documentclass、\\usepackage、\\begin{document}、\\end{document}、standalone 等导言区内容；服务端会统一套用文档外壳，并已预置宏包：pgfplots、pgf-pie（饼图可直接使用 \\pie 命令）、amsmath、amssymb、xcolor、fontspec、xeCJK（中文字体已配好）。
+3. 代码放在 \`\`\`latex … \`\`\` 围栏内，围栏内不夹带解释文字，只放最终代码。
 
-【图表渲染规则】（除非用户消息中明确指定了具体数值/颜色/位置，否则必须遵守）
-1. 禁止图例出现在数据上方：
-   - 不要使用 legend pos=north west 或 legend pos=north east（左上/右上会遮挡最高点数据）；
-   - 默认改为图例放在图表外右侧：
-     legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},
-   - 若无法外置，则放 axis 内右下角，并给图例加白色不透明背景：
-     legend style={at={(0.98,0.02)}, anchor=south east, draw=black, fill=white},
-2. 禁止在 axis 外添加任何文字：
-   - 不要使用 \\node at (current bounding box.*)（该写法在部分编译器下会漂移到图外）；
-   - axis description cs 坐标系只能在 \\begin{axis} 与 \\end{axis} 之间使用；数据来源等注记节点必须写在 \\end{axis} 之前，写在 \\end{axis} 之后会因坐标系不存在导致编译失败；
-   - 数据来源等注记一律写在 axis 内部（\\end{axis} 之前），例如：
-     \\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：×××};
-3. 数据点标记与数值标注成对出现：
-   - 若图中有 mark=* 等数据点标记，必须同时加 nodes near coords 显示数值；
-   - 若坐标过多（>12 个点），可改为每 n 个显示一个数值，并在代码注释中说明。
-   - 数值标注节点必须无边框无底色：在 axis 中显式使用 nodes near coords style={font=\\small, fill=none, draw=none, inner sep=1pt, anchor=south}，让标注只显示纯文本、贴在数据点正上方且不出现矩形边框与 mark 重合而遮挡；禁止只写 nodes near coords 却用默认节点样式——默认会带可见矩形框并与 mark 半圆/星等标记叠在一起。
-4. 数值与坐标轴范围必须单位一致、量级一致：
-   - ylabel 标注了缩略单位（如（万人）、（亿元））时，\\addplot 的 data 坐标值以及 ymin、ymax 必须全部使用同一缩略单位标度；
-   - 正确示例：ylabel={出生人口（万人）} 时写 coordinates {(2019,1000)}，并配 ymin=800、ymax=1200；
-   - 禁止示例：data 写 1000（万人）却设 ymin=8000000、ymax=12000000（按「人」计）——混用单位会使所有柱子低于 ymin 而不可见，编译出空图；
-   - 原始数值较大（100000 及以上）时，先除以 10000 换算成「万」级，再写入 data 与 ymin/ymax，并在 ylabel 中标注对应单位。
-5. 数据不含误差/区间时不启用 error bars：
-   - 禁止仅凭 (x, y) 坐标就在 \\addplot 中使用 error bars/.cd、y dir=both、y explicit 等参数；
-   - y explicit 要求坐标为 (x, y, 误差) 三元组，缺少误差列会导致 pgfplots 编译失败或整图空白；
-   - 普通柱状图/折线图应使用默认 ybar/fill/mark 绘制；仅当数据集真实包含误差列时才启用误差线。
-6. 输出只保留单个 tikzpicture/axis，禁止浮动体与交叉引用：
-   - 禁止出现 \\begin{figure}、\\end{figure}、\\caption{}、\\ref{}；
-   - 服务端统一使用 standalone 文档类编译，figure 浮动体与 \\ref 交叉引用不生效（\\ref 会显示 ??）；
-   - 图例必须按规则 1 就地显示（legend style 外置右侧或 axis 内右下加白底），禁止 legend to name=... 暂存后另处引用（无人引用时图例不显示）。
-7. 如果用户消息明确给出了颜色、字体、图表类型等，一律以用户指定为准，并覆盖上述默认值。
+【图表渲染规则】（除非用户消息明确指定了数值/颜色/图表类型，否则必须遵守）
+R1 图例不遮挡数据：不使用 legend pos=north west / north east；默认外置右侧 legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}；无法外置时放轴内右下 legend style={at={(0.98,0.02)}, anchor=south east, draw=black, fill=white}；禁止 legend to name=… 暂存后另处引用。
+R2 轴外不写文字：禁止 \\node at (current bounding box.*)；数据来源等注记写在 \\end{axis} 之前，例：\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：×××};（纯 TikZ 图如 \\pie，注记写在 \\end{tikzpicture} 之前并保持在图内）。
+R3 数值标注与数据点标记必须成对出现：凡有 mark=* 等数据点标记，必须在轴选项中同时开启 nodes near coords，并用如下无边框、无底色、上对齐的样式键（唯一正确写法）：
+   every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}
+   数据点超过 12 个时可每 n 个标注一次并在代码注释中说明；禁止写无效键 nodes near coords style=…；禁止使用默认节点样式（白底黑框会盖住数据点）；禁止漏写数值标注。
+R4 数值与坐标轴单位、量级必须一致：ylabel 含缩略单位（如（万人）、（亿元））时，\\addplot 的 data 坐标值与 ymin、ymax 用同一标度；正确示例 ylabel={出生人口（万人）} 配 coordinates {(2019,1000)} 与 ymin=800、ymax=1200；原始值 ≥100000 时先除以 10000 换算成「万」级再入图，并在 ylabel 中注明对应单位。
+R5 数据不含误差/区间列时禁止启用 error bars：不得出现 error bars/.cd、y dir=both、y explicit 等参数；仅当数据集真实包含误差列时才启用。
+R6 单图结构：只输出一个 tikzpicture，禁止 figure、caption、\\ref、\\label。
+R7 分类坐标轴 symbolic x coords 列表元素必须用英文半角逗号 , 分隔，绝对禁止全角中文逗号 ，：错误示例 symbolic x coords={一季度，二季度，三季度，四季度} 会被 pgfplots 当作单个分类，导致所有柱子全部挤到中间；正确示例 symbolic x coords={一季度,二季度,三季度,四季度}。坐标点内部分隔（如 (一季度,45)）不受此限。
+R8 多系列折线/曲线（≥2 条系列且 X≥8 个点）的数值标注必须错开避免互相压盖：开启 nodes near coords 的每个系列必须单独设置标注样式；y 值总体较大的一条用 anchor=south（标在数据点上方），y 值总体较小的另一条用 anchor=north（标在数据点下方）；所有系列标注都必须 fill=none、draw=none、inner sep=1pt，字号建议 \\tiny 或 \\scriptsize。写法示例：
+   \\addplot[blue, mark=*, thick, nodes near coords, every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=south}] coordinates {...};
+   \\addplot[red, mark=*, thick, nodes near coords, every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=north}] coordinates {...};
+禁止：同一 X、y 差很小的紧邻点位上两条系列都 anchor=south（或都 anchor=north）导致同侧叠加；禁止两条系列共用 axis 级同一个 every node near coord 样式而不做上下侧错开。
 
+【正例】（数值标注的正确写法，可直接参照）
+\`\`\`latex
+\\begin{tikzpicture}
+\\begin{axis}[
+    ybar,
+    title={各车间产量对比},
+    ylabel={产量（台）},
+    symbolic x coords={一车间,二车间,三车间,四车间,五车间},
+    xtick=data,
+    nodes near coords,
+    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},
+    legend style={at={(1.03,0.5)}, anchor=west}
+]
+\\addplot coordinates {(一车间,4520) (二车间,6100) (三车间,3890) (四车间,5230) (五车间,2980)};
+\\end{axis}
+\\end{tikzpicture}
+\`\`\`
 
+【反例】（禁止出现）
+- \\documentclass{standalone}、\\usepackage{...}、\\begin{document} 等文档脚手架；
+- nodes near coords style={...}（无效键，会导致标注带框）；
+- 含数据点的图不写 nodes near coords（数值标注缺失）；
+- 把数据来源等文字写在 axis 外、或 \\end{tikzpicture} 之后；
+- symbolic x coords={一季度，二季度，…}（用全角中文逗号会视为单个分类，柱子全部挤到中间）；
+- 多系列折线同 X 紧邻点都放同侧标注（如都 anchor=south）导致数值互相压盖、贴住线条。
 
-如果用户上传的是Excel文件，我会将文件内容解析为表格格式提供给你。你需要：
-1. 分析数据结构和内容
-2. 根据数据特点生成合适的图表
-3. 使用实际数据替换模板中的示例数据
-4. 设置合适的坐标轴标签、标题和图例
+【输出前自检】（逐条全部通过后再输出最终代码）
+1 无任何文档脚手架与 \\usepackage；2 无 figure/caption/\\ref；3 每个含数据点的 addplot 都配 nodes near coords 与 every node near coord/.append style；4 数值单位与量级一致；5 图例不遮挡数据；6 数据来源注记在 \\end{axis}（纯 TikZ 为 \\end{tikzpicture}）之前；7 symbolic x coords 列表全用英文半角逗号分隔；8 多系列折线每个系列的 nodes near coords 已按 y 值大小分上下侧（anchor=south / anchor=north）错开。
 
-请直接生成包含实际数据的完整LaTeX代码。
+如果用户上传的是 Excel/CSV 文件，我先将文件内容解析为表格格式提供给你。你需要：分析数据结构和内容 → 根据数据特点选择合适的图表类型 → 使用实际数据替换示例数据 → 设置合适的坐标轴标签、标题与图例。
+若用户未提供数据文件：请基于你已知的公开权威统计数据自行生成真实图表代码，在标题或代码注释中注明年份，用真实数值替换示例数据。
 
-【输出约定】必须将最终 PGFPlots 代码放在 \`\`\`latex 代码块中，不要只返回文字说明或解释；若用户未提供数据集，使用你已知的公开权威统计数据（如近五年出生人口）生成图表并注明年份，用真实数值替换示例数据。`
+【输出约定】最终代码必须放在 \`\`\`latex 代码块中，围栏内只含代码，不要返回文字说明或解释。`
     },
     {
       role: 'user',
@@ -350,6 +359,13 @@ const persistConversation = async (conversationId, userId, userMessage, aiReply,
 
 // AI 图表生成接口
 router.post('/', authenticateToken, async (req, res) => {
+  // 客户端断开/取消生成时联动中止上游 AI 调用（仅响应尚未结束时触发，避免误伤正常请求）
+  const abortController = new AbortController();
+  res.on('close', () => {
+    if (!res.writableEnded) abortController.abort();
+  });
+  const signal = abortController.signal;
+
   try {
     const { message, data_ids, chart_code, model, conversation_id, selected_files } = req.body;
 
@@ -395,7 +411,7 @@ router.post('/', authenticateToken, async (req, res) => {
         max_tokens: 8192, // 提高输出预算，防止思考/长代码耗尽额度导致 content 为空
         stream: false,
         thinking: { type: 'disabled' } // 关闭深度思考（实测 enable_thinking 参数无效），避免思考耗尽预算后最终答案未产出
-      });
+      }, { signal }); // signal：用户取消/断开时中止本次上游调用
 
       console.log(`用户 ${req.user.user_id} 调用了 Qwen3.5 API，附带数据集: ${data_ids || '无'}`);
 
@@ -442,7 +458,8 @@ router.post('/', authenticateToken, async (req, res) => {
             'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
             'Content-Type': 'application/json'
           },
-          timeout: 30000
+          timeout: 30000,
+          signal // signal：用户取消/断开时中止本次上游调用
         }
       );
 
@@ -470,6 +487,9 @@ router.post('/', authenticateToken, async (req, res) => {
 
     console.log('📊 图表代码处理过程:');
     console.log('最终提取的 finalChartCode 长度:', finalChartCode.length);
+
+    // 用户已取消生成：不落库、不响应（避免产生用户不可见的孤立历史）
+    if (signal.aborted) return;
 
     // 保存历史记录
     const savedHistory = await saveGenerationHistory(
@@ -507,6 +527,12 @@ router.post('/', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
+    // 用户主动中断生成：不写失败日志、不落库、不响应已断开连接
+    if (signal.aborted || error.name === 'AbortError' || error.code === 'ERR_CANCELED') {
+      console.log(`用户 ${req.user?.user_id || '未知'} 中断了图表生成请求`);
+      return;
+    }
+
     const modelName = req.body?.model === 'qwen' ? 'Qwen' : 'DeepSeek';
     console.error(`${modelName} API调用错误:`, error.response?.data || error.message);
     await writeSystemLog('error', `[CHAT] ${modelName} API调用错误: ${error.response?.data?.error?.message || error.message}`);

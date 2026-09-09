@@ -1,0 +1,20 @@
+{
+  "history_id": 95,
+  "user_id": 4,
+  "data_id": 14,
+  "file_name": "01-line-sales.csv",
+  "dataset_name": "01-line-sales",
+  "user_input": "请根据我上传的数据绘制折线图，展示 1—12 月销售额的变化趋势；折线添加数据点标记并在每个数据点上方标注销售额数值（单位：万元）；添加图表标题、X 轴（月份）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "ai_response": "\n\n```latex\n\\documentclass[border=10pt]{standalone}\n\\usepackage[utf8]{inputenc}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7cm,\n    title={2024年销售额月度变化趋势},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    xmin=0.5, xmax=12.5,\n    ymin=0, ymax=190,\n    xtick={1,2,3,4,5,6,7,8,9,10,11,12},\n    xticklabels={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    grid=major,\n    grid style={gray!30},\n    legend style={\n        at={(1.03,0.5)},\n        anchor=west,\n        draw=black,\n        fill=white,\n        font=\\small\n    },\n    legend pos=outer right,\n    nodes near coords style={\n        font=\\small,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south,\n        color=black\n    },\n    every node near coord/.append style={\n        font=\\small\n    },\n]\n\n\\addplot[\n    color=blue,\n    mark=*,\n    mark size=2.5pt,\n    thick,\n    nodes near coords,\n] coordinates {\n    (1,86)\n    (2,92)\n    (3,105)\n    (4,98)\n    (5,112)\n    (6,126)\n    (7,119)\n    (8,138)\n    (9,150)\n    (10,143)\n    (11,162)\n    (12,175)\n};\n\n\\addlegendentry{销售额}\n\n\\node[anchor=north west, font=\\scriptsize, color=gray] at (axis description cs:0.0,-0.15) {数据来源：公司月度销售报表};\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```",
+  "chart_code": "\\documentclass[border=10pt]{standalone}\n\\usepackage[utf8]{inputenc}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7cm,\n    title={2024年销售额月度变化趋势},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    xmin=0.5, xmax=12.5,\n    ymin=0, ymax=190,\n    xtick={1,2,3,4,5,6,7,8,9,10,11,12},\n    xticklabels={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    grid=major,\n    grid style={gray!30},\n    legend style={\n        at={(1.03,0.5)},\n        anchor=west,\n        draw=black,\n        fill=white,\n        font=\\small\n    },\n    legend pos=outer right,\n    nodes near coords style={\n        font=\\small,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south,\n        color=black\n    },\n    every node near coord/.append style={\n        font=\\small\n    },\n]\n\n\\addplot[\n    color=blue,\n    mark=*,\n    mark size=2.5pt,\n    thick,\n    nodes near coords,\n] coordinates {\n    (1,86)\n    (2,92)\n    (3,105)\n    (4,98)\n    (5,112)\n    (6,126)\n    (7,119)\n    (8,138)\n    (9,150)\n    (10,143)\n    (11,162)\n    (12,175)\n};\n\n\\addlegendentry{销售额}\n\n\\node[anchor=north west, font=\\scriptsize, color=gray] at (axis description cs:0.0,-0.15) {数据来源：公司月度销售报表};\n\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 请根据我上传的数据绘制折线图，展示 1—12 月销售额的变化趋势；折线添加数据点标记并在每个数据点上方标注销售额数值（单位：万元）；添加图表标题、X 轴（月份）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "created_at": "2026-09-09T14:01:36.551Z",
+  "metadata": {
+    "data_ids": [
+      14
+    ],
+    "has_chart_code": true,
+    "code_length": 1277,
+    "code_source": "from_request"
+  }
+}

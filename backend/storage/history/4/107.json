@@ -1,0 +1,20 @@
+{
+  "history_id": 107,
+  "user_id": 4,
+  "data_id": 22,
+  "file_name": "06-multiline-channels.csv",
+  "dataset_name": "06-multiline-channels",
+  "user_input": "请根据我上传的数据绘制折线图，对比线下渠道与线上渠道 1—12 月销售额变化趋势；两条折线使用不同颜色与标记，并标注数值（单位：万元）；添加图表标题、X 轴（月份）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "ai_response": "\n\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={线下渠道与线上渠道月度销售额对比},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    ymin=0,\n    ymax=160,\n    width=10cm,\n    height=6cm,\n    grid=major,\n    grid style={dashed, gray!30}\n]\n\\addplot[red, mark=*, thick] coordinates {(1月,60) (2月,55) (3月,72) (4月,68) (5月,80) (6月,76) (7月,90) (8月,95) (9月,88) (10月,96) (11月,102) (12月,110)};\n\\addplot[blue, mark=triangle*, thick] coordinates {(1月,35) (2月,42) (3月,50) (4月,58) (5月,66) (6月,75) (7月,84) (8月,92) (9月,100) (10月,112) (11月,125) (12月,140)};\n\\legend{线下渠道,线上渠道}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：06-multiline-channels.csv};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    title={线下渠道与线上渠道月度销售额对比},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    ymin=0,\n    ymax=160,\n    width=10cm,\n    height=6cm,\n    grid=major,\n    grid style={dashed, gray!30}\n]\n\\addplot[red, mark=*, thick] coordinates {(1月,60) (2月,55) (3月,72) (4月,68) (5月,80) (6月,76) (7月,90) (8月,95) (9月,88) (10月,96) (11月,102) (12月,110)};\n\\addplot[blue, mark=triangle*, thick] coordinates {(1月,35) (2月,42) (3月,50) (4月,58) (5月,66) (6月,75) (7月,84) (8月,92) (9月,100) (10月,112) (11月,125) (12月,140)};\n\\legend{线下渠道,线上渠道}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：06-multiline-channels.csv};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制折线图，对比线下渠道与线上渠道 1—12 月销售额变化趋势；两条折线使用不同颜色与标记，并标注数值（单位：万元）；添加图表标题、X 轴（月份）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "created_at": "2026-09-09T15:09:59.375Z",
+  "metadata": {
+    "data_ids": [
+      22
+    ],
+    "has_chart_code": true,
+    "code_length": 959,
+    "code_source": "from_request"
+  }
+}

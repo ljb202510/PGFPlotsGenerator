@@ -1,0 +1,18 @@
+{
+  "history_id": 91,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "请基于我上传的数据绘制折线图，展示数值随时间或类别变化的趋势；添加图表标题、X 轴与 Y 轴标签（含单位）、数据点标记与网格线，并加上图例。",
+  "ai_response": "\n\n```latex\n\\documentclass[border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={中国近年出生人口数量变化趋势},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    % 图例外置右侧，避免遮挡数据\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    grid=both,\n    grid style={dashed, gray!50},\n    % 坐标轴范围与单位一致（单位：万人）\n    xmin=2017.5, xmax=2023.5,\n    ymin=800, ymax=1600,\n    xtick={2018,2019,2020,2021,2022,2023},\n    width=12cm,\n    height=8cm,\n]\n% 添加数据点标记与数值标注\n\\addplot[\n    color=blue,\n    mark=*,\n    thick,\n    nodes near coords,\n    % 数值标注无边框无底色，位于数据点正上方\n    nodes near coords style={font=\\small, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\ncoordinates {\n    (2018,1523)\n    (2019,1465)\n    (2020,1200)\n    (2021,1062)\n    (2022,956)\n    (2023,902)\n};\n\\legend{出生人口}\n% 数据来源注记写在 axis 内部\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.1) {数据来源：国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}\n```",
+  "chart_code": "\\documentclass[border=10pt]{standalone}\n\\usepackage{pgfplots}\n\\pgfplotsset{compat=1.18}\n\n\\begin{document}\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={中国近年出生人口数量变化趋势},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    % 图例外置右侧，避免遮挡数据\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    grid=both,\n    grid style={dashed, gray!50},\n    % 坐标轴范围与单位一致（单位：万人）\n    xmin=2017.5, xmax=2023.5,\n    ymin=800, ymax=1600,\n    xtick={2018,2019,2020,2021,2022,2023},\n    width=12cm,\n    height=8cm,\n]\n% 添加数据点标记与数值标注\n\\addplot[\n    color=blue,\n    mark=*,\n    thick,\n    nodes near coords,\n    % 数值标注无边框无底色，位于数据点正上方\n    nodes near coords style={font=\\small, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\ncoordinates {\n    (2018,1523)\n    (2019,1465)\n    (2020,1200)\n    (2021,1062)\n    (2022,956)\n    (2023,902)\n};\n\\legend{出生人口}\n% 数据来源注记写在 axis 内部\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.1) {数据来源：国家统计局};\n\\end{axis}\n\\end{tikzpicture}\n\\end{document}",
+  "generation_description": " 请基于我上传的数据绘制折线图，展示数值随时间或类别变化的趋势；添加图表标题、X 轴与 Y 轴标签（含单位）、数据点标记与网格线，并加上图例。",
+  "created_at": "2026-09-09T13:21:17.491Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 992,
+    "code_source": "from_request"
+  }
+}

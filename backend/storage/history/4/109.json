@@ -1,0 +1,18 @@
+{
+  "history_id": 109,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "请根据下面的数据绘制柱状图：某省近五年粮食产量分别为 2019 年 3200 万吨、2020 年 3280 万吨、2021 年 3360 万吨、2022 年 3450 万吨、2023 年 3520 万吨。请在每根柱子上方标注产量数值（单位：万吨）；添加图表标题、X 轴（年份）与 Y 轴（粮食产量/万吨）标签。",
+  "ai_response": "\n\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={某省近五年粮食产量},\n    ylabel={粮食产量（万吨）},\n    xlabel={年份},\n    ybar,\n    symbolic x coords={2019, 2020, 2021, 2022, 2023},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    ymin=0,\n    ymax=3800,\n    width=10cm,\n    height=6cm\n]\n\\addplot[fill=blue!20, draw=blue] coordinates {(2019,3200) (2020,3280) (2021,3360) (2022,3450) (2023,3520)};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：用户提供};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    title={某省近五年粮食产量},\n    ylabel={粮食产量（万吨）},\n    xlabel={年份},\n    ybar,\n    symbolic x coords={2019, 2020, 2021, 2022, 2023},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    ymin=0,\n    ymax=3800,\n    width=10cm,\n    height=6cm\n]\n\\addplot[fill=blue!20, draw=blue] coordinates {(2019,3200) (2020,3280) (2021,3360) (2022,3450) (2023,3520)};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：用户提供};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据下面的数据绘制柱状图：某省近五年粮食产量分别为 2019 年 3200 万吨、2020 年 3280 万吨、2021 年 3360 万吨、2022 年 3450 万吨、2023 年 3520 万吨。请在每根柱子上方标注产量数值（单位：万吨）；添加图表标题、X 轴（年份）与 Y 轴（粮食产量/万...",
+  "created_at": "2026-09-09T15:13:17.794Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 599,
+    "code_source": "from_request"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "history_id": 106,
+  "user_id": 4,
+  "data_id": 16,
+  "file_name": "03-pie-share.xlsx",
+  "dataset_name": "03-pie-share",
+  "user_input": "请根据我上传的数据绘制饼图，展示各品牌市场份额占比；为每个扇区标注品牌名称与百分比数值；添加图表标题与图例。",
+  "ai_response": "\n\n```latex\n\\begin{tikzpicture}\n\\pie[\n    text=legend,\n    legend style={at={(1.1,0.5)}, anchor=west, draw=black, fill=white},\n    radius=3,\n    title={各品牌市场份额占比},\n    style={post},\n    label position=middle,\n    sum=auto\n]{\n    32/品牌A,\n    26/品牌B,\n    18/品牌C,\n    14/品牌D,\n    10/品牌E\n}\n\\node[anchor=north, font=\\scriptsize] at (current bounding box.south) {数据来源：各品牌公开数据};\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\pie[\n    text=legend,\n    legend style={at={(1.1,0.5)}, anchor=west, draw=black, fill=white},\n    radius=3,\n    title={各品牌市场份额占比},\n    style={post},\n    label position=middle,\n    sum=auto\n]{\n    32/品牌A,\n    26/品牌B,\n    18/品牌C,\n    14/品牌D,\n    10/品牌E\n}\n\\node[anchor=north, font=\\scriptsize] at (current bounding box.south) {数据来源：各品牌公开数据};\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制饼图，展示各品牌市场份额占比；为每个扇区标注品牌名称与百分比数值；添加图表标题与图例。",
+  "created_at": "2026-09-09T15:06:57.983Z",
+  "metadata": {
+    "data_ids": [
+      16
+    ],
+    "has_chart_code": true,
+    "code_length": 377,
+    "code_source": "from_request"
+  }
+}
