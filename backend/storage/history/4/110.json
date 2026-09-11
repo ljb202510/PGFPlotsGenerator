@@ -1,0 +1,18 @@
+{
+  "history_id": 110,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你是什么模型",
+  "ai_response": "\n\n我是 **Qwen3.5**，是通义千问（Qwen）系列中最新推出的超大规模语言模型。我支持 100+ 语言，具备 256K 超长上下文窗口，并在逻辑推理、代码生成、视觉解析及智能体规划等能力上进行了全面升级。如果您有具体任务需求，欢迎随时告诉我！ 😊",
+  "chart_code": "",
+  "generation_description": " 你是什么模型",
+  "created_at": "2026-09-11T11:11:14.028Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": false,
+    "code_length": 0,
+    "code_source": "extracted_from_response"
+  }
+}

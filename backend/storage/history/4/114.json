@@ -1,0 +1,20 @@
+{
+  "history_id": 114,
+  "user_id": 4,
+  "data_id": 31,
+  "file_name": "14-errorbar-yield.csv",
+  "dataset_name": "14-errorbar-yield",
+  "user_input": "请根据我上传的数据绘制带误差棒的柱状图，展示各施肥方案的平均亩产及其标准差；误差棒表示标准差；在柱顶标注平均亩产数值（单位：公斤）；添加图表标题、X 轴（施肥方案）与 Y 轴（平均亩产/公斤）标签，并加上图例。",
+  "ai_response": "\n\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={各施肥方案平均亩产对比},\n    xlabel={施肥方案},\n    ylabel={平均亩产（公斤）},\n    ybar,\n    symbolic x coords={方案 A,方案 B,方案 C,方案 D},\n    xtick=data,\n    width=10cm,\n    height=6cm,\n    legend style={at={(1.03,0.5)}, anchor=west},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    error bars/.cd,\n    y dir=both,\n    y explicit,\n    error bar style={thick},\n    mark=*,\n    mark options={mark size=2pt, fill=white, draw=black}\n]\n\\addplot coordinates {\n    (方案 A,520,28)\n    (方案 B,568,35)\n    (方案 C,602,22)\n    (方案 D,585,30)\n};\n\\addlegendentry{平均亩产}\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    title={各施肥方案平均亩产对比},\n    xlabel={施肥方案},\n    ylabel={平均亩产（公斤）},\n    ybar,\n    symbolic x coords={方案 A,方案 B,方案 C,方案 D},\n    xtick=data,\n    width=10cm,\n    height=6cm,\n    legend style={at={(1.03,0.5)}, anchor=west},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    error bars/.cd,\n    y dir=both,\n    y explicit,\n    error bar style={thick},\n    mark=*,\n    mark options={mark size=2pt, fill=white, draw=black}\n]\n\\addplot coordinates {\n    (方案 A,520,28)\n    (方案 B,568,35)\n    (方案 C,602,22)\n    (方案 D,585,30)\n};\n\\addlegendentry{平均亩产}\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制带误差棒的柱状图，展示各施肥方案的平均亩产及其标准差；误差棒表示标准差；在柱顶标注平均亩产数值（单位：公斤）；添加图表标题、X 轴（施肥方案）与 Y 轴（平均亩产/公斤）标签，并加上图例。",
+  "created_at": "2026-09-11T11:38:32.642Z",
+  "metadata": {
+    "data_ids": [
+      31
+    ],
+    "has_chart_code": true,
+    "code_length": 687,
+    "code_source": "from_request"
+  }
+}

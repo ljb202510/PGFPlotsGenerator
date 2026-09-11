@@ -1,0 +1,62 @@
+\documentclass[border=5pt]{standalone}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % 饼图：AI 代码可直接使用 \pie
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}  % 面积图 / 堆叠面积图 / \closedcycle 填充路径
+\usepgfplotslibrary{errorbars}     % \addplot +[error bars/.cd, ...] 误差棒子键
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+
+% 支持中文
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{SimSun}
+\setmainfont{Times New Roman}
+
+\begin{document}
+
+\begin{tikzpicture}
+\begin{axis}[
+    width=14cm, height=8cm,
+    title={2015—2024 年中国建成区绿化覆盖率变化},
+    xlabel={年份},
+    ylabel={建成区绿化覆盖率（\%）},
+    xmin=2014.6, xmax=2024.6,
+    ymin=38, ymax=49,
+    xtick={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},
+    ytick={38,40,42,44,46,48},
+    ymajorgrids=true,
+    grid style={dashed, gray!30},
+    tick align=outside,
+    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},
+]
+
+% 面积主体：折线下方填充淡蓝色区域
+\addplot[fill=blue!15, draw=blue!70!black, thick] coordinates {
+    (2015,40.1) (2016,40.8) (2017,41.5) (2018,42.3) (2019,43.0)
+    (2020,43.8) (2021,44.5) (2022,45.2) (2023,46.0) (2024,46.8)
+} \closedcycle;
+\addlegendentry{建成区绿化覆盖率}
+
+% 数值标注：单系列 10 个点,按交错的上下方向标注（奇数年标上方,偶数年标下方）
+\addplot[only marks, mark=*, mark size=2pt, blue!70!black, forget plot,
+    nodes near coords,
+    every node near coord/.append style={font=\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}
+] coordinates {
+    (2015,40.1) (2017,41.5) (2019,43.0) (2021,44.5) (2023,46.0)
+};
+
+\addplot[only marks, mark=*, mark size=2pt, blue!70!black, forget plot,
+    nodes near coords,
+    every node near coord/.append style={font=\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north}
+] coordinates {
+    (2016,40.8) (2018,42.3) (2020,43.8) (2022,45.2) (2024,46.8)
+};
+
+\node[anchor=north west, font=\scriptsize] at (axis description cs:0.0,-0.15)
+    {数据来源：住房和城乡建设部《城乡建设统计年鉴》（2015—2024 年）};
+\end{axis}
+\end{tikzpicture}
+
+\end{document}

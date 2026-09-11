@@ -1,0 +1,50 @@
+\documentclass[border=5pt]{standalone}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % 饼图：AI 代码可直接使用 \pie
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}  % 面积图 / 堆叠面积图 / \closedcycle 填充路径
+\usepgfplotslibrary{errorbars}     % \addplot +[error bars/.cd, ...] 误差棒子键
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+
+% 支持中文
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{SimSun}
+\setmainfont{Times New Roman}
+
+\begin{document}
+
+\begin{tikzpicture}
+\begin{axis}[
+    xbar,
+    width=11cm, height=8.5cm,
+    bar width=0.5,
+    title={2023年末主要城市轨道交通运营里程对比},
+    xlabel={运营里程（km）},
+    ylabel={城市},
+    symbolic y coords={南京,武汉,杭州,深圳,广州,成都,北京,上海},
+    ytick=data,
+    xmin=0, xmax=950,
+    enlarge y limits=0.08,
+    nodes near coords,
+    every node near coord/.append style={font=\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=west},
+    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}
+]
+\addplot[fill=blue!45, draw=blue!70!black] coordinates {
+    (831,上海)
+    (807,北京)
+    (632,成都)
+    (621,广州)
+    (567,深圳)
+    (516,杭州)
+    (486,武汉)
+    (459,南京)
+};
+\legend{轨道交通运营里程}
+\node[anchor=north west, font=\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2023年城市轨道交通运营数据（交通运输部）};
+\end{axis}
+\end{tikzpicture}
+
+\end{document}

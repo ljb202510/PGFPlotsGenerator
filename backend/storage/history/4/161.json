@@ -1,0 +1,20 @@
+{
+  "history_id": 161,
+  "user_id": 4,
+  "data_id": 34,
+  "file_name": "17-stackedarea-products.xlsx",
+  "dataset_name": "17-stackedarea-products",
+  "user_input": "请根据我上传的数据绘制堆叠面积图，展示产品甲、产品乙、产品丙 1—12 月的销量构成与累计趋势；三个产品使用不同颜色自下而上堆叠并加上图例；添加图表标题、X 轴（月份）与 Y 轴（销量/万件）标签。",
+  "ai_response": "\n\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={产品甲、乙、丙销量构成与累计趋势},\n    xlabel={月份},\n    ylabel={销量（万件）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    stacked,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits={abs=12*0.15}\n]\n% 产品甲（底部，anchor=south）\n\\addplot[blue, fill=blue!30, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}] \n    coordinates {(1月,12) (2月,14) (3月,16) (4月,18) (5月,20) (6月,22) (7月,24) (8月,26) (9月,28) (10月,30) (11月,32) (12月,34)} \\closedcycle;\n% 产品乙（中间，anchor=north 避免重叠）\n\\addplot[red, fill=red!30, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north}] \n    coordinates {(1月,8) (2月,9) (3月,11) (4月,12) (5月,14) (6月,15) (7月,17) (8月,18) (9月,20) (10月,21) (11月,23) (12月,25)} \\closedcycle;\n% 产品丙（顶部，anchor=south）\n\\addplot[green!60!black, fill=green!30, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}] \n    coordinates {(1月,5) (2月,6) (3月,7) (4月,8) (5月,9) (6月,10) (7月,11) (8月,12) (9月,13) (10月,14) (11月,15) (12月,16)} \\closedcycle;\n\\legend{产品甲,产品乙,产品丙}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：17-stackedarea-products.xlsx};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    title={产品甲、乙、丙销量构成与累计趋势},\n    xlabel={月份},\n    ylabel={销量（万件）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    stacked,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits={abs=12*0.15}\n]\n% 产品甲（底部，anchor=south）\n\\addplot[blue, fill=blue!30, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}] \n    coordinates {(1月,12) (2月,14) (3月,16) (4月,18) (5月,20) (6月,22) (7月,24) (8月,26) (9月,28) (10月,30) (11月,32) (12月,34)} \\closedcycle;\n% 产品乙（中间，anchor=north 避免重叠）\n\\addplot[red, fill=red!30, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north}] \n    coordinates {(1月,8) (2月,9) (3月,11) (4月,12) (5月,14) (6月,15) (7月,17) (8月,18) (9月,20) (10月,21) (11月,23) (12月,25)} \\closedcycle;\n% 产品丙（顶部，anchor=south）\n\\addplot[green!60!black, fill=green!30, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}] \n    coordinates {(1月,5) (2月,6) (3月,7) (4月,8) (5月,9) (6月,10) (7月,11) (8月,12) (9月,13) (10月,14) (11月,15) (12月,16)} \\closedcycle;\n\\legend{产品甲,产品乙,产品丙}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：17-stackedarea-products.xlsx};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制堆叠面积图，展示产品甲、产品乙、产品丙 1—12 月的销量构成与累计趋势；三个产品使用不同颜色自下而上堆叠并加上图例；添加图表标题、X 轴（月份）与 Y 轴（销量/万件）标签。",
+  "created_at": "2026-09-11T13:29:21.153Z",
+  "metadata": {
+    "data_ids": [
+      34
+    ],
+    "has_chart_code": true,
+    "code_length": 1427,
+    "code_source": "from_request"
+  }
+}

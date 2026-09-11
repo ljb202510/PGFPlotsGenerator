@@ -1,0 +1,20 @@
+{
+  "history_id": 129,
+  "user_id": 4,
+  "data_id": 38,
+  "file_name": "26-multiline3-months.csv",
+  "dataset_name": "26-multiline3-months",
+  "user_input": "请根据我上传的数据绘制折线图，对比华北、华东、华南三个区域 1—12 月销售额变化趋势；三条折线使用不同颜色与数据点标记，并标注数值（单位：万元）；添加图表标题、X 轴（月份）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "ai_response": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=15cm, height=8cm,\n    title={华北、华东、华南三区域 1—12 月销售额变化趋势},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    x tick label style={font=\\scriptsize},\n    ymin=70, ymax=310,\n    ytick distance=50,\n    ymajorgrids,\n    enlarge x limits=0.04,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    legend cell align=left\n]\n% 华东（整体最高，标注放在数据点上方）\n\\addplot[red, mark=*, thick, nodes near coords,\n    every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=south}]\n    coordinates {(1月,150) (2月,160) (3月,172) (4月,168) (5月,185) (6月,190) (7月,205)\n                 (8月,215) (9月,230) (10月,245) (11月,260) (12月,278)};\n\\addlegendentry{华东}\n\n% 华北（居中，标注放在数据点左下侧，与华南错开）\n\\addplot[blue, mark=square*, thick, nodes near coords,\n    every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=north east, xshift=1pt}]\n    coordinates {(1月,120) (2月,115) (3月,130) (4月,128) (5月,140) (6月,136) (7月,150)\n                 (8月,158) (9月,152) (10月,165) (11月,172) (12月,185)};\n\\addlegendentry{华北}\n\n% 华南（整体最低，标注放在数据点右下侧，与华北错开）\n\\addplot[teal, mark=triangle*, thick, nodes near coords,\n    every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=north west, xshift=-1pt}]\n    coordinates {(1月,95) (2月,102) (3月,110) (4月,118) (5月,125) (6月,132) (7月,140)\n                 (8月,148) (9月,155) (10月,162) (11月,170) (12月,180)};\n\\addlegendentry{华南}\n\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.18)\n    {数据来源：数据集 26-multiline3-months.csv（单位：万元）};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=15cm, height=8cm,\n    title={华北、华东、华南三区域 1—12 月销售额变化趋势},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    x tick label style={font=\\scriptsize},\n    ymin=70, ymax=310,\n    ytick distance=50,\n    ymajorgrids,\n    enlarge x limits=0.04,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    legend cell align=left\n]\n% 华东（整体最高，标注放在数据点上方）\n\\addplot[red, mark=*, thick, nodes near coords,\n    every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=south}]\n    coordinates {(1月,150) (2月,160) (3月,172) (4月,168) (5月,185) (6月,190) (7月,205)\n                 (8月,215) (9月,230) (10月,245) (11月,260) (12月,278)};\n\\addlegendentry{华东}\n\n% 华北（居中，标注放在数据点左下侧，与华南错开）\n\\addplot[blue, mark=square*, thick, nodes near coords,\n    every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=north east, xshift=1pt}]\n    coordinates {(1月,120) (2月,115) (3月,130) (4月,128) (5月,140) (6月,136) (7月,150)\n                 (8月,158) (9月,152) (10月,165) (11月,172) (12月,185)};\n\\addlegendentry{华北}\n\n% 华南（整体最低，标注放在数据点右下侧，与华北错开）\n\\addplot[teal, mark=triangle*, thick, nodes near coords,\n    every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=north west, xshift=-1pt}]\n    coordinates {(1月,95) (2月,102) (3月,110) (4月,118) (5月,125) (6月,132) (7月,140)\n                 (8月,148) (9月,155) (10月,162) (11月,170) (12月,180)};\n\\addlegendentry{华南}\n\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.18)\n    {数据来源：数据集 26-multiline3-months.csv（单位：万元）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制折线图，对比华北、华东、华南三个区域 1—12 月销售额变化趋势；三条折线使用不同颜色与数据点标记，并标注数值（单位：万元）；添加图表标题、X 轴（月份）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "created_at": "2026-09-11T12:16:43.340Z",
+  "metadata": {
+    "data_ids": [
+      38
+    ],
+    "has_chart_code": true,
+    "code_length": 1697,
+    "code_source": "from_request"
+  }
+}

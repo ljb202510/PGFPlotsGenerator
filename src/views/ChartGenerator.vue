@@ -1042,8 +1042,15 @@ const compileToPDF = async (message) => {
     } else if (error.response?.status === 400) {
       ElMessage.error('该历史记录没有可编译的图表代码')
     } else {
+      // 后端错误信息可能包含完整 LaTeX 编译日志（数千字符），直接塞 ElMessage 会出现
+      // 全屏红字弹窗且无法关闭。这里截断到 200 字符，并用 showClose + duration 保证可自动/手动关闭。
       const rawMsg = error.response?.data?.message || error.message || '未知错误'
-      ElMessage.error('PDF生成失败: ' + String(rawMsg))
+      const trimmed = String(rawMsg).replace(/\s+/g, ' ').slice(0, 200)
+      ElMessage.error({
+        message: 'PDF生成失败（后端 LaTeX 编译日志已截断，完整内容见 backend/storage/debug/）：\n' + trimmed,
+        showClose: true,
+        duration: 5000
+      })
     }
   } finally {
     compiling.value = false

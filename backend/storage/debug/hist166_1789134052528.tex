@@ -1,0 +1,57 @@
+\documentclass[border=5pt]{standalone}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % 饼图：AI 代码可直接使用 \pie
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}  % 面积图 / 堆叠面积图 / \closedcycle 填充路径
+% 注：error bars 是 pgfplots 内置功能（在核心 pgfplots.errorbars.code.tex），不需要单独 \usepgfplotslibrary 加载
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+
+% 支持中文
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{SimSun}
+\setmainfont{Times New Roman}
+
+\begin{document}
+
+\begin{tikzpicture}
+\begin{axis}[
+    ybar,
+    title={2024 年各省/直辖市 GDP 对比},
+    ylabel={GDP（亿元）},
+    symbolic x coords={广东,江苏,山东,浙江,四川,河南,湖北,福建,湖南,上海,安徽,河北,北京,陕西},
+    xtick=data,
+    xticklabel style={font=\scriptsize, rotate=45, anchor=east},
+    nodes near coords,
+    every node near coord/.append style={font=\scriptsize, yshift=3pt, fill=none, draw=none, inner sep=1pt, anchor=south},
+    enlarge x limits=0.15,
+    ymin=0,
+    ymax=140000,
+    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},
+    width=12cm,
+    height=7cm
+]
+\addplot[fill=steelblue, draw=steelblue, thick] coordinates {
+    (广东,135673)
+    (江苏,128222)
+    (山东,92069)
+    (浙江,82553)
+    (四川,60132)
+    (河南,59132)
+    (湖北,55803)
+    (福建,54355)
+    (湖南,50012)
+    (上海,47218)
+    (安徽,47050)
+    (河北,43944)
+    (北京,43760)
+    (陕西,33786)
+};
+\legend{GDP}
+\node[anchor=north west, font=\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2024 年各省统计公报};
+\end{axis}
+\end{tikzpicture}
+
+\end{document}

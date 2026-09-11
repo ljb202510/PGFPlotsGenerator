@@ -1,0 +1,18 @@
+{
+  "history_id": 184,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm,\n    height=7cm,\n    title={2023 年中国 14 个省份/直辖市 GDP 对比},\n    xlabel={省份},\n    ylabel={GDP（亿元）},\n    symbolic x coords={广东,江苏,山东,浙江,四川,河南,湖北,福建,湖南,上海,安徽,河北,北京,陕西},\n    xtick=data,\n    x tick label style={rotate=45, anchor=east, font=\\scriptsize},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=140000\n]\n\\addplot[fill=blue!60, draw=black] coordinates {\n    (广东,135673)\n    (江苏,128222)\n    (山东,92069)\n    (浙江,82553)\n    (四川,60132)\n    (河南,59132)\n    (湖北,55803)\n    (福建,54355)\n    (湖南,50012)\n    (上海,47218)\n    (安徽,47050)\n    (河北,43944)\n    (北京,43760)\n    (陕西,33786)\n};\n\\legend{GDP}\n\\end{axis}\n\\end{tikzpicture}\n\n有些数据互相遮挡了，可以把间距拉大一点",
+  "ai_response": "\n\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm,\n    height=7cm,\n    title={2023 年中国 14 个省份/直辖市 GDP 对比},\n    xlabel={省份},\n    ylabel={GDP（亿元）},\n    symbolic x coords={广东,江苏,山东,浙江,四川,河南,湖北,福建,湖南,上海,安徽,河北,北京,陕西},\n    xtick=data,\n    x tick label style={rotate=45, anchor=east, font=\\scriptsize},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    bar width=12pt,\n    ymin=0,\n    ymax=140000\n]\n\\addplot[fill=blue!60, draw=black] coordinates {\n    (广东,135673)\n    (江苏,128222)\n    (山东,92069)\n    (浙江,82553)\n    (四川,60132)\n    (河南,59132)\n    (湖北,55803)\n    (福建,54355)\n    (湖南,50012)\n    (上海,47218)\n    (安徽,47050)\n    (河北,43944)\n    (北京,43760)\n    (陕西,33786)\n};\n\\legend{GDP}\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm,\n    height=7cm,\n    title={2023 年中国 14 个省份/直辖市 GDP 对比},\n    xlabel={省份},\n    ylabel={GDP（亿元）},\n    symbolic x coords={广东,江苏,山东,浙江,四川,河南,湖北,福建,湖南,上海,安徽,河北,北京,陕西},\n    xtick=data,\n    x tick label style={rotate=45, anchor=east, font=\\scriptsize},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    bar width=12pt,\n    ymin=0,\n    ymax=140000\n]\n\\addplot[fill=blue!60, draw=black] coordinates {\n    (广东,135673)\n    (江苏,128222)\n    (山东,92069)\n    (浙江,82553)\n    (四川,60132)\n    (河南,59132)\n    (湖北,55803)\n    (福建,54355)\n    (湖南,50012)\n    (上海,47218)\n    (安徽,47050)\n    (河北,43944)\n    (北京,43760)\n    (陕西,33786)\n};\n\\legend{GDP}\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " \\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm,\n    height=7cm,\n    title={2023 年中国 14 个省份/直辖市 GDP 对比},\n    xlabel={省份},\n    ylabel={GDP（亿...",
+  "created_at": "2026-09-11T15:05:51.091Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 894,
+    "code_source": "from_request"
+  }
+}

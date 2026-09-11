@@ -1,0 +1,20 @@
+{
+  "history_id": 134,
+  "user_id": 4,
+  "data_id": 40,
+  "file_name": "28-single-point.csv",
+  "dataset_name": "28-single-point",
+  "user_input": "请根据我上传的数据绘制柱状图，对比各区域销售额；X 轴为较长的中文区域名称，请合理处理标签（如旋转或缩小字号）避免重叠；在每根柱子上方标注销售额（单位：万元）；添加图表标题、X 轴（区域）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "ai_response": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    bar width=32pt,\n    width=11cm,\n    height=7.5cm,\n    title={各项目投资额对比},\n    xlabel={项目名称（区域）},\n    ylabel={投资额（万元）},\n    symbolic x coords={一期工程},\n    xtick=data,\n    x tick label style={font=\\small, rotate=20, anchor=east},\n    ymin=0,\n    ymax=10500,\n    ytick={0,2000,4000,6000,8000,10000},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    tick align=outside\n]\n\\addplot coordinates {(一期工程,8600)};\n\\addlegendentry{投资额（万元）}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.30) {数据来源：28-single-point.csv};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    bar width=32pt,\n    width=11cm,\n    height=7.5cm,\n    title={各项目投资额对比},\n    xlabel={项目名称（区域）},\n    ylabel={投资额（万元）},\n    symbolic x coords={一期工程},\n    xtick=data,\n    x tick label style={font=\\small, rotate=20, anchor=east},\n    ymin=0,\n    ymax=10500,\n    ytick={0,2000,4000,6000,8000,10000},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    tick align=outside\n]\n\\addplot coordinates {(一期工程,8600)};\n\\addlegendentry{投资额（万元）}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.30) {数据来源：28-single-point.csv};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制柱状图，对比各区域销售额；X 轴为较长的中文区域名称，请合理处理标签（如旋转或缩小字号）避免重叠；在每根柱子上方标注销售额（单位：万元）；添加图表标题、X 轴（区域）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "created_at": "2026-09-11T12:24:34.767Z",
+  "metadata": {
+    "data_ids": [
+      40
+    ],
+    "has_chart_code": true,
+    "code_length": 769,
+    "code_source": "from_request"
+  }
+}

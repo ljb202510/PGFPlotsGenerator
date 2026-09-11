@@ -1,0 +1,20 @@
+{
+  "history_id": 177,
+  "user_id": 4,
+  "data_id": 37,
+  "file_name": "25-provinces-gdp.csv",
+  "dataset_name": "25-provinces-gdp",
+  "user_input": "请根据我上传的数据绘制柱状图，对比这 14 个省份/直辖市的 GDP；在每根柱子上方标注 GDP 数值（单位：亿元）；添加图表标题、X 轴（省份）与 Y 轴（GDP/亿元）标签，并加上图例。",
+  "ai_response": "\n\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2022 年 14 省份/直辖市 GDP 对比},\n    ylabel={GDP（亿元）},\n    symbolic x coords={广东,江苏,山东,浙江,四川,河南,湖北,福建,湖南,上海,安徽,河北,北京,陕西},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=140000\n]\n\\addplot[blue, fill=blue!40] coordinates {(广东,135673) (江苏,128222) (山东,92069) (浙江,82553) (四川,60132) (河南,59132) (湖北,55803) (福建,54355) (湖南,50012) (上海,47218) (安徽,47050) (河北,43944) (北京,43760) (陕西,33786)};\n\\legend{GDP}\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局};\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2022 年 14 省份/直辖市 GDP 对比},\n    ylabel={GDP（亿元）},\n    symbolic x coords={广东,江苏,山东,浙江,四川,河南,湖北,福建,湖南,上海,安徽,河北,北京,陕西},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=140000\n]\n\\addplot[blue, fill=blue!40] coordinates {(广东,135673) (江苏,128222) (山东,92069) (浙江,82553) (四川,60132) (河南,59132) (湖北,55803) (福建,54355) (湖南,50012) (上海,47218) (安徽,47050) (河北,43944) (北京,43760) (陕西,33786)};\n\\legend{GDP}\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局};\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制柱状图，对比这 14 个省份/直辖市的 GDP；在每根柱子上方标注 GDP 数值（单位：亿元）；添加图表标题、X 轴（省份）与 Y 轴（GDP/亿元）标签，并加上图例。",
+  "created_at": "2026-09-11T14:22:16.121Z",
+  "metadata": {
+    "data_ids": [
+      37
+    ],
+    "has_chart_code": true,
+    "code_length": 759,
+    "code_source": "from_request"
+  }
+}

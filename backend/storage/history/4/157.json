@@ -1,0 +1,18 @@
+{
+  "history_id": 157,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型基座是什么",
+  "ai_response": "我无法确认或披露自己具体的模型基座信息（训练细节、版本号等），这类信息请以官方文档和公告为准，我不做猜测，以免给出错误答案。\n\n不过我这边的主要用途是**图表生成**：你只要给出数据（或说明想要的年份与指标，例如「2020—2024 年中国新能源汽车销量」），我就可以直接输出一段可编译的 PGFPlots / TikZ 代码，包含坐标轴标签、图例、数值标注等。\n\n需要的话，直接告诉我：\n\n- 图表类型（折线 / 柱状 / 堆叠柱 / 饼图 / 散点 / 面积图……）\n- 数据（可上传 Excel/CSV，或直接贴数值）\n- 标题与坐标轴单位\n\n我这就给你生成代码。",
+  "chart_code": "",
+  "generation_description": " 你的模型基座是什么",
+  "created_at": "2026-09-11T13:27:43.697Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": false,
+    "code_length": 0,
+    "code_source": "extracted_from_response"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "history_id": 132,
+  "user_id": 4,
+  "data_id": 40,
+  "file_name": "28-single-point.csv",
+  "dataset_name": "28-single-point",
+  "user_input": "请根据我上传的数据绘制柱状图；数据只有一个类别；在柱子上方标注投资额数值（单位：万元）；添加图表标题、X 轴（项目）与 Y 轴（投资额/万元）标签。",
+  "ai_response": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    bar width=45pt,\n    width=9cm,\n    height=8cm,\n    title={项目投资额（单位：万元）},\n    xlabel={项目},\n    ylabel={投资额（万元）},\n    symbolic x coords={一期工程},\n    xtick=data,\n    enlarge x limits=0.6,\n    ymin=0,\n    ymax=10000,\n    ymajorgrids,\n    grid style={dashed, gray!40},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n% 数据来源：28-single-point.csv\n\\addplot[fill=blue!50, draw=blue!70!black] coordinates {(一期工程,8600)};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：28-single-point.csv};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    bar width=45pt,\n    width=9cm,\n    height=8cm,\n    title={项目投资额（单位：万元）},\n    xlabel={项目},\n    ylabel={投资额（万元）},\n    symbolic x coords={一期工程},\n    xtick=data,\n    enlarge x limits=0.6,\n    ymin=0,\n    ymax=10000,\n    ymajorgrids,\n    grid style={dashed, gray!40},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n% 数据来源：28-single-point.csv\n\\addplot[fill=blue!50, draw=blue!70!black] coordinates {(一期工程,8600)};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：28-single-point.csv};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制柱状图；数据只有一个类别；在柱子上方标注投资额数值（单位：万元）；添加图表标题、X 轴（项目）与 Y 轴（投资额/万元）标签。",
+  "created_at": "2026-09-11T12:21:21.907Z",
+  "metadata": {
+    "data_ids": [
+      40
+    ],
+    "has_chart_code": true,
+    "code_length": 677,
+    "code_source": "from_request"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "history_id": 140,
+  "user_id": 4,
+  "data_id": 26,
+  "file_name": "12-hbar-metro.csv",
+  "dataset_name": "12-hbar-metro",
+  "user_input": "请根据我上传的数据绘制水平条形图，对比各城市轨道交通运营里程；在每根条形末端标注里程数值（单位：km）；添加图表标题、X 轴（运营里程/km）与 Y 轴（城市）标签，并加上图例。",
+  "ai_response": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    xbar,\n    width=11cm, height=8.5cm,\n    bar width=0.5,\n    title={2023年末主要城市轨道交通运营里程对比},\n    xlabel={运营里程（km）},\n    ylabel={城市},\n    symbolic y coords={南京,武汉,杭州,深圳,广州,成都,北京,上海},\n    ytick=data,\n    xmin=0, xmax=950,\n    enlarge y limits=0.08,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=west},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n\\addplot[fill=blue!45, draw=blue!70!black] coordinates {\n    (831,上海)\n    (807,北京)\n    (632,成都)\n    (621,广州)\n    (567,深圳)\n    (516,杭州)\n    (486,武汉)\n    (459,南京)\n};\n\\legend{轨道交通运营里程}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2023年城市轨道交通运营数据（交通运输部）};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    xbar,\n    width=11cm, height=8.5cm,\n    bar width=0.5,\n    title={2023年末主要城市轨道交通运营里程对比},\n    xlabel={运营里程（km）},\n    ylabel={城市},\n    symbolic y coords={南京,武汉,杭州,深圳,广州,成都,北京,上海},\n    ytick=data,\n    xmin=0, xmax=950,\n    enlarge y limits=0.08,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=west},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n\\addplot[fill=blue!45, draw=blue!70!black] coordinates {\n    (831,上海)\n    (807,北京)\n    (632,成都)\n    (621,广州)\n    (567,深圳)\n    (516,杭州)\n    (486,武汉)\n    (459,南京)\n};\n\\legend{轨道交通运营里程}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2023年城市轨道交通运营数据（交通运输部）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制水平条形图，对比各城市轨道交通运营里程；在每根条形末端标注里程数值（单位：km）；添加图表标题、X 轴（运营里程/km）与 Y 轴（城市）标签，并加上图例。",
+  "created_at": "2026-09-11T12:50:57.156Z",
+  "metadata": {
+    "data_ids": [
+      26
+    ],
+    "has_chart_code": true,
+    "code_length": 807,
+    "code_source": "from_request"
+  }
+}

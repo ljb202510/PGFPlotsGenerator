@@ -1,0 +1,20 @@
+{
+  "history_id": 139,
+  "user_id": 4,
+  "data_id": 25,
+  "file_name": "11-area-greening.csv",
+  "dataset_name": "11-area-greening",
+  "user_input": "请根据我上传的数据绘制面积图，展示 2015—2024 年建成区绿化覆盖率的变化；折线下方填充淡色区域；添加图表标题、X 轴（年份）与 Y 轴（绿化覆盖率/%）标签，并加上图例。",
+  "ai_response": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=14cm, height=8cm,\n    title={2015—2024 年中国建成区绿化覆盖率变化},\n    xlabel={年份},\n    ylabel={建成区绿化覆盖率（\\%）},\n    xmin=2014.6, xmax=2024.6,\n    ymin=38, ymax=49,\n    xtick={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},\n    ytick={38,40,42,44,46,48},\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    tick align=outside,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n]\n\n% 面积主体：折线下方填充淡蓝色区域\n\\addplot[fill=blue!15, draw=blue!70!black, thick] coordinates {\n    (2015,40.1) (2016,40.8) (2017,41.5) (2018,42.3) (2019,43.0)\n    (2020,43.8) (2021,44.5) (2022,45.2) (2023,46.0) (2024,46.8)\n} \\closedcycle;\n\\addlegendentry{建成区绿化覆盖率}\n\n% 数值标注：单系列 10 个点，按交错的上下方向标注（奇数年标上方，偶数年标下方）\n\\addplot[only marks, mark=*, mark size=2pt, blue!70!black, forget plot,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n] coordinates {\n    (2015,40.1) (2017,41.5) (2019,43.0) (2021,44.5) (2023,46.0)\n};\n\n\\addplot[only marks, mark=*, mark size=2pt, blue!70!black, forget plot,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north}\n] coordinates {\n    (2016,40.8) (2018,42.3) (2020,43.8) (2022,45.2) (2024,46.8)\n};\n\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15)\n    {数据来源：住房和城乡建设部《城乡建设统计年鉴》（2015—2024 年）};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=14cm, height=8cm,\n    title={2015—2024 年中国建成区绿化覆盖率变化},\n    xlabel={年份},\n    ylabel={建成区绿化覆盖率（\\%）},\n    xmin=2014.6, xmax=2024.6,\n    ymin=38, ymax=49,\n    xtick={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},\n    ytick={38,40,42,44,46,48},\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    tick align=outside,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n]\n\n% 面积主体：折线下方填充淡蓝色区域\n\\addplot[fill=blue!15, draw=blue!70!black, thick] coordinates {\n    (2015,40.1) (2016,40.8) (2017,41.5) (2018,42.3) (2019,43.0)\n    (2020,43.8) (2021,44.5) (2022,45.2) (2023,46.0) (2024,46.8)\n} \\closedcycle;\n\\addlegendentry{建成区绿化覆盖率}\n\n% 数值标注：单系列 10 个点，按交错的上下方向标注（奇数年标上方，偶数年标下方）\n\\addplot[only marks, mark=*, mark size=2pt, blue!70!black, forget plot,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n] coordinates {\n    (2015,40.1) (2017,41.5) (2019,43.0) (2021,44.5) (2023,46.0)\n};\n\n\\addplot[only marks, mark=*, mark size=2pt, blue!70!black, forget plot,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north}\n] coordinates {\n    (2016,40.8) (2018,42.3) (2020,43.8) (2022,45.2) (2024,46.8)\n};\n\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15)\n    {数据来源：住房和城乡建设部《城乡建设统计年鉴》（2015—2024 年）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制面积图，展示 2015—2024 年建成区绿化覆盖率的变化；折线下方填充淡色区域；添加图表标题、X 轴（年份）与 Y 轴（绿化覆盖率/%）标签，并加上图例。",
+  "created_at": "2026-09-11T12:48:22.185Z",
+  "metadata": {
+    "data_ids": [
+      25
+    ],
+    "has_chart_code": true,
+    "code_length": 1470,
+    "code_source": "from_request"
+  }
+}

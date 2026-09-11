@@ -1,0 +1,20 @@
+{
+  "history_id": 124,
+  "user_id": 4,
+  "data_id": 17,
+  "file_name": "04-scatter-ad-sales.csv",
+  "dataset_name": "04-scatter-ad-sales",
+  "user_input": "请根据我上传的数据生成一张完整、规范的散点图，观察广告费用与销量之间的相关性；请确保图表包含完整的标题、坐标轴标签，并在图中给出必要说明（如相关关系）；每个数据点使用清晰的圆形标记。",
+  "ai_response": "\n\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    scatter,\n    title={广告费用与销量关系散点图},\n    xlabel={广告费用（万元）},\n    ylabel={销量（件）},\n    xmin=0, xmax=35,\n    ymin=0, ymax=220,\n    xtick={0,5,10,15,20,25,30},\n    ytick={0,50,100,150,200},\n    grid=major,\n    grid style={gray!30},\n    mark=*,\n    mark size=4pt,\n    thick,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south west,\n        rotate=45\n    },\n    legend style={\n        at={(1.03,0.5)},\n        anchor=west,\n        draw=black,\n        fill=white,\n        font=\\small\n    },\n    scatter src=explicit symbolic,\n]\n\\addplot[blue, mark=*] \n    coordinates {\n        (5,42)\n        (8,60)\n        (10,75)\n        (12,90)\n        (15,105)\n        (18,128)\n        (20,140)\n        (25,166)\n        (28,188)\n        (30,205)\n    };\n\\legend{广告费用与销量}\n\\node[anchor=north west, font=\\scriptsize, text width=3.5cm] at (axis description cs:0.0,-0.12) {说明：散点图显示广告费用与销量呈显著正相关关系，即随着广告费用增加，销量相应增长。};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    scatter,\n    title={广告费用与销量关系散点图},\n    xlabel={广告费用（万元）},\n    ylabel={销量（件）},\n    xmin=0, xmax=35,\n    ymin=0, ymax=220,\n    xtick={0,5,10,15,20,25,30},\n    ytick={0,50,100,150,200},\n    grid=major,\n    grid style={gray!30},\n    mark=*,\n    mark size=4pt,\n    thick,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south west,\n        rotate=45\n    },\n    legend style={\n        at={(1.03,0.5)},\n        anchor=west,\n        draw=black,\n        fill=white,\n        font=\\small\n    },\n    scatter src=explicit symbolic,\n]\n\\addplot[blue, mark=*] \n    coordinates {\n        (5,42)\n        (8,60)\n        (10,75)\n        (12,90)\n        (15,105)\n        (18,128)\n        (20,140)\n        (25,166)\n        (28,188)\n        (30,205)\n    };\n\\legend{广告费用与销量}\n\\node[anchor=north west, font=\\scriptsize, text width=3.5cm] at (axis description cs:0.0,-0.12) {说明：散点图显示广告费用与销量呈显著正相关关系，即随着广告费用增加，销量相应增长。};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据生成一张完整、规范的散点图，观察广告费用与销量之间的相关性；请确保图表包含完整的标题、坐标轴标签，并在图中给出必要说明（如相关关系）；每个数据点使用清晰的圆形标记。",
+  "created_at": "2026-09-11T11:58:54.018Z",
+  "metadata": {
+    "data_ids": [
+      17
+    ],
+    "has_chart_code": true,
+    "code_length": 1077,
+    "code_source": "from_request"
+  }
+}

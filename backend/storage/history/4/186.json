@@ -1,0 +1,20 @@
+{
+  "history_id": 186,
+  "user_id": 4,
+  "data_id": 37,
+  "file_name": "25-provinces-gdp.csv",
+  "dataset_name": "25-provinces-gdp",
+  "user_input": "请根据我上传的数据绘制柱状图，对比这 14 个省份/直辖市的 GDP；在每根柱子上方标注 GDP 数值（单位：亿元）；添加图表标题、X 轴（省份）与 Y 轴（GDP/亿元）标签，并加上图例。",
+  "ai_response": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=17cm, height=8cm,\n    bar width=0.55cm,\n    title={2023年14省份/直辖市GDP对比},\n    xlabel={省份},\n    ylabel={GDP（亿元）},\n    symbolic x coords={广东,江苏,山东,浙江,四川,河南,湖北,福建,湖南,上海,安徽,河北,北京,陕西},\n    xtick=data,\n    xticklabel style={rotate=45, anchor=east, font=\\scriptsize},\n    ymin=0, ymax=155000,\n    ytick={0,20000,40000,60000,80000,100000,120000,140000},\n    enlarge x limits=0.15,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n% 奇位分类（数值较高段，标注在柱顶上方）\n\\addplot[fill=blue!55, draw=blue!70!black, nodes near coords, point meta=explicit symbolic,\n         every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}]\n  coordinates {\n    (广东,135673)[13.6万]\n    (山东,92069)[9.2万]\n    (四川,60132)[6.0万]\n    (湖北,55803)[5.6万]\n    (湖南,50012)[5.0万]\n    (安徽,47050)[4.7万]\n    (北京,43760)[4.4万]\n  };\n\\addlegendentry{2023年GDP}\n\n% 偶位分类（与奇位交错，标注在柱顶下方内侧，避免长数字左右互压）\n\\addplot[fill=blue!55, draw=blue!70!black, nodes near coords, point meta=explicit symbolic,\n         every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north},\n         forget plot]\n  coordinates {\n    (江苏,128222)[12.8万]\n    (浙江,82553)[8.3万]\n    (河南,59132)[5.9万]\n    (福建,54355)[5.4万]\n    (上海,47218)[4.7万]\n    (河北,43944)[4.4万]\n    (陕西,33786)[3.4万]\n  };\n\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.30) {数据来源：2023年各省份统计公报（纵轴单位：亿元）};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=17cm, height=8cm,\n    bar width=0.55cm,\n    title={2023年14省份/直辖市GDP对比},\n    xlabel={省份},\n    ylabel={GDP（亿元）},\n    symbolic x coords={广东,江苏,山东,浙江,四川,河南,湖北,福建,湖南,上海,安徽,河北,北京,陕西},\n    xtick=data,\n    xticklabel style={rotate=45, anchor=east, font=\\scriptsize},\n    ymin=0, ymax=155000,\n    ytick={0,20000,40000,60000,80000,100000,120000,140000},\n    enlarge x limits=0.15,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n% 奇位分类（数值较高段，标注在柱顶上方）\n\\addplot[fill=blue!55, draw=blue!70!black, nodes near coords, point meta=explicit symbolic,\n         every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}]\n  coordinates {\n    (广东,135673)[13.6万]\n    (山东,92069)[9.2万]\n    (四川,60132)[6.0万]\n    (湖北,55803)[5.6万]\n    (湖南,50012)[5.0万]\n    (安徽,47050)[4.7万]\n    (北京,43760)[4.4万]\n  };\n\\addlegendentry{2023年GDP}\n\n% 偶位分类（与奇位交错，标注在柱顶下方内侧，避免长数字左右互压）\n\\addplot[fill=blue!55, draw=blue!70!black, nodes near coords, point meta=explicit symbolic,\n         every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north},\n         forget plot]\n  coordinates {\n    (江苏,128222)[12.8万]\n    (浙江,82553)[8.3万]\n    (河南,59132)[5.9万]\n    (福建,54355)[5.4万]\n    (上海,47218)[4.7万]\n    (河北,43944)[4.4万]\n    (陕西,33786)[3.4万]\n  };\n\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.30) {数据来源：2023年各省份统计公报（纵轴单位：亿元）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制柱状图，对比这 14 个省份/直辖市的 GDP；在每根柱子上方标注 GDP 数值（单位：亿元）；添加图表标题、X 轴（省份）与 Y 轴（GDP/亿元）标签，并加上图例。",
+  "created_at": "2026-09-11T15:14:32.233Z",
+  "metadata": {
+    "data_ids": [
+      37
+    ],
+    "has_chart_code": true,
+    "code_length": 1497,
+    "code_source": "from_request"
+  }
+}

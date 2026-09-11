@@ -1,0 +1,21 @@
+{
+  "history_id": 111,
+  "user_id": 4,
+  "data_id": 24,
+  "file_name": "11-area-greening.csv",
+  "dataset_name": "11-area-greening",
+  "user_input": "请根据我上传的数据绘制面积图，展示 2015—2024 年建成区绿化覆盖率的变化；折线下方填充淡色区域；添加图表标题、X 轴（年份）与 Y 轴（绿化覆盖率/%）标签，并加上图例。",
+  "ai_response": "\n\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    area plot,\n    title={2015—2024 年建成区绿化覆盖率变化},\n    xlabel={年份},\n    ylabel={绿化覆盖率（%）},\n    symbolic x coords={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    ymin=38, ymax=48,\n    grid=major,\n    grid style={dashed, gray!30},\n    width=12cm,\n    height=7cm\n]\n\\addplot [fill=blue!20, draw=blue, thick, mark=*, mark size=2pt] coordinates {\n    (2015,40.1) (2016,40.8) (2017,41.5) (2018,42.3) (2019,43.0)\n    (2020,43.8) (2021,44.5) (2022,45.2) (2023,46.0) (2024,46.8)\n};\n\\addlegendentry{建成区绿化覆盖率}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：住建部城市绿化统计数据};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    area plot,\n    title={2015—2024 年建成区绿化覆盖率变化},\n    xlabel={年份},\n    ylabel={绿化覆盖率（%）},\n    symbolic x coords={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    ymin=38, ymax=48,\n    grid=major,\n    grid style={dashed, gray!30},\n    width=12cm,\n    height=7cm\n]\n\\addplot [fill=blue!20, draw=blue, thick, mark=*, mark size=2pt] coordinates {\n    (2015,40.1) (2016,40.8) (2017,41.5) (2018,42.3) (2019,43.0)\n    (2020,43.8) (2021,44.5) (2022,45.2) (2023,46.0) (2024,46.8)\n};\n\\addlegendentry{建成区绿化覆盖率}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：住建部城市绿化统计数据};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 请根据我上传的数据绘制面积图，展示 2015—2024 年建成区绿化覆盖率的变化；折线下方填充淡色区域；添加图表标题、X 轴（年份）与 Y 轴（绿化覆盖率/%）标签，并加上图例。",
+  "created_at": "2026-09-11T11:20:51.442Z",
+  "metadata": {
+    "data_ids": [
+      24,
+      25
+    ],
+    "has_chart_code": true,
+    "code_length": 865,
+    "code_source": "from_request"
+  }
+}

@@ -681,6 +681,31 @@ max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易�
 #### 6. 测试文档与数据
 - 新增 `docs/manual-test-cases.md`（10 个手动测试样例）与 `docs/testdata/`（8 个配套 CSV/XLSX + 2 个无文件用例）；首轮实测 10/10 通过，问题与修复记录见文档 §7.1。
 
+### 2026年9月11日（进阶用例 v1.2 全量测试与修复）
+
+> 对 `docs/manual-test-cases.md` §9 用例 11–32 全量测试：首轮 **11 通过 / 2 存疑 / 9 失败**，修复后复测收敛为 **21 通过 / 1 放弃**（用例 17 堆叠面积图）。逐例现象/原因/解决方案/复测详见文档 §9.5。
+
+#### 1. `compile.js` 后端加固
+- 编译外壳加载 pgfplots 子库 `fillbetween` + `errorbars`——覆盖面积图、误差棒图空白。
+- `preprocessLatexCode` 加 `code.replace(/，/g, ',')` 兜底替换全角逗号——零成本消除 17/19 两个致命失败。
+- 禁用 P1/P4/P5 后处理函数（yshift 注入、X 轴/数据标签 rotate）；P3 简化为 N≥7 时统一替换为比例 `enlarge x limits=0.15`，N≤6 不干预。
+
+#### 2. `chat.js` 提示词增强
+- 移除堆叠面积图相关提示词（用例 17，pgfplots 无原生支持且少用）。
+- ybar 边距规则：禁止 `abs` 形式，统一比例 `enlarge x limits=0.15`。
+- 新增密集柱状图数值缩写规则：`point meta=explicit symbolic` 缩写显示标签（坐标仍真实值、缩写单位与 Y 轴一致）；所有点放在同一 `\addplot` 内统一 `anchor=south`，**禁止拆多个 \addplot**（防柱位错乱）。
+- R5 补误差棒正例模板；R3 补单系列密集点标注错开；模板区补面积图（`\closedcycle`）、堆叠柱状图（`point meta` 标原始值）、散点图（只用 `only marks`）。
+- **AI 返回内容为空兜底（修「AI 回复为空」）**：DeepSeek-V4-Flash 长推理时 `content` 可能为空（超时/截断），新增三层降级——先 `reasoning_content` 兜底提取代码块 → 同模型重试 1 次 → 切回 Qwen3.5 兜底；全部失败返回明确 `502 "AI 返回内容为空，请重试"`，不再静默返回空。`extractChartCode` 统一提取图表代码（围栏优先，裸 `\begin{tikzpicture}` 兜底防截断）。
+
+#### 3. 前端 bug 修复（`src/views/ChartGenerator.vue`）
+- 编译失败时后端返回完整 LaTeX 编译日志（数千字符），直接塞进 `ElMessage.error` 会出现**全屏红字弹窗且无法关闭**。改为截断到 200 字符 + `showClose` + `duration: 5000`，保证可自动/手动关闭；完整日志仍留档 `backend/storage/debug/`。
+
+#### 4. 测试文档
+- `docs/manual-test-cases.md` §9.4 结果记录表精简为「用例/结果/备注」三列；§9.5 按 §7.1 结构补全进阶用例「现象/原因/解决方案/复测」记录，写入最终复测结果。
+
+#### 5. 其他bug
+- [ ] 还有一个bug在生成的时候前端点击切换模型，也会切换提示，正在使用 Deepseek-V4-Flash 生成图表代码。实际使用模型不变。可以“你的模型是什么”来检验/后端调用也会显示模型。（不用解决）
+- [ ] 当数字相差不大且数字达到4位，5位或以上（或者数据很多很密集）时，标注会出现互相遮挡的情况。（扩大单位来解决）
 ---
 
 ## 其他

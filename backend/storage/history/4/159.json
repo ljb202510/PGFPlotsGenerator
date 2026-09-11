@@ -1,0 +1,18 @@
+{
+  "history_id": 159,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你使用的模型是什么",
+  "ai_response": "\n\n我是通义千问系列的最新版本 **Qwen3.5**，由通义实验室研发。作为该系列的迭代升级，我在架构效率、推理速度及多模态处理等方面均有显著提升。如果您有具体问题或需要帮助，欢迎随时告诉我！ 😊",
+  "chart_code": "",
+  "generation_description": " 你使用的模型是什么",
+  "created_at": "2026-09-11T13:28:16.665Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": false,
+    "code_length": 0,
+    "code_source": "extracted_from_response"
+  }
+}
