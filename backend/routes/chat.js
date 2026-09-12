@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const axios = require('axios');
 const dbModule = require('../db');
 const db = dbModule.promisePool;
 const { authenticateToken } = require('../middleware/auth');
@@ -409,6 +408,87 @@ const persistConversation = async (conversationId, userId, userMessage, aiReply,
   }
 };
 
+// ── 统一模型调用配置与逻辑（Qwen / DeepSeek 共用同一套 OpenAI 兼容 SDK + 重试/兜底）──
+const AI_TIMEOUT = 45000; // 统一超时：单次请求 45s
+const AI_MAX_TOKENS = 8192; // 统一输出预算（长代码/思考的安全额度）
+
+const MODEL_CONFIG = {
+  qwen: {
+    label: 'Qwen',
+    apiKeyEnv: 'NSCC_API_KEY',
+    baseUrlEnv: 'NSCC_API_URL',
+    model: 'Qwen3.5',
+    disableThinking: true // Qwen3.5 关闭深度思考，避免思考耗尽预算后 content 为空
+  },
+  deepseek: {
+    label: 'DeepSeek',
+    apiKeyEnv: 'DEEPSEEK_API_KEY',
+    baseUrlEnv: 'DEEPSEEK_API_URL',
+    model: 'deepseek-v4-flash',
+    disableThinking: false
+  }
+};
+
+const getModelConfig = (model) => MODEL_CONFIG[model] || MODEL_CONFIG.deepseek;
+
+// 用 OpenAI 兼容 SDK 发起单次调用
+async function callModelOnce(cfg, messages, signal) {
+  const client = new OpenAI({
+    apiKey: process.env[cfg.apiKeyEnv],
+    baseURL: process.env[cfg.baseUrlEnv],
+    timeout: AI_TIMEOUT
+  });
+  const params = {
+    model: cfg.model,
+    messages,
+    temperature: 0.7,
+    max_tokens: AI_MAX_TOKENS,
+    stream: false
+  };
+  if (cfg.disableThinking) params.thinking = { type: 'disabled' };
+  const completion = await client.chat.completions.create(params, { signal });
+  const msg = completion.choices?.[0]?.message || {};
+  return {
+    content: msg.content || '',
+    reasoning: msg.reasoning ?? msg.reasoning_content ?? '',
+    usage: completion.usage
+  };
+}
+
+// 从 reasoning_content 中兜底提取 latex 代码块
+const extractCodeFromText = (text) => {
+  const fenced = (text || '').match(/```(?:latex|tex)?\s*([\s\S]*?)\s*```/);
+  return fenced && fenced[1].trim() ? `\`\`\`latex\n${fenced[1].trim()}\n\`\`\`` : '';
+};
+
+// 统一降级链：reasoning 兜底 → 同模型重试 1 次 → 切换另一模型兜底
+async function generateWithFallback(messages, model, signal) {
+  const primary = getModelConfig(model);
+  const backup = getModelConfig(primary === MODEL_CONFIG.qwen ? 'deepseek' : 'qwen');
+
+  let attempt = await callModelOnce(primary, messages, signal);
+  let aiReply = attempt.content;
+  let usage = attempt.usage;
+
+  if (!aiReply.trim()) aiReply = extractCodeFromText(attempt.reasoning); // 空 → reasoning 兜底
+
+  if (!aiReply.trim()) {
+    attempt = await callModelOnce(primary, messages, signal); // 空 → 同模型重试 1 次
+    aiReply = attempt.content;
+    usage = attempt.usage;
+    if (!aiReply.trim()) aiReply = extractCodeFromText(attempt.reasoning);
+  }
+
+  if (!aiReply.trim()) {
+    attempt = await callModelOnce(backup, messages, signal); // 空 → 切换另一模型兜底
+    aiReply = attempt.content;
+    usage = attempt.usage;
+    if (!aiReply.trim()) aiReply = extractCodeFromText(attempt.reasoning);
+  }
+
+  return { aiReply, usage };
+}
+
 // AI 图表生成接口
 router.post('/', authenticateToken, async (req, res) => {
   // 客户端断开/取消生成时联动中止上游 AI 调用（仅响应尚未结束时触发，避免误伤正常请求）
@@ -438,145 +518,28 @@ router.post('/', authenticateToken, async (req, res) => {
     let aiReply;
     let usage;
 
-    if (model === 'qwen') {
-      // Qwen3.5 调用（超算）
-      const NSCC_API_KEY = process.env.NSCC_API_KEY;
-      const NSCC_API_URL = process.env.NSCC_API_URL;
-
-      if (!NSCC_API_KEY) {
-        return res.status(500).json({
-          success: false,
-          message: 'Qwen API密钥未配置'
-        });
-      }
-
-      const client = new OpenAI({
-        apiKey: NSCC_API_KEY,
-        baseURL: NSCC_API_URL,
-        timeout: 30000, // 与 DeepSeek 分支一致，避免请求无限挂起
+    // 统一模型调用：OpenAI 兼容 SDK + 统一超时(45s)/重试/兜底
+    const modelCfg = getModelConfig(model);
+    if (!process.env[modelCfg.apiKeyEnv]) {
+      return res.status(500).json({
+        success: false,
+        message: `${modelCfg.label} API密钥未配置`
       });
+    }
 
-      const completion = await client.chat.completions.create({
-        model: 'Qwen3.5',
-        messages: messages,
-        temperature: 0.7,
-        max_tokens: 8192, // 提高输出预算，防止思考/长代码耗尽额度导致 content 为空
-        stream: false,
-        thinking: { type: 'disabled' } // 关闭深度思考（实测 enable_thinking 参数无效），避免思考耗尽预算后最终答案未产出
-      }, { signal }); // signal：用户取消/断开时中止本次上游调用
+    const result = await generateWithFallback(messages, model, signal);
+    aiReply = result.aiReply;
+    usage = result.usage;
 
-      console.log(`用户 ${req.user.user_id} 调用了 Qwen3.5 API，附带数据集: ${data_ids || '无'}`);
+    console.log(`用户 ${req.user.user_id} 调用了 ${modelCfg.label} API，附带数据集: ${data_ids || '无'}`);
 
-      aiReply = completion.choices[0].message.content;
-      usage = completion.usage;
-
-      // 健壮性：content 为空/null 时记录原始响应并返回明确错误，绝不静默返回空
-      if (!aiReply || typeof aiReply !== 'string' || !aiReply.trim()) {
-        const emptyChoice = completion.choices?.[0];
-        const emptyMsg = emptyChoice?.message || {};
-        const emptyReasoning = emptyMsg.reasoning ?? emptyMsg.reasoning_content ?? '';
-        console.error('⚠️ Qwen 返回内容为空，原始响应:', JSON.stringify(completion).slice(0, 1000));
-        console.error('   finish_reason:', emptyChoice?.finish_reason, '| reasoning 长度:', String(emptyReasoning).length);
-        await writeSystemLog('error', `[CHAT] Qwen 返回内容为空 (用户 ${req.user?.user_id || '未知'}) finish_reason=${emptyChoice?.finish_reason || '未知'}`);
-        return res.status(502).json({
-          success: false,
-          message: 'AI 返回内容为空，请重试或检查模型配置'
-        });
-      }
-    } else {
-      // DeepSeek API配置
-      const DEEPSEEK_API_URL = process.env.DEEPSEEK_API_URL;
-      const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
-
-      if (!DEEPSEEK_API_KEY) {
-        return res.status(500).json({
-          success: false,
-          message: 'DeepSeek API密钥未配置'
-        });
-      }
-
-      // 调用DeepSeek API
-      const response = await axios.post(
-        DEEPSEEK_API_URL,
-        {
-          model: "deepseek-v4-flash",
-          messages: messages,
-          temperature: 0.7,
-          max_tokens: 4096,
-          stream: false
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          timeout: 30000,
-          signal // signal：用户取消/断开时中止本次上游调用
-        }
-      );
-
-      console.log(`用户 ${req.user.user_id} 调用了DeepSeek API，附带数据集: ${data_ids || '无'}`);
-
-      aiReply = response.data.choices[0]?.message?.content || '';
-      usage = response.data.usage;
-
-      // DeepSeek-V4-Flash 长推理时可能 reasoning_content 有完整代码但 content 为空（超时/截断）。
-      // 三层降级：reasoning_content 兜底 → 同模型重试 1 次 → 切回 Qwen3.5 兜底
-      if (!aiReply || !aiReply.trim()) {
-        // Layer 1：从 reasoning_content 兜底提取代码块
-        const reasoning = response.data.choices[0]?.message?.reasoning_content || '';
-        const fenced = reasoning.match(/```(?:latex|tex)?\s*([\s\S]*?)\s*```/);
-        if (fenced && fenced[1].trim()) {
-          aiReply = `\`\`\`latex\n${fenced[1].trim()}\n\`\`\``;
-          console.log('   ✅ Layer 1 命中：从 reasoning_content 提取到代码块，长度', aiReply.length);
-        }
-      }
-
-      // Layer 2：同模型重发 1 次
-      if (!aiReply || !aiReply.trim()) {
-        try {
-          console.log('   🔁 Layer 2：同模型重试 DeepSeek 1 次...');
-          const retryResp = await axios.post(
-            DEEPSEEK_API_URL,
-            { model: 'deepseek-v4-flash', messages, temperature: 0.7, max_tokens: 4096, stream: false },
-            { headers: { Authorization: `Bearer ${DEEPSEEK_API_KEY}`, 'Content-Type': 'application/json' }, timeout: 30000, signal }
-          );
-          aiReply = retryResp.data.choices[0]?.message?.content || '';
-          if (!aiReply.trim()) {
-            const r2 = retryResp.data.choices[0]?.message?.reasoning_content || '';
-            const f2 = r2.match(/```(?:latex|tex)?\s*([\s\S]*?)\s*```/);
-            if (f2 && f2[1].trim()) aiReply = `\`\`\`latex\n${f2[1].trim()}\n\`\`\``;
-          }
-        } catch (err) {
-          console.error('   Layer 2 重试失败:', err.message);
-        }
-      }
-
-      // Layer 3：切回 Qwen3.5 兜底
-      if (!aiReply || !aiReply.trim()) {
-        try {
-          console.log('   🛟 Layer 3：切回 Qwen3.5 兜底...');
-          const qwenResp = await client.chat.completions.create({
-            model: process.env.QWEN_MODEL || 'qwen3.5',
-            messages,
-            temperature: 0.7,
-            max_tokens: 4096,
-            timeout: 30000,
-            signal
-          });
-          aiReply = qwenResp.choices[0]?.message?.content || '';
-          usage = qwenResp.usage;
-          console.log('   ✅ Layer 3 命中：Qwen3.5 返回正常，长度', aiReply.length);
-        } catch (err) {
-          console.error('   Layer 3 Qwen 兜底也失败:', err.message);
-        }
-      }
-
-      if (!aiReply || typeof aiReply !== 'string' || !aiReply.trim()) {
-        console.error('⚠️ DeepSeek 三轮降级全部失败，原始响应:', JSON.stringify(response.data).slice(0, 1000));
-        await writeSystemLog('error', `[CHAT] DeepSeek 内容为空 + 三层降级失败 (用户 ${req.user?.user_id || '未知'})`);
-        return res.status(502).json({ success: false, message: 'AI 返回内容为空，请重试。' });
-      }
+    // 统一健壮性：content 为空 + 全部降级失败时返回明确错误，绝不静默返回空
+    if (!aiReply || typeof aiReply !== 'string' || !aiReply.trim()) {
+      await writeSystemLog('error', `[CHAT] ${modelCfg.label} 内容为空 + 降级全失败 (用户 ${req.user?.user_id || '未知'})`);
+      return res.status(502).json({
+        success: false,
+        message: 'AI 返回内容为空，请重试。'
+      });
     }
 
     // 提取图表代码（统一用 extractChartCode，保证与入库一致）

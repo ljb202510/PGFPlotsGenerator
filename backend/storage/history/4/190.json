@@ -1,0 +1,18 @@
+{
+  "history_id": 190,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你使用的模型是什么",
+  "ai_response": "我是 Claude，由 Anthropic 开发。以下是按既定任务生成的图表代码（数据为公开统计口径的示例）：\n\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7.5cm,\n    title={中国出生人口变化（2017—2023年）},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    symbolic x coords={2017,2018,2019,2020,2021,2022,2023},\n    xtick=data,\n    enlarge x limits=0.08,\n    ymin=800,\n    ymax=1900,\n    ytick={800,1000,1200,1400,1600,1800},\n    ymajorgrids=true,\n    grid style={dashed, gray!40},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[blue!70!black, mark=*, thick] coordinates {\n    (2017,1723)\n    (2018,1523)\n    (2019,1465)\n    (2020,1200)\n    (2021,1062)\n    (2022,956)\n    (2023,902)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.18) {数据来源：国家统计局历年国民经济和社会发展统计公报（2017—2023年）};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7.5cm,\n    title={中国出生人口变化（2017—2023年）},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    symbolic x coords={2017,2018,2019,2020,2021,2022,2023},\n    xtick=data,\n    enlarge x limits=0.08,\n    ymin=800,\n    ymax=1900,\n    ytick={800,1000,1200,1400,1600,1800},\n    ymajorgrids=true,\n    grid style={dashed, gray!40},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[blue!70!black, mark=*, thick] coordinates {\n    (2017,1723)\n    (2018,1523)\n    (2019,1465)\n    (2020,1200)\n    (2021,1062)\n    (2022,956)\n    (2023,902)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.18) {数据来源：国家统计局历年国民经济和社会发展统计公报（2017—2023年）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 你使用的模型是什么",
+  "created_at": "2026-09-12T15:29:45.390Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 820,
+    "code_source": "from_request"
+  }
+}

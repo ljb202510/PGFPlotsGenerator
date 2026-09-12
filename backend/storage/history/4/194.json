@@ -1,0 +1,18 @@
+{
+  "history_id": 194,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型是什么",
+  "ai_response": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm,\n    height=7cm,\n    title={中国新能源汽车销量（2020—2024年）},\n    ylabel={销量（万辆）},\n    xlabel={年份},\n    symbolic x coords={2020,2021,2022,2023,2024},\n    xtick=data,\n    ymin=0,\n    ymax=1500,\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    tick label style={font=\\small}\n]\n\\addplot[fill=blue!50, draw=blue!70] coordinates {\n    (2020,136.7)\n    (2021,352.1)\n    (2022,688.7)\n    (2023,949.5)\n    (2024,1286.6)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.18) {数据来源：中国汽车工业协会（2020—2024年销量统计）};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm,\n    height=7cm,\n    title={中国新能源汽车销量（2020—2024年）},\n    ylabel={销量（万辆）},\n    xlabel={年份},\n    symbolic x coords={2020,2021,2022,2023,2024},\n    xtick=data,\n    ymin=0,\n    ymax=1500,\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    tick label style={font=\\small}\n]\n\\addplot[fill=blue!50, draw=blue!70] coordinates {\n    (2020,136.7)\n    (2021,352.1)\n    (2022,688.7)\n    (2023,949.5)\n    (2024,1286.6)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.18) {数据来源：中国汽车工业协会（2020—2024年销量统计）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 你的模型是什么",
+  "created_at": "2026-09-12T15:33:37.918Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 719,
+    "code_source": "from_request"
+  }
+}

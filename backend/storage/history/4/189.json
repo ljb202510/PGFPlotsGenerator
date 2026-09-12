@@ -1,0 +1,18 @@
+{
+  "history_id": 189,
+  "user_id": 4,
+  "data_id": null,
+  "file_name": "",
+  "dataset_name": "",
+  "user_input": "你的模型是什么",
+  "ai_response": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=11cm, height=7cm,\n    title={2019—2023年中国新能源汽车产量},\n    ylabel={产量（万辆）},\n    symbolic x coords={2019,2020,2021,2022,2023},\n    xtick=data,\n    ymin=0, ymax=1100,\n    enlarge x limits=0.15,\n    bar width=16pt,\n    ymajorgrids=true,\n    grid style=dashed,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[fill=blue!55, draw=blue!70!black] coordinates {\n    (2019,124.2)\n    (2020,136.6)\n    (2021,354.5)\n    (2022,705.8)\n    (2023,958.7)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国汽车工业协会，2019—2023年};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=11cm, height=7cm,\n    title={2019—2023年中国新能源汽车产量},\n    ylabel={产量（万辆）},\n    symbolic x coords={2019,2020,2021,2022,2023},\n    xtick=data,\n    ymin=0, ymax=1100,\n    enlarge x limits=0.15,\n    bar width=16pt,\n    ymajorgrids=true,\n    grid style=dashed,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[fill=blue!55, draw=blue!70!black] coordinates {\n    (2019,124.2)\n    (2020,136.6)\n    (2021,354.5)\n    (2022,705.8)\n    (2023,958.7)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国汽车工业协会，2019—2023年};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description": " 你的模型是什么",
+  "created_at": "2026-09-12T15:29:13.120Z",
+  "metadata": {
+    "data_ids": [],
+    "has_chart_code": true,
+    "code_length": 721,
+    "code_source": "from_request"
+  }
+}

@@ -706,6 +706,27 @@ max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易�
 #### 5. 其他bug
 - [ ] 还有一个bug在生成的时候前端点击切换模型，也会切换提示，正在使用 Deepseek-V4-Flash 生成图表代码。实际使用模型不变。可以“你的模型是什么”来检验/后端调用也会显示模型。（不用解决）
 - [ ] 当数字相差不大且数字达到4位，5位或以上（或者数据很多很密集）时，标注会出现互相遮挡的情况。（扩大单位来解决）
+
+### 2026年9月12日（模型调用统一重构 + 404 修复）
+
+> 把 Qwen / DeepSeek 两套互相独立的调用逻辑统一为「一套 OpenAI 兼容 SDK + 统一超时/重试/兜底」。
+
+#### 1. `chat.js` 模型调用统一重构
+- 两个模型统一走 OpenAI 兼容 SDK（DeepSeek 由 `axios` 裸调迁移到 SDK），删除孤立 `axios` import。
+- 新增 `MODEL_CONFIG` / `callModelOnce` / `generateWithFallback`：Qwen、DeepSeek 共用同一套参数（`temperature 0.7`）；仅保留差异 `thinking: {type:'disabled'}`（DeepSeek 不发）。
+- **统一超时**：单次请求 30s → **45s**。
+- **统一输出预算**：max_tokens 统一为 **8192**（原 Qwen 8192 / DeepSeek 4096）。
+- **统一降级链对两个模型都生效**：空内容 → `reasoning_content` 兜底提取代码块 → 同模型重试 1 次 → 切换另一模型兜底；全失败返回明确 `502`，不再静默返回空。
+- **修复 bug**：原 DeepSeek 分支三层降级的 L3「切回 Qwen」引用了作用域外的 `client`（`ReferenceError`），此兜底此前从未真正生效；重构后按配置动态建客户端，兜底可正常工作。
+
+#### 2. `.env` / `.env.example` 修复 404
+- 现象：修改后生成报「服务器内部错误: 404 status code (no body)」。
+- 原因：`DEEPSEEK_API_URL` 原为完整 endpoint（`…/v1/chat/completions`），而 OpenAI SDK 会自动在 baseURL 后拼接 `/chat/completions`，两处叠加导致双份路径 → 404。`NSCC_API_URL` 本就是 base，故 Qwen 正常。
+- 解决：`.env` 与 `.env.example` 的 `DEEPSEEK_API_URL` 改为 base 语义 `https://api.deepseek.com/v1`（与 NSCC 一致，SDK 自动补路径）。
+
+#### 3. 测试
+- 语法检查通过（`node --check`）。
+- 真实连通测试：DeepSeek 与 Qwen 均请求成功、不再 404（临时脚本 `_test_ai_conn.js` 已删除）。
 ---
 
 ## 其他
