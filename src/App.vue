@@ -3,45 +3,26 @@
   <!-- 全局消息默认：5 秒自动消失 + 可点击关闭按钮 -->
   <el-config-provider :message="messageConfig">
   <div id="app">
-    <!-- 根据认证状态显示不同的顶部导航栏 -->
-    <!-- 普通用户登录后显示普通导航栏 -->
-    <CommonNavbar 
-      v-if="isAuthenticated && !isAdminAuthenticated"
+    <!-- 顶部导航栏按「当前路由归属」决定：/admin/** 用管理员外壳，其余用用户外壳 -->
+    <AdminNavbar
+      v-if="isAdminShell && isAdminAuthenticated"
+      :admin="currentAdmin"
+      @logout="handleAdminLogout"
+    />
+
+    <CommonNavbar
+      v-else-if="!isAdminShell && isAuthenticated"
       :show-navbar="isAuthenticated"
       :user="currentUser"
       :unread-count="unreadCount"
       @logout="handleLogout"
       @user-click="goToChangeInformation"
     />
-    
-    <!-- 管理员登录后显示管理员导航栏 -->
-    <AdminNavbar 
-      v-else-if="isAdminAuthenticated"
-      :admin="currentAdmin"
-      @logout="handleAdminLogout"
-    />
 
     <!-- 主要内容 -->
     <main>
-      <!-- 未登录显示认证页面 -->
-      <Auth 
-        v-if="!isAuthenticated && !isAdminAuthenticated" 
-        @auth-success="handleAuthSuccess"
-        @admin-success="handleAdminSuccess"
-      />
-      
-      <!-- 普通用户登录后显示主应用 -->
-      <div v-else-if="isAuthenticated" class="main-app">
-        <div class="app-layout">
-          <!-- 主内容区域 -->
-          <div class="content-area" :class="{ 'is-chat': $route.path === '/chart-generator' }">
-            <router-view></router-view>
-          </div>
-        </div>
-      </div>
-      
-      <!-- 管理员登录后显示路由视图容器 -->
-      <div v-else-if="isAdminAuthenticated" class="admin-main">
+      <!-- 管理员外壳：/admin/** 且已登录管理员 -->
+      <div v-if="isAdminShell && isAdminAuthenticated" class="admin-main">
         <div class="admin-layout">
           <!-- 移动端抽屉遮罩 -->
           <div v-if="adminMobileDrawerOpen" class="drawer-overlay" @click="adminMobileDrawerOpen = false"></div>
@@ -51,7 +32,7 @@
           </button>
 
           <!-- 管理员侧边栏组件 -->
-          <AdminSidebar 
+          <AdminSidebar
             :collapsed="isAdminSidebarCollapsed"
             :mobile-open="adminMobileDrawerOpen"
             @toggle="handleAdminSidebarToggle"
@@ -65,6 +46,23 @@
           </div>
         </div>
       </div>
+
+      <!-- 用户外壳：非 /admin 路由且已登录用户 -->
+      <div v-else-if="!isAdminShell && isAuthenticated" class="main-app">
+        <div class="app-layout">
+          <!-- 主内容区域 -->
+          <div class="content-area" :class="{ 'is-chat': $route.path === '/chart-generator' }">
+            <router-view></router-view>
+          </div>
+        </div>
+      </div>
+
+      <!-- 其余情况（未登录，或访问 /admin 但无管理员会话）显示认证页面 -->
+      <Auth
+        v-else
+        @auth-success="handleAuthSuccess"
+        @admin-success="handleAdminSuccess"
+      />
     </main>
   </div>
   </el-config-provider>
@@ -77,6 +75,16 @@ import AdminNavbar from './components/AdminNavbar.vue';
 import AdminSidebar from './components/AdminSidebar.vue';
 import { Menu } from '@element-plus/icons-vue';
 import { API_BASE_URL } from '@/config';
+import {
+  getUserToken,
+  getUser,
+  getAdminToken,
+  getAdmin,
+  saveAdminSession,
+  clearUserSession,
+  clearAdminSession,
+  isAdminRoute
+} from '@/utils/auth';
 
 export default {
   name: 'App',
@@ -106,6 +114,10 @@ export default {
     },
     unreadCount() {
       return this.$store.state.unreadCount
+    },
+    // 当前路由是否属于管理员外壳（/admin 及其子路径）
+    isAdminShell() {
+      return isAdminRoute(this.$route.path)
     }
   },
   watch: {
@@ -127,29 +139,23 @@ export default {
 
   methods: {
     checkAuthStatus() {
-      // 检查普通用户认证
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-      const user = localStorage.getItem('user') || sessionStorage.getItem('user')
-      
+      // 两套会话独立恢复、互不影响；最终渲染哪个外壳由「当前路由」决定（见 isAdminShell）
+      const token = getUserToken()
+      const user = getUser()
       if (token && user) {
-        this.$store.commit('SET_USER', JSON.parse(user))
+        this.$store.commit('SET_USER', user)
         this.validateToken(token)
         this.fetchUnreadCount()
       }
-      
-      // 检查管理员认证
-      const adminToken = localStorage.getItem('adminToken')
-      const adminUser = localStorage.getItem('adminUser')
-      
+
+      const adminToken = getAdminToken()
+      const adminUser = getAdmin()
       if (adminToken && adminUser) {
-        try {
-          this.currentAdmin = JSON.parse(adminUser)
-          this.isAdminAuthenticated = true
-          console.log('管理员已认证，当前路径:', window.location.pathname)
-        } catch (e) {
-          console.error('解析管理员信息失败:', e)
-          this.handleAdminLogout()
-        }
+        this.currentAdmin = adminUser
+        this.isAdminAuthenticated = true
+      } else if (adminToken || adminUser) {
+        // 残留的「半个管理员态」：清理，避免与用户态叠加出混合外壳
+        clearAdminSession()
       }
     },
     
@@ -179,32 +185,27 @@ export default {
       console.log('管理员登录成功:', adminData)
       this.currentAdmin = adminData
       this.isAdminAuthenticated = true
-      
-      // 存储管理员信息到localStorage
-      localStorage.setItem('adminUser', JSON.stringify(adminData))
-      localStorage.setItem('adminToken', adminData.token)
-      
-      // 管理员登录后跳转到Admin.vue界面
+
+      // 只写管理员会话，不触碰用户会话（两套身份互不干扰）
+      saveAdminSession(adminData, adminData.token)
+
+      // 管理员登录后跳转到管理员界面
       this.$router.push('/admin')
     },
     
     handleLogout() {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      sessionStorage.removeItem('token')
-      sessionStorage.removeItem('user')
-      
+      clearUserSession()
+
       this.$store.commit('LOGOUT')
       // 登出后跳转到首页
       this.$router.push('/')
     },
-    
+
     handleAdminLogout() {
-      localStorage.removeItem('adminToken')
-      localStorage.removeItem('adminUser')
+      clearAdminSession()
       this.isAdminAuthenticated = false
       this.currentAdmin = null
-      
+
       // 管理员登出后跳转到首页
       this.$router.push('/')
     },

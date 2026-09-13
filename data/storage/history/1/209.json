@@ -1,0 +1,18 @@
+{
+  "history_id" : 209,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一条正弦曲线 y=sin(x)，x 范围 0 到 2pi，用 PGFPlots 代码实现，并尽量美观",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=6.8cm,\n    axis lines=middle,\n    xlabel={$x$（弧度 rad）},\n    ylabel={$y$},\n    xmin=0, xmax=6.9,\n    ymin=-1.4, ymax=1.45,\n    domain=0:2*pi,\n    samples=300,\n    xtick={0,pi/2,pi,3*pi/2,2*pi},\n    xticklabels={$0$,$\\frac{\\pi}{2}$,$\\pi$,$\\frac{3\\pi}{2}$,$2\\pi$},\n    ytick={-1,-0.5,0,0.5,1},\n    yticklabels={$-1$,$-0.5$,$0$,$0.5$,$1$},\n    grid=major,\n    grid style={gray!25, dashed},\n    tick label style={font=\\small},\n    label style={font=\\small},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white, font=\\small, cells={anchor=west}},\n    every axis plot/.append style={line width=1pt}\n]\n% 曲线下方的浅色填充（不进入图例）\n\\addplot[blue!12, draw=none, samples=200] {sin(deg(x))} \\closedcycle;\n\n% 正弦曲线主图\n\\addplot[blue!70!black, thick] {sin(deg(x))};\n\\addlegendentry{$y=\\sin x$}\n\n% 关键点：极大值、零点、极小值\n\\addplot[only marks, mark=*, mark size=2.2pt, red!75!black,\n         nodes near coords,\n         every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}]\n    coordinates {(pi/2,1) (pi,0) (3*pi/2,-1) (2*pi,0)};\n\\addlegendentry{极值点与零点}\n\n\\node[anchor=north east, font=\\scriptsize, text=gray]\n    at (axis description cs:1.0,-0.22)\n    {函数图像：$y=\\sin x$，定义域 $x\\in[0,2\\pi]$；相位单位为弧度（rad），$\\pi\\approx3.14159$};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=6.8cm,\n    axis lines=middle,\n    xlabel={$x$（弧度 rad）},\n    ylabel={$y$},\n    xmin=0, xmax=6.9,\n    ymin=-1.4, ymax=1.45,\n    domain=0:2*pi,\n    samples=300,\n    xtick={0,pi/2,pi,3*pi/2,2*pi},\n    xticklabels={$0$,$\\frac{\\pi}{2}$,$\\pi$,$\\frac{3\\pi}{2}$,$2\\pi$},\n    ytick={-1,-0.5,0,0.5,1},\n    yticklabels={$-1$,$-0.5$,$0$,$0.5$,$1$},\n    grid=major,\n    grid style={gray!25, dashed},\n    tick label style={font=\\small},\n    label style={font=\\small},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white, font=\\small, cells={anchor=west}},\n    every axis plot/.append style={line width=1pt}\n]\n% 曲线下方的浅色填充（不进入图例）\n\\addplot[blue!12, draw=none, samples=200] {sin(deg(x))} \\closedcycle;\n\n% 正弦曲线主图\n\\addplot[blue!70!black, thick] {sin(deg(x))};\n\\addlegendentry{$y=\\sin x$}\n\n% 关键点：极大值、零点、极小值\n\\addplot[only marks, mark=*, mark size=2.2pt, red!75!black,\n         nodes near coords,\n         every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}]\n    coordinates {(pi/2,1) (pi,0) (3*pi/2,-1) (2*pi,0)};\n\\addlegendentry{极值点与零点}\n\n\\node[anchor=north east, font=\\scriptsize, text=gray]\n    at (axis description cs:1.0,-0.22)\n    {函数图像：$y=\\sin x$，定义域 $x\\in[0,2\\pi]$；相位单位为弧度（rad），$\\pi\\approx3.14159$};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一条正弦曲线 y=sin(x)，x 范围 0 到 2pi，用 PGFPlots 代码实现，并尽量美观",
+  "created_at" : "2026-09-13T06:34:14.377Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 1342,
+    "code_source" : "from_request"
+  }
+}

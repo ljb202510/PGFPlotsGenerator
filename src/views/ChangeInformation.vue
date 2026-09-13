@@ -237,6 +237,7 @@
 
 <script>
 import { API_BASE_URL } from '@/config';
+import { getUserToken } from '@/utils/auth';
 import { User, ArrowLeft, EditPen, Lock, View, Hide } from '@element-plus/icons-vue';
 export default {
   name: 'ChangeInformation',
@@ -329,24 +330,9 @@ export default {
     this.loadUserInfo();
   },
   methods: {
-    // 获取认证token
+    // 获取认证token（统一身份入口：只认用户会话，避免与管理员 token 混用）
     getAuthToken() {
-      const possibleTokens = [
-        localStorage.getItem('token'),
-        sessionStorage.getItem('token'),
-        localStorage.getItem('authToken'),
-        sessionStorage.getItem('authToken'),
-        localStorage.getItem('userToken'), 
-        sessionStorage.getItem('userToken')
-      ];
-      
-      for (let token of possibleTokens) {
-        if (token && token !== 'null' && token !== 'undefined') {
-          return token.replace(/^["']|["']$/g, '').trim();
-        }
-      }
-      
-      return null;
+      return getUserToken()
     },
     
     // 用户名相关方法

@@ -97,14 +97,15 @@ export default {
         const data = await response.json()
 
         if (data.success) {
-          // 管理员登录成功，存储token和用户信息
-          localStorage.setItem('adminToken', data.token)
-          localStorage.setItem('adminUser', JSON.stringify(data.user))
-          
+          // 管理员登录成功，存储token和用户信息（后端统一响应：user/token 位于 data 内）
+          const payload = data.data || {}
+          localStorage.setItem('adminToken', payload.token)
+          localStorage.setItem('adminUser', JSON.stringify(payload.user))
+
           // 通知父组件登录成功
           this.$emit('success', {
-            ...data.user,
-            token: data.token, // 确保传递了 token
+            ...payload.user,
+            token: payload.token, // 确保传递了 token
             isAdmin: true
           })
         } else {

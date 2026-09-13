@@ -116,6 +116,7 @@
 <script>
 import axios from 'axios'
 import { API_BASE_URL } from '@/config';
+import { getUserToken } from '@/utils/auth';
 import { ChatDotRound, Bell } from '@element-plus/icons-vue';
 export default {
   name: 'MyNotice',
@@ -166,27 +167,9 @@ export default {
     }
   },
   methods: {
-    // 获取认证token
+    // 获取认证token（统一身份入口：只认用户会话，避免与管理员 token 混用）
     getAuthToken() {
-      // 尝试从多个可能的存储位置获取 token
-      const possibleTokens = [
-        localStorage.getItem('token'),
-        sessionStorage.getItem('token'),
-        localStorage.getItem('authToken'),
-        sessionStorage.getItem('authToken'),
-        localStorage.getItem('userToken'), 
-        sessionStorage.getItem('userToken')
-      ]
-      
-      // 返回第一个有效的 token
-      for (let token of possibleTokens) {
-        if (token && token !== 'null' && token !== 'undefined') {
-          // 清理 token（移除可能的引号或空格）
-          return token.replace(/^["']|["']$/g, '').trim()
-        }
-      }
-            
-      return null
+      return getUserToken()
     },
 
     // 获取通知列表（统一消费后端 /api/notice，反馈回复与系统通知同源）
@@ -206,7 +189,7 @@ export default {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        if (response.data.code === 200) {
+        if (response.data.success) {
           this.notices = response.data.data.notices || [];
         } else {
           console.error('获取通知失败:', response.data.message);

@@ -335,6 +335,7 @@
 
 <script>
 import { API_BASE_URL } from '@/config';
+import { getAdminToken } from '@/utils/auth';
 import { Delete } from '@element-plus/icons-vue';
 export default {
   name: 'AdminFeedback',
@@ -445,31 +446,9 @@ export default {
       console.log(`排序字段: ${this.sortField}, 排序顺序: ${this.sortOrder}`);
     },
 
-    // 获取认证token（从MyFeedback.vue复制）
+    // 获取认证token（统一身份入口：管理员页面只认管理员会话，绝不回落到用户 token）
     getAuthToken() {
-      // 优先获取管理员token
-      const adminToken = localStorage.getItem('adminToken')
-      if (adminToken && adminToken !== 'null' && adminToken !== 'undefined') {
-        return adminToken.replace(/^["']|["']$/g, '').trim()
-      }
-      
-      // 如果管理员token不存在，再尝试其他可能的用户token（作为备用）
-      const possibleTokens = [
-        localStorage.getItem('token'),
-        sessionStorage.getItem('token'),
-        localStorage.getItem('authToken'),
-        sessionStorage.getItem('authToken'),
-        localStorage.getItem('userToken'), 
-        sessionStorage.getItem('userToken')
-      ]
-      
-      for (let token of possibleTokens) {
-        if (token && token !== 'null' && token !== 'undefined') {
-          return token.replace(/^["']|["']$/g, '').trim()
-        }
-      }
-              
-      return null
+      return getAdminToken()
     },
     
     // 加载反馈列表
@@ -510,8 +489,8 @@ export default {
         const result = await response.json()
         
         if (result.success) {
-          this.feedbacks = result.data
-          this.totalItems = result.pagination.total
+          this.feedbacks = result.data.records || []
+          this.totalItems = result.data.pagination.total
         } else {
           throw new Error(result.message)
         }
@@ -540,7 +519,7 @@ export default {
         if (response.ok) {
           const result = await response.json()
           if (result.success) {
-            const allFeedbacks = result.data
+            const allFeedbacks = result.data.records || []
             this.totalFeedbacks = allFeedbacks.length
             this.pendingFeedbacks = allFeedbacks.filter(f => !f.answer).length
             this.repliedFeedbacks = allFeedbacks.filter(f => f.answer).length

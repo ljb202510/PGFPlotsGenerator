@@ -107,16 +107,17 @@ export default {
         const data = await response.json()
 
         if (data.success) {
-          // 登录成功
+          // 登录成功（后端统一响应：user/token 位于 data 内）
+          const payload = data.data || {}
           if (this.form.rememberMe) {
-            localStorage.setItem('token', data.token)
-            localStorage.setItem('user', JSON.stringify(data.user))
+            localStorage.setItem('token', payload.token)
+            localStorage.setItem('user', JSON.stringify(payload.user))
           } else {
-            sessionStorage.setItem('token', data.token)
-            sessionStorage.setItem('user', JSON.stringify(data.user))
+            sessionStorage.setItem('token', payload.token)
+            sessionStorage.setItem('user', JSON.stringify(payload.user))
           }
 
-          this.$emit('success', data.user)
+          this.$emit('success', payload.user)
         } else {
           this.error = data.message || '登录失败'
         }

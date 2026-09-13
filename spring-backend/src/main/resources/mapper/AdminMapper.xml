@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pg.pgfplots.mapper.AdminMapper">
+
+    <!-- ==================== AdminUser 统计 ==================== -->
+    <select id="selectRoleStats" resultType="map">
+        SELECT role, COUNT(*) AS count
+        FROM users
+        GROUP BY role
+    </select>
+
+    <select id="selectRecentRegistrations" resultType="map">
+        SELECT DATE_FORMAT(DATE(register_time), '%Y-%m-%d') AS date, COUNT(*) AS count
+        FROM users
+        WHERE register_time &gt;= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        GROUP BY DATE_FORMAT(DATE(register_time), '%Y-%m-%d')
+        ORDER BY date DESC
+    </select>
+
+    <select id="selectUserSummary" resultType="map">
+        SELECT COUNT(*) AS total,
+               COUNT(CASE WHEN role = 'admin' THEN 1 END) AS admin_count,
+               COUNT(CASE WHEN role = 'user' THEN 1 END) AS user_count
+        FROM users
+    </select>
+
+    <!-- ==================== AdminNotice ==================== -->
+    <sql id="noticeWhere">
+        n.feedback_id IS NULL
+        <if test="keyword != null and keyword != ''">
+            AND (n.title LIKE CONCAT('%', #{keyword}, '%') OR n.content LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND n.created_time &gt;= CONCAT(#{startDate}, ' 00:00:00')
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND n.created_time &lt;= CONCAT(#{endDate}, ' 23:59:59')
+        </if>
+    </sql>
+
+    <select id="selectAdminNotices" resultType="map">
+        SELECT n.notice_id, n.title, n.content, n.admin_id, n.is_read, n.target_user_id, n.feedback_id, n.reply,
+               DATE_FORMAT(n.created_time, '%Y-%m-%d %H:%i:%s') AS created_time,
+               u.username AS admin_name,
+               (SELECT COUNT(*) FROM notice_read nr WHERE nr.notice_id = n.notice_id) AS read_count
+        FROM notice n
+        LEFT JOIN users u ON n.admin_id = u.user_id
+        WHERE <include refid="noticeWhere"/>
+        ORDER BY n.created_time DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countAdminNotices" resultType="long">
+        SELECT COUNT(*)
+        FROM notice n
+        WHERE <include refid="noticeWhere"/>
+    </select>
+
+    <select id="selectNoticeDetail" resultType="map">
+        SELECT n.notice_id, n.title, n.content, n.admin_id, n.is_read, n.target_user_id, n.feedback_id, n.reply,
+               DATE_FORMAT(n.created_time, '%Y-%m-%d %H:%i:%s') AS created_time,
+               u.username AS admin_name
+        FROM notice n
+        LEFT JOIN users u ON n.admin_id = u.user_id
+        WHERE n.notice_id = #{noticeId} AND n.feedback_id IS NULL
+    </select>
+
+    <select id="countDistinctReadNotices" resultType="long">
+        SELECT COUNT(DISTINCT nr.notice_id)
+        FROM notice_read nr
+        JOIN notice n ON nr.notice_id = n.notice_id AND n.feedback_id IS NULL
+    </select>
+
+    <select id="countUnreadSystemNotices" resultType="long">
+        SELECT COUNT(*)
+        FROM notice
+        WHERE feedback_id IS NULL
+          AND notice_id NOT IN (SELECT DISTINCT notice_id FROM notice_read)
+    </select>
+
+    <select id="selectNoticeRecentStats" resultType="map">
+        SELECT DATE_FORMAT(DATE(nr.read_time), '%Y-%m-%d') AS date, COUNT(*) AS count, COUNT(*) AS read_count
+        FROM notice_read nr
+        WHERE nr.read_time &gt;= DATE_SUB(NOW(), INTERVAL 30 DAY)
+          AND nr.notice_id IN (SELECT notice_id FROM notice WHERE feedback_id IS NULL)
+        GROUP BY DATE_FORMAT(DATE(nr.read_time), '%Y-%m-%d')
+        ORDER BY date DESC
+    </select>
+
+    <select id="selectNoticeAdminStats" resultType="map">
+        SELECT u.user_id,
+               u.username,
+               COUNT(n.notice_id) AS notice_count,
+               (SELECT COUNT(*) FROM notice_read nr WHERE nr.notice_id IN (
+                   SELECT n2.notice_id FROM notice n2 WHERE n2.admin_id = u.user_id AND n2.feedback_id IS NULL
+               )) AS read_count
+        FROM users u
+        LEFT JOIN notice n ON u.user_id = n.admin_id AND n.feedback_id IS NULL
+        WHERE u.role = 'admin'
+        GROUP BY u.user_id, u.username
+    </select>
+
+    <select id="selectNoticeSummary" resultType="map">
+        SELECT COUNT(*) AS total,
+               (SELECT COUNT(DISTINCT nr.notice_id) FROM notice_read nr
+                 JOIN notice n ON nr.notice_id = n.notice_id AND n.feedback_id IS NULL) AS read_count
+        FROM notice
+        WHERE feedback_id IS NULL
+    </select>
+
+    <!-- ==================== AdminLog ==================== -->
+    <select id="selectApiLogs" resultType="map">
+        SELECT al.call_id, al.user_id, al.history_id, al.call_status, al.call_error,
+               DATE_FORMAT(al.call_time, '%Y-%m-%d %H:%i:%s') AS call_time,
+               u.username,
+               gh.generation_description
+        FROM api_log al
+        LEFT JOIN users u ON al.user_id = u.user_id
+        LEFT JOIN generation_history gh ON al.history_id = gh.history_id
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            WHERE al.call_time BETWEEN #{startDate} AND CONCAT(#{endDate}, ' 23:59:59')
+        </if>
+        ORDER BY al.call_time DESC
+    </select>
+
+    <sql id="systemLogWhere">
+        <where>
+            <if test="status != null and status != '' and status != 'all'">
+                AND system_status = #{status}
+            </if>
+            <if test="search != null and search != ''">
+                AND error LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+                AND log_time BETWEEN #{startDate} AND CONCAT(#{endDate}, ' 23:59:59')
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectSystemLogs" resultType="map">
+        SELECT sys_id, system_status,
+               DATE_FORMAT(log_time, '%Y-%m-%d %H:%i:%s') AS log_time,
+               error
+        FROM system_log
+        <include refid="systemLogWhere"/>
+        ORDER BY log_time DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countSystemLogs" resultType="long">
+        SELECT COUNT(*)
+        FROM system_log
+        <include refid="systemLogWhere"/>
+    </select>
+
+    <select id="selectSystemLogStats" resultType="map">
+        SELECT system_status, COUNT(*) AS count
+        FROM system_log
+        WHERE log_time &gt;= #{since}
+        GROUP BY system_status
+    </select>
+
+    <select id="selectRecentApiStats" resultType="map">
+        SELECT call_status, COUNT(*) AS count
+        FROM api_log
+        WHERE call_time &gt;= #{since}
+        GROUP BY call_status
+    </select>
+
+    <select id="countRecentErrors" resultType="long">
+        SELECT COUNT(*)
+        FROM system_log
+        WHERE system_status = 'error' AND log_time &gt;= #{since}
+    </select>
+
+    <select id="countActiveUsers" resultType="long">
+        SELECT COUNT(DISTINCT user_id)
+        FROM (
+            SELECT user_id FROM api_log WHERE call_time &gt;= #{since}
+            UNION
+            SELECT user_id FROM generation_history WHERE generation_time &gt;= #{since}
+        ) t
+    </select>
+
+    <select id="selectRecentFileStats" resultType="map">
+        SELECT COUNT(*) AS file_count, COALESCE(SUM(data_size), 0) AS total_size
+        FROM data_file
+        WHERE load_time &gt;= #{since}
+    </select>
+
+    <!-- ==================== 表计数 ==================== -->
+    <select id="countUsers" resultType="long">SELECT COUNT(*) FROM users</select>
+    <select id="countDataFile" resultType="long">SELECT COUNT(*) FROM data_file</select>
+    <select id="countGenerationHistory" resultType="long">SELECT COUNT(*) FROM generation_history</select>
+    <select id="countFeedback" resultType="long">SELECT COUNT(*) FROM feedback</select>
+    <select id="countApiLog" resultType="long">SELECT COUNT(*) FROM api_log</select>
+    <select id="countSystemLog" resultType="long">SELECT COUNT(*) FROM system_log</select>
+</mapper>

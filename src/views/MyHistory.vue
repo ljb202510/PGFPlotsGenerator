@@ -288,26 +288,15 @@ import CodeBlock from '@/components/ui/CodeBlock.vue'
 // API配置
 import { API_BASE_URL } from '@/config';
 import { fetchPdfBlobUrl } from '@/utils/pdf';
+import { getUserToken } from '@/utils/auth';
 const previewingPdfId = ref(null)
 
 const compileErrorDialogVisible = ref(false)
 const compileErrorTitle = ref('PDF生成失败')
 const compileErrorDetails = ref('')
 
-// 获取token
-const getAuthToken = () => {
-  const possibleTokens = [
-    localStorage.getItem('token'),
-    sessionStorage.getItem('token'),
-  ];
-  
-  for (let token of possibleTokens) {
-    if (token && token !== 'null' && token !== 'undefined') {
-      return token.replace(/^["']|["']$/g, '').trim();
-    }
-  }
-  return null;
-}
+// 获取token（统一身份入口：只认用户会话）
+const getAuthToken = () => getUserToken()
 
 // 响应式数据
 const loading = ref(false)

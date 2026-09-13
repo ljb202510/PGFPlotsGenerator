@@ -22,3 +22,7 @@ pnpm-debug.log*
 *.sln
 *.sw?
 backend/.env
+spring-backend/.env
+spring-backend/verify-app.log
+spring-backend/verify-app-err.log
+spring-backend/target/

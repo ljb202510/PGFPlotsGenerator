@@ -1,0 +1,94 @@
+# ============================================================
+# PGFPlotsGenerator Java 后端配置
+# 支持环境变量覆盖：${ENV_VAR:default}
+# 数据库默认值：localhost/root/000/X
+# ============================================================
+server:
+  port: ${PORT:3000}
+
+spring:
+  application:
+    name: pgfplots-backend
+  config:
+    # 复用共享数据目录 hello/data/.env（DB/密钥/SMTP 配置）；
+    # 文件不存在时自动跳过（optional），此时回退下方各项默认值。
+    # 注意：需在 spring-backend 目录下启动，相对路径才能解析到 hello/data/.env
+    import: optional:file:../data/.env[.properties]
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:X}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:000}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+  servlet:
+    multipart:
+      # 与 Node multer limits.fileSize 一致：100MB
+      max-file-size: 100MB
+      max-request-size: 100MB
+  mail:
+    host: ${SMTP_HOST:smtp.qq.com}
+    port: ${SMTP_PORT:465}
+    username: ${SMTP_USER:2771008024@qq.com}
+    password: ${SMTP_PASS:}
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+  mapper-locations: classpath*:mapper/**/*.xml
+
+# 应用自定义配置
+app:
+  # JWT 密钥：缺失即启动失败（fail-fast，与 Node app.js 一致）
+  jwt:
+    secret: ${JWT_SECRET:}
+    # 普通用户 token 有效期（小时）
+    user-expire-hours: 24
+    # 管理员 token 有效期（天）
+    admin-expire-days: 7
+  # 文件存储（默认指向共享数据目录 hello/data/，复用历史数据集与编译产物）
+  storage:
+    uploads: ${UPLOADS_DIR:../data/uploads}
+    history: ${HISTORY_DIR:../data/storage/history}
+    charts: ${CHARTS_DIR:../data/storage/generated_charts}
+    debug: ${DEBUG_DIR:../data/storage/debug}
+    # 用于解析 generation_path 相对路径的基准目录（项目根 hello/）
+    relative-base: ${RELATIVE_BASE:..}
+  latex:
+    executable: ${XELATEX:xelatex}
+    timeout-ms: ${LATEX_TIMEOUT_MS:30000}
+    max-code-length: 50000
+  llm:
+    timeout-ms: ${AI_TIMEOUT_MS:45000}
+    max-tokens: ${AI_MAX_TOKENS:8192}
+    deepseek:
+      api-key: ${DEEPSEEK_API_KEY:}
+      api-url: ${DEEPSEEK_API_URL:https://api.deepseek.com/v1}
+      model: ${DEEPSEEK_MODEL:deepseek-v4-flash}
+    qwen:
+      api-key: ${NSCC_API_KEY:}
+      api-url: ${NSCC_API_URL:https://maas.nscc-cs.cn/external/api/v1}
+      model: ${QWEN_MODEL:Qwen3.5}
+  mail:
+    from: ${SMTP_FROM:PG Admin <2771008024@qq.com>}
+    # 注册验证码有效期（分钟）
+    code-expire-minutes: 10
+
+logging:
+  level:
+    com.pg.pgfplots: info

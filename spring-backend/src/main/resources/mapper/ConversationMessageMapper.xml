@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pg.pgfplots.mapper.ConversationMessageMapper">
+
+    <select id="selectMessages" resultType="com.pg.pgfplots.dto.conversation.ConversationMessageVO">
+        SELECT message_id, role, content, chart_code, history_id, selected_files, created_at
+        FROM conversation_messages
+        WHERE conversation_id = #{conversationId} AND user_id = #{userId}
+        ORDER BY message_id ASC
+    </select>
+</mapper>

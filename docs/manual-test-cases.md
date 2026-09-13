@@ -30,14 +30,12 @@ mysql -u root -p000
 mysql> source 1.sql;
 mysql> source migrations/add_notice_feedback_columns.sql;
 mysql> source migrations/create_notice_read_table.sql;
+mysql> source migrations/create_conversations_tables.sql;
 mysql> exit;
-cd backend && node migrations/001_conversations.js && cd ..
 
-# 2. 启动后端（终端 A）
-cd backend
-copy .env.example .env   # 至少填写 JWT_SECRET（Linux/macOS 用 cp）
-npm install
-npm run dev              # http://localhost:3000
+# 2. 启动后端（终端 A；配置自动读取 ../backend/.env，JWT_SECRET 缺失会启动失败）
+cd spring-backend
+run.cmd                  # http://localhost:3000（或 mvn-run.cmd 开发模式）
 
 # 3. 启动前端（终端 B，回到 hello/ 根目录）
 npm run serve            # http://localhost:8080
@@ -310,7 +308,7 @@ npm run serve            # http://localhost:8080
 #### 同期修复的其他问题（界面 / 上传 / 提示）
 1. **首屏“快速开始模版”遮挡 AI 助手初始消息并阻断拖拽**：将 `guide-area` 移入 `.chat-messages` 容器，初始消息完整可见且整个聊天区可拖拽上传。
 2. **错误提示可关闭、可超时**：全局 ElMessage 默认 `duration: 5000ms` + `showClose: true`（显示可点击关闭按钮）。
-3. **编译失败可完整查看并留档**：Toast 不再截断；失败 `.tex/.log` 自动保存到 `backend/storage/debug/hist{id}_{时间戳}.tex(.log)`，控制台打印样本路径。
+3. **编译失败可完整查看并留档**：Toast 不再截断；失败 `.tex/.log` 自动保存到 `data/storage/debug/hist{id}_{时间戳}.tex(.log)`，控制台打印样本路径。
 
 
 ## 8. 常见问题与重试建议
@@ -323,7 +321,7 @@ npm run serve            # http://localhost:8080
 | PDF 图表为空白或数据没画出来 | 多为 AI 生成的 Y 轴单位与数据量级不一致，重新发送时在提示词里明确单位（如用例 08 的写法） |
 | 预览提示“浏览器不支持” | 换 Chrome/Edge 再试（PDF 预览依赖浏览器内置查看器） |
 | 上传 Excel/CSV 解析异常 | 确认文件直接来自 `docs/testdata/`，勿改动表头；单个文件不超过 100MB |
-| 点「生成PDF」提示失败，想定位真实原因 | 错误 Toast 现完整展示；后端会把失败样本与日志保存到 `backend/storage/debug/hist{id}_{时间戳}.tex(.log)`，用该 .tex 可本地复现并交给维护者 |
+| 点「生成PDF」提示失败，想定位真实原因 | 错误 Toast 现完整展示；后端会把失败样本与日志保存到 `data/storage/debug/hist{id}_{时间戳}.tex(.log)`，用该 .tex 可本地复现并交给维护者 |
 | 上传报 `Data too long for column 'data_name'` / 数据集名称过长 | 名称最长 50 字符；旧库需先执行 `migrations/alter_data_file_data_name.sql` 扩列（`1.sql` 已内置），上传接口会自动截断兜底 |
 
 ---

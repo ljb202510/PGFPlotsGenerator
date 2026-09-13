@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pg.pgfplots.mapper.NoticeMapper">
+
+    <select id="selectUserNotices" resultType="com.pg.pgfplots.dto.notice.NoticeRowVO">
+        SELECT n.notice_id,
+               n.title,
+               n.content,
+               n.created_time,
+               n.feedback_id,
+               n.feedback_time,
+               n.feedback_type,
+               n.reply,
+               CASE WHEN nr.id IS NOT NULL THEN 1 ELSE 0 END AS is_read
+        FROM notice n
+        LEFT JOIN notice_read nr ON n.notice_id = nr.notice_id AND nr.user_id = #{userId}
+        WHERE n.target_user_id IS NULL OR n.target_user_id = #{userId}
+        ORDER BY n.created_time DESC
+    </select>
+
+    <select id="countUnread" resultType="map">
+        SELECT COUNT(*) AS total,
+               SUM(CASE WHEN nr.id IS NULL THEN 1 ELSE 0 END) AS unread
+        FROM notice n
+        LEFT JOIN notice_read nr ON n.notice_id = nr.notice_id AND nr.user_id = #{userId}
+        WHERE n.target_user_id IS NULL OR n.target_user_id = #{userId}
+    </select>
+</mapper>

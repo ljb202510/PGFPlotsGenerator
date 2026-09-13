@@ -209,26 +209,10 @@ const abortController = ref(null)
 
 // API基础URL - 根据你的后端配置修改
 import { API_BASE_URL } from '@/config';
+import { getUserToken } from '@/utils/auth';
 
-// 获取认证token
-const getAuthToken = () => {
-  const possibleTokens = [
-    localStorage.getItem('token'),
-    sessionStorage.getItem('token'),
-    localStorage.getItem('authToken'),
-    sessionStorage.getItem('authToken'),
-    localStorage.getItem('userToken'), 
-    sessionStorage.getItem('userToken')
-  ];
-  
-  for (let token of possibleTokens) {
-    if (token && token !== 'null' && token !== 'undefined') {
-      return token.replace(/^["']|["']$/g, '').trim();
-    }
-  }
-  
-  return null;
-}
+// 获取token（统一身份入口：只认用户会话）
+const getAuthToken = () => getUserToken()
 
 // 上传表单数据
 const uploadForm = ref({

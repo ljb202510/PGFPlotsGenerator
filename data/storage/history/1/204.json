@@ -1,0 +1,18 @@
+{
+  "history_id" : 204,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "用一组示例数据画一个简单柱状图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={示例商品销量对比},\n    ylabel={销量（件）},\n    symbolic x coords={A商品, B商品, C商品, D商品, E商品},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    enlarge x limits=0.15\n]\n\\addplot[fill=blue!60, draw=blue!60] coordinates {(A商品,45) (B商品,60) (C商品,35) (D商品,55) (E商品,25)};\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：示例数据};\n\\end{tikzpicture}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={示例商品销量对比},\n    ylabel={销量（件）},\n    symbolic x coords={A商品, B商品, C商品, D商品, E商品},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    enlarge x limits=0.15\n]\n\\addplot[fill=blue!60, draw=blue!60] coordinates {(A商品,45) (B商品,60) (C商品,35) (D商品,55) (E商品,25)};\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：示例数据};\n\\end{tikzpicture}",
+  "generation_description" : " 用一组示例数据画一个简单柱状图",
+  "created_at" : "2026-09-13T05:10:40.323Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 578,
+    "code_source" : "from_request"
+  }
+}

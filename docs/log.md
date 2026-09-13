@@ -1,7 +1,7 @@
 # 开发日志 — PGFPlotsGenerator
 > 本日志为历史记录，权威技术文档以 README.md 为准
-> 项目：PGFPlotsGenerator（前端 Vue3 + 后端 Node/Express + MySQL）
-> 记录区间：2025-12-03 ～ 2026-09-09
+> 项目：PGFPlotsGenerator（前端 Vue3 + 后端 Spring Boot + MySQL；2026-09-13 前为 Node/Express）
+> 记录区间：2025-12-03 ～ 2026-09-13
 
 ## 目录
 - 一、前期已完成项
@@ -11,6 +11,7 @@
 - 五、待定 / 废除项 / 疑问
 - 六、部署相关
 - 七、技术说明与参考
+- 八、2026-09-13 Java 后端重构与后续（整合：重构 / 配套修复 / Node 退役；分界线以上为 Node.js 版开发记录）
 
 ---
 
@@ -43,10 +44,10 @@
 最后这样部分解决问题，直接不要 `type=password`
 
 #### 12月初补充记录
-5. 对话界面拖拽上传，会显示“上传失败: {"code":400,"message":"数据集名称和描述不能为空"}”，名称和描述默认为上传的文件名
+5. 对话界面拖拽上传，会显示"上传失败: {"code":400,"message":"数据集名称和描述不能为空"}"，名称和描述默认为上传的文件名
 5. 每次对话之后，应当清除选中文件。
-2. 数据上传的“修改”按钮应为编辑按钮（默认显示当前名称和描述，支持修改）
-5. 当点击“历史记录”时，后端终端报错：从数据库获取历史记录失败: Error: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?' at line 20
+2. 数据上传的"修改"按钮应为编辑按钮（默认显示当前名称和描述，支持修改）
+5. 当点击"历史记录"时，后端终端报错：从数据库获取历史记录失败: Error: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?' at line 20
 5. 文件大小限制 10000 字节，太小了
 
 ---
@@ -58,19 +59,19 @@
 `<!-- PDF预览对话框 -->` 预览框的关闭（X 图标），无法关闭整个框（会留下这一行）
 1.5 图表生成和历史记录生成的 pdf 应当一致，统一显示
 5. API 调用错误: 发送 `.xlsx` 文件，报错，之后都不能调用 AI。
-3. 在图表生成界面一旦点击其他组件/页面，就会清除所有记录，我不希望这样，我希望只有退出登录或者刷新界面（再添加一个按钮，“新建对话”按下按钮时）才会清除当前所有对话记录
+3. 在图表生成界面一旦点击其他组件/页面，就会清除所有记录，我不希望这样，我希望只有退出登录或者刷新界面（再添加一个按钮，"新建对话"按下按钮时）才会清除当前所有对话记录
 2. 发出消息如果带有文件，需要在页面上显示出来，而不是只显示文字部分的描述
 
 ---
 
-7. 拖拽的区域可以参考 deepseek 而不是固定在右端，底层可以有一个上传历史文件的选项，弹出原来右边“历史文件”的部分，“点击上传”的按钮也需要添加在底部，对话界面可占据全部页面
+7. 拖拽的区域可以参考 deepseek 而不是固定在右端，底层可以有一个上传历史文件的选项，弹出原来右边"历史文件"的部分，"点击上传"的按钮也需要添加在底部，对话界面可占据全部页面
 1. 上传历史文件界面不友好（显示不好看）
 
 ### 周二 12.16
 
-- 删除描述中的“用户查询”删除字段
+- 删除描述中的"用户查询"删除字段
 - 删除重新生成选项
-3. 上传历史文件里的“取消”和“确认选择”删除这两个按钮相关代码
+3. 上传历史文件里的"取消"和"确认选择"删除这两个按钮相关代码
 
 - AI 回复距离底部输入框有很长的空白区域，去掉；
 - 切换回图表生成界面时，默认在最底部而不是最开始的地方
@@ -143,11 +144,11 @@
 但是衍生了很多 bug：
 
 ------------------------------------------------------------------------------------------------------------------------------------
-现在普通用户和管理员登录成功之后都会看到一闪而过的“登录界面”（包含邮箱 密码输入框，但其他导航栏正常显示），我已经改了很久了还是没解决。请帮我仔细检查。给出几种解决方案
+现在普通用户和管理员登录成功之后都会看到一闪而过的"登录界面"（包含邮箱 密码输入框，但其他导航栏正常显示），我已经改了很久了还是没解决。请帮我仔细检查。给出几种解决方案
 
 0. 渲染逻辑冲突：App.vue 的模板根据认证状态条件渲染，而路由守卫也进行重定向。如果冲突的话只取其中一种渲染逻辑吧。
 1. 删除了路由守卫 `index.js`，但还是不行结果一样
-2. 猜想，当时为了解决新开标签页（跳转反馈管理）会弹出“请先登录”的认证问题添加的 `created` 和 `watch`（使用 `checkAuthStatus` 多了，原来只在 `mounted` 使用，现在 `created` 和 `watch` 都使用了）
+2. 猜想，当时为了解决新开标签页（跳转反馈管理）会弹出"请先登录"的认证问题添加的 `created` 和 `watch`（使用 `checkAuthStatus` 多了，原来只在 `mounted` 使用，现在 `created` 和 `watch` 都使用了）
 3. 改了十几次代码（`App.vue` 和 `index.js`）都没解决问题，会不会是其他组件代码有问题，你还需要查看什么文件可以告诉我。
 
 这里把 `index.js` 里面的重定向方法删除，用户登录一切正常。管理员登录很不正常（但也没什么大问题？）
@@ -220,7 +221,7 @@
 1. 后端新增一个可以根据用户 ID 获取反馈的接口
 2. 在前端完成正确调用后端反馈接口即可。（获取反馈的回复显示在前端，查看回复需要获取---用户自己的反馈）
 在我的通知界面，其中反馈通知（如果管理员回复了应该正常接收）
-帮我正确完成后端反馈接口的调用，反馈通知不计入未读消息数（没有已读状态未读状态，不用考虑），notice 表是系统通知表和反馈表不一样，在“我的通知”页面，单独从 feedback 表中获取当前用户被回复的反馈，作为反馈通知展示。
+帮我正确完成后端反馈接口的调用，反馈通知不计入未读消息数（没有已读状态未读状态，不用考虑），notice 表是系统通知表和反馈表不一样，在"我的通知"页面，单独从 feedback 表中获取当前用户被回复的反馈，作为反馈通知展示。
 
 ---
 
@@ -261,7 +262,7 @@
 3. 开发管理员的用户管理功能
 根据描述，生成完整的 vue3 组件代码，`1.sql` 为数据库，里面包含用户表，按照数据库表进行编程（不修改数据库）。生成管理员的用户管理界面代码 `AdminUser.vue` 以及对应的后端接口（使用 node.js） `AdminUser.js` 文件（使用临时数据库，保证前后端可以正常对接即可），界面包括用户管理的常见功能即可
 
-4. 编辑功能删除，优化前端界面。很多不必要的“对话框”等等
+4. 编辑功能删除，优化前端界面。很多不必要的"对话框"等等
 5. 优化通知管理界面，取消已读状态。
 
 6. 开发系统监控功能
@@ -291,12 +292,12 @@
 3. 开发用户管理功能（后端对接数据库）
 4. 管理员首页对接数据库
 
-5. 管理员界面在“提交时间” “发布时间” “注册时间” 右边增加箭头，点击可按时间正序/逆序排序。
+5. 管理员界面在"提交时间" "发布时间" "注册时间" 右边增加箭头，点击可按时间正序/逆序排序。
 
 ---
 
-1. “提交时间”的箭头样式需要调整
-2. 用户界面 上传数据 “上传时间” 右边增加箭头，点击可按时间正序/逆序排序。
+1. "提交时间"的箭头样式需要调整
+2. 用户界面 上传数据 "上传时间" 右边增加箭头，点击可按时间正序/逆序排序。
 3. 回复反馈的框要和反馈详情框大小适应，现在是很小的一块，需要修改
 
 系统日志功能的研究
@@ -323,7 +324,7 @@
 5. AI 认为缺少 psutil 模块和 Python 的 SSL 模块，安装后运行，
    `cd /www/server/panel` 切换宝塔面板目录
    5.1 `curl -sSO http://download.bt.cn/install/install_panel.sh && bash install_panel.sh` 重新安装面板
-   失败，定位问题应该就是“缺少 psutil 模块和 Python 的 SSL 模块”
+   失败，定位问题应该就是"缺少 psutil 模块和 Python 的 SSL 模块"
    尝试解决
    5.2 重新下载编译面板的 python3.7.9（这里耗时 40 分钟，太久了）结果还是失败了
 
@@ -394,7 +395,7 @@ cd install-tl-*
 ### 2026年1月4日 19:32:20
 
 关于系统健康。什么时候会出现，实在不行就删掉吧
-添加了“登录”“调用”“编译”成功和失败，插入系统日志。
+添加了"登录""调用""编译"成功和失败，插入系统日志。
 
 ### 2026年1月5日 10:37:50
 
@@ -610,7 +611,7 @@ max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易�
 - 数据来源 / 副标题等附加文字的占位随意——模型经常用 \node 而不是 \title/\caption/xlabel 之类的标准结构来加这些文字，缺稳定性。
 - 使用system prompt约束，实在不行就要从代码层面约束了
 
-#### 在提示词里添加“渲染规则”之后出现了很多bug
+#### 在提示词里添加"渲染规则"之后出现了很多bug
 - 生成图表形状空白（如没有柱形和折线形，甚至只有标题。。）更换在线编译器显示的正常一点，但也有问题
 
 #### 原有偶尔出现的bug（一直没修好像）
@@ -658,7 +659,7 @@ max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易�
 
 #### 1. 生成等待提示 + 可停止
 - 思考气泡：等待 AI 生成期间聊天区显示转圈 + 「正在使用 {模型} 生成图表代码，请稍候…」。
-- 停止生成：发送按钮生成期变为“停止”方块；前端 AbortController 取消请求，后端 `chat.js` 以 `res.on('close')` 联动中止 Qwen/DeepSeek 上游调用，避免额度浪费与多余落库；生成期防并发发送，组件卸载自动中止。
+- 停止生成：发送按钮生成期变为"停止"方块；前端 AbortController 取消请求，后端 `chat.js` 以 `res.on('close')` 联动中止 Qwen/DeepSeek 上游调用，避免额度浪费与多余落库；生成期防并发发送，组件卸载自动中止。
 
 #### 2. 错误提示体验
 - 全局 ElMessage 默认 `duration: 5000ms` + `showClose: true`（可点击关闭，App.vue `el-config-provider`）。
@@ -666,11 +667,11 @@ max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易�
 - 编译失败样本与日志自动留档 `backend/storage/debug/hist{id}_{时间戳}.tex(.log)`，控制台仅提示文件位置。
 
 #### 3. 界面问题修复
-- 首屏“快速开始模版”遮挡 AI 助手初始消息并阻断拖拽 → `guide-area` 移入 `.chat-messages` 容器。
+- 首屏"快速开始模版"遮挡 AI 助手初始消息并阻断拖拽 → `guide-area` 移入 `.chat-messages` 容器。
 
 #### 4. AI 生成/编译链路修复（双端防御 + 提示词 PE 重构）
 - AI 输出完整文档（`\documentclass`/`\usepackage`/`\begin{document}`…）被再包裹 → 提示词禁止输出文档脚手架；`preprocessLatexCode` 无条件清理；编译外壳预置 `pgf-pie`。
-- 数值标注旧无效键 `nodes near coords style=` → 改正确键 `every node near coord/.append style={font=\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}`，并强制“有 mark 必配标注”（R3）。
+- 数值标注旧无效键 `nodes near coords style=` → 改正确键 `every node near coord/.append style={font=\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}`，并强制"有 mark 必配标注"（R3）。
 - `symbolic x coords` 误用全角逗号 → 强约束英文半角逗号（R7），附正反例。
 - 多系列折线标注重叠 → 按系列错开锚点 `anchor=south/north`、字号 `\tiny/\scriptsize`（R8）。
 - 提示词整体按 PE 分层重构：输出边界 / 渲染规则 MUST / 正例 / 反例 / 输出前自检。
@@ -704,7 +705,7 @@ max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易�
 - `docs/manual-test-cases.md` §9.4 结果记录表精简为「用例/结果/备注」三列；§9.5 按 §7.1 结构补全进阶用例「现象/原因/解决方案/复测」记录，写入最终复测结果。
 
 #### 5. 其他bug
-- [ ] 还有一个bug在生成的时候前端点击切换模型，也会切换提示，正在使用 Deepseek-V4-Flash 生成图表代码。实际使用模型不变。可以“你的模型是什么”来检验/后端调用也会显示模型。（不用解决）
+- [ ] 还有一个bug在生成的时候前端点击切换模型，也会切换提示，正在使用 Deepseek-V4-Flash 生成图表代码。实际使用模型不变。可以"你的模型是什么"来检验/后端调用也会显示模型。（不用解决）
 - [ ] 当数字相差不大且数字达到4位，5位或以上（或者数据很多很密集）时，标注会出现互相遮挡的情况。（扩大单位来解决）
 
 ### 2026年9月12日（模型调用统一重构 + 404 修复）
@@ -727,6 +728,52 @@ max_tokens: 4096 → 8192（安全余量，关闭思考后长代码输出不易�
 #### 3. 测试
 - 语法检查通过（`node --check`）。
 - 真实连通测试：DeepSeek 与 Qwen 均请求成功、不再 404（临时脚本 `_test_ai_conn.js` 已删除）。
+
+---
+
+### 2026年9月13日（ bug 修复与优化）
+
+> 均为实际改动；原因与修复对应如下。
+
+#### Bug 修复
+
+- [x] **后端报错提示不明显 → 改回类 Node 的明确提示，并落库记录调用日志（方便开发调试）**
+- 原因：原 `GlobalExceptionHandler` 对未知异常只笼统返回「服务器内部错误」，开发环境难定位；AI 调用也无落库日志。
+- 改动：`ChatService` 在 AI 调用成功/失败均写 `api_log`（`recordFailedCall` / `API调用日志已记录`，`ChatService.java:287/347`）；`GlobalExceptionHandler` 对参数校验、缺参、请求体错误、上传超限、兜底 500 均返回具体中文提示，兜底异常同时写 `system_log`，便于查后台日志。
+
+- [x] **已登录用户再登录管理员会出现一系列前端 bug**
+- 原因：用户态与管理员态的存储/路由未隔离，切换时残留「半个管理员态」导致外壳渲染错乱。
+- 改动：`App.vue` 将用户会话（`token`/`user`）与管理员会话（`adminToken`/`adminUser`）完全隔离；`checkAuthStatus` 检测到「半个管理员态」自动清理（`App.vue:156-159`）；管理员登录只写管理员会话、不触碰用户会话，渲染哪个外壳由「当前路由」决定（`App.vue:184-194`）。
+
+- [x] **Qwen 调用报错（深度思考没关）**
+- 原因：Qwen3.5(NSCC) 默认开启深度思考，`reasoning` 1 万+字符、耗时 ~42s，偶发思考跑满 `max_tokens` 只产出残桩。
+- 改动：`LlmClient` 对 Qwen 在请求体加 `chat_template_kwargs: {enable_thinking:false}` 真正关闭深度思考（实测 `reasoning=0`、耗时 2.1s）；`disableThinkingOf` 对 `qwen` 返回 `true`（`LlmClient.java:78-83`）。
+
+- [x] **IDE 显示 108 个问题**
+- 原因：IDE 的 Java 语言服务跑在 JDK 8，遇到 `var` / `record` / 文本块等 JDK 17+ 语法即报「cannot be resolved」一类假错误。
+- 改动：`.vscode/settings.json` 固定 `java.jdt.ls.java.home` / `java.configuration.runtimes` 为 JDK 21（与 `run.cmd` / `mvn-run.cmd` 自动选 JDK 17+ 一致），108 个假错误消除。
+
+- [x] **邮箱改为 2771008024@qq.com 后无法发送验证码**
+- 原因：`.env` 的 `SMTP_USER` / `SMTP_FROM` 已改为新邮箱，但 `SMTP_PASS` 仍是对应的旧授权码（或该邮箱 SMTP 服务未开），发信报 535 认证失败。
+- 改动：将 `.env` 的 `SMTP_PASS` 更新为 2771008024@qq.com 对应的 SMTP 授权码，发信恢复；`VerificationService.sendRegisterVerificationEmail` 用 try/catch 捕获发信异常并返回「发送验证码失败，请稍后重试」而非原始堆栈（`VerificationService.java:92-97`）。
+
+- [x] **发布通知内容为空时报 `Uncaught runtime errors: [object Object]`**
+- 原因：`AdminNotice.vue` 的 `handleSubmit` 直接 `await noticeFormRef.value.validate()`，Element Plus 校验失败时 reject 的是字段错误对象（非 Error 实例），未被捕获形成未处理 rejection，触发 webpack 错误覆盖层；后端本有「标题和内容不能为空」兜底，纯前端问题。
+- 改动：`validate()` 追加 `.catch(() => false)`，校验失败仅显示表单内红色提示并中止提交。
+
+#### 优化
+
+- [x] **对话界面左侧历史对话：时间改为「最近一次对话」的时间，排序同此；显示规则为仅当天用相对时间**
+- 原因：`ChatService.persistConversation` 插入消息时从不更新 `conversations.updated_at`（仅自动命名时更新该行），侧边栏时间≈创建时间、排序失真。
+- 改动：`ConversationMapper.xml` 列表 SQL 新增 `last_message_at` 子查询（`MAX(conversation_messages.created_at)`），排序改为 `ORDER BY COALESCE(last_message_at, updated_at) DESC`；`ConversationVO` 增加 `last_message_at` 字段；前端展示优先取 `last_message_at`（空会话回退 `updated_at`），存量数据无需刷库。显示规则随后调整为：当天（同一自然日）显示 刚刚/N 分钟前/N 小时前，非当天显示具体日期 `YYYY-MM-DD`。
+
+- [x] **侧边栏收起/展开图标与常见 AI 产品风格统一**
+- 改动：`ChartGenerator.vue` 左上角按钮图标由 `Menu`（三条横线）改为内联 SVG「左侧面板」图标（圆角矩形 + 左侧分隔线），颜色用 `currentColor` 继承品牌色与 hover 效果，按钮样式不变；同步移除未使用的 `Menu` 图标导入。
+
+- [x] **历史记录时间筛选漏记录（如筛 9.10–9.14 丢失 9.11 记录）**
+- 原因：日期过滤在分页之后的内存里做——先按 `history_id DESC` 取当前页 20 条再筛日期，早于当前页的记录永远筛不出来；`total_count` 也只按当前页过滤后的条数统计，分页信息失真。
+- 改动：日期过滤下推到 SQL 于分页前执行——`GenerationHistoryMapper.xml` 的 `listFrom` 增加 `generation_time >= #{startTime} / <= #{endTime}` 条件；`selectHistoryPage` / `countHistory` 增加 `startTime`、`endTime` 参数；`HistoryService.list` 先解析日期再传参并删除内存过滤块；`exportCsv` 调用同步适配新签名。`total_count` 与翻页均按过滤后结果计算。
+
 ---
 
 ## 其他
@@ -817,3 +864,87 @@ const response = await fetch(`${API\_BASE\_URL}/datasets/${row.id}`, {
       method: 'DELETE'
     })
 ```
+
+---
+
+# ═══════════════════════ 重构 Java 后端 ═══════════════════════
+
+> **分界线**：以上为 Node.js（Express）版开发记录；以下为 2026-09-13 起 Java 后端（spring-backend）重构及后续记录。
+
+## 八、2026-09-13 Java 后端（spring-backend）重构与后续（整合：重构 / 配套修复 / Node 退役）
+
+### 背景与取舍
+- 三份优化文档（`c优化方向评估.md` / `t优化方案清单.md` / `w优化方向清单.md`）原本共同结论是「不建议重写为 Java」（前提：以最小成本换取 RAG 面试讲点）。
+- 本次目标切换为「Java 岗面试作品」，故决定**全量重写**为 Spring Boot + MyBatis-Plus；第一阶段只做技术栈等价迁移，**不含 RAG**（RAG/Prompt 工程化/结构化输出/编译任务队列化/评估体系列为后续增量）。
+
+### 范围与原则
+- 全量重写 Node/Express 后端：13 个路由、11 张表、JWT 鉴权、AI 生成、XeLaTeX 编译、文件上传、邮件验证码、管理后台。
+- **数据库 schema 不变**（MyBatis-Plus 直接映射现有 11 张表，零迁移成本）。
+- **REST 路径与入参不变**，仅统一响应体为 `{success,data,message}`；前端同步适配。
+- 新工程 `spring-backend/` 与 `backend/` 并存，功能对齐后再退役 Node。
+
+### 交付
+- 新增 `hello/spring-backend/`（Spring Boot 3.2.12 + MyBatis-Plus 3.5.5 + Java 17，Maven）。
+- 包结构：`common/config/security/entity/mapper/dto/client/util/service/controller`；复杂聚合查询走 `resources/mapper/*.xml`。
+- 技术映射：multer→`MultipartFile`、xlsx→POI、nodemailer→JavaMailSender、`child_process.exec(xelatex)`→`ProcessBuilder`、openai SDK/axios→`RestClient`、bcryptjs→`BCryptPasswordEncoder`、jsonwebtoken→jjwt。
+- 前端改动：登录/注册/管理员登录读取 `data.{user,token}`；`notice`/AdminNotice 由 `code===200` 改为 `success`；AdminFeedback 列表改为 `data.{records,pagination}`；数据集上传判定改为 `success`；Vuex 未读数判定改为 `success`。
+
+### 验证（实测）
+- 应用启动正常（Tomcat :3000）；无 token→401 `未提供token`，非管理员访问 `/api/admin/**`→403。
+- 管理员 `admin123/666666` 登录返回 `data.{user,token}`；`/api/admin/static`、`/api/admin/users`、`/api/notice`、`/api/history`、`/api/datasets`、`/api/conversations`、`/api/feedback`、`/api/admin/log/*`、`/api/admin/notices` 返回结构正确。
+- 修复 `only_full_group_by` 下的两处按日期分组 SQL（用户注册统计、通知阅读统计）。
+- 编译链路实测：`POST /api/compile/82` → `data.{history_id,pdf_path,file_size}`；`GET /api/compile/82/pdf` → 200 流式 PDF；中文 UTF-8 正常。
+
+### 后续修复与配套（整合原「九」「十」两部分）
+
+#### 1. 配置与联调
+- `backend/.env`：验证码发件账号由 `3242899892@qq.com` 改为 **`2771008024@qq.com`**（`SMTP_USER` / `SMTP_FROM`，显示名用英文 `PG Admin` 规避 properties 中文编码问题）。
+  - **待办**：`SMTP_PASS` 需换成该邮箱的 SMTP 授权码，否则发信报 535 认证失败。
+- `spring-backend/application.yml`：新增 `spring.config.import: optional:file:../backend/.env[.properties]`，**与 Node 共用同一份 DB/密钥/SMTP 配置**；邮件默认值同步改为新账号。
+- `WebConfig`：启动时打印 uploads / history / charts / debug 及 `generation_path` 解析基准的**绝对路径**，便于核对。
+- 结论：Java 与 Node **不冲突** —— 同一个库 `X`（schema 未动）、同一 `backend/uploads` 与 `backend/storage`；仅端口 3000 不能同时启动。
+
+#### 2. 环境依赖排障（同一根因：Maven/IDE 跑在 JDK 8）
+- 报错 1：`mvn package` → `无效的标记: --release`。
+- 报错 2：`mvn spring-boot:run` → `RunMojo ... class file version 61.0 ... only recognizes up to 52.0`。
+- 根因：Maven 自身运行在 JDK 8，而 Spring Boot 3 插件要求 JDK 17+。
+- 新增 `build.cmd` / `run.cmd` / `mvn-run.cmd`：自动从 `%PG_JAVA_HOME%` → Microsoft jdk-21 → Java jdk-21 / jdk-17 / jdk-23 中挑选 JDK 17+ 再执行。
+- 用户级 `JAVA_HOME`：`C:\Program Files\Java\jdk-1.8` → **`C:\Program Files\Microsoft\jdk-21.0.2.13-hotspot`**（`setx`，系统级未动）。验证：`mvn -v` → `Java version: 21.0.2, vendor: Microsoft`。
+- 新增 `.vscode/settings.json`：用 `java.jdt.ls.java.home` / `java.configuration.runtimes` 固定 JDK 21，消除 IDE 里 `DatasetVO cannot be resolved` 一类**假错误**（根因：语言服务按 Java 8 解析，遇到含 `var` / `record` / 文本块的文件即解析失败）。
+- 残留（非阻塞）：`java` / `javac` 命令来自系统级 Oracle javapath（Java 23），故启动请用 `run.cmd`，不要手敲 `java -jar`。
+
+#### 3. 验证工具
+- 新增 `verify.cmd` + `verify.js`（Node，零依赖）：启动后端 → 鉴权 / 管理后台 / 用户侧 / 数据集增删改查 / 编译链路全量回归。
+- **实测：`PASS=27  FAIL=0  WARN=0`**（含真实 XeLaTeX 编译与 PDF 鉴权流式返回）。
+- 备查：最初用 PowerShell 写验证脚本，因 PS 5.1 解析异常改用 Node 实现。
+
+#### 4. 文档
+- 新增 `spring-backend/README.md`（技术栈、Node→Java 映射、配置优先级、构建运行、验证、共存与退役步骤）。
+- 新增 **`docs/plan-AI.md`**：整合 `c` / `t` / `w` 三份文档的**优化路线图（19 项 / 5 批次）**，含 RAG 选型建议（第一版推荐「MySQL 存向量 + Java 暴力余弦」，零新中间件，可演进 pgvector）、面试叙事与验收标准。
+- `.gitignore` 补充 `spring-backend/.env`、验证日志、`target/`。
+
+#### 5. Node 后端退役（删除前先核查，删除后复验）
+- 删除前全仓引用核查：前端 / spring-backend / 脚本 / launch.json 对 Node 代码 **0 处悬空引用**。
+- 归档：`backend/migrations/001_conversations.js` 的建表 DDL 转存为 `migrations/create_conversations_tables.sql` 后再删。
+- 删除 `hello/backend/` 下全部 Node 代码：`app.js`、`db.js`、`createAdmin.js`、`routes/`（13 个）、`middleware/`、`services/`、`utils/`、`migrations/`、`package.json`、`package-lock.json`、`yarn.lock`、`.env.example`、`node_modules`；`backend/` 目录原地保留数据。
+- 依赖清理：根 `package.json` 用 `npm uninstall` 移除仅为 Node 后端服务的 `bcryptjs` / `cors` / `express` / `jsonwebtoken` / `multer`（lock 同步，removed 50 packages）。
+- 文档改写：`README.md`（+v3.3 版本行）、`spring-backend/README.md`（§8 标记已执行）、`.github/copilot-instructions.md`（整篇重写为 Java 视角）、`docs/architecture.md`、`docs/development.md`、`docs/deployment.md`、`docs/manual-test-cases.md` 统一以 spring-backend 为唯一后端；`log.md` 历史流水不动。
+- 复验：`verify.cmd` **PASS=27 FAIL=0**（与基线一致）。
+
+#### 6. 残留垃圾清理
+- 删除：根目录空文件 `smoke.log`、`backend.log`（Node 时代 EADDRINUSE 报错残留）、`texput.log`（2025-12 编译失败残留）、空目录 `backend/temp/` 与 `hello/uploads/`。
+- 保留：`docs/testdata/`（manual-test-cases 32 个用例的配套数据，非垃圾）、`docs/plan-1.md` / `plan-AI.md`（历史规划存档）。
+
+#### 7. 数据目录改名 `backend/` → `data/`（语义更清晰）
+- 改动点：
+  - `application.yml` 5 处：`spring.config.import` 指向 `../data/.env`，`uploads/history/charts/debug` 四个目录默认值改 `../data/...`；`AppProperties.java` 4 处代码默认值同步。
+  - DB：`generation_history.generation_path` 前缀 `backend\` → `data\`（**UPDATE 128 行**，`HEX()` 抽查确认单反斜杠无误）；`data_file.file_path` 按文件名重解析，无需动。
+  - 前端 1 处：`ChartGenerator.vue` 编译失败提示文案 `backend/storage/debug/` → `data/storage/debug/`。
+  - `application.yml` 打包在 jar 内，改后重新 `mvn package`（`target/` 被 IDE 语言服务器锁定无法 clean，用不 clean 的增量打包）。
+- `data/` 最终仅含 `.env` + `uploads/`（33 文件）+ `storage/`（history 251 JSON / generated_charts 165 PDF / debug）。
+- 文档路径表述同步：README（+v3.4 版本行）等 7 份。
+- 复验：`verify.cmd` **PASS=27 FAIL=0**（其中编译 hist209 + PDF 鉴权流式返回 200，直接验证了新路径解析与历史数据可读）。
+
+### 待办
+- 优化路线图批次 1（RAG 检索增强 + Prompt 工程化 / 结构化输出 + 编译任务队列化 + 离线评估体系）：未开始（见 `docs/plan-AI.md`）。
+- 脚本归档：`build.cmd` / `run.cmd` / `mvn-run.cmd` / `verify.cmd` 已移入 `spring-backend/scripts/`（路径已适配新位置）。

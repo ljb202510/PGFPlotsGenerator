@@ -1,0 +1,18 @@
+{
+  "history_id" : 198,
+  "user_id" : 4,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "请基于我上传的数据绘制柱状图，比较各类别的数值大小；添加图表标题、坐标轴标签（含单位）与数值标注，使用清晰的配色并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=11cm, height=7cm,\n    bar width=0.55cm,\n    title={2023年中国主要省份地区生产总值（GDP）比较},\n    ylabel={地区生产总值（万亿元）},\n    xlabel={省份},\n    symbolic x coords={广东,江苏,山东,浙江,四川,河南},\n    xtick=data,\n    x tick label style={font=\\small},\n    ymin=0, ymax=17,\n    enlarge x limits=0.15,\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n\\addplot[fill=blue!60, draw=blue!80!black] coordinates {\n    (广东,13.57)\n    (江苏,12.82)\n    (山东,9.21)\n    (浙江,8.26)\n    (四川,6.01)\n    (河南,5.91)\n};\n\\addlegendentry{2023年地区生产总值}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.20) {数据来源：国家统计局《2023年国民经济和社会发展统计公报》};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=11cm, height=7cm,\n    bar width=0.55cm,\n    title={2023年中国主要省份地区生产总值（GDP）比较},\n    ylabel={地区生产总值（万亿元）},\n    xlabel={省份},\n    symbolic x coords={广东,江苏,山东,浙江,四川,河南},\n    xtick=data,\n    x tick label style={font=\\small},\n    ymin=0, ymax=17,\n    enlarge x limits=0.15,\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n\\addplot[fill=blue!60, draw=blue!80!black] coordinates {\n    (广东,13.57)\n    (江苏,12.82)\n    (山东,9.21)\n    (浙江,8.26)\n    (四川,6.01)\n    (河南,5.91)\n};\n\\addlegendentry{2023年地区生产总值}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.20) {数据来源：国家统计局《2023年国民经济和社会发展统计公报》};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请基于我上传的数据绘制柱状图，比较各类别的数值大小；添加图表标题、坐标轴标签（含单位）与数值标注，使用清晰的配色并加上图例。",
+  "created_at" : "2026-09-13T04:54:05.353Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 899,
+    "code_source" : "from_request"
+  }
+}

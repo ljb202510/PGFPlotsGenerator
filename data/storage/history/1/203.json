@@ -1,0 +1,18 @@
+{
+  "history_id" : 203,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "用一组示例数据画一个简单柱状图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2023年主要城市空气质量指数（AQI）对比},\n    ylabel={AQI (无量纲)},\n    symbolic x coords={北京,上海,广州,深圳,成都},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=120\n]\n\\addplot[fill=blue!50] coordinates {(北京,85) (上海,72) (广州,68) (深圳,65) (成都,78)};\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国环境监测总站 (2023年平均)};\n\\end{tikzpicture}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2023年主要城市空气质量指数（AQI）对比},\n    ylabel={AQI (无量纲)},\n    symbolic x coords={北京,上海,广州,深圳,成都},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=120\n]\n\\addplot[fill=blue!50] coordinates {(北京,85) (上海,72) (广州,68) (深圳,65) (成都,78)};\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国环境监测总站 (2023年平均)};\n\\end{tikzpicture}",
+  "generation_description" : " 用一组示例数据画一个简单柱状图",
+  "created_at" : "2026-09-13T05:10:38.493Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 628,
+    "code_source" : "from_request"
+  }
+}

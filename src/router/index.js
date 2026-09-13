@@ -3,6 +3,7 @@
 // Vue.use(Router)
 //这里使用的VUE2版本不能适用当前VUE3版本
 import { createRouter, createWebHistory } from 'vue-router'
+import { getAdminToken, getUserToken, clearAdminSession } from '@/utils/auth'
 
 const routerHistory = createWebHistory()
 
@@ -14,14 +15,10 @@ const router = createRouter({
       path: '/',
       // 修改这里：使用函数进行动态重定向
       redirect: () => {
-        // 1. 优先检查是否有管理员登录信息 (根据 AdminLogin.vue 的逻辑)
-        const adminUser = localStorage.getItem('adminUser');
-        if (adminUser) {
-          // 如果是管理员，强制去管理员首页 (请确保 '/admin' 是你的管理员主路由 path)
-          return '/admin'; 
+        // 已有用户会话 → 用户主流程；仅登录了管理员 → 管理端；都无 → 图表页（由 App.vue 渲染登录页）
+        if (!getUserToken() && getAdminToken()) {
+          return '/admin';
         }
-        
-        // 2. 如果没有管理员信息，才跳转到默认的图表生成页
         return '/chart-generator';
       }
     },
@@ -99,5 +96,13 @@ const router = createRouter({
   ]
 })
 
+// 管理员路由守卫：/admin/** 需要有效管理员会话，缺失则清理残留并回到入口
+router.beforeEach((to) => {
+  if (to.meta && to.meta.requiresAdmin && !getAdminToken()) {
+    clearAdminSession()
+    return { path: '/' }
+  }
+  return true
+})
 
 export default router

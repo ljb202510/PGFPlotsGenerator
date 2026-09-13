@@ -12,11 +12,12 @@
 
 | 依赖 | 版本建议 | 用途 |
 |---|---|---|
-| Node.js / npm | ≥ 16 | 前端构建 + 后端运行 |
+| JDK | 17+（本机 JDK 21） | 后端构建与运行（Maven） |
+| Node.js / npm | ≥ 16 | 前端构建（后端已改用 Java，Node 仅服务前端工具链） |
 | MySQL | 5.7+ | 库名 `X` |
 | XeLaTeX（TeX Live） | 完整版 | 编译 PDF（本地 Windows 可装 TeX Live/TeXstudio，log.md：下载 arm 版会导致无法运行） |
 
-### 1.2 初始化数据库（Windows 示例，密码见 `backend/db.js`）
+### 1.2 初始化数据库（Windows 示例，密码见 `backend/.env`）
 
 ```bash
 cd hello
@@ -24,10 +25,8 @@ mysql -u root -p        # 输入密码 000
 mysql> source 1.sql;                                    # 建库 X + 8 张表 + 预置管理员 admin123/666666
 mysql> source migrations/add_notice_feedback_columns.sql;   # notice 定向/反馈字段迁移
 mysql> source migrations/create_notice_read_table.sql;      # notice_read 表
+mysql> source migrations/create_conversations_tables.sql;   # conversations / conversation_messages（自 Node 迁移脚本归档）
 mysql> exit;
-
-cd hello/backend
-node migrations/001_conversations.js    # 建 conversations / conversation_messages（依赖 db.js 连库）
 ```
 
 > 提醒：`1.sql` 首行 `DROP DATABASE IF EXISTS X;` 会清库重建，仅首次/重建使用。
@@ -40,19 +39,18 @@ cd hello
 npm install
 npm run serve
 
-# 终端 B：后端（Express，默认 :3000）
-cd hello/backend
-npm install
-npm run dev        # nodemon 热重启（推荐开发）
-# 或 npm run start（node app.js）
+# 终端 B：后端（Spring Boot，默认 :3000；脚本自动选 JDK 17+）
+cd hello/spring-backend
+mvn-run.cmd        # 开发模式（mvn spring-boot:run，热改 Java 需重启进程）
+# 或 run.cmd（启动 jar，jar 不存在则先构建）
 ```
 
-后端首次启动前：复制 `backend/.env.example` 为 `backend/.env` 并填 `JWT_SECRET`、`SMTP_*`、`DEEPSEEK_*`、`NSCC_*`（可先只填 JWT_SECRET 即可登录，发验证码/调用 AI 再补）。
+后端配置自动读取 `../data/.env`（JWT_SECRET 缺失会启动失败；SMTP/AI 密钥按需补填）。
 
 ### 1.4 验证
 
 - 打开 `http://localhost:8080` → 注册/登录页正常
-- 后端控制台输出 `服务器运行在端口 3000`
+- 后端控制台输出 `Started PgApplication`（Tomcat :3000）
 - 用 `admin123/666666` 管理员登录；用户走邮箱验证码注册（需配好 SMTP）
 
 ## 2. 代码结构导览
@@ -60,7 +58,7 @@ npm run dev        # nodemon 热重启（推荐开发）
 ```
 hello/
 ├── 1.sql                      # 基础建表（users/data_file/generation_history/api_log/feedback/system_log/email_verification_codes/notice）
-├── migrations/                # SQL 迁移（notice 字段、notice_read）
+├── migrations/                # SQL 迁移（notice 字段、notice_read、conversations 两表归档）
 ├── docs/                      # 文档（README 补充：architecture / deployment / development / log）
 ├── public/  dist/             # 前端模板 / 构建产物
 ├── src/                       # ★ 前端 Vue 3 SPA
@@ -71,16 +69,17 @@ hello/
 │   ├── store/index.js         # Vuex：currentUser/isAuthenticated/unreadCount
 │   ├── components/            # TheAuth、Login/Register/AdminLogin、Common/Admin Navbar+Sidebar、ui/ 通用组件
 │   └── views/                 # ChartGenerator、MyHistory、DataUpload、MyFeedback、MyNotice、ChangeInformation、Admin* 共 10 页
-└── backend/                   # ★ 后端 Express
-    ├── app.js                 # 入口：挂载 13 个路由前缀（/api/admin/* 统一挂 authenticateToken+requireAdmin）
-    ├── db.js                  # mysql2/promise 连接池（读 .env DB_*，缺省回退默认），导出 { promisePool }
-    ├── .env(.example)         # 环境变量（勿提交 .env）
-    ├── middleware/auth.js     # JWT 校验 authenticateToken + 管理员校验 requireAdmin
-    ├── routes/                # 13 个路由文件（auth/chat/compile/history/datasets/conversations/feedback/notice/verification/Admin*）
-    ├── services/              # 非 HTTP 业务（verificationService.js 邮件+验证码）
-    ├── utils/systemLog.js     # writeSystemLog 写 system_log（副作用，不抛异常）
-    ├── migrations/            # 001_conversations.js（两对话表）
-    ├── uploads/               # 数据集文件（multer）
+├── spring-backend/            # ★ 后端 Spring Boot（唯一后端）
+│   ├── PgApplication.java     # 入口；SecurityConfig 统一拦截（/api/admin/** 要求管理员角色）
+│   ├── controller/            # 13 个控制器（路径与退役的 Express 版一致）
+│   ├── service/               # 业务服务（含 VerificationService 邮件+验证码）
+│   ├── mapper/                # MyBatis-Plus Mapper（复杂 SQL 在 resources/mapper/*.xml）
+│   ├── security/              # JwtTokenProvider / JwtAuthenticationFilter（角色查库装配）
+│   ├── util/                  # LatexCompiler（30s）/ SystemLogWriter / FileStorage / FileContentReader
+│   └── application.yml        # 默认配置；自动导入 ../data/.env
+└── data/                      # 共享运行时数据目录（原 backend/ 改名而来，请勿删除）
+    ├── .env                   # 环境变量（Java 启动时自动读取，勿提交 .env）
+    ├── uploads/               # 数据集文件
     └── storage/               # history/{uid}/{id}.json、generated_charts/user{uid}/hist{id}.pdf（仅服务端内部读写，经鉴权接口访问）
 ```
 
@@ -88,24 +87,23 @@ hello/
 
 ## 3. 编码规范与约定
 
-> 后端 `backend/package.json` 配置了 **eslint-config-google**；前端走 Vue CLI ESLint（`npm run lint`）。
+> 前端走 Vue CLI ESLint（`npm run lint`）；后端遵循 Spring 分层约定（见 §3.2）。
 
 ### 3.1 通用约定
 
 - 全库为**参数化查询**（`?` 占位），禁止字符串拼接 SQL（防注入）。
 - **数据隔离**：所有按用户查询/删除必须带 `user_id = ?` 条件；越权一律返回 404/403。
-- 业务代码中的异常/越权统一调 `writeSystemLog(status, message)`（`backend/utils/systemLog.js`）记录，message 会被截断 500 字；该函数只作为副作用，失败不影响主流程。
-- 密码规则（`routes/auth.js` `validatePassword`）：**仅字母数字、长度 6–16 位**；存取用 bcryptjs。
+- 业务代码中的异常/越权统一调 `SystemLogWriter`（`util/SystemLogWriter.java`）记录，message 会被截断 500 字；该工具只作为副作用，失败不影响主流程。
+- 密码规则（`AuthService` 校验）：**仅字母数字、长度 6–16 位**；存取用 BCrypt（`BCryptPasswordEncoder`）。
 - 响应风格注意（前后端分别处理两种）：部分接口 `{ success, data?, message }`；部分 `{ code, message, data }`（如 notice.js、Admin*）。**新增接口建议统一 `{ success, data, message }`**。
 
 ### 3.2 后端约定
 
-- **路由**：新增路由文件 `backend/routes/xxx.js`，在 `backend/app.js` 用 `app.use('/api/xxx', require('./routes/xxx'))` 挂载（`.github/copilot-instructions.md`）。
-- **业务逻辑**：涉及 DB/外部服务的逻辑放 `backend/services/`（参照 `verificationService.js`），路由文件保持薄。
-- **DB 访问**：`const db = require('../db').promisePool;` 然后 `await db.query(sql, params)`。
-- **鉴权**：需要登录的接口挂 `authenticateToken`（`middleware/auth.js`）；管理员校验：`/api/admin/*` 在 `app.js` 统一挂 `authenticateToken + requireAdmin`，反馈管理接口在 `feedback.js` 挂 `checkAdmin`（均为查库校验 role）。新增管理员接口应参照此模式。
-- 删除级联等跨表操作使用**事务**（`getConnection + beginTransaction + commit/rollback + release`，参照 `history.js:253-292`、`conversations.js:90-111`）。
-- 编译等外部命令用 `util.promisify(exec)` 并设 timeout（参照 `compile.js` 30s）。
+- **分层**：新增接口按 `controller/ → service/ → mapper/` 分层（复杂 SQL 写 `resources/mapper/*.xml`）；控制器返回 `Result.ok(...)`，业务错误抛 `BusinessException`（`notFound`/`forbidden`/`badRequest` 等静态工厂），由 `GlobalExceptionHandler` 统一转 `{success,data,message}` 与对应状态码。
+- **鉴权**：需登录接口由 `SecurityConfig` 统一拦截；`/api/admin/**` 自动要求管理员角色；非该前缀的管理员接口用 `@PreAuthorize("hasRole('ADMIN')")`（角色查库装配，不信任 JWT 中的角色声明）。
+- **数据隔离**：所有按用户查询/删除必须带 `user_id` 条件（`LambdaQueryWrapper.eq`）；越权一律 404/403。
+- 删除级联等跨表操作使用**事务**（service 方法加 `@Transactional`，参照 `HistoryService`、`ConversationService`）。
+- 编译等外部命令用 `util/LatexCompiler`（ProcessBuilder，30s 超时 + 临时目录必清理）。
 
 ### 3.3 前端约定
 
@@ -119,50 +117,50 @@ hello/
 
 ### 4.1 后端（5 步）
 
-1. **建表/迁移**：给 `generation_history` 加列，写 `migrations/add_favorite_column.sql`（带存在性判断，参照 `add_notice_feedback_columns.sql`）并执行；或新建表。
-2. **写路由文件** `backend/routes/favorite.js`：
+1. **建表/迁移**：给 `generation_history` 加列，写 `migrations/add_favorite_column.sql`（带存在性判断，参照 `add_notice_feedback_columns.sql`）并执行；或新建表；同时在 `entity/` 补实体/字段。
+2. **写服务** `service/FavoriteService.java`：
 
-```js
-// routes/favorite.js —— 收藏功能示例
-const express = require('express');
-const router = express.Router();
-const db = require('../db').promisePool;
-const { authenticateToken } = require('../middleware/auth');
-const { writeSystemLog } = require('../utils/systemLog');
+```java
+// service/FavoriteService.java —— 收藏功能示例
+@Service
+@RequiredArgsConstructor
+public class FavoriteService {
 
-// 收藏/取消收藏某条历史
-router.put('/:historyId', authenticateToken, async (req, res) => {
-  try {
-    const userId = req.user.user_id;
-    const historyId = parseInt(req.params.historyId);
-    const isFavorite = req.body.isFavorite ? 1 : 0;
-    const [result] = await db.query(
-      'UPDATE generation_history SET is_favorite = ? WHERE history_id = ? AND user_id = ?',
-      [isFavorite, historyId, userId]
-    );
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ success: false, message: '历史不存在或无权操作' });
+    private final GenerationHistoryMapper historyMapper;
+
+    public void toggleFavorite(int userId, int historyId, boolean favorite) {
+        LambdaUpdateWrapper<GenerationHistory> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(GenerationHistory::getHistoryId, historyId)
+               .eq(GenerationHistory::getUserId, userId)
+               .set(GenerationHistory::getIsFavorite, favorite ? 1 : 0);
+        if (historyMapper.update(null, wrapper) == 0) {
+            throw BusinessException.notFound("历史不存在或无权操作");
+        }
     }
-    res.json({ success: true, message: '已更新收藏状态' });
-  } catch (error) {
-    await writeSystemLog('error', `[FAVORITE] 更新失败: ${error.message}`);
-    res.status(500).json({ success: false, message: '服务器错误' });
-  }
-});
-
-module.exports = router;
+}
 ```
 
-3. **挂载**：在 `backend/app.js` 引入并注册：
+3. **写控制器** `controller/FavoriteController.java`：
 
-```js
-// app.js 追加
-const favoriteRouter = require('./routes/favorite');
-app.use('/api/favorite', favoriteRouter);
+```java
+@RestController
+@RequestMapping("/api/favorite")
+@RequiredArgsConstructor
+public class FavoriteController {
+
+    private final FavoriteService favoriteService;
+
+    @PutMapping("/{historyId}")
+    public Result<Void> toggle(@PathVariable int historyId, @RequestBody Map<String, Object> body) {
+        // 用户身份经 SecurityUtils 取当前登录用户，数据按 user_id 隔离
+        favoriteService.toggleFavorite(SecurityUtils.userId(), historyId, Boolean.TRUE.equals(body.get("isFavorite")));
+        return Result.ok(null);
+    }
+}
 ```
 
-4. （若跨表/多步）在 services 或事务内实现。
-5. 验证：`npm run lint`；用 curl/Postman 带 Bearer token 调 `PUT /api/favorite/1`。
+4. （若跨表/多步）在 service 内加 `@Transactional` 实现。
+5. 验证：`mvn -DskipTests package`；用 curl/Postman 带 Bearer token 调 `PUT /api/favorite/1`。
 
 ### 4.2 前端（4 步）
 
@@ -189,10 +187,10 @@ async function toggleFavorite(historyId, isFavorite) {
 ## 5. 常用命令清单
 
 ```bash
-# 后端
-cd hello/backend && npm run dev        # nodemon 开发
-cd hello/backend && npm run start      # node app.js
-cd hello/backend && npm run lint       # google-style 检查
+# 后端（脚本自动选 JDK 17+）
+cd hello/spring-backend && mvn-run.cmd   # 开发模式 mvn spring-boot:run
+cd hello/spring-backend && run.cmd       # 启动 jar（jar 不存在则先构建）
+cd hello/spring-backend && verify.cmd    # 全量接口回归（基线 PASS=27 FAIL=0）
 # 前端
 cd hello && npm run serve              # 开发服务器 :8080
 cd hello && npm run build              # 产物 dist/
@@ -205,11 +203,41 @@ cd <temp> && xelatex -interaction=nonstopmode test.tex
 
 ## 6. 常见开发易错点
 
-- 改 `db.js`/`.env`/`config.js` 后需重启对应进程（nodemon 自动重启后端，前端改 config 需刷新）。
-- 新增表后忘执行 `backend/migrations/001_conversations.js` 或迁移 SQL，接口会报「table doesn't exist」。
-- `uploads`、`storage` 目录不存在时 multer/编译会失败——后端已自动创建部分目录（`datasets.js:13-15`、`compile.js:117-119`），若权限不足需手工 mkdir。
+- 改 `data/.env`/`config.js` 后需重启对应进程（Java 后端需重启应用，前端改 config 需刷新）。
+- 新增表后忘执行 `migrations/` 下迁移 SQL，接口会报「table doesn't exist」。
+- `uploads`、`storage` 目录不存在时上传/编译会失败——Java 启动时会自动创建目录，若权限不足需手工 mkdir。
 - 删除用户/数据走 AdminUser/MyHistory 接口（内部级联），避免直接 SQL 触发外键错误。
-- 对话持久化只有传 `conversation_id` 才会写入（`chat.js:451`）；纯单轮生成不会进 `conversation_messages`。
+- 对话持久化只有传 `conversation_id` 才会写入（`service/ChatService`）；纯单轮生成不会进 `conversation_messages`。
+
+## 7. Java 后端（spring-backend）开发
+
+Spring Boot 后端为本项目**唯一后端**（原 Node 版已退役删除，接口路径与行为等价），开发约定如下（详见 `spring-backend/README.md`）。
+
+### 7.1 环境与启动
+
+```bash
+# 需 JDK 17+（本机 JDK 21）
+set "JAVA_HOME=C:\Program Files\Microsoft\jdk-21.0.2.13-hotspot"
+cd hello/spring-backend
+mvn -DskipTests package
+set "JWT_SECRET=your-super-secret-jwt-key-change-me"   # 缺失即启动失败
+java -jar target/pgfplots-backend-1.0.0.jar            # 或 mvn spring-boot:run
+```
+
+数据库沿用同一个库 `X`（**无需重新执行 `1.sql`**，schema 未变）；`DB_*` 缺省回退 `localhost/root/000/X`（`application.yml`）。
+
+### 7.2 新增一个接口（示例）
+
+1. **建表/迁移**：写 `migrations/*.sql`；实体放 `entity/`，Mapper 放 `mapper/`（复杂 SQL 写 `resources/mapper/*.xml`）。
+2. **服务**：业务放 `service/`；跨表删除加 `@Transactional`；按 `user_id` 隔离（`LambdaQueryWrapper.eq`）。
+3. **控制器**：放 `controller/`，返回 `Result.ok(...)`；业务错误抛 `BusinessException`，由 `GlobalExceptionHandler` 统一转 `{success,data,message}` 并给出状态码。
+4. **鉴权**：需登录接口默认被 `SecurityConfig` 拦截；`/api/admin/**` 自动要求管理员；非该前缀的管理员接口用 `@PreAuthorize("hasRole('ADMIN')")`。
+5. **验证**：`mvn -DskipTests package` 后按 `spring-backend/README.md` §7 冒烟。
+
+### 7.3 约定
+
+- 字段名保持既有契约（与退役的 Express 版一致，DTO 用 `@JsonProperty` 输出 snake_case），减少前端改动。
+- 系统日志用 `SystemLogWriter`（副作用式，不抛异常）；外部命令用 `util/LatexCompiler`（30s 超时 + `safeCleanup`）。
 
 ---
-**文档版本**：1.1　**基准日期**：2026-09-07　**交叉引用**：docs/architecture.md、README.md、.github/copilot-instructions.md
+**文档版本**：1.2　**基准日期**：2026-09-13　**交叉引用**：docs/architecture.md、README.md、.github/copilot-instructions.md

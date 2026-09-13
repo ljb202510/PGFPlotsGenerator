@@ -292,7 +292,7 @@ const loadNotices = async () => {
     })
     const result = await response.json()
     
-    if (result.code === 200) {
+    if (result.success) {
       noticeList.value = result.data.notices
       pagination.total = result.data.pagination.total
       pagination.totalPages = result.data.pagination.totalPages
@@ -408,7 +408,7 @@ const handleDelete = async (row) => {
     })
     const result = await response.json()
 
-    if (result.code === 200) {
+    if (result.success) {
       ElMessage.success('删除成功')
       loadNotices()
     } else {
@@ -450,7 +450,7 @@ const handleBatchDelete = async () => {
     })
     const result = await response.json()
 
-    if (result.code === 200) {
+    if (result.success) {
       ElMessage.success('批量删除成功')
       selectedIds.value = []
       loadNotices()
@@ -469,7 +469,7 @@ const handleBatchDelete = async () => {
 const handleSubmit = async () => {
   if (!noticeFormRef.value) return
 
-  const valid = await noticeFormRef.value.validate()
+  const valid = await noticeFormRef.value.validate().catch(() => false)
   if (!valid) return
 
   submitting.value = true
@@ -494,7 +494,7 @@ const handleSubmit = async () => {
     
     const result = await response.json()
     
-    if (result.code === 200) {
+    if (result.success) {
       ElMessage.success(isEditMode.value ? '更新成功' : '发布成功')
       dialogVisible.value = false
       loadNotices()

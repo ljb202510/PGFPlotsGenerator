@@ -198,14 +198,15 @@ export default {
 
         if (data.success) {
           this.success = true
-          // 注册成功，保存token到localStorage
-          if (data.token) {
-            localStorage.setItem('token', data.token)
-            localStorage.setItem('user', JSON.stringify(data.user))
+          // 注册成功，保存token到localStorage（后端统一响应：user/token 位于 data 内）
+          const payload = data.data || {}
+          if (payload.token) {
+            localStorage.setItem('token', payload.token)
+            localStorage.setItem('user', JSON.stringify(payload.user))
           }
           // 注册成功，2秒后自动跳转
           setTimeout(() => {
-            this.$emit('success', data.user)
+            this.$emit('success', payload.user)
           }, 2000)
         } else {
           this.error = data.message || '注册失败'

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pg.pgfplots.mapper.GenerationHistoryMapper">
+
+    <!-- 列表/详情共用的字段投影 -->
+    <sql id="recordColumns">
+        h.history_id AS id,
+        h.history_id,
+        h.user_id,
+        h.data_id,
+        h.generation_description AS description,
+        h.generation_code AS chart_code,
+        h.generation_description AS user_input,
+        h.generation_code AS ai_response,
+        COALESCE(d.data_name, '') AS file_name,
+        h.generation_path,
+        h.generation_time AS created_at,
+        h.generation_time AS updated_at
+    </sql>
+
+    <!-- 列表查询条件（含搜索/日期过滤） -->
+    <sql id="listFrom">
+        FROM generation_history h
+        LEFT JOIN data_file d ON h.data_id = d.data_id
+        WHERE h.user_id = #{userId}
+        <if test="search != null and search != ''">
+            AND (h.generation_description LIKE CONCAT('%', #{search}, '%')
+                 OR d.data_name LIKE CONCAT('%', #{search}, '%'))
+        </if>
+        <if test="startTime != null">
+            AND h.generation_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND h.generation_time &lt;= #{endTime}
+        </if>
+    </sql>
+
+    <select id="selectHistoryPage" resultType="com.pg.pgfplots.dto.history.HistoryRecordVO">
+        SELECT <include refid="recordColumns"/>
+        <include refid="listFrom"/>
+        ORDER BY h.history_id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countHistory" resultType="long">
+        SELECT COUNT(*)
+        <include refid="listFrom"/>
+    </select>
+
+    <select id="selectHistoryDetail" resultType="com.pg.pgfplots.dto.history.HistoryRecordVO">
+        SELECT <include refid="recordColumns"/>
+        FROM generation_history h
+        LEFT JOIN data_file d ON h.data_id = d.data_id
+        WHERE h.history_id = #{historyId} AND h.user_id = #{userId}
+        LIMIT 1
+    </select>
+</mapper>

@@ -61,7 +61,7 @@ const store = new Vuex.Store({
           headers: { 'Authorization': `Bearer ${token}` }
         })
         const result = await response.json()
-        if (result.code === 200) {
+        if (result.success) {
           commit('SET_UNREAD_COUNT', result.data.unreadCount)
         }
       } catch (error) {

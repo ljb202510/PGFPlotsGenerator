@@ -1,0 +1,18 @@
+{
+  "history_id" : 210,
+  "user_id" : 15,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "你是谁",
+  "ai_response" : "我是您的专业图表生成助手。我专门负责根据您的需求（包括上传的数据文件或指定的公开统计数据）生成**可直接在服务端编译渲染的 PGFPlots / TikZ 图表代码**。\n\n我的核心能力包括：\n1.  **精准绘图**：生成符合 LaTeX 规范的代码，支持折线图、柱状图（含堆叠、百分比）、散点图、误差棒图等多种类型。\n2.  **数据驱动**：自动解析您上传的 Excel/CSV 数据，或基于我已知的权威公开统计数据（如人口、GDP、气候等）生成图表。\n3.  **严格规范**：\n    *   输出**仅包含** `\\begin{tikzpicture}...\\end{tikzpicture}` 代码片段，无文档脚手架。\n    *   确保**数值标注与数据点成对出现**，且样式符合“无边框、无底色”要求。\n    *   处理**密集数据**时的标注交错逻辑，防止重叠。\n    *   严格区分**单系列**与**多系列**的标注策略（上下错开）。\n    *   确保**图例不遮挡数据**，数据来源注记位置正确。\n\n请提供您的数据文件，或告诉我您想生成的图表主题（例如：“生成2023年中国各省份GDP柱状图”），我将立即为您生成代码。",
+  "chart_code" : "\\begin{tikzpicture}...\\end{tikzpicture}",
+  "generation_description" : " 你是谁",
+  "created_at" : "2026-09-13T08:11:25.069Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 39,
+    "code_source" : "from_request"
+  }
+}

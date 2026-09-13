@@ -68,6 +68,7 @@
 
 <script>
 import { API_BASE_URL } from '@/config';
+import { getUserToken } from '@/utils/auth';
 export default {
   name: 'MyFeedback',
   data() {
@@ -142,27 +143,9 @@ export default {
       }
     },
 
-    // 获取认证token
+    // 获取认证token（统一身份入口：只认用户会话，避免与管理员 token 混用）
     getAuthToken() {
-      // 尝试从多个可能的存储位置获取 token
-      const possibleTokens = [
-        localStorage.getItem('token'),
-        sessionStorage.getItem('token'),
-        localStorage.getItem('authToken'),
-        sessionStorage.getItem('authToken'),
-        localStorage.getItem('userToken'), 
-        sessionStorage.getItem('userToken')
-      ]
-      
-      // 返回第一个有效的 token
-      for (let token of possibleTokens) {
-        if (token && token !== 'null' && token !== 'undefined') {
-          // 清理 token（移除可能的引号或空格）
-          return token.replace(/^["']|["']$/g, '').trim()
-        }
-      }
-            
-      return null
+      return getUserToken()
     },
     
     showMessageFunc(text, type) {

@@ -21,7 +21,7 @@
             <div class="conv-item__main">
               <div class="conv-item__title">{{ c.title }}</div>
               <div class="conv-item__meta">
-                {{ formatConvTime(c.updated_at) }}<span v-if="c.message_count"> · {{ c.message_count }} 条</span>
+                {{ formatConvTime(c.last_message_at || c.updated_at) }}<span v-if="c.message_count"> · {{ c.message_count }} 条</span>
               </div>
             </div>
             <div class="conv-item__actions">
@@ -39,7 +39,10 @@
       <div class="chat-section">
         <div class="chat-header">
           <button class="conv-toggle" @click="toggleSidebar" aria-label="对话列表">
-            <el-icon><Menu /></el-icon>
+            <svg class="conv-toggle__icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="16" rx="3" />
+              <line x1="9.5" y1="4" x2="9.5" y2="20" />
+            </svg>
           </button>
           <h2><el-icon class="chat-title-icon"><ChatDotRound /></el-icon> AI图表助手</h2>
           <button class="new-chat-btn" @click="newChat">
@@ -435,8 +438,7 @@ import {
   PieChart,
   DataAnalysis,
   ChatDotRound,
-  Delete,
-  Menu
+  Delete
 } from '@element-plus/icons-vue'
 import axios from 'axios'
 import CodeBlock from '@/components/ui/CodeBlock.vue'
@@ -445,21 +447,10 @@ import AppSpinner from '@/components/ui/AppSpinner.vue'
 // API配置
 import { API_BASE_URL } from '@/config';
 import { fetchPdfBlobUrl } from '@/utils/pdf';
+import { getUserToken } from '@/utils/auth';
 
-// 获取token
-const getAuthToken = () => {
-  const possibleTokens = [
-    localStorage.getItem('token'),
-    sessionStorage.getItem('token'),
-  ];
-  
-  for (let token of possibleTokens) {
-    if (token && token !== 'null' && token !== 'undefined') {
-      return token.replace(/^["']|["']$/g, '').trim();
-    }
-  }
-  return null;
-}
+// 获取token（统一身份入口：只认用户会话）
+const getAuthToken = () => getUserToken()
 
 // 响应式数据
 const inputMessage = ref('')
@@ -645,7 +636,7 @@ const uploadDragFile = async (file) => {
     
     loadingMessage.close()
     
-    if (response.data.code === 200) {
+    if (response.data.success) {
       ElMessage.success('文件上传成功！')
       await fetchFileList()
       
@@ -832,16 +823,21 @@ const deleteConversation = async (c) => {
   }
 }
 
-// 对话时间友好显示
+// 对话时间友好显示：当天显示相对时间，非当天显示具体日期
 const formatConvTime = (t) => {
   if (!t) return ''
   const d = new Date(t)
-  const diff = (Date.now() - d.getTime()) / 1000
-  if (diff < 60) return '刚刚'
-  if (diff < 3600) return `${Math.floor(diff / 60)} 分钟前`
-  if (diff < 86400) return `${Math.floor(diff / 3600)} 小时前`
-  if (diff < 86400 * 7) return `${Math.floor(diff / 86400)} 天前`
-  return d.toLocaleDateString('zh-CN')
+  const now = new Date()
+  const sameDay = d.getFullYear() === now.getFullYear() &&
+    d.getMonth() === now.getMonth() && d.getDate() === now.getDate()
+  if (sameDay) {
+    const diff = (Date.now() - d.getTime()) / 1000
+    if (diff < 60) return '刚刚'
+    if (diff < 3600) return `${Math.floor(diff / 60)} 分钟前`
+    return `${Math.floor(diff / 3600)} 小时前`
+  }
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 }
 //键盘事件处理
 const handleKeydown = (event) => {
@@ -1047,7 +1043,7 @@ const compileToPDF = async (message) => {
       const rawMsg = error.response?.data?.message || error.message || '未知错误'
       const trimmed = String(rawMsg).replace(/\s+/g, ' ').slice(0, 200)
       ElMessage.error({
-        message: 'PDF生成失败（后端 LaTeX 编译日志已截断，完整内容见 backend/storage/debug/）：\n' + trimmed,
+        message: 'PDF生成失败（后端 LaTeX 编译日志已截断，完整内容见 data/storage/debug/）：\n' + trimmed,
         showClose: true,
         duration: 5000
       })

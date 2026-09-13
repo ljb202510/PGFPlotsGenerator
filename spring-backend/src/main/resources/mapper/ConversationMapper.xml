@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pg.pgfplots.mapper.ConversationMapper">
+
+    <select id="selectConversationList" resultType="com.pg.pgfplots.dto.conversation.ConversationVO">
+        SELECT c.conversation_id,
+               c.title,
+               c.created_at,
+               c.updated_at,
+               (SELECT COUNT(*) FROM conversation_messages m
+                 WHERE m.conversation_id = c.conversation_id) AS message_count,
+               (SELECT content FROM conversation_messages m
+                 WHERE m.conversation_id = c.conversation_id
+                 ORDER BY m.message_id DESC LIMIT 1) AS last_message,
+               (SELECT MAX(m.created_at) FROM conversation_messages m
+                 WHERE m.conversation_id = c.conversation_id) AS last_message_at
+        FROM conversations c
+        WHERE c.user_id = #{userId}
+        ORDER BY COALESCE(last_message_at, c.updated_at) DESC, c.conversation_id DESC
+    </select>
+</mapper>

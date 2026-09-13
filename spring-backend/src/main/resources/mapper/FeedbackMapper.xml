@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pg.pgfplots.mapper.FeedbackMapper">
+
+    <!-- 管理员列表/总数共用的筛选条件 -->
+    <sql id="adminWhere">
+        <where>
+            <if test="type != null and type != ''">
+                AND f.type = #{type}
+            </if>
+            <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+                AND f.feedback_time BETWEEN #{startDate} AND CONCAT(#{endDate}, ' 23:59:59')
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectAdminPage" resultType="com.pg.pgfplots.dto.feedback.FeedbackVO">
+        SELECT f.*, u.username
+        FROM feedback f
+        JOIN users u ON f.user_id = u.user_id
+        <include refid="adminWhere"/>
+        ORDER BY f.feedback_time DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countAdmin" resultType="long">
+        SELECT COUNT(*)
+        FROM feedback f
+        <include refid="adminWhere"/>
+    </select>
+
+    <select id="selectDetail" resultType="com.pg.pgfplots.dto.feedback.FeedbackVO">
+        SELECT f.*, u.username
+        FROM feedback f
+        JOIN users u ON f.user_id = u.user_id
+        WHERE f.feedback_id = #{feedbackId}
+    </select>
+
+    <select id="selectUserFeedbacks" resultType="com.pg.pgfplots.dto.feedback.FeedbackVO">
+        SELECT feedback_id,
+               type,
+               content,
+               answer,
+               feedback_time,
+               answer_time,
+               CASE WHEN answer IS NOT NULL THEN '已回复' ELSE '待回复' END AS status
+        FROM feedback
+        WHERE user_id = #{userId}
+        ORDER BY feedback_time DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+</mapper>

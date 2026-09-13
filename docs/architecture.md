@@ -12,7 +12,7 @@ PGFPlotsGenerator 是一个「AI 图表生成系统」：普通用户用自然�
 
 ## 2. 总体架构
 
-系统为**前后端分离的经典分层架构**：浏览器端 Vue 3 SPA（`hello/src`），服务端 Express 应用（`hello/backend`），数据层为 MySQL（库名 `X`）+ 本地文件系统，外部依赖为两家 LLM 服务、XeLaTeX 编译器与 SMTP 邮件服务。
+系统为**前后端分离的经典分层架构**：浏览器端 Vue 3 SPA（`hello/src`），服务端 Spring Boot 应用（`hello/spring-backend`；原 Node/Express 版已于 2026-09-13 退役删除），数据层为 MySQL（库名 `X`）+ 本地文件系统，外部依赖为两家 LLM 服务、XeLaTeX 编译器与 SMTP 邮件服务。
 
 ### 2.1 逻辑架构
 
@@ -32,9 +32,9 @@ flowchart TD
         VUEX --- UI_USER
     end
 
-    subgraph Express["Node.js + Express 服务（hello/backend/app.js）"]
-        AUTH["middleware/auth.js<br/>JWT 校验 authenticateToken"]
-        subgraph API["13 个路由前缀（app.js:27-39）"]
+    subgraph JAVA["Spring Boot 服务（hello/spring-backend）"]
+        AUTH["Spring Security<br/>JwtAuthenticationFilter（角色查库装配）"]
+        subgraph API["13 个控制器（路径与退役 Express 版一致）"]
             R1["/api/auth"]
             R2["/api/chat"]
             R3["/api/feedback"]
@@ -49,27 +49,27 @@ flowchart TD
             R12["/api/admin/log"]
             R13["/api/admin/static"]
         end
-        SVC["支撑件<br/>utils/systemLog.js · services/verificationService.js"]
-        DB["db.js mysql2/promise 连接池"]
+        SVC["支撑件<br/>util/SystemLogWriter · service/VerificationService"]
+        DB["MyBatis-Plus Mapper + HikariCP"]
     end
 
     subgraph Data["数据与外部依赖"]
         MYSQL[("MySQL 库 X<br/>11 张表")]
-        FS[("文件系统<br/>backend/uploads · backend/storage")]
-        TEX["XeLaTeX 编译器<br/>(child_process.exec)"]
-        LLM["LLM<br/>DeepSeek(axios) / Qwen3.5(NSCC·OpenAI SDK)"]
-        SMTP["SMTP 邮件服务<br/>(nodemailer)"]
+        FS[("文件系统<br/>data/uploads · data/storage")]
+        TEX["XeLaTeX 编译器<br/>(ProcessBuilder, 30s)"]
+        LLM["LLM<br/>DeepSeek / Qwen3.5(NSCC·RestClient)"]
+        SMTP["SMTP 邮件服务<br/>(JavaMailSender)"]
     end
 
-    Browser -- "HTTP/JSON + Bearer JWT<br/>(API_BASE_URL=http://localhost:3000)" --> Express
+    Browser -- "HTTP/JSON + Bearer JWT<br/>(API_BASE_URL=http://localhost:3000)" --> JAVA
     API --> AUTH
-    Express --> DB --> MYSQL
-    Express --> FS
-    R2 -- "axios / OpenAI SDK" --> LLM
+    JAVA --> DB --> MYSQL
+    JAVA --> FS
+    R2 -- "LlmClient（RestClient）" --> LLM
     R6 -- "xelatex -interaction=nonstopmode" --> TEX
-    R4 -- "nodemailer" --> SMTP
-    Express -- "读写 storage/uploads（服务端内部，无公开静态托管）" --> FS
-    R5 -- "multer 上传" --> FS
+    R4 -- "JavaMailSender" --> SMTP
+    JAVA -- "读写 storage/uploads（服务端内部，无公开静态托管）" --> FS
+    R5 -- "MultipartFile 上传" --> FS
 ```
 
 ### 2.2 运行/部署视角
@@ -78,8 +78,8 @@ flowchart TD
 flowchart LR
     subgraph Dev["开发机"]
         FE["npm run serve<br/>(vue-cli-service, 8080)"]
-        BE["cd backend && node app.js<br/>(:3000, 0.0.0.0)"]
-        MYSQL_LOCAL["MySQL localhost/root/000/X<br/>(db.js 读 env/默认)"]
+        BE["cd spring-backend && run.cmd<br/>(:3000)"]
+        MYSQL_LOCAL["MySQL localhost/root/000/X<br/>(读 ../backend/.env / 默认)"]
         TEX_LOCAL["TeX Live：xelatex + SimSun/Times New Roman"]
     end
     FE -- "API_BASE_URL 代理目标 :3000" --> BE
@@ -95,117 +95,117 @@ flowchart LR
 
 | 模块 | 后端入口 | 前端对应 | 职责与关键实现 |
 |---|---|---|---|
-| 认证 | `backend/routes/auth.js` | LoginForm / RegisterForm / AdminLogin / ChangeInformation | 注册、用户/管理员登录、改密码/用户名/邮箱、token 校验；bcrypt 哈希 + JWT |
-| AI 生成 | `backend/routes/chat.js` | ChartGenerator | 接收自然语言+数据集 → 拼提示词 → 调 DeepSeek/Qwen → 提取代码 → 落库 |
-| 编译 | `backend/routes/compile.js` | ChartGenerator（生成 PDF 按钮） | 读库内代码 → 包中文文档 → XeLaTeX → 移动 PDF、更新路径 |
-| 历史 | `backend/routes/history.js` | MyHistory | 列表/详情/删除/统计/CSV 导出 |
-| 数据集 | `backend/routes/datasets.js` | DataUpload / ChartGenerator | multer 上传(≤100MB)/列表/改名/删除/下载 |
-| 对话持久化 | `backend/routes/conversations.js` | ChartGenerator（会话侧栏） | 会话 CRUD + 消息读取；chat 生成时联动写消息 |
-| 反馈 | `backend/routes/feedback.js` | MyFeedback / AdminFeedback | 用户提交查看；管理员列表/详情/回复(联动写通知)/删除 |
-| 通知 | `backend/routes/notice.js` | MyNotice / CommonNavbar | 系统通知+反馈回复统一列表；单条/全部已读；未读计数 |
-| 邮件验证码 | `backend/routes/verification.js` + `services/verificationService.js` | RegisterForm / ChangeInformation | 发送/校验注册·改邮箱验证码 |
-| 管理员-用户 | `backend/routes/AdminUser.js` | AdminUser | 用户列表/重置密码(666666)/级联删除/统计 |
-| 管理员-通知 | `backend/routes/AdminNotice.js` | AdminNotice | 通知 CRUD（广播）+ 已读统计 |
-| 管理员-日志 | `backend/routes/AdminLog.js` | AdminLog | API 统计/系统日志/健康概览/表状态 |
-| 管理员-概览 | `backend/routes/AdminStatic.js` | Admin（Admin.vue 首页） | 全库计数（users/files/generations/feedback） |
+| 认证 | `controller/AuthController` → `service/AuthService` | LoginForm / RegisterForm / AdminLogin / ChangeInformation | 注册、用户/管理员登录、改密码/用户名/邮箱、token 校验；BCrypt 哈希 + JWT |
+| AI 生成 | `controller/ChatController` → `service/ChatService` | ChartGenerator | 接收自然语言+数据集 → 拼提示词 → 调 DeepSeek/Qwen → 提取代码 → 落库 |
+| 编译 | `controller/CompileController` → `service/CompileService` | ChartGenerator（生成 PDF 按钮） | 读库内代码 → 包中文文档 → XeLaTeX → 移动 PDF、更新路径 |
+| 历史 | `controller/HistoryController` → `service/HistoryService` | MyHistory | 列表/详情/删除/统计/CSV 导出 |
+| 数据集 | `controller/DatasetController` → `service/DatasetService` | DataUpload / ChartGenerator | 上传(≤100MB)/列表/改名/删除/下载 |
+| 对话持久化 | `controller/ConversationController` → `service/ConversationService` | ChartGenerator（会话侧栏） | 会话 CRUD + 消息读取；chat 生成时联动写消息 |
+| 反馈 | `controller/FeedbackController` → `service/FeedbackService` | MyFeedback / AdminFeedback | 用户提交查看；管理员列表/详情/回复(联动写通知)/删除 |
+| 通知 | `controller/NoticeController` → `service/NoticeService` | MyNotice / CommonNavbar | 系统通知+反馈回复统一列表；单条/全部已读；未读计数 |
+| 邮件验证码 | `controller/VerificationController` → `service/VerificationService` | RegisterForm / ChangeInformation | 发送/校验注册·改邮箱验证码 |
+| 管理员-用户 | `controller/AdminUserController` | AdminUser | 用户列表/重置密码(666666)/级联删除/统计 |
+| 管理员-通知 | `controller/AdminNoticeController` | AdminNotice | 通知 CRUD（广播）+ 已读统计 |
+| 管理员-日志 | `controller/AdminLogController` | AdminLog | API 统计/系统日志/健康概览/表状态 |
+| 管理员-概览 | `controller/AdminStaticController` | Admin（Admin.vue 首页） | 全库计数（users/files/generations/feedback） |
 
-> 后端入口统一挂载于 `backend/app.js:27-39`。业务接口除验证码外均需 `Authorization: Bearer <token>`。
+> 后端入口统一由 Spring Security 过滤器链拦截（`SecurityConfig`；`/api/admin/**` 要求 ADMIN 角色）。业务接口除验证码外均需 `Authorization: Bearer <token>`。
 
 ### 3.2 各模块详细说明
 
 #### 3.2.1 认证（auth）
 
-- 入口：`backend/routes/auth.js`
-- 接口：`POST /admin/login`(:21)、`POST /register`(:97)、`POST /login`(:196)、`POST /change-password`(:262)、`POST /change-username`(:340)、`POST /change-email`(:440)、`GET /validate`(:544)
+- 入口：`controller/AuthController` → `service/AuthService`
+- 接口：`POST /admin/login`、`POST /register`、`POST /login`、`POST /change-password`、`POST /change-username`、`POST /change-email`、`GET /validate`（路径与退役 Express 版一致）
 - 关键逻辑：
-  - 密码统一 `bcryptjs.hash(pwd, 10)` 存储、`bcrypt.compare` 校验（如 `auth.js:150,296`）
-  - 密码格式校验 `validatePassword`：**仅字母与数字、长度 6–16 位**（`auth.js` 顶部，注册/改密共用）
-  - JWT 签发：管理员 token 7 天（`auth.js:60-69`，payload 含 userId），用户 token 24h（`auth.js:164-168, 232-236`）
-- 鉴权校验在 `backend/middleware/auth.js:7-38`：取 `Authorization: Bearer` → `jwt.verify`（密钥来自 `process.env.JWT_SECRET`）→ 按 `decoded.userId` 查 `users` 表 → 注入 `req.user`（仅 user_id/username/email，**不含 role**）
+  - 密码统一 BCrypt 哈希存储与校验（`BCryptPasswordEncoder`）
+  - 密码格式校验：**仅字母与数字、长度 6–16 位**（注册/改密共用，`AuthService` 内实现）
+  - JWT 签发：管理员 token 7 天、用户 token 24h（`security/JwtTokenProvider`，claims 与退役版一致）
+- 鉴权校验由 `security/JwtAuthenticationFilter` 完成：解析 `Authorization: Bearer` → 验签（密钥 `JWT_SECRET`）→ 按 userId 查 `users` 表 → 装配登录用户（**不信任 JWT payload 中的角色声明**）
 
-> 角色判断注意：`authenticateToken` 不回填 role。管理员接口统一为 `feedback.js` 内部自定义 `checkAdmin`（查库校验 role=admin，`feedback.js:10-42`）与 `app.js` 对四个 `/api/admin/*` 前缀统一挂载的 `authenticateToken + requireAdmin`（middleware/auth.js，同样查库校验 role）两种实现，均不信任 JWT payload 中的角色声明。
+> 角色判断注意：管理员接口统一由 `SecurityConfig` 对 `/api/admin/**` 要求 ADMIN 角色（查库装配）；feedback 管理员接口另加 `@PreAuthorize` 双校验，均不信任 JWT payload 中的角色声明。
 
 #### 3.2.2 AI 生成（chat）
 
-- 入口：`backend/routes/chat.js`，单路由 `POST /`（:319-521，需认证）
+- 入口：`controller/ChatController` → `service/ChatService`，单路由 `POST /api/chat`（需认证）
 - 处理流水线：
-  1. `buildMessagesWithDataset(userMessage, dataIds, userId)`（:96-167）：从 `data_file` 按 `data_id IN (?) AND user_id = ?` 查询（:131-137），逐一用 `readFileContent`（:16-77，支持 xlsx/csv/文本，上限 100MB）把数据拼入 system 提示词；无数据集时追加提示「用已知公开统计数据出图」
-  2. 按 `model` 分派（:340-430）：
-     - `model === 'qwen'`：OpenAI SDK 指向 `NSCC_API_URL`（湖大超算 MaaS），模型 `Qwen3.5`，`max_tokens: 8192`、关闭 thinking（:352-365）
-     - 否则（deepseek）：axios POST `DEEPSEEK_API_URL`，模型 `deepseek-v4-flash`，`max_tokens: 4096`，超时 30s（:398-414）
-  3. **空回复兜底**：`content` 为 null/空/非字符串时打印原始响应、写系统日志并返回 `502「AI 返回内容为空」`（Qwen :372-384 / DeepSeek :421-429）
-  4. `extractChartCode(aiReply)`（:80-93）：优先匹配「```latex / ```tex 代码块围栏」，兜底裸 `\begin{tikzpicture}...\end{tikzpicture}`（防截断围栏不闭合）；返回值即入库代码
-  5. `saveGenerationHistory`（:170-281）：INSERT `generation_history` → 写 `storage/history/{userId}/{historyId}.json`（含 ai_response 全文）→ INSERT `api_log`(success)
-  6. 若请求带 `conversation_id`：`persistConversation`（:284-316）写 user/assistant 两条 `conversation_messages`（assistant 消息带 chart_code/history_id），首条自动回填标题
-  7. 失败路径：模型异常时记录 `api_log`(failed, call_error 截断 500) 并按错误类型返回（:476-519）
+  1. 数据集拼接：从 `data_file` 按 user_id 隔离查询，逐一用 `util/FileContentReader`（支持 xlsx/csv/文本，上限 100MB）把数据拼入 system 提示词；无数据集时追加提示「用已知公开统计数据出图」
+  2. 按 `model` 分派（均经 `client/LlmClient`，Spring 6 RestClient）：
+     - `model === 'qwen'`：指向 `NSCC_API_URL`（湖大超算 MaaS），模型 `Qwen3.5`，`max_tokens: 8192`、关闭 thinking
+     - 否则（deepseek）：调 `DEEPSEEK_API_URL`，模型 `deepseek-v4-flash`，`max_tokens: 4096`，超时 30s
+  3. **空回复兜底**：`content` 为 null/空/非字符串时打印原始响应、写系统日志并返回 `502「AI 返回内容为空」`
+  4. `util/ChartCodeExtractor`：优先匹配「```latex / ```tex 代码块围栏」，兜底裸 `\begin{tikzpicture}...\end{tikzpicture}`（防截断围栏不闭合）；返回值即入库代码
+  5. 生成成功后：INSERT `generation_history` → 写 `storage/history/{userId}/{historyId}.json`（含 ai_response 全文）→ INSERT `api_log`(success)
+  6. 若请求带 `conversation_id`：写 user/assistant 两条 `conversation_messages`（assistant 消息带 chart_code/history_id），首条自动回填标题
+  7. 失败路径：模型异常时记录 `api_log`(failed, call_error 截断 500) 并按错误类型返回
 - 返回结构 `{ success, data: { reply, chart_code, usage, dataset_count, history_id } }`
 
 #### 3.2.3 编译（compile）
 
-- 入口：`backend/routes/compile.js`
+- 入口：`controller/CompileController` → `service/CompileService`
 - 接口：`GET /:history_id/pdf`（鉴权流式返回 PDF 文件）、`POST /:history_id`（编译，均需认证）
 - 关键事实：
-  - **POST 只读取库内 `generation_history.generation_code`**（:132），**不接受请求体 code 覆盖**；先校验历史存在且属于当前用户（:93-110）
-  - `preprocessLatexCode`（:208-233）：若代码含完整 `document` 结构则抽取文档体并清理 documentclass/usepackage
-  - `createChineseLatexDocument`（:236-255）：用 `standalone` 文档类 + `pgfplots/compat=1.18` + `xeCJK`，**中文字体 SimSun、西文 Times New Roman**
-  - `compileLatexWithXeLaTeX`（:258-289）：`xelatex -interaction=nonstopmode`，超时 **30s**；以 PDF 是否存在判成败
-  - 成功：PDF 移动至 `storage/generated_charts/user{userId}/hist{historyId}.pdf`，更新 `generation_path`（相对路径，:171-178）；失败走 `safeCleanup` 清理临时目录（:292-317）
-- PDF 访问：已移除 `/storage` 无鉴权静态托管；前端通过 `GET /api/compile/:id/pdf` 携带 JWT，服务端按 `user_id` 校验归属后 `res.sendFile` 流式返回，前端 `fetch → blob → objectURL` 预览（`src/utils/pdf.js`）
+  - **POST 只读取库内 `generation_history.generation_code`**，**不接受请求体 code 覆盖**；先校验历史存在且属于当前用户
+  - 若代码含完整 `document` 结构则抽取文档体并清理 documentclass/usepackage
+  - 中文文档：`standalone` 文档类 + `pgfplots/compat=1.18` + `xeCJK`，**中文字体 SimSun、西文 Times New Roman**
+  - `util/LatexCompiler`：`xelatex -interaction=nonstopmode`，超时 **30s**；以 PDF 是否存在判成败
+  - 成功：PDF 移动至 `storage/generated_charts/user{userId}/hist{historyId}.pdf`，更新 `generation_path`（相对路径）；失败必清理临时目录
+- PDF 访问：已移除 `/storage` 无鉴权静态托管；前端通过 `GET /api/compile/:id/pdf` 携带 JWT，服务端按 `user_id` 校验归属后流式返回，前端 `fetch → blob → objectURL` 预览（`src/utils/pdf.js`）
 
 #### 3.2.4 历史（history）
 
-- 接口：`GET /`（列表+分页/搜索，:107）、`GET /:id`（:168）、`DELETE /:id`（:240）、`GET /stats/summary`（:307）、`GET /export/csv`（:368）
-- 删除使用**事务**：先删 `api_log` 子表再删 `generation_history`（:253-292）；所有查询均带 `user_id = ?` 隔离
+- 接口：`GET /`（列表+分页/搜索）、`GET /:id`、`DELETE /:id`、`GET /stats/summary`、`GET /export/csv`
+- 删除使用**事务**：先删 `api_log` 子表再删 `generation_history`（`HistoryService` `@Transactional`）；所有查询均带 `user_id = ?` 隔离
 
 #### 3.2.5 数据集（datasets）
 
-- 接口：`GET /`（:47）、`POST /`（:96，multer `single('file')`）、`POST /:id/update`（:174）、`DELETE /:id`（:262）、`GET /download/:id`（:310）
-- multer 配置：磁盘存储到 `uploads/`（相对路径，:13-35），**≤100MB**
-- 文件预览无独立后端接口：`readFileContent` 仅定义于 `chat.js`（:16-77），前端从数据集列表直接拿到文件元信息，聊天发送时交后端解析
+- 接口：`GET /`、`POST /`（`MultipartFile` 上传）、`POST /:id/update`、`DELETE /:id`、`GET /download/:id`
+- 上传落盘 `data/uploads/`（`util/FileStorage`），**≤100MB**
+- 文件预览无独立后端接口：`util/FileContentReader` 在 chat 生成时按 data_ids 解析文件内容，前端从数据集列表直接拿到文件元信息
 
 #### 3.2.6 对话持久化（conversations）
 
-- 接口：`GET /`（:10-41，含 message_count/last_message）、`POST /`（:44-60，默认标题「新对话」）、`PUT /:id`（:63-80 重命名）、`DELETE /:id`（:83-116，**事务先删消息再删会话**）、`GET /:id/messages`（:119-149，按 message_id 正序返回 content/chart_code/history_id/selected_files）
-- 写入方：`chat.js:persistConversation`（:284-316）在生成成功后写入一轮 user+assistant 消息
-- 表：`conversations` / `conversation_messages`（无外键，关联由代码事务维护）
+- 接口：`GET /`（含 message_count/last_message）、`POST /`（默认标题「新对话」）、`PUT /:id`（重命名）、`DELETE /:id`（**事务先删消息再删会话**）、`GET /:id/messages`（按 message_id 正序返回 content/chart_code/history_id/selected_files）
+- 写入方：`ChatService` 在生成成功后写入一轮 user+assistant 消息
+- 表：`conversations` / `conversation_messages`（无外键，关联由代码事务维护；建表 DDL 归档于 `migrations/create_conversations_tables.sql`）
 
 #### 3.2.7 反馈（feedback）
 
-- 用户接口：`POST /`（:45-98，type ∈ suggestion/ui/bug/other，content ≤100）、`GET /user/my-feedbacks`（:101-158，含「已回复/待回复」状态）
-- 管理员接口（`authenticateToken + checkAdmin`）：`GET /`（:161-235，筛选 type/日期）、`GET /:id`（:238-271）、`PUT /:id/reply`（:274-369）、`DELETE /:id`（:372-403）
-- **回复→通知联动**（:327-353）：更新 `feedback.answer` 后，INSERT 一条定向 `notice`（target_user_id=反馈者、feedback_id 关联、reply=回复内容；`feedback_id` 唯一索引保证幂等）
+- 用户接口：`POST /`（type ∈ suggestion/ui/bug/other，content ≤100）、`GET /user/my-feedbacks`（含「已回复/待回复」状态）
+- 管理员接口：`GET /`（筛选 type/日期）、`GET /:id`、`PUT /:id/reply`、`DELETE /:id`
+- **回复→通知联动**：更新 `feedback.answer` 后，INSERT 一条定向 `notice`（target_user_id=反馈者、feedback_id 关联、reply=回复内容；`feedback_id` 唯一索引保证幂等）
 
 #### 3.2.8 通知（notice）
 
-- 接口：`GET /`（:10，返回列表+unreadCount）、`POST /read/:id`（:70，写 `notice_read`）、`POST /read-all`（:92）、`GET /unread-count`（:112）
+- 接口：`GET /`（返回列表+unreadCount）、`POST /read/:id`（写 `notice_read`）、`POST /read-all`、`GET /unread-count`
 - 通知来源两类，统一走 `notice` + `notice_read`：
-  - 系统广播：`AdminNotice` 创建，`target_user_id = NULL`
-  - 反馈回复：`feedback.js` 回复时写入，`target_user_id = 反馈者`
-- 前端未读数红点由 `store/index.js:56-70` 的 `fetchUnreadCount` 拉取
+  - 系统广播：`AdminNoticeController` 创建，`target_user_id = NULL`
+  - 反馈回复：`FeedbackService` 回复时写入，`target_user_id = 反馈者`
+- 前端未读数红点由 `store/index.js` 的 `fetchUnreadCount` 拉取
 
 #### 3.2.9 邮件验证码（verification）
 
-- 接口：`POST /send-register-code`（verification.js:7）、`POST /verify-register-code`（:56），**均免 token**
-- `services/verificationService.js`：生成 6 位随机码（:39-46）、SMTP 发送（nodemailer，:49-60）、落 `email_verification_codes`（10 分钟过期、一次性）
-- 注册与改邮箱前校验（auth.js:97 register / :440 change-email）
+- 接口：`POST /send-register-code`、`POST /verify-register-code`，**均免 token**
+- `service/VerificationService`：生成 6 位随机码、SMTP 发送（JavaMailSender）、落 `email_verification_codes`（10 分钟过期、一次性）
+- 注册与改邮箱前校验（`AuthService` register / change-email）
 
-#### 3.2.10 管理员后台（Admin*，app.js 统一挂 `authenticateToken + requireAdmin`）
+#### 3.2.10 管理员后台（Admin*，SecurityConfig 统一要求 ADMIN 角色）
 
 | 模块 | 主要接口 | 备注 |
 |---|---|---|
-| AdminUser.js | `GET /`(:20)、`PATCH /:id/reset-password`(:77，重置为 `666666`，bcrypt 哈希)、`DELETE /:id`(:119，级联删除关联数据)、`GET /statistics/overview`(:216) | 无 JWT 中间件 |
-| AdminNotice.js | `GET /`(:8)、`GET /:id`(:105)、`POST /`(:143)、`PUT /:id`(:182)、`DELETE /:id`(:231)、`DELETE /`(:268 批量)、`GET /statistics/overview`(:299) | 广播通知 |
-| AdminLog.js | `GET /api-stats`(:32)、`GET /system-logs`(:142)、`GET /health-overview`(:268)、`POST /add-test-log`(:362)、`GET /tables-status`(:393) | — |
-| AdminStatic.js | `GET /`(:8，全库计数) | — |
+| AdminUserController | `GET /`、`PATCH /:id/reset-password`（重置为 `666666`，BCrypt 哈希）、`DELETE /:id`（级联删除关联数据）、`GET /statistics/overview` | — |
+| AdminNoticeController | `GET /`、`GET /:id`、`POST /`、`PUT /:id`、`DELETE /:id`、`DELETE /`（批量）、`GET /statistics/overview` | 广播通知 |
+| AdminLogController | `GET /api-stats`、`GET /system-logs`、`GET /health-overview`、`POST /add-test-log`、`GET /tables-status` | — |
+| AdminStaticController | `GET /`（全库计数） | — |
 
 ### 3.3 支撑件
 
 | 文件 | 职责 |
 |---|---|
-| `backend/db.js` | `mysql2/promise` 连接池，读取 `.env` 的 `DB_HOST/DB_USER/DB_PASSWORD/DB_NAME`（缺省回退 `localhost/root/000/X`）、connectionLimit 10，导出 `{ promisePool }` |
-| `backend/middleware/auth.js` | JWT 校验中间件（见 3.2.1） |
-| `backend/utils/systemLog.js` | `writeSystemLog(status, message)` 写 `system_log`（error 截断 500 字；自身失败仅 console，不抛异常，:12-22） |
-| `backend/services/verificationService.js` | 验证码生成/发信/落库 |
+| `security/JwtAuthenticationFilter` + `config/SecurityConfig` | JWT 过滤器与安全配置（角色查库装配，见 3.2.1） |
+| `util/SystemLogWriter` | `writeSystemLog(status, message)` 写 `system_log`（error 截断 500 字；自身失败仅 console，不抛异常） |
+| `service/VerificationService` | 验证码生成/发信/落库 |
+| `common/Result` + `common/GlobalExceptionHandler` | 统一响应 `{success,data,message}` 与业务异常转换 |
 
 ### 3.4 前端路由与视图（前后端映射）
 
@@ -250,7 +250,7 @@ sequenceDiagram
     U->>CG: 输入自然语言 + 选择数据集(可选) + 选模型
     CG->>CHAT: {message, data_ids?, model, conversation_id?} + Bearer JWT
     CHAT->>CHAT: buildMessagesWithDataset：查 data_file、readFileContent 拼提示词
-    CHAT->>LLM: 调模型（qwen→OpenAI SDK；其他→axios DeepSeek）
+    CHAT->>LLM: 调模型（LlmClient：qwen→NSCC；其他→DeepSeek）
     alt content 为空/null
         CHAT-->>CG: 502「AI 返回内容为空」（写 system_log）
     else 正常返回
@@ -277,14 +277,14 @@ sequenceDiagram
 
 ```mermaid
 flowchart LR
-    A["登录/注册（auth.js）<br/>bcrypt.compare/hash"] --> B["jwt.sign<br/>用户 24h / 管理员 7d<br/>(JWT_SECRET)"]
+    A["登录/注册（AuthService）<br/>BCrypt 校验/哈希"] --> B["签发 JWT<br/>用户 24h / 管理员 7d<br/>(JWT_SECRET)"]
     B --> C["前端存 localStorage/sessionStorage<br/>token + user；管理员 adminToken"]
     C --> D["请求头<br/>Authorization: Bearer <token>"]
-    D --> E["authenticateToken<br/>(middleware/auth.js)"]
-    E --> F["jwt.verify → 查 users → 注入 req.user<br/>(user_id/username/email)"]
+    D --> E["JwtAuthenticationFilter"]
+    E --> F["验签 → 查 users → 装配角色<br/>(不信任 JWT 中角色声明)"]
     F --> G["业务路由按 user_id=? 隔离数据"]
-    E -. "管理员接口" .-> H["feedback: checkAdmin 查库 role=admin"]
-    E -. "Admin*.js (app.js)" .-> H["requireAdmin 查库 role=admin"]
+    E -. "管理员接口" .-> H["SecurityConfig 要求 ADMIN<br/>(查库装配角色)"]
+    E -. "feedback 管理接口" .-> H["@PreAuthorize 双校验"]
 ```
 
 ### 4.3 对话持久化数据流
@@ -296,7 +296,7 @@ flowchart LR
     C --> D["persistConversation<br/>(chat.js:284-316)"]
     D --> E["INSERT conversation_messages<br/>user + assistant(chart_code/history_id)"]
     E --> F["首条消息自动回填标题<br/>(用户输入前 20 字)"]
-    G["切换/新建会话<br/>(conversations.js)"] --> H["GET /:id/messages<br/>按序恢复聊天记录"]
+    G["切换/新建会话<br/>(ConversationService)"] --> H["GET /:id/messages<br/>按序恢复聊天记录"]
     H --> A
 ```
 
@@ -322,10 +322,10 @@ sequenceDiagram
 
 | 路径 | 内容 | 写入方 |
 |---|---|---|
-| `backend/uploads/` | 数据集原始文件（multer diskStorage） | datasets.js:13-35 |
-| `backend/storage/history/{userId}/{historyId}.json` | 完整对话/生成记录（含 ai_response） | chat.js:228-254 |
-| `backend/storage/generated_charts/user{userId}/hist{historyId}.pdf` | 编译产物（`generation_path` 相对项目根） | compile.js:159-178 |
-| `GET /api/compile/:id/pdf` | PDF 鉴权流式返回（按 user_id 归属校验） | compile.js |
+| `data/uploads/` | 数据集原始文件（MultipartFile 落盘） | `util/FileStorage` |
+| `data/storage/history/{userId}/{historyId}.json` | 完整对话/生成记录（含 ai_response） | `service/ChatService` |
+| `data/storage/generated_charts/user{userId}/hist{historyId}.pdf` | 编译产物（`generation_path` 相对项目根） | `service/CompileService` |
+| `GET /api/compile/:id/pdf` | PDF 鉴权流式返回（按 user_id 归属校验） | `controller/CompileController` |
 
 ## 5. 数据存储设计
 
@@ -444,10 +444,10 @@ erDiagram
 | `email_verification_codes` | email/code/expires_at | `1.sql:77-85` | 10 分钟过期 |
 | `notice` | notice_id/title/content/admin_id + **target_user_id/feedback_id/feedback_time/feedback_type/reply** | `1.sql:87-95` + `migrations/add_notice_feedback_columns.sql` | 后 5 列迁移追加；`feedback_id` 唯一索引 |
 | `notice_read` | id/user_id/notice_id/read_time | `migrations/create_notice_read_table.sql:8-17` | user+notice 唯一索引 |
-| `conversations` | conversation_id/user_id/title/created_at/updated_at | `backend/migrations/001_conversations.js:8-16` | **无外键**，事务维护 |
-| `conversation_messages` | message_id/conversation_id/user_id/role/content/chart_code/history_id/selected_files | `backend/migrations/001_conversations.js:19-31` | **无外键** |
+| `conversations` | conversation_id/user_id/title/created_at/updated_at | `migrations/create_conversations_tables.sql`（自 Node 迁移脚本归档） | **无外键**，事务维护 |
+| `conversation_messages` | message_id/conversation_id/user_id/role/content/chart_code/history_id/selected_files | `migrations/create_conversations_tables.sql`（自 Node 迁移脚本归档） | **无外键** |
 
-> 实现事实：基础表部分外键在 DDL 中声明；`conversations`/`conversation_messages` 之间及与历史/用户之间**不设外键**，会话删除由 `conversations.js:83-116` 在事务内先删消息再删会话。
+> 实现事实：基础表部分外键在 DDL 中声明；`conversations`/`conversation_messages` 之间及与历史/用户之间**不设外键**，会话删除由 `ConversationService` 在事务内先删消息再删会话。
 
 ### 5.3 建表/迁移执行顺序
 
@@ -455,7 +455,7 @@ erDiagram
 mysql -u root -p000 X < 1.sql
 mysql -u root -p000 X < migrations/add_notice_feedback_columns.sql
 mysql -u root -p000 X < migrations/create_notice_read_table.sql
-node backend/migrations/001_conversations.js   # 需在 backend/ 目录执行（依赖 db.js）
+mysql -u root -p000 X < migrations/create_conversations_tables.sql
 ```
 
 ## 6. 技术栈清单
@@ -466,15 +466,15 @@ node backend/migrations/001_conversations.js   # 需在 backend/ 目录执行（
 | UI | Element Plus `^2.11.9` + `@element-plus/icons-vue`；监控页 ECharts `^6.0.0` | 同上 |
 | 构建 | **Vue CLI 5**（`vue-cli-service serve/build`，非 Vite） | `hello/package.json` scripts、`vue.config.js` |
 | HTTP | axios（组件内直调，无统一封装）；部分 fetch | `ChartGenerator.vue:434` 等 |
-| 后端框架 | Express `^4.18.2`（backend/package.json，包名 `my-google-style-app`） | `backend/package.json:25` |
-| 数据库 | mysql2 `^3.15.3`（promise 连接池）+ mysql `^2.18.1` | `backend/db.js` |
-| LLM 调用 | openai `^6.42.0`（Qwen3.5/NSCC）、axios（DeepSeek `deepseek-v4-flash`） | `chat.js:352,398` |
-| 编译 | child_process.exec 调 **xelatex**（TeX Live + SimSun/Times New Roman 字体） | `compile.js:258-289` |
-| 邮件 | nodemailer `^7.0.11`（QQ SMTP） | `verificationService.js` |
-| 上传/解析 | multer（cors、multer 未声明于 backend/package.json，依赖 node_modules）、xlsx `^0.18.5` | `datasets.js:4` |
-| 安全 | bcryptjs `^3.0.3` / bcrypt、jsonwebtoken `^9.0.2` | `auth.js:4-5` |
+| 后端框架 | Spring Boot `3.2.12` + MyBatis-Plus `3.5.5`（`spring-backend/`，Java 17） | `spring-backend/pom.xml` |
+| 数据库 | MySQL（HikariCP 连接池） | `application.yml` |
+| LLM 调用 | Spring 6 `RestClient`（Qwen3.5/NSCC、DeepSeek `deepseek-v4-flash`） | `client/LlmClient.java` |
+| 编译 | ProcessBuilder 调 **xelatex**（TeX Live + SimSun/Times New Roman 字体，30s 超时） | `util/LatexCompiler.java` |
+| 邮件 | spring-boot-starter-mail（QQ SMTP） | `service/VerificationService.java` |
+| 上传/解析 | Spring `MultipartFile`（≤100MB）+ Apache POI 5.2.5（xlsx） | `controller/DatasetController.java`、`util/FileContentReader.java` |
+| 安全 | Spring Security 无状态 JWT（jjwt 0.12.6）+ BCrypt | `security/` |
 
-> 前后端位于同一工程 `hello/`：根 `package.json` 为前端依赖，`backend/package.json` 为后端依赖（另有根依赖含 express `^5.1.0`、playwright 等，后端实际运行以 `backend/` 为准）。
+> 前后端位于同一工程 `hello/`：根 `package.json` 为前端依赖（已移除仅供 Node 后端使用的 bcryptjs/cors/express/jsonwebtoken/multer 五项）；后端依赖见 `spring-backend/pom.xml`。
 
 ## 7. 与 README.md 差异清单（2026-09-05 复核）
 
@@ -495,24 +495,56 @@ node backend/migrations/001_conversations.js   # 需在 backend/ 目录执行（
 
 ## 8. 安全与可运维性提示（2026-09-07 已加固，下述为当前状态与运维注意）
 
-- ✅ `/api/admin/*` 四个模块（AdminUser/AdminNotice/AdminLog/AdminStatic）由 `app.js` 统一挂 `authenticateToken + requireAdmin`（middleware/auth.js，查库校验 role=admin）；feedback 管理员接口保留 `authenticateToken + checkAdmin` 双校验；均为服务端强制鉴权，不再依赖前端隐藏
-- ✅ PDF 已移除 `/storage` 静态托管与 `/storage` 反代，改 `GET /api/compile/:id/pdf` 按 user_id 归属校验后 `res.sendFile`（history JSON 目录不再可被 HTTP 访问）
-- ✅ LaTeX 编译前 `validateLatexCode` 拦截 `\write18`/`\input`/`\include`/`\usepackage` 等危险序列并限制长度
-- ✅ `backend/db.js` 凭据改读 `.env`（缺省回退本地默认值）；JWT 去除 `'your-secret-key'` 兜底，`app.js` 启动时校验 `JWT_SECRET` 缺失即退出
-- ✅ 密码规则收紧为仅字母数字 6–16 位（`auth.js` `validatePassword`），预置管理员 `admin123/666666` 与重置密码均满足
-- ⚠️ 运维注意：`backend/.env` 明文含 SMTP 授权码与两家 LLM API Key，须加入 `.gitignore` 且勿提交；`1.sql` 预置管理员哈希未经明文验证（重置密码统一 `666666` 见 `AdminUser.js:96`）
+- ✅ `/api/admin/*` 四个模块（AdminUser/AdminNotice/AdminLog/AdminStatic）由 `SecurityConfig` 统一要求 ADMIN 角色（查库装配，不信任 JWT 声明）；feedback 管理员接口另加 `@PreAuthorize` 双校验；均为服务端强制鉴权，不再依赖前端隐藏
+- ✅ PDF 已移除 `/storage` 静态托管与 `/storage` 反代，改 `GET /api/compile/:id/pdf` 按 user_id 归属校验后流式返回（history JSON 目录不再可被 HTTP 访问）
+- ✅ LaTeX 编译前拦截 `\write18`/`\input`/`\include`/`\usepackage` 等危险序列并限制长度
+- ✅ DB 凭据读 `../backend/.env`（缺省回退本地默认值）；`JWT_SECRET` 缺失启动即失败（fail-fast）
+- ✅ 密码规则收紧为仅字母数字 6–16 位（`AuthService` 校验），预置管理员 `admin123/666666` 与重置密码均满足
+- ⚠️ 运维注意：`backend/.env` 明文含 SMTP 授权码与两家 LLM API Key，须加入 `.gitignore` 且勿提交；`1.sql` 预置管理员哈希未经明文验证（重置密码统一 `666666` 见 `AdminUserService`）
 - 系统日志与 API 日志分离：`system_log` 记录服务端异常/越权告警，`api_log` 记录每次 AI 调用成败
 
-## 9. 参考文档
+## 9. Java 后端（spring-backend，2026-09-13 起为唯一后端）
+
+Spring Boot 后端 `hello/spring-backend/`（**唯一后端**；原 Node/Express 版 `hello/backend/` 已于 2026-09-13 退役删除，其数据目录已改名为 `hello/data/`，现仅保留 `.env`、`uploads/`、`storage/` 共享运行时数据，请勿删除），与前端**共用同一 MySQL 库（`X`，11 张表，schema 不变）**。详见 `spring-backend/README.md`。
+
+### 9.1 逻辑架构
+
+```mermaid
+flowchart TD
+    FE["Vue3 前端 SPA（API_BASE_URL 可切换）"] -->|"HTTP/JSON + Bearer JWT :3000"| CTRL["Controller 13 个（路径与 Node 一致）"]
+    CTRL --> SEC["Spring Security（JWT 过滤器，角色查库）"]
+    CTRL --> RES["统一响应 Result 与全局异常"]
+    CTRL --> SVC["Service（事务）"]
+    SVC --> MAP["MyBatis-Plus Mapper"]
+    MAP --> DB["MySQL 库 X（11 张表，schema 不变）"]
+    SVC --> FS["uploads 与 storage 文件"]
+    SVC --> LLM["DeepSeek / Qwen3.5（RestClient）"]
+    SVC --> TEX["XeLaTeX（ProcessBuilder，30s）"]
+    SVC --> MAIL["SMTP 邮件（JavaMailSender）"]
+```
+
+### 9.2 与 Node 版的关系
+
+- **路径与入参完全不变**；响应体统一为 `{success, data, message}`（原 `{code,message,data}`、`{success,code,message,data}` 已收敛）。
+- 技术映射：multer→`MultipartFile`、xlsx→POI、nodemailer→JavaMailSender、`child_process.exec(xelatex)`→`ProcessBuilder`、openai SDK/axios→`RestClient`、bcryptjs→`BCryptPasswordEncoder`、jsonwebtoken→jjwt。
+- 存储路径沿用共享数据目录 `data/uploads`、`data/storage/history`、`data/storage/generated_charts`（`RELATIVE_BASE=..`），可复用历史文件与已生成 PDF（DB 中 `generation_path` 前缀已同步改为 `data\`）。
+- 鉴权：无状态 JWT，角色从数据库读取后装配（延续「不信任 JWT 中角色声明」策略）。
+
+### 9.3 端点与迁移顺序
+
+13 个前缀一一对应：`/api/auth`、`/api/verification`、`/api/datasets`、`/api/chat`、`/api/compile`、`/api/history`、`/api/conversations`、`/api/feedback`、`/api/notice`、`/api/admin/{users,notices,log,static}`。迁移顺序：基础设施/鉴权 → auth/verification → datasets → chat → compile → history → conversations/feedback/notice → admin → 前端契约适配。
+
+## 10. 参考文档
 
 | 文档 | 说明 |
 |---|---|
 | `hello/README.md` | 项目文档 v2.0（模块/API/部署细节，差异见 §7） |
+| `hello/spring-backend/README.md` | Java 后端（Spring Boot 3.2 + MyBatis-Plus 3.5）模块文档：构建/配置/映射/响应契约/验收 |
 | `hello/plan.md` | 优化功能清单（部分契约未落地，见 §7#3-5） |
 | `hello/log.md` | 开发日志 |
-| `hello/1.sql`、`hello/migrations/`、`hello/backend/migrations/001_conversations.js` | 数据库 schema 与迁移 |
+| `hello/1.sql`、`hello/migrations/`（含自 Node 迁移脚本归档的 `create_conversations_tables.sql`） | 数据库 schema 与迁移 |
 
 ---
-**文档版本**：1.1（架构视图）
-**基准日期**：2026-09-07
+**文档版本**：1.2（架构视图）
+**基准日期**：2026-09-13
 **基准**：`hello/` 下源码实证（行号引用如上）

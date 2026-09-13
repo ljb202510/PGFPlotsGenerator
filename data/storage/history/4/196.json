@@ -1,0 +1,18 @@
+{
+  "history_id" : 196,
+  "user_id" : 4,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "直方图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    bar width=1,\n    width=12cm,\n    height=7cm,\n    title={2020年全国人口年龄结构（第七次全国人口普查）},\n    xlabel={年龄组（岁）},\n    ylabel={人口（亿人）},\n    symbolic x coords={0～9,10～19,20～29,30～39,40～49,50～59,60～69,70～79,80及以上},\n    xtick=data,\n    x tick label style={font=\\small},\n    ymin=0,\n    ymax=2.6,\n    ytick={0,0.5,1,1.5,2,2.5},\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    enlarge x limits=0.15\n]\n% 坐标 y 值保留真实完整数值，方括号内为标注缩写；Y 轴单位为亿人，标注与轴单位一致\n\\addplot[\n    fill=blue!45,\n    draw=blue!60,\n    nodes near coords,\n    point meta=explicit symbolic,\n    every node near coord/.append style={anchor=south, font=\\scriptsize, fill=none, draw=none, inner sep=1pt}\n] coordinates {\n    (0～9,1.6812)[1.68]\n    (10～19,1.5794)[1.58]\n    (20～29,1.6675)[1.67]\n    (30～39,2.2316)[2.23]\n    (40～49,2.0044)[2.00]\n    (50～59,2.2256)[2.23]\n    (60～69,1.4739)[1.47]\n    (70～79,0.8083)[0.81]\n    (80及以上,0.3580)[0.36]\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.18) {数据来源：国家统计局《中国人口普查年鉴2020》（第七次全国人口普查）};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    bar width=1,\n    width=12cm,\n    height=7cm,\n    title={2020年全国人口年龄结构（第七次全国人口普查）},\n    xlabel={年龄组（岁）},\n    ylabel={人口（亿人）},\n    symbolic x coords={0～9,10～19,20～29,30～39,40～49,50～59,60～69,70～79,80及以上},\n    xtick=data,\n    x tick label style={font=\\small},\n    ymin=0,\n    ymax=2.6,\n    ytick={0,0.5,1,1.5,2,2.5},\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    enlarge x limits=0.15\n]\n% 坐标 y 值保留真实完整数值，方括号内为标注缩写；Y 轴单位为亿人，标注与轴单位一致\n\\addplot[\n    fill=blue!45,\n    draw=blue!60,\n    nodes near coords,\n    point meta=explicit symbolic,\n    every node near coord/.append style={anchor=south, font=\\scriptsize, fill=none, draw=none, inner sep=1pt}\n] coordinates {\n    (0～9,1.6812)[1.68]\n    (10～19,1.5794)[1.58]\n    (20～29,1.6675)[1.67]\n    (30～39,2.2316)[2.23]\n    (40～49,2.0044)[2.00]\n    (50～59,2.2256)[2.23]\n    (60～69,1.4739)[1.47]\n    (70～79,0.8083)[0.81]\n    (80及以上,0.3580)[0.36]\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.18) {数据来源：国家统计局《中国人口普查年鉴2020》（第七次全国人口普查）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 直方图",
+  "created_at" : "2026-09-13T04:52:54.523Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 1090,
+    "code_source" : "from_request"
+  }
+}

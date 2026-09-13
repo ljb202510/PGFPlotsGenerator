@@ -1,0 +1,18 @@
+{
+  "history_id" : 200,
+  "user_id" : 4,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "近10年出生人口变化折线图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=14cm, height=8cm,\n    title={2015—2024年中国出生人口变化},\n    ylabel={出生人口（万人）},\n    xmin=2014.5, xmax=2024.5,\n    xtick={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},\n    ymin=800, ymax=1950,\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    tick label style={font=\\small},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n% 完整折线（无数据点标记，故不加 nodes near coords；由下方两组 only marks 提供点位与标注）\n\\addplot[blue!70!black, thick, forget plot] coordinates {\n    (2015,1655) (2016,1786) (2017,1723) (2018,1523) (2019,1465)\n    (2020,1202) (2021,1062) (2022,956)  (2023,902)  (2024,954)\n};\n% 单系列密集点（X=10），数值标注上下交错：高值段标在点上方\n\\addplot[blue!70!black, only marks, mark=*, mark size=2pt, nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}]\n    coordinates {(2015,1655) (2017,1723) (2019,1465) (2021,1062) (2023,902)};\n\\addlegendentry{出生人口}\n% 低值段标在点下方，避免相邻点位数值互相压盖\n\\addplot[blue!70!black, only marks, mark=*, mark size=2pt, nodes near coords, forget plot,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north}]\n    coordinates {(2016,1786) (2018,1523) (2020,1202) (2022,956) (2024,954)};\n\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.14)\n    {数据来源：国家统计局年度国民经济和社会发展统计公报（2015—2024年）};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=14cm, height=8cm,\n    title={2015—2024年中国出生人口变化},\n    ylabel={出生人口（万人）},\n    xmin=2014.5, xmax=2024.5,\n    xtick={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},\n    ymin=800, ymax=1950,\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    tick label style={font=\\small},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n% 完整折线（无数据点标记，故不加 nodes near coords；由下方两组 only marks 提供点位与标注）\n\\addplot[blue!70!black, thick, forget plot] coordinates {\n    (2015,1655) (2016,1786) (2017,1723) (2018,1523) (2019,1465)\n    (2020,1202) (2021,1062) (2022,956)  (2023,902)  (2024,954)\n};\n% 单系列密集点（X=10），数值标注上下交错：高值段标在点上方\n\\addplot[blue!70!black, only marks, mark=*, mark size=2pt, nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}]\n    coordinates {(2015,1655) (2017,1723) (2019,1465) (2021,1062) (2023,902)};\n\\addlegendentry{出生人口}\n% 低值段标在点下方，避免相邻点位数值互相压盖\n\\addplot[blue!70!black, only marks, mark=*, mark size=2pt, nodes near coords, forget plot,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north}]\n    coordinates {(2016,1786) (2018,1523) (2020,1202) (2022,956) (2024,954)};\n\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.14)\n    {数据来源：国家统计局年度国民经济和社会发展统计公报（2015—2024年）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 近10年出生人口变化折线图",
+  "created_at" : "2026-09-13T04:55:12.551Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 1428,
+    "code_source" : "from_request"
+  }
+}

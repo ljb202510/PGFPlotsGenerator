@@ -1,0 +1,18 @@
+{
+  "history_id" : 195,
+  "user_id" : 4,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "请基于我上传的数据绘制折线图，展示数值随时间或类别变化的趋势；添加图表标题、X 轴与 Y 轴标签（含单位）、数据点标记与网格线，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=13.5cm,\n    height=7.5cm,\n    title={2018--2024年中国城乡居民人均可支配收入变化},\n    xlabel={年份},\n    ylabel={人均可支配收入（元）},\n    xmin=2017.6, xmax=2024.4,\n    ymin=0, ymax=62000,\n    xtick={2018,2019,2020,2021,2022,2023,2024},\n    ytick={0,10000,20000,30000,40000,50000,60000},\n    grid=both,\n    major grid style={draw=gray!40, dashed},\n    minor grid style={draw=gray!15, dotted},\n    minor y tick num=1,\n    tick label style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\bfseries},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white, font=\\small}\n]\n% 城镇居民人均可支配收入（元），标注置于数据点上方\n\\addplot[blue, thick, mark=*, mark size=2.2pt,\n         nodes near coords,\n         every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}]\n    coordinates {\n        (2018,39251) (2019,42359) (2020,43834) (2021,47412)\n        (2022,49283) (2023,51821) (2024,54188)\n    };\n\\addlegendentry{城镇居民}\n\n% 农村居民人均可支配收入（元），标注置于数据点下方以避开上方系列\n\\addplot[red, thick, mark=*, mark size=2.2pt,\n         nodes near coords,\n         every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north}]\n    coordinates {\n        (2018,14617) (2019,16021) (2020,17131) (2021,18931)\n        (2022,20133) (2023,21691) (2024,23119)\n    };\n\\addlegendentry{农村居民}\n\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.18) {数据来源：国家统计局（2024年为年度统计公报数据）};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=13.5cm,\n    height=7.5cm,\n    title={2018--2024年中国城乡居民人均可支配收入变化},\n    xlabel={年份},\n    ylabel={人均可支配收入（元）},\n    xmin=2017.6, xmax=2024.4,\n    ymin=0, ymax=62000,\n    xtick={2018,2019,2020,2021,2022,2023,2024},\n    ytick={0,10000,20000,30000,40000,50000,60000},\n    grid=both,\n    major grid style={draw=gray!40, dashed},\n    minor grid style={draw=gray!15, dotted},\n    minor y tick num=1,\n    tick label style={font=\\small},\n    label style={font=\\small},\n    title style={font=\\bfseries},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white, font=\\small}\n]\n% 城镇居民人均可支配收入（元），标注置于数据点上方\n\\addplot[blue, thick, mark=*, mark size=2.2pt,\n         nodes near coords,\n         every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}]\n    coordinates {\n        (2018,39251) (2019,42359) (2020,43834) (2021,47412)\n        (2022,49283) (2023,51821) (2024,54188)\n    };\n\\addlegendentry{城镇居民}\n\n% 农村居民人均可支配收入（元），标注置于数据点下方以避开上方系列\n\\addplot[red, thick, mark=*, mark size=2.2pt,\n         nodes near coords,\n         every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north}]\n    coordinates {\n        (2018,14617) (2019,16021) (2020,17131) (2021,18931)\n        (2022,20133) (2023,21691) (2024,23119)\n    };\n\\addlegendentry{农村居民}\n\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.18) {数据来源：国家统计局（2024年为年度统计公报数据）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请基于我上传的数据绘制折线图，展示数值随时间或类别变化的趋势；添加图表标题、X 轴与 Y 轴标签（含单位）、数据点标记与网格线，并加上图例。",
+  "created_at" : "2026-09-13T04:41:44.990Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 1510,
+    "code_source" : "from_request"
+  }
+}

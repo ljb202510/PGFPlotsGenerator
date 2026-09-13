@@ -10,15 +10,10 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
     "axios": "^1.13.2",
-    "bcryptjs": "^3.0.3",
     "core-js": "^3.8.3",
-    "cors": "^2.8.5",
     "echarts": "^6.0.0",
     "element-plus": "^2.11.9",
-    "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
     "mitt": "^3.0.1",
-    "multer": "^2.0.2",
     "vue": "^3.2.13",
     "vue-router": "^4.6.3",
     "vuex": "^4.0.2"

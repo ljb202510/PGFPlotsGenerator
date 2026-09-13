@@ -1,0 +1,18 @@
+{
+  "history_id" : 199,
+  "user_id" : 4,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "近5年出生人口变化折线图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=11cm, height=6.5cm,\n    title={2020—2024年中国出生人口变化},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    xtick={2020,2021,2022,2023,2024},\n    xmin=2019.5, xmax=2024.5,\n    ymin=800, ymax=1300,\n    grid=major,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[blue, mark=*, thick] coordinates {\n    (2020,1200)\n    (2021,1062)\n    (2022,956)\n    (2023,902)\n    (2024,954)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局（2020—2024年）};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=11cm, height=6.5cm,\n    title={2020—2024年中国出生人口变化},\n    xlabel={年份},\n    ylabel={出生人口（万人）},\n    xtick={2020,2021,2022,2023,2024},\n    xmin=2019.5, xmax=2024.5,\n    ymin=800, ymax=1300,\n    grid=major,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[blue, mark=*, thick] coordinates {\n    (2020,1200)\n    (2021,1062)\n    (2022,956)\n    (2023,902)\n    (2024,954)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局（2020—2024年）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 近5年出生人口变化折线图",
+  "created_at" : "2026-09-13T04:54:39.669Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 636,
+    "code_source" : "from_request"
+  }
+}

@@ -3,10 +3,14 @@
 # 范围：后端实际存在的主要接口（backend/app.js 挂载的 13 个前缀）。
 # 依据：2026-09-05 对 backend/routes/*.js 的逐文件核实，与 docs/architecture.md 一致。
 # 说明：
-#   - 本项目响应存在两种风格：{success, data?, message} 与 {code, message, data?}，下方如实标注。
+#   - 【Node 版】响应存在两种风格：{success, data?, message} 与 {code, message, data?}，下方如实标注。
+#   - 【Java 版 spring-backend（2026-09-13）】已统一为 {success, data, message}：
+#       * 原 {code,message,data}（notice、AdminNotice）与 {success,code,message,data}（AdminUser）均收敛；
+#       * 登录/注册的 user、token 由顶层移入 data；validate 的用户信息在 data.user；
+#       * 数据集上传/更新统一返回 DatasetVO；反馈列表 data 由数组改为 {records, pagination}。
+#     使用 Java 后端时，下方示例中 code 风格字段可按上述规则理解（详见 spring-backend/README.md）。
 #   - 未实现的接口（如 /api/chat/fix、/api/compile 的 body.code 覆盖）不在此列。
-#   - 2026-09-07 起 /api/admin/* 四个模块已在 app.js 统一挂 authenticateToken + requireAdmin（服务端强制）。
-#     下方管理端 operations 的 security 标注为历史遗留，语义上均需管理员 Bearer token，后续宜统一收敛。
+#   - /api/admin/* 四个模块在 Node 与 Java 两版均强制 Bearer + 管理员角色（服务端强制）。
 openapi: 3.0.3
 info:
   title: PGFPlotsGenerator API
