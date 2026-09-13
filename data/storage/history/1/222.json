@@ -1,0 +1,18 @@
+{
+  "history_id" : 222,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个全球智能手机市场份额饼图，图例放右侧",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\pie[\n    radius=3,\n    text=legend,\n    rotate=0,\n    sum=auto,\n    color={blue!60, red!55, orange!70, green!55, purple!55, gray!45},\n    every node/.style={font=\\small}\n]{18.7/苹果, 18.3/三星, 13.6/小米, 8.5/OPPO, 8.2/vivo, 32.7/其他}\n\\node[anchor=north west, font=\\scriptsize, text=gray] at (-3.2,-3.35) {数据来源：IDC 2024 年全球智能手机出货量统计（全年，单位：\\%）};\n\\end{tikzpicture}\n```\n\n```json\n{\"chart_type\": \"pie\", \"code\": \"\\\\begin{tikzpicture}\\n\\\\pie[\\n    radius=3,\\n    text=legend,\\n    rotate=0,\\n    sum=auto,\\n    color={blue!60, red!55, orange!70, green!55, purple!55, gray!45},\\n    every node/.style={font=\\\\small}\\n]{18.7/苹果, 18.3/三星, 13.6/小米, 8.5/OPPO, 8.2/vivo, 32.7/其他}\\n\\\\node[anchor=north west, font=\\\\scriptsize, text=gray] at (-3.2,-3.35) {数据来源：IDC 2024 年全球智能手机出货量统计（全年，单位：\\\\%）};\\n\\\\end{tikzpicture}\", \"summary\": \"2024年全球智能手机品牌份额饼图\"}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\pie[\n    radius=3,\n    text=legend,\n    rotate=0,\n    sum=auto,\n    color={blue!60, red!55, orange!70, green!55, purple!55, gray!45},\n    every node/.style={font=\\small}\n]{18.7/苹果, 18.3/三星, 13.6/小米, 8.5/OPPO, 8.2/vivo, 32.7/其他}\n\\node[anchor=north west, font=\\scriptsize, text=gray] at (-3.2,-3.35) {数据来源：IDC 2024 年全球智能手机出货量统计（全年，单位：\\%）};\n\\end{tikzpicture}",
+  "generation_description" : " 画一个全球智能手机市场份额饼图，图例放右侧",
+  "created_at" : "2026-09-13T15:10:57.530Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 376,
+    "code_source" : "from_request"
+  }
+}

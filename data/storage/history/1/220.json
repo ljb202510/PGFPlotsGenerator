@@ -1,0 +1,18 @@
+{
+  "history_id" : 220,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个 2023 年四个季度销售额对比柱状图，图例外置",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=10cm, height=7cm,\n    title={2023 年分季度社会消费品零售总额对比},\n    ylabel={社会消费品零售总额（万亿元）},\n    symbolic x coords={一季度,二季度,三季度,四季度},\n    xtick=data,\n    ymin=0, ymax=16,\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    legend entries={社会消费品零售总额}\n]\n\\addplot[fill=blue!55, draw=blue!70] coordinates {\n    (一季度,11.49)\n    (二季度,11.27)\n    (三季度,11.45)\n    (四季度,12.94)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局，2023 年（全年 47.15 万亿元）};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\"chart_type\": \"bar\", \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    width=10cm, height=7cm,\\n    title={2023 年分季度社会消费品零售总额对比},\\n    ylabel={社会消费品零售总额（万亿元）},\\n    symbolic x coords={一季度,二季度,三季度,四季度},\\n    xtick=data,\\n    ymin=0, ymax=16,\\n    enlarge x limits=0.15,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    legend entries={社会消费品零售总额}\\n]\\n\\\\addplot[fill=blue!55, draw=blue!70] coordinates {\\n    (一季度,11.49)\\n    (二季度,11.27)\\n    (三季度,11.45)\\n    (四季度,12.94)\\n};\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局，2023 年（全年 47.15 万亿元）};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\", \"summary\": \"2023年分季度社零总额柱状图\"}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=10cm, height=7cm,\n    title={2023 年分季度社会消费品零售总额对比},\n    ylabel={社会消费品零售总额（万亿元）},\n    symbolic x coords={一季度,二季度,三季度,四季度},\n    xtick=data,\n    ymin=0, ymax=16,\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    legend entries={社会消费品零售总额}\n]\n\\addplot[fill=blue!55, draw=blue!70] coordinates {\n    (一季度,11.49)\n    (二季度,11.27)\n    (三季度,11.45)\n    (四季度,12.94)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局，2023 年（全年 47.15 万亿元）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个 2023 年四个季度销售额对比柱状图，图例外置",
+  "created_at" : "2026-09-13T15:10:39.315Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 739,
+    "code_source" : "from_request"
+  }
+}

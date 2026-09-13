@@ -1,0 +1,18 @@
+{
+  "history_id" : 239,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个十年人口增长趋势图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=13cm,\n    height=7.5cm,\n    title={2015--2024年中国年末总人口变化趋势},\n    ylabel={年末总人口（亿人）},\n    xlabel={年份},\n    symbolic x coords={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},\n    xtick=data,\n    x tick label style={rotate=0, font=\\small},\n    ymin=13.6, ymax=14.3,\n    ytick={13.6,13.7,...,14.3}? 默认即可\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.05? 折线图不需要\n]\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=13cm,\n    height=7.5cm,\n    title={2015--2024年中国年末总人口变化趋势},\n    ylabel={年末总人口（亿人）},\n    xlabel={年份},\n    symbolic x coords={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},\n    xtick=data,\n    x tick label style={rotate=0, font=\\small},\n    ymin=13.6, ymax=14.3,\n    ytick={13.6,13.7,...,14.3}? 默认即可\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.05? 折线图不需要\n]",
+  "generation_description" : " 画一个十年人口增长趋势图",
+  "created_at" : "2026-09-13T15:18:27.233Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 511,
+    "code_source" : "from_request"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "history_id" : 226,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个带误差棒的实验数据对比柱状图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm, height=7.5cm,\n    bar width=0.55cm,\n    title={2023年中国重点区域PM2.5年均浓度对比（均值$\\pm$标准差）},\n    ylabel={PM2.5年均浓度（$\\mu$g/m$^3$）},\n    symbolic x coords={京津冀及周边,长三角,汾渭平原,成渝地区,珠三角},\n    xtick=data,\n    x tick label style={font=\\small},\n    ymin=0, ymax=62,\n    enlarge x limits=0.15,\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot +[error bars/.cd, y dir=both, y explicit,\n           fill=blue!45, draw=blue!70!black]\n  coordinates {\n    (京津冀及周边,45) +- (0,6)\n    (长三角,33) +- (0,5)\n    (汾渭平原,43) +- (0,7)\n    (成渝地区,33) +- (0,4)\n    (珠三角,22) +- (0,3)\n  };\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.20) {数据来源：生态环境部《2023中国生态环境状况公报》；误差棒为区域内各城市年均浓度标准差。};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\"chart_type\": \"bar\", \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    width=12cm, height=7.5cm,\\n    bar width=0.55cm,\\n    title={2023年中国重点区域PM2.5年均浓度对比（均值$\\\\pm$标准差）},\\n    ylabel={PM2.5年均浓度（$\\\\mu$g/m$^3$）},\\n    symbolic x coords={京津冀及周边,长三角,汾渭平原,成渝地区,珠三角},\\n    xtick=data,\\n    x tick label style={font=\\\\small},\\n    ymin=0, ymax=62,\\n    enlarge x limits=0.15,\\n    ymajorgrids=true,\\n    grid style={dashed, gray!30},\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\\n]\\n\\\\addplot +[error bars/.cd, y dir=both, y explicit,\\n           fill=blue!45, draw=blue!70!black]\\n  coordinates {\\n    (京津冀及周边,45) +- (0,6)\\n    (长三角,33) +- (0,5)\\n    (汾渭平原,43) +- (0,7)\\n    (成渝地区,33) +- (0,4)\\n    (珠三角,22) +- (0,3)\\n  };\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.20) {数据来源：生态环境部《2023中国生态环境状况公报》；误差棒为区域内各城市年均浓度标准差。};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\", \"summary\": \"2023年重点区域PM2.5浓度带误差棒柱状图\"}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm, height=7.5cm,\n    bar width=0.55cm,\n    title={2023年中国重点区域PM2.5年均浓度对比（均值$\\pm$标准差）},\n    ylabel={PM2.5年均浓度（$\\mu$g/m$^3$）},\n    symbolic x coords={京津冀及周边,长三角,汾渭平原,成渝地区,珠三角},\n    xtick=data,\n    x tick label style={font=\\small},\n    ymin=0, ymax=62,\n    enlarge x limits=0.15,\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot +[error bars/.cd, y dir=both, y explicit,\n           fill=blue!45, draw=blue!70!black]\n  coordinates {\n    (京津冀及周边,45) +- (0,6)\n    (长三角,33) +- (0,5)\n    (汾渭平原,43) +- (0,7)\n    (成渝地区,33) +- (0,4)\n    (珠三角,22) +- (0,3)\n  };\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.20) {数据来源：生态环境部《2023中国生态环境状况公报》；误差棒为区域内各城市年均浓度标准差。};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个带误差棒的实验数据对比柱状图",
+  "created_at" : "2026-09-13T15:12:10.569Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 912,
+    "code_source" : "from_request"
+  }
+}

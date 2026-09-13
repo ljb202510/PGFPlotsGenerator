@@ -1,7 +1,7 @@
 <!-- 本地使用说明：后端 cd spring-backend && run.cmd（开发模式 mvn-run.cmd）；前端 npm run serve（hello 根目录）；数据库 mysql -u root -p 登录输入密码 000; use X; source 1.sql; 并执行下方迁移（见 §4 快速开始）。 -->
 <!-- AI 接口配置在 data/.env（Java 后端启动时自动读取 ../data/.env，DEEPSEEK_* 与 NSCC_* 分别对应 DeepSeek 与 Qwen3.5）。 -->
-<!-- 注意：原 Node/Express 后端已于 2026-09-13 退役删除；其数据目录 backend/ 已改名为 data/，现仅保留 .env、uploads/、storage/ 共享运行时数据（Java 后端仍在使用），请勿删除。 -->
-<!-- 管理员账号预置：admin123 / 666666（见 1.sql 与 §8 版本说明）。 -->
+<!-- 注意：原 Node/Express 后端已于 2026-09-13 退役删除（移至本机D盘/PG）；其数据目录 backend/ 已改名为 data/，现仅保留 .env、uploads/、storage/ 共享运行时数据（Java 后端仍在使用），请勿删除。 -->
+<!-- 管理员账号预置：admin123 / 666666（见 1.sql 与 §8 版本说明）。admin@pgfplots.com user_id=1 -->
 # PGFPlotsGenerator 智能图表生成系统
 
 > 通过自然语言（可附带 Excel/CSV 数据集）生成 PGFPlots/TikZ 图表代码，再用 XeLaTeX 编译为 PDF 在线预览与下载的全栈应用。前端 Vue 3 + 后端 Spring Boot（`spring-backend/`）+ MySQL（原 Node/Express 后端已退役）。

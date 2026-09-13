@@ -88,6 +88,20 @@ app:
     from: ${SMTP_FROM:PG Admin <2771008024@qq.com>}
     # 注册验证码有效期（分钟）
     code-expire-minutes: 10
+  # RAG 检索增强（批次1/A1）：默认关闭，开启需配置 embedding 并执行 rag_seed / rag_backfill
+  rag:
+    enabled: ${RAG_ENABLED:false}
+    top-k-history: 3
+    top-k-template: 2
+    min-score: ${RAG_MIN_SCORE:0.55}
+    timeout-ms: ${RAG_TIMEOUT_MS:3000}
+    history-limit: 500
+    template-limit: 200
+  embedding:
+    api-key: ${EMBEDDING_API_KEY:}
+    api-url: ${EMBEDDING_API_URL:https://api.siliconflow.cn/v1}
+    model: ${EMBEDDING_MODEL:BAAI/bge-m3}
+    dim: ${EMBEDDING_DIM:1024}
 
 logging:
   level:

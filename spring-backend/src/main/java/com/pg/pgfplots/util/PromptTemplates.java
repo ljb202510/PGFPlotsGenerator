@@ -9,9 +9,20 @@ public final class PromptTemplates {
     private PromptTemplates() {
     }
 
+    /** 提示词版本号（批次1/A2）：SYSTEM_PROMPT 或注入策略变更时递增，并写入 api_log.prompt_version 便于对比 */
+    public static final String VERSION = "v1.1-rag";
+
     /** 无数据集时追加的引导语。 */
     public static final String NO_DATASET_SUFFIX =
             "\n\n【本次请求】用户未上传数据集，请基于你已知的公开权威统计数据自行生成真实图表代码并注明年份，必须将代码放在 ```latex 代码块中。";
+
+    /** [A3] 结构化输出约定：要求模型在围栏代码块之外，追加输出一个 JSON 对象（解析失败时由调用方正则兜底，绝不因此失败） */
+    public static final String STRUCTURED_OUTPUT_SUFFIX =
+            "\n\n【结构化输出约定】在 ```latex 代码块之外，请另输出一个 JSON 对象："
+            + "{\"chart_type\": \"<图型英文标识，如 bar/line/pie/scatter>\", "
+            + "\"code\": \"<与围栏内完全一致的 tikzpicture 代码>\", "
+            + "\"summary\": \"<一句话中文摘要，20 字以内>\"}。"
+            + "JSON 必须放在 ```json 代码块中，且 code 字段与 latex 代码块内容一致。";
 
     /** 图表生成系统提示词。 */
     public static final String SYSTEM_PROMPT = """

@@ -1,0 +1,12 @@
+[
+  { "id": "bar_quarter",   "message": "画一个 2023 年四个季度销售额对比柱状图，图例外置" },
+  { "id": "line_trend",    "message": "画一个 2018-2024 年新能源汽车销量的折线图，标注数据点" },
+  { "id": "pie_share",     "message": "画一个全球智能手机市场份额饼图，图例放右侧" },
+  { "id": "scatter",       "message": "画一个身高体重关系的散点图，带图例" },
+  { "id": "bar_stacked",   "message": "画一个 2020-2024 年线上/线下渠道销售额堆叠柱状图" },
+  { "id": "bar_dense",     "message": "画一个 12 个月降水量的密集柱状图（ybar 紧凑写法）" },
+  { "id": "error_bar",     "message": "画一个带误差棒的实验数据对比柱状图" },
+  { "id": "line_multi",    "message": "画一个双系列折线图（产量与销量），标注错开避免重叠" },
+  { "id": "bar_negative",  "message": "画一个含正负值的月度盈亏柱状图" },
+  { "id": "bar_ambiguity", "message": "画一个十年人口增长趋势图" }
+]

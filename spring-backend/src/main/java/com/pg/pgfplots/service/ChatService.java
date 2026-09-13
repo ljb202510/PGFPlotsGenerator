@@ -19,9 +19,11 @@ import com.pg.pgfplots.mapper.ConversationMapper;
 import com.pg.pgfplots.mapper.ConversationMessageMapper;
 import com.pg.pgfplots.mapper.DataFileMapper;
 import com.pg.pgfplots.mapper.GenerationHistoryMapper;
+import com.pg.pgfplots.service.rag.RagService;
 import com.pg.pgfplots.util.ChartCodeExtractor;
 import com.pg.pgfplots.util.FileContentReader;
 import com.pg.pgfplots.util.PromptTemplates;
+import com.pg.pgfplots.util.StructuredOutputParser;
 import com.pg.pgfplots.util.SystemLogWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +60,7 @@ public class ChatService {
     private final ConversationMessageMapper conversationMessageMapper;
     private final FileContentReader fileContentReader;
     private final SystemLogWriter systemLogWriter;
+    private final RagService ragService;
 
     /** 生成图表（主流程）。 */
     public Map<String, Object> generate(Integer userId, ChatRequest request) {
@@ -114,9 +117,14 @@ public class ChatService {
             throw new BusinessException(HttpStatus.BAD_GATEWAY, "AI 返回内容为空，请重试。");
         }
 
-        // 提取图表代码
-        String finalChartCode = request.getChartCode();
-        if (finalChartCode == null || finalChartCode.isEmpty()) {
+        // [A3] 解析顺序：JSON 结构化 → 前端显式传入 chart_code → 正则兜底（绝不因模型不听话而失败）
+        StructuredOutputParser.Structured structured = StructuredOutputParser.parse(aiReply);
+        String finalChartCode;
+        if (structured != null) {
+            finalChartCode = structured.code();
+        } else if (request.getChartCode() != null && !request.getChartCode().isEmpty()) {
+            finalChartCode = request.getChartCode();
+        } else {
             finalChartCode = ChartCodeExtractor.extract(aiReply);
         }
 
@@ -136,12 +144,21 @@ public class ChatService {
         data.put("dataset_count", request.getDataIds() == null ? 0 : request.getDataIds().size());
         data.put("history_id", saved == null ? null : saved.historyId());
         data.put("chart_code_length", finalChartCode.length());
+        // [A3] 结构化输出可用时附加（为 null 时不放入，保持旧客户端兼容）
+        if (structured != null) {
+            data.put("chart_type", structured.chartType());
+            data.put("summary", structured.summary());
+        }
         return data;
     }
 
     /** 构建含数据集内容的系统提示词。 */
     private String buildSystemPrompt(String userMessage, List<Integer> dataIds, Integer userId) {
-        StringBuilder content = new StringBuilder(PromptTemplates.SYSTEM_PROMPT);
+        // [RAG] 召回 few-shot：关闭或失败时返回 ""，拼接结果与旧版逐字符一致（零破坏）
+        // [A3] 追加结构化输出约定（解析失败由正则兜底，不影响旧链路）
+        String fewShot = ragService.retrieveFewShot(userId, userMessage);
+        StringBuilder content = new StringBuilder(
+                PromptTemplates.SYSTEM_PROMPT + fewShot + PromptTemplates.STRUCTURED_OUTPUT_SUFFIX);
         if (dataIds == null || dataIds.isEmpty()) {
             content.append(PromptTemplates.NO_DATASET_SUFFIX);
             return content.toString();
@@ -187,6 +204,19 @@ public class ChatService {
         String reply = attempt.content();
         if (reply.trim().isEmpty()) {
             reply = ChartCodeExtractor.extractFencedBlock(attempt.reasoning());
+        }
+
+        // [A3] 结构化校验失败（JSON 无效且正则提不出代码）→ 带错误信息重试一次（同模型）
+        if (!reply.trim().isEmpty() && ChartCodeExtractor.extract(reply).isEmpty()
+                && StructuredOutputParser.parse(reply) == null) {
+            String corrective = systemPrompt + "\n\n【上次输出无效】你上一次的回复既没有可解析的 JSON，"
+                    + "也没有 ```latex 围栏代码。请严格按【结构化输出约定】重新输出。";
+            LlmResponse retry = callOnce(primary, corrective, userMessage);
+            String retryReply = retry.content();
+            if (retryReply != null && !retryReply.trim().isEmpty()) {
+                reply = retryReply;
+                attempt = retry;
+            }
         }
 
         if (reply.trim().isEmpty()) {
@@ -283,8 +313,15 @@ public class ChatService {
             apiLog.setHistoryId(historyId);
             apiLog.setCallStatus("success");
             apiLog.setCallTime(LocalDateTime.now());
+            // [A2] 记录提示词版本，便于同一用例换版本对比
+            apiLog.setPromptVersion(PromptTemplates.VERSION);
             apiLogMapper.insert(apiLog);
             log.info("✅ API调用日志已记录，call_id: {}", apiLog.getCallId());
+
+            // [RAG] 异步索引历史成功案例（fire-and-forget，内部全吞异常，不阻断主流程）
+            if (historyId != null && finalChartCode != null && !finalChartCode.isEmpty()) {
+                ragService.indexHistoryAsync(userId, historyId, generationDescription, finalChartCode);
+            }
 
             return new SavedHistory(historyId, apiLog.getCallId(), historyFile.toString(), finalChartCode.length());
         } catch (Exception e) {
@@ -342,6 +379,8 @@ public class ChatService {
             apiLog.setUserId(userId);
             apiLog.setCallStatus("failed");
             apiLog.setCallTime(LocalDateTime.now());
+            // [A2] 记录提示词版本，便于同一用例换版本对比
+            apiLog.setPromptVersion(PromptTemplates.VERSION);
             apiLog.setCallError(message.length() > 500 ? message.substring(0, 500) : message);
             apiLogMapper.insert(apiLog);
             log.info("❌ API调用失败日志已记录，用户ID: {}", userId);

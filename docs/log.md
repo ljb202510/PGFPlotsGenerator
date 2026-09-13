@@ -945,6 +945,51 @@ const response = await fetch(`${API\_BASE\_URL}/datasets/${row.id}`, {
 - 文档路径表述同步：README（+v3.4 版本行）等 7 份。
 - 复验：`verify.cmd` **PASS=27 FAIL=0**（其中编译 hist209 + PDF 鉴权流式返回 200，直接验证了新路径解析与历史数据可读）。
 
-### 待办
-- 优化路线图批次 1（RAG 检索增强 + Prompt 工程化 / 结构化输出 + 编译任务队列化 + 离线评估体系）：未开始（见 `docs/plan-AI.md`）。
+### 批次1 主链路落地（A1 RAG + A2 + A3 + RAG CLI，2026-09-13 晚）
+
+> 施工图：`docs/plan-AI-批次1-执行方案.md`（自包含，T0–T13 任务级细节）。决策前置：评估后**不引入 LangChain4j / Spring AI / pgvector**，RAG 自研（MySQL 存 JSON 向量 + Java 暴力余弦，约 200 行）。
+
+#### 1. A1 RAG 检索增强
+- 迁移 `hello/migrations/create_rag_vector.sql`（`rag_vector`：source_type / user_id 隔离 / `uk_source_ref` 幂等键 / dim+model 校验字段）。
+- 新增 `service/rag/` 五件套：`EmbeddingClient`（RestClient+JDK HttpClient 对齐 `LlmClient`，独立 3s 超时）、`VectorStore`（delete-then-insert 幂等 upsert）、`Retriever`（暴力余弦 + 历史/模板分区 Top-k）、`PromptComposer`（few-shot 段落，显式声明与【上下文独立指令】不冲突）、`RagService`（门面，全链路静默降级）。
+- 新增 `config/AsyncConfig`（全工程首个 `@EnableAsync`，rag-index 线程池，队列满丢弃记日志）。
+- 接入点仅两处：`ChatService.buildSystemPrompt` 注入 few-shot（关闭时返回 ""，拼接结果与旧版逐字符一致）；`saveGenerationHistory` 后 `@Async` 索引（fire-and-forget）。
+- CLI 工具：`tools/RagCli`（seed/backfill/demo，主类 `--rag-cli=` 参数走非 Web 模式）+ `scripts/rag_seed|rag_backfill|rag_demo.cmd`。
+- 配置：`app.rag.*` + `app.embedding.*`（默认 SiliconFlow `BAAI/bge-m3`，dim=1024），环境变量经 `data/.env`。
+
+#### 2. A2 Prompt 工程化 / A3 结构化输出
+- A2：`PromptTemplates.VERSION=v1.1-rag`，成功/失败 api_log 均落 `prompt_version`（迁移 `alter_api_log_prompt_version.sql`）。
+- A3：提示词追加【结构化输出约定】；新增 `util/StructuredOutputParser`（```json 围栏 → 裸 JSON → code 必含 tikzpicture）；解析顺序 JSON → 前端显式 chart_code → `ChartCodeExtractor` 正则兜底；`generateWithFallback` 内无效输出带纠错语重试一次。
+- 补充 8 项 JUnit 单测（解析器 5 分支 + 余弦 3 用例）全过。
+
+#### 3. 实测验收（硅基流动 EMBEDDING_API_KEY，全部通过）
+- **seed 幂等**：7 条模板（柱状/折线/饼/散点/堆叠柱/密集柱缩写/误差棒）两次重建后 template 分区仍 7 行。
+- **backfill**：181 条历史成功案例，成功 181 / 失败 0（约 33s，分批 20 条 + 200ms 限速）；重复执行后 188 行、`(source_type, ref_id)` 全唯一。
+- **召回区分度**：相关查询 0.71（历史）/ 0.56（模板），无关查询最高 0.43 —— 阈值 0.55 干净切开。
+- **数据隔离**：userId=2（无历史）仅召回模板分区；历史按 user_id=1/4/11/15… 隔离。
+- **活体生成**（RAG_ENABLED=true）：日志 `[RAG] 召回 3 条` → DeepSeek 生成 → 返回 `chart_type=bar` + summary + 可编译代码（historyId=219，终验基线中该图直接编译出 PDF）→ `rag-index-1` 线程异步索引成功 → `api_log.prompt_version=v1.1-rag` 落库（call_id=272）。
+- **回归**：verify.cmd 三轮 PASS=27 FAIL=0（改造前 / T9 后 / 终验）。
+
+#### 4. 实测驱动的三个修正
+- `min-score` 0.72 → **0.55**（`${RAG_MIN_SCORE}` 可覆盖）：旧阈值把 0.71 的强相关历史全卡掉（bge-m3 中文相关对多在 0.5–0.75 区间）。
+- 模板 embedText 改自然句式开头（"画一个柱状图：…"），模板召回 0.50 → 0.56。
+- 历史行 title 修复（原为 null，现取需求描述截断 50 字）。
+
+#### 5. E1 离线评估（T12，Trae 执行，批次1 闭环）
+- 交付审查合格：`spring-backend/eval/eval.mjs`（162 行，零依赖 Node，复用 verify.js 登录，指标口径正确），未触碰任何 Java 代码；误暂存的 `hist47/48.pdf` 已从 git index 清理（`git rm --cached`，仓库尚无 HEAD 不能用 restore --staged）。
+- **结果**：`eval/results/rag-off.json` vs `rag-on.json` 各 10 用例——生成成功率 / 可编译率 / **首轮通过率均 1.0（基线饱和）**；avg 延迟 15.4s → 16.8s（**+9%，embedding + few-shot 的量化成本**）。
+- 叙事口径（已回填 `plan-AI.md` §12）：不讲「RAG 提升通过率」，讲**评估管线建立 + 基线饱和分析 + 成本量化 + RAG 价值定位（进阶图型/长尾写法）**；附追问预案。
+- **评估集 V2 建议**（已登记 `plan-AI.md` §8，作为批次3 E2/E3 前置）：进阶图型组合题 + 含歧义用例 + 静态违例检测（脚本检查生成代码是否命中 R1-R8 反例特征），把「通过」细化为「通过且零违例」，才能量出真实增量。
+- **批次1（A1+A2+A3+E1）至此全部闭环。**
+
+#### 6. 批次2 施工图产出（2026-09-13 晚）
+- 新增 `docs/plan-AI-批次2-执行方案.md`：覆盖 G1 编译任务队列化（`CompileTaskService` 状态机 + 独立线程池 + `POST /api/compile/{id}` 返回 task_id + `GET /api/compile/task/{taskId}` 轮询）、G2 XeLaTeX 并发控制（Semaphore，`app.latex.max-concurrency` 默认 2）、O1 耗时拆解（`api_log.duration_ms` 迁移 + ChatService 计时 + **替换 AdminLogService 硬编码假 responseTime 245/420** 为真实 avg/P95）。
+- 契约变更三处联动（后端端点 + verify.js 第 5 段 + 前端两处 `compileToPDF` 改轮询）必须在同一批落地；回归标准 FAIL=0（PASS 允许 27→28）。
+- 明确不做：compile_task 表持久化（演进版）、SSE、A4/G3/G4/O2/O4。
+
+### 待办（更新于 2026-09-13 晚）
+- ~~批次 1 主链路（A1 RAG + A2 Prompt 工程化 + A3 结构化输出 + RAG CLI）~~：**已完成并全部实测验收**（见上「批次1 主链路落地」）。
+- ~~E1 离线评估（T12）~~：**已完成**（Trae 执行，两轮 10 用例 first_pass_rate 均 1.0 基线饱和、avg 延迟 +9%；批次1 全部闭环，见上「5. E1 离线评估」）。
+- 批次 2（G1 编译任务队列化 + G2 XeLaTeX 并发上限 + O1 链路耗时拆解）：**施工图已就绪**（`docs/plan-AI-批次2-执行方案.md`），待执行。
+- 可选：种子模板库扩充（当前 7 条，冷门图型召回为空）。
 - 脚本归档：`build.cmd` / `run.cmd` / `mvn-run.cmd` / `verify.cmd` 已移入 `spring-backend/scripts/`（路径已适配新位置）。

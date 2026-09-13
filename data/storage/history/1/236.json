@@ -1,0 +1,18 @@
+{
+  "history_id" : 236,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个带误差棒的实验数据对比柱状图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar, width=11cm, height=7cm,\n    title={2023年全国主要粮食作物单位面积产量对比（含误差棒）},\n    ylabel={单位面积产量（公斤/公顷）},\n    symbolic x coords={稻谷,小麦,玉米,大豆,薯类},\n    xtick=data,\n    enlarge x limits=0.15,\n    ymin=0, ymax=10000,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[fill=blue!55, draw=blue!70!black, error bars/.cd, y dir=both, y explicit]\n  coordinates {\n    (稻谷,7139) +- (0,980)\n    (小麦,5930) +- (0,760)\n    (玉米,6532) +- (0,860)\n    (大豆,1989) +- (0,320)\n    (薯类,3900) +- (0,540)\n  };\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局《关于2023年粮食产量数据的公告》；误差棒为省际单产标准差};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\"chart_type\": \"bar\", \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar, width=11cm, height=7cm,\\n    title={2023年全国主要粮食作物单位面积产量对比（含误差棒）},\\n    ylabel={单位面积产量（公斤/公顷）},\\n    symbolic x coords={稻谷,小麦,玉米,大豆,薯类},\\n    xtick=data,\\n    enlarge x limits=0.15,\\n    ymin=0, ymax=10000,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\\n]\\n\\\\addplot[fill=blue!55, draw=blue!70!black, error bars/.cd, y dir=both, y explicit]\\n  coordinates {\\n    (稻谷,7139) +- (0,980)\\n    (小麦,5930) +- (0,760)\\n    (玉米,6532) +- (0,860)\\n    (大豆,1989) +- (0,320)\\n    (薯类,3900) +- (0,540)\\n  };\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局《关于2023年粮食产量数据的公告》；误差棒为省际单产标准差};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\", \"summary\": \"2023年主要粮食作物单产对比带误差棒柱状图\"}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar, width=11cm, height=7cm,\n    title={2023年全国主要粮食作物单位面积产量对比（含误差棒）},\n    ylabel={单位面积产量（公斤/公顷）},\n    symbolic x coords={稻谷,小麦,玉米,大豆,薯类},\n    xtick=data,\n    enlarge x limits=0.15,\n    ymin=0, ymax=10000,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[fill=blue!55, draw=blue!70!black, error bars/.cd, y dir=both, y explicit]\n  coordinates {\n    (稻谷,7139) +- (0,980)\n    (小麦,5930) +- (0,760)\n    (玉米,6532) +- (0,860)\n    (大豆,1989) +- (0,320)\n    (薯类,3900) +- (0,540)\n  };\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局《关于2023年粮食产量数据的公告》；误差棒为省际单产标准差};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个带误差棒的实验数据对比柱状图",
+  "created_at" : "2026-09-13T15:16:54.306Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 758,
+    "code_source" : "from_request"
+  }
+}

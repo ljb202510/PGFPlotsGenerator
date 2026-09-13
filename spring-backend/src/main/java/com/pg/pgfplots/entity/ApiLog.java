@@ -25,4 +25,7 @@ public class ApiLog {
     private LocalDateTime callTime;
 
     private String callError;
+
+    /** 提示词版本号（批次1/A2），值取 PromptTemplates.VERSION */
+    private String promptVersion;
 }
