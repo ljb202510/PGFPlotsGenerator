@@ -73,7 +73,7 @@ public final class LatexCompiler {
         return new Validation(true, "");
     }
 
-    /** 预处理：全角逗号归一、截取文档主体、行级清除脚手架、ybar 边距兜底。 */
+    /** 预处理：全角逗号归一、截取文档主体、行级清除脚手架、非法 color 键剔除、at 坐标补花括号、空 axis 剔除、直方图补 ybar、ymax 覆盖不足修正、ybar 边距兜底。 */
     public static String preprocess(String originalCode) {
         try {
             if (originalCode == null || originalCode.trim().isEmpty()) {
@@ -98,10 +98,128 @@ public final class LatexCompiler {
                     .trim();
 
             String chartCode = cleaned.isEmpty() ? originalCode : cleaned;
-            return fixYbarEnlargeLimits(chartCode);
+            return fixYbarEnlargeLimits(stripEmptyAxes(addYbarForHistogram(
+                    ensureYmaxCoversData(braceAtCoordinates(dropInvalidColorKey(chartCode))))));
         } catch (Exception e) {
             return originalCode;
         }
+    }
+
+    /** [v1.4] axis 环境的起始（含可选参数区）与结束标记，仅用于剔除空 axis */
+    private static final Pattern AXIS_BEGIN = Pattern.compile("\\\\begin\\{axis\\}\\s*(\\[[\\s\\S]*?\\])?");
+    private static final Pattern AXIS_END = Pattern.compile("\\\\end\\{axis\\}");
+
+    /**
+     * [v1.4] 剔除「没有数据的空 axis」。
+     * <p>判据取最保守的一种：整段代码一个 {@code \addplot} 都没有。此时 axis 没有任何可绘制内容，
+     * 只会在图中多画一个空坐标系（表现为一个空方框，pgf-pie 等纯 TikZ 图元全部落在它外面）。</p>
+     * <p>只要出现过 {@code \addplot}，一律原样返回，绝不误伤正常图。</p>
+     */
+    private static String stripEmptyAxes(String code) {
+        if (!code.contains("\\begin{axis}") || code.contains("\\addplot")) {
+            return code;
+        }
+        return AXIS_END.matcher(AXIS_BEGIN.matcher(code).replaceAll("")).replaceAll("");
+    }
+
+    /** [v1.5] 主观图型关键词：出现这些词说明作者意图是柱状分布图，而不是面积图（判据刻意收窄，避免误伤真面积图） */
+    private static final Pattern HISTOGRAM_HINT = Pattern.compile("直方图|频数分布|分布图");
+    /** [v1.5] {@code \begin{axis}} 及其后紧邻的选项区起始（插入点） */
+    private static final Pattern AXIS_OPTION_START = Pattern.compile("\\\\begin\\{axis\\}\\s*\\[");
+    private static final Pattern HAS_YBAR = Pattern.compile("\\bybar\\b");
+
+    /**
+     * [v1.5] 直方图缺 {@code ybar} 时补上。
+     * <p>真实事故：模型写出了柱体填充色（{@code \addplot[fill=blue!70, draw=black]}），却漏写 axis 的
+     * {@code ybar}；pgfplots 于是把填充色用在折线上闭合成多边形，渲染成「面积覆盖图」而不是柱状图。</p>
+     * <p>判据取最保守的一种：仅当代码出现「直方图 / 频数分布 / 分布图」且 axis 选项里没有 ybar 时才补，
+     * 真正的面积图（标题不含这些词）一律不动。</p>
+     */
+    private static String addYbarForHistogram(String code) {
+        if (!code.contains("\\addplot")
+                || HAS_YBAR.matcher(code).find()
+                || !HISTOGRAM_HINT.matcher(code).find()) {
+            return code;
+        }
+        Matcher axis = AXIS_OPTION_START.matcher(code);
+        if (!axis.find()) {
+            return code;
+        }
+        return code.substring(0, axis.end()) + "ybar, " + code.substring(axis.end());
+    }
+
+    /** [v1.6] axis 选项里显式写的 ymax=<数值> */
+    private static final Pattern YMAX_OPT = Pattern.compile("ymax\\s*=\\s*(-?\\d+(?:\\.\\d+)?)");
+    /** [v1.6] coordinates {...} 块 */
+    private static final Pattern COORDINATES_BLOCK = Pattern.compile("coordinates\\s*\\{([^}]*)\\}");
+    /** [v1.6] 坐标点 (x,y) 的 y 分量（x/y 内部不含括号） */
+    private static final Pattern COORD_Y = Pattern.compile("\\([^(),]+,\\s*(-?\\d+(?:\\.\\d+)?)\\s*\\)");
+
+    /**
+     * [v1.6] ymax 必须覆盖全部数据。
+     * <p>真实事故：{@code ymax=40000} 而北京 = 40184，柱子被轴顶裁掉、顶部标注不可见。</p>
+     * <p>只在「ymax 小于数据最大值」时修正（即真的发生了裁切），抬到 最大值 × 1.1 以留出约 10% 余量；
+     * 未显式写 ymax（pgfplots 会自动留余量）或 ymax 已够大的图一律不动 —— 不做无必要的"改进"。</p>
+     */
+    private static String ensureYmaxCoversData(String code) {
+        Matcher ymax = YMAX_OPT.matcher(code);
+        if (!ymax.find()) {
+            return code;
+        }
+        double maxY = maxYValue(code);
+        if (maxY <= 0 || Double.parseDouble(ymax.group(1)) >= maxY) {
+            return code;
+        }
+        long raised = (long) Math.ceil(maxY * 1.1);
+        return code.substring(0, ymax.start()) + "ymax=" + raised + code.substring(ymax.end());
+    }
+
+    /** 扫描所有 {@code coordinates} 块取最大 y 值；无可用数值返回 0。 */
+    private static double maxYValue(String code) {
+        double max = 0;
+        Matcher blocks = COORDINATES_BLOCK.matcher(code);
+        while (blocks.find()) {
+            Matcher points = COORD_Y.matcher(blocks.group(1));
+            while (points.find()) {
+                try {
+                    max = Math.max(max, Double.parseDouble(points.group(1)));
+                } catch (NumberFormatException ignored) {
+                    // 非数值 y（如符号标签）跳过，不影响其它点
+                }
+            }
+        }
+        return max;
+    }
+
+    /** [v1.7] 误用的 {@code color={<逗号列表>}}：pgfplots 的 color 只接受单一颜色（连同该行一起删除） */
+    private static final Pattern INVALID_COLOR_KEY =
+            Pattern.compile("[ \\t]*color\\s*=\\s*\\{[^{}]*,[^{}]*\\}[ \\t]*\\r?\\n?");
+    /** [v1.7] 未加花括号的 at 坐标：{@code at=(1.03,0.5)} */
+    private static final Pattern UNBRACED_AT = Pattern.compile("\\bat\\s*=\\s*(\\(\\s*[^()]*,[^()]*\\))");
+
+    /**
+     * [v1.7] 删除误用的 {@code color={blue, red, green, orange, purple}}。
+     * <p>真实事故：模型把色环当成了 color 的值，xcolor 会把整串当成一个颜色名，抛
+     * {@code Undefined color 'blue, red, green, orange, purple'} —— 每个柱体报一次，
+     * 刷屏 50+ 条错误并把编译拖到 30s 超时。</p>
+     * <p>只删「花了括号且内含逗号」的 color 键；{@code color=blue} / {@code color={blue}} 不动。</p>
+     * <p><b>必须连同整行一起删除</b>：若只删键本身，会留下一行只有空白的文本 —— 而 TeX 会丢弃行尾空白，
+     * 使「只有空白的行」等价于空行（{@code \par}），在 axis 选项区里会中断选项解析并抛
+     * {@code Paragraph ended before \pgfplots@@environment@axis was complete}（本规则首版就踩了这个坑）。
+     * 删除后若留下空键位（如 {@code ybar, ,}），pgfkeys 会忽略空键，无副作用。</p>
+     */
+    private static String dropInvalidColorKey(String code) {
+        return INVALID_COLOR_KEY.matcher(code).replaceAll("");
+    }
+
+    /**
+     * [v1.7] 给未加花括号的 at 坐标补上花括号：{@code at=(1.03,0.5)} → {@code at={(1.03,0.5)}}。
+     * <p>真实事故：pgfkeys 用逗号分隔键，未加花括号的 {@code at=(1.03,0.5)} 会被切成
+     * {@code at=(1.03} 与 {@code 0.5)} 两个键，抛 {@code Runaway argument} 并读到段落结束，
+     * 是一类会直接中断编译的致命错误。已加花括号的写法不会被匹配，故不会重复处理。</p>
+     */
+    private static String braceAtCoordinates(String code) {
+        return UNBRACED_AT.matcher(code).replaceAll("at={$1}");
     }
 
     /** P3：N≥7 时把任意 enlarge x limits 统一为比例 0.15。 */
@@ -137,6 +255,9 @@ public final class LatexCompiler {
     /** 文档外壳模板，{@code __CHART_CODE__} 处替换为图表代码。 */
     private static final String DOC_TEMPLATE = """
 \\documentclass[border=5pt]{standalone}
+% 命名色表必须在 pgfplots 之前声明：pgfplots 内部会先加载 xcolor，
+% 之后再 \\usepackage[dvipsnames,svgnames]{xcolor} 会触发 Option clash
+\\PassOptionsToPackage{dvipsnames,svgnames}{xcolor}
 \\usepackage{pgfplots}
 \\usepackage{pgf-pie} % 饼图：AI 代码可直接使用 \\pie
 \\pgfplotsset{compat=1.18}
@@ -144,7 +265,6 @@ public final class LatexCompiler {
 % 注：error bars 是 pgfplots 内置功能（在核心 pgfplots.errorbars.code.tex），不需要单独 \\usepgfplotslibrary 加载
 \\usepackage{amsmath}
 \\usepackage{amssymb}
-\\usepackage{xcolor}[dvipsnames,svgnames]  % 加载标准色名表（steelblue/teal/orange/coral 等），避免 AI 用预定义色名时报 Undefined color
 
 % 支持中文
 \\usepackage{fontspec}

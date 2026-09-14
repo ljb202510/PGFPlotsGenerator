@@ -104,6 +104,13 @@ public class AppProperties {
         private int historyLimit = 500;
         /** 检索时最多加载的模板向量条数 */
         private int templateLimit = 200;
+        /**
+         * [v1.4] 历史案例相似度上限（不含）：≥ 该值视为「与当前提问几乎相同」而剔除，不再注入 few-shot。
+         * <p>动机：同一句提问的相似度接近 1.0，必然排在最前；模型拿到上一次的**完整代码**后会直接照抄，
+         * 包括上一次的错误，形成自我强化循环（折线图重复系列、直方图面积图两次事故均源于此）。</p>
+         * <p>只作用于历史分区；模板库是通用图型示范，不受该上限约束。</p>
+         */
+        private double maxHistoryScore = 0.98;
     }
 
     /** OpenAI 兼容 /v1/embeddings 配置（如 SiliconFlow BAAI/bge-m3 或阿里百炼 text-embedding-v4） */

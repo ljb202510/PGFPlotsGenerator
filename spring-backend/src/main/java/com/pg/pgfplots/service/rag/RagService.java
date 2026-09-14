@@ -1,6 +1,7 @@
 package com.pg.pgfplots.service.rag;
 
 import com.pg.pgfplots.config.AppProperties;
+import com.pg.pgfplots.util.ChartCodeValidator;
 import com.pg.pgfplots.util.SystemLogWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,7 @@ public class RagService {
         }
         try {
             float[] queryVec = embeddingClient.embed(query);
-            List<Retriever.Retrieved> hits = retriever.retrieve(userId, queryVec);
+            List<Retriever.Retrieved> hits = retriever.retrieve(userId, query, queryVec);
             String fewShot = PromptComposer.compose(hits);
             log.info("[RAG] 召回 {} 条（user={}）", hits.size(), userId);
             return fewShot;
@@ -64,6 +65,13 @@ public class RagService {
                 return;
             }
             if (isBlank(appProperties.getEmbedding().getApiKey())) {
+                return;
+            }
+            // [v1.2] 准入校验：两个 addplot 坐标完全相同的图属明显错误，绝不能进向量库——
+            // 否则下次同题请求会把它当 few-shot 范例照抄，形成自我强化循环（history 315/318/329 事故）
+            if (ChartCodeValidator.hasDuplicateSeries(chartCode)) {
+                log.warn("[RAG] 跳过索引：多系列坐标完全相同，historyId={}", historyId);
+                systemLogWriter.warning("[RAG] 跳过索引（多系列坐标重复）historyId=" + historyId);
                 return;
             }
             String embedText = description == null || description.isBlank() ? "AI图表生成" : description;

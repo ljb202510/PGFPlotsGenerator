@@ -1,7 +1,7 @@
 # 开发日志 — PGFPlotsGenerator
 > 本日志为历史记录，权威技术文档以 README.md 为准
 > 项目：PGFPlotsGenerator（前端 Vue3 + 后端 Spring Boot + MySQL；2026-09-13 前为 Node/Express）
-> 记录区间：2025-12-03 ～ 2026-09-13
+> 记录区间：2025-12-03 ～ 2026-09-14
 
 ## 目录
 - 一、前期已完成项
@@ -1247,11 +1247,93 @@ const response = await fetch(`${API\_BASE\_URL}/datasets/${row.id}`, {
 - ~~批次 3.5（模型三通道 + 降级链修复 + 耗时趋势图）~~：**已完成并实测验收**（verify **PASS=39 FAIL=0**；降级链三条路径由本地 stub 断言；耗时趋势图单日/多日经浏览器自动化复测；Qwen 双轮评测产出 `v2-qwen-rag-on/off`。详见「批次3.5 落地」）。
 - **DeepSeek 已停用**（账户余额为 0）：`.env` 设 `DEEPSEEK_ENABLED=false`，充值后改回 `true` 即恢复（无需改代码）。**不再需要重跑 `v2-rag-off`**——统一改用 Qwen 后，批次1 的 DeepSeek 基线（`rag-off.json`/`rag-on.json`）与当前结果不可比，已作废的 `v2-rag-off.json` 保留作诚实记录。
 - ~~批次 3.6（压平转义还原 + AdminLog 生命周期 + COMPILE_QUEUE_FULL 验收 + 外层 git 边界）~~：**已完成并实测验收**——`verify.js` **PASS=42 FAIL=0**；rag-on 重跑首轮通过率回升至 **1.0**（`bar_dense` 转为 PASS）；队列满 503 与 `COMPILE_QUEUE_FULL` 落库均有硬证据；`AdminLog.vue` 两处既有缺陷已修（SPA 往返 5 轮 0 错误）；外层 `PG` 索引清空并新增 `.gitignore`。详见「批次3.6 落地」。
+- ~~批次 3.7（生成质量硬修复 + RAG 同题断链）~~：**已完成并实测验收**——`verify.js` **PASS=42 FAIL=0**；定位并切断了「RAG 把上一次的**完整代码**当范例喂回模型」的自污染循环（同题断链 + 入库准入 + purge 清理 9 条）；`LatexCompiler.preprocess` 新增五步确定性修复（空 axis / 直方图补 ybar / ymax 覆盖 / 非法 color / at 括号）；提示词升至 `v1.4-pie-no-axis`；硅基流动模型名换成在架的 `THUDM/GLM-4-9B-0414`。详见「批次3.7 落地」。
 - ~~字面 `\n` 致 `bar_dense` 编译失败~~ → **已修复**（批次3.6：`ChartCodeExtractor.normalizeEscapes`，首轮通过率回到 1.0）。
 - ~~`COMPILE_QUEUE_FULL` 未验收~~ → **已验收**（批次3.6：容量可注入 + 并发 12 请求触发 503 并落库）。
 - ~~`AdminLog.vue` 无 `onUnmounted` 与 `.chart-container` 空类名~~ → **已修复**（批次3.6）。
 - ~~外层 `PG` 目录 git 状态混乱~~ → **已整理**（批次3.6：44 个条目移出索引 + 新增外层 `.gitignore`；未删任何文件、未改任何历史）。
 - 仍未覆盖：`EMPTY_REPLY` / `CODE_EXTRACT_FAIL` 无稳定造数手段；降级链未做真实供应商故障验证（stub 验的是链路语义）。
 - 仍明确不做：前端 DeepSeek 选项置灰（按需求保留可选）；环形降级；耗时趋势图 (b)/(c) 方案。
+- 批次3.7 遗留：那 5 条 `直方图` 污染向量未清理（已被同题断链拦住，换措辞仍可能召回）；`\%` 仅靠提示词规则；编译失败仍以"PDF 是否存在"判定（致命错误可能静默产出空白 PDF）；~~结构合规检测仍散在三处且 `eval/violations.mjs` 落后于提示词（仅 R1–R8）~~ → **已对齐**（下节：补 R9/R12，R4/R10/R11 有据不做；三处仍分散但口径一致）。
+- ~~待修隐患：文档外壳 `\usepackage{xcolor}[dvipsnames,svgnames]` 选项位置错误~~ → **已修复**（改为在 `\usepackage{pgfplots}` 之前 `\PassOptionsToPackage{dvipsnames,svgnames}{xcolor}`；xelatex 对照实测：`SteelBlue/MidnightBlue/TealBlue` 由 `Undefined color` 转为正常渲染，`Missing character ... in font nullfont` 消失，无 `Option clash`，`verify.js` 仍 PASS=42）。
 - 可选：种子模板库扩充（当前 7 条，冷门图型召回为空）。
 - 脚本归档：`build.cmd` / `run.cmd` / `mvn-run.cmd` / `verify.cmd` 已移入 `spring-backend/scripts/`（路径已适配新位置）。
+
+### 批次3.7 落地（生成质量硬修复 + RAG 同题断链，2026-09-14）
+
+**（a）根因：RAG 自污染循环（本轮核心发现）**
+- 现象：输入"折线图"→ 两个 `\addplot` 坐标完全相同；输入"直方图"→ 面积覆盖图。**重试结果不变**，且 qwen 与 siliconflow 两种模型输出**逐字节相同**。
+- 根因：`RagService.indexHistoryAsync` 把每次生成的**完整代码**入库（`content = "需求：X\n代码：\n…"`）；同题查询相似度 ≈ 1.0 → 必然排第一 → 模型直接照抄上一次的结果（**连同上一次的错误**），形成自我强化循环。
+- 硬证据：`rag_vector`（user15，`embed_text=' 直方图'`）同题记录 5 条 —— 317 / 323 / 339 / 340 / 341，全部无 `ybar`；时间线 19:41 → 19:52 → 20:22/20:23 **逐次复制**。
+
+**（b）RAG 同题断链（两道闸门，只作用于 history 分区）**
+- `Retriever.retrieve(userId, query, queryVec)`：闸门1 —— 历史 `embed_text` 与提问**文字相同**（去首尾空白）即剔除；闸门2 —— 相似度 ≥ `app.rag.max-history-score`（默认 `0.98`，可注入）即剔除。**模板库传 `Double.MAX_VALUE`，通用图型示范不受影响。**
+- 实测阈值：`" 直方图"` vs `"直方图"` 余弦 **1.0000**（故闸门2 单独已够，闸门1 是零成本兜底）；`"直方图"` vs `"折线图"` **0.6263**（不误伤其它图型）。
+- 端到端：`--rag-cli=demo:直方图:15` **排除 5 条**同题（召回变为 柱状图#324/#334 + 折线图#321）；`demo:折线图:15` 排除 3 条。
+- **如实说明**：断链只保证"不再照抄上一次那一份"，**不等于拿到正确范例**；真正保证直方图画成柱状图的仍是提示词规则。
+
+**（c）RAG 入库准入（防固化）**
+- 新增 `ChartCodeValidator.hasDuplicateSeries`（两个 `\addplot` 坐标集合相同，忽略顺序与空白）：`RagService.indexHistoryAsync` 与 `RagCli.backfill` 均据此**不入库**。
+- 新增 `--rag-cli=purge` + `scripts/rag_purge.cmd`，清理已污染向量：**删除 9 条**（history 258 → 249）。
+- 新增 `ChartCodeValidatorTest`（6 例）。
+- 未做（按需求选择）：扩准入检测、清理那 5 条 `直方图` 污染记录（现已被断链拦住，但对换措辞的提问仍可能被召回）。
+
+**（d）编译前预处理五步（`LatexCompiler.preprocess`，确定性修复 —— 模型写错也能出对图）**
+
+| 新增步骤 | 触发判据 | 动作 / 真实事故 |
+|---|---|---|
+| `dropInvalidColorKey` | `color={含逗号}` | **连同整行**删除；`color=` 只接受单色，逗号列表会被 xcolor 当成一个颜色名（每柱报一次错，刷屏 50+ 条并将编译拖到 30s 超时） |
+| `braceAtCoordinates` | `at=(x,y)` | → `at={(x,y)}`；未加花括号时逗号被 pgfkeys 当键分隔符 → `Runaway argument` 致命错误 |
+| `stripEmptyAxes` | 全图无 `\addplot` | 删除 axis 环境；饼图被 axis 包裹会多画一个 0–1 空坐标框，图元全落在它外面 |
+| `addYbarForHistogram` | 含"直方图/频数分布/分布图"且无 `ybar` | 在 `\begin{axis}[` 后插入 `ybar,`；模型只写 `fill=` 却漏写 `ybar` → 渲染成面积覆盖图 |
+| `ensureYmaxCoversData` | `ymax` < 数据最大值 | 抬到 `ceil(最大值×1.1)`；未写 `ymax` 或已够大 → **不动**（不做无必要的改进） |
+
+- **本批自身踩坑并修复**：`dropInvalidColorKey` 首版只删键本身、留下一行只有空白的文本；TeX 丢弃行尾空白使"只有空白的行"等价于空行（`\par`）→ 在 axis 选项区中断解析（100 个错）。已改为整行删除，并把该断言写进单测防回归。
+- 新增 `LatexCompilerTest`（13 例，此前该类**无任何测试**）。
+
+**（e）提示词与配置**
+- `PromptTemplates.VERSION`：`v1.1-rag` → **`v1.4-pie-no-axis`**。新增 **R9**（多系列坐标必须互不相同）、**R10**（直方图/分布图必须用 `ybar`，禁止填充面积）、**R11**（`ymax` 须 ≥ 最大值并留约 10% 余量）、**R12**（文本参数里的 `%` 必须写 `\%`）＋**饼图专项**（禁止 axis 包裹 / 整图只画一次 / 标签与图例只选一种 / 禁止自述性注释）；自检补至 16 条、反例 +7 条。
+- `NO_DATASET_SUFFIX` 改为**双分支**：需求模糊（只说"折线图"）→ 可自拟示意数据；指明主题（"近五年 GDP"）→ 必须使用已知权威数据并注明年份与来源。**实测生效**：新生成开始主动标注"数据来源：示意数据（无真实来源）"。
+- `SILICONFLOW_MODEL`：`THUDM/glm-4-9b-chat`（**已被平台下架**，调用返回 `30003 Model disabled`）→ `THUDM/GLM-4-9B-0414`；`.env` / `application.yml` / `README` 三处同步。直连实测返回 200。
+
+**（f）前端**
+- `ChartGenerator.vue` 新增 `displayText`：助手气泡剔除 ``` 围栏块（latex/json），**并剔除未闭合的尾部围栏** —— 模型输出被 `max_tokens` 截断时末尾 ``` 缺失，只剔成对围栏会把 json 残块留在界面上（history 329 实测）。
+
+**（g）验证**
+- `verify.js` **PASS=42 FAIL=0**（自批次3.6 基线起全程无回退）。
+- 单测全绿：`LatexCompilerTest` 13 / `ChartCodeValidatorTest` 6 / `RetrieverTest` 7。
+- 真实样本端到端：`hist351`（`data/storage/debug/`）预处理后 —— `color` 列表已删、`at` 已补括号、坐标完整保留，xelatex 报错数 **100 → 0**，渲染正常；饼图空 axis、直方图补 `ybar`、`ymax 40000 → 44203` 三项均以真实代码渲染确认。
+
+**（h）未做 / 遗留（如实记录）**
+- 按需求未做：编译失败与"PDF 是否存在"解耦（`LatexCompiler.run` 仍以 PDF 存在判成功，致命错误仍可能产出空白 PDF）；`\%` 仅靠提示词规则；清理那 5 条污染向量；把结构合规检测收拢为统一规则集。
+- ~~已知隐患：文档外壳 `\usepackage{xcolor}[dvipsnames,svgnames]` 选项位置写错~~ → **已修复**（同上，2026-09-14）。注：xcolor 的 svgnames 名首字母大写（`Coral` 而非 `coral`），`dvipsnames`/`svgnames` 均已生效。
+- ~~规则目前散在三处且**已不同步**：提示词文本（R1–R12）、`eval/violations.mjs`（仅 R1–R8，落后于提示词）、`ChartCodeValidator`（仅 R9 的一部分）~~ → **已对齐**（见下节）。
+
+### 规则口径对齐与文档收尾（2026-09-14 晚，面试交付级打磨）
+
+**（a）`eval/violations.mjs` 补齐到提示词口径（本批核心）**
+- 新增 **R9**（多系列 `coordinates` 集合完全相同）与 **R12**（文本参数 `title/xlabel/ylabel/legend/\node` 花括号内未转义的 `%`）。
+- R9 判定与 `ChartCodeValidator.hasDuplicateSeries` **逐条同源**（按 `\addplot` 切段 → 取第一处 `coordinates {...}` → 点集 `x|y` 去空白 → 单点系列不参与比较），保证「离线评估口径」与「RAG 入库准入门槛」是同一把尺子，不会出现「评估说合规、入库却被拒」的口径分裂。
+- R12 只扫文本参数花括号内，**不扫注释行**（注释里的 `%` 是合法 LaTeX 注释，全局扫描会误报）；`\%` 正确识别为合法。
+- **刻意不做 R4 / R10 / R11（理由写进代码注释，本身就是可讲的设计取舍）**：
+  - R4（数值与坐标轴量纲一致）需理解数据语义标度，正则会大量误报 → 保留人工评审；
+  - R10（直方图须 `ybar`）/ R11（`ymax` 覆盖数据）已被 `LatexCompiler.preprocess` **编译前确定性修复**，模型原始输出里的违例在编译阶段即消失 → 静态检测恒为零违例，只会让零违例率**虚高、失去区分度**（评估指标不能自我欺骗）。
+- 自测（一次性脚本，跑完已删除）：R9 正例（两条系列坐标相同，含顺序颠倒）/ R9 反例（坐标不同、单点系列、部分重叠）/ R12 正例（`ylabel={准确率（%）}`、`\node` 文字裸 `%`）/ R12 反例（`\%`、注释内 `%`）/ R1、R7 回归 / 空输入 —— **11 例全通过**。
+
+**（b）重跑评估集（新规则版本，旧结果全部保留）**
+- 产物 `eval/results/v3.0-qwen-rag-on.json`（`--model=qwen`，本地 `.env` 中 `RAG_ENABLED=true`）：16 例 **生成成功率 / 可编译率 / 首轮通过率 / 零违例通过率 均 1.0**，`violation_counts` 为空（新增 R9/R12 **未命中任何一例**，说明不是靠放宽规则刷出来的 1.0），`degraded_count=0`，avg 6687ms / P95 10969ms。
+- 旧结果文件（`v2.1-qwen-rag-on`、`v2-qwen-rag-on/off`、`v2-rag-*`、`rag-*`）**一个都没覆盖**；规则版本变更后跨 tag 不可比，README 引用时已带上 tag。
+
+**（c）文档收尾**
+- `hello/README.md` 重写：新增「§5 AI 生成链路」（RAG 检索增强与同题断链、结构化输出 + 双层兜底、三通道降级链、编译前五步确定性预处理与 xcolor 外壳、异步编译队列与并发控制、离线评估集与实测数据）；清掉 Node 时代残留（`db.js`、`backend/.env`、根目录 `plan.md` 引用、本机绝对路径）与过期版本号；版本表补 v3.5 / v3.6 / v3.7。
+- `spring-backend/README.md` 同步：`.env` 路径 `..\backend\.env` → `..\data\.env`、脚本路径统一加 `scripts\`、`PASS=31` → `PASS=42`；新增 RAG 分区说明与配置键（`RAG_ENABLED` / `RAG_MIN_SCORE` / `RAG_MAX_HISTORY_SCORE` / `EMBEDDING_*`）；包结构补 `service/rag/`、`CompileTaskService`、`ChartCodeValidator`、`tools/RagCli`；§7.4 补降级链与编译队列的实测结论。
+- 四个批次执行方案**内容一字未改**，仅此前提早归档在 `docs/process/` 下。
+
+**（d）回归证据（本批全部实跑，非引用旧数据）**
+- `mvn test`：**39 例全绿**（`LatexCompilerTest` 14 / `ChartCodeValidatorTest` 6 / `RetrieverTest` 7 / `ChartCodeExtractorTest` 7 / `StructuredOutputParserTest` 5）。
+- `scripts\verify.cmd`：**PASS=42 FAIL=0 WARN=0**（自批次3.6 基线起无回退）。
+- 评估集：见（b）；为保证跑的是含 xcolor 修复的最新代码，评估前执行了 `scripts\build.cmd` 重打包（构建成功，`Tests are skipped` 属 build.cmd 既有行为，单测另行执行）。
+
+**（e）未做 / 遗留（如实记录）**
+- 按需求未做：`data/storage`、`data/uploads` 的 `.gitignore` 与 `git rm --cached`（运行时产物**仍被 git 跟踪**，本次未动索引）；前端 DeepSeek 选项置灰；环形降级；`ChartGenerator.vue`（2492 行）拆分；前端 request 封装层（G5）与路由守卫（G6）。
+- 规则仍由三处并存（提示词文本 / `eval/violations.mjs` / `ChartCodeValidator`）且**靠人工同步**：本次已对齐口径，但新增规则时仍需三处同改，未做统一规则集抽象。

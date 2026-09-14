@@ -9,6 +9,7 @@ import com.pg.pgfplots.service.rag.EmbeddingClient;
 import com.pg.pgfplots.service.rag.RagUnavailableException;
 import com.pg.pgfplots.service.rag.Retriever;
 import com.pg.pgfplots.service.rag.VectorStore;
+import com.pg.pgfplots.util.ChartCodeValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -28,6 +29,8 @@ public class RagCli implements CommandLineRunner {
 
     private static final int BACKFILL_LIMIT = 2000;
     private static final int BACKFILL_BATCH = 20;
+    /** [v1.2] purge 单次扫描的历史向量上限 */
+    private static final int PURGE_LIMIT = 5000;
     private static final long BACKFILL_BATCH_SLEEP_MS = 200;
 
     private final EmbeddingClient embeddingClient;
@@ -47,10 +50,12 @@ public class RagCli implements CommandLineRunner {
                 seed();
             } else if ("backfill".equals(mode)) {
                 backfill();
+            } else if ("purge".equals(mode)) {
+                purge();
             } else if (mode.startsWith("demo:")) {
                 demo(mode.substring("demo:".length()));
             } else {
-                System.out.println("未知模式：" + mode + "（支持 seed / backfill / demo:查询文本[:userId]）");
+                System.out.println("未知模式：" + mode + "（支持 seed / backfill / purge / demo:查询文本[:userId]）");
             }
         } catch (RagUnavailableException e) {
             System.err.println(e.getMessage());
@@ -107,27 +112,53 @@ public class RagCli implements CommandLineRunner {
         System.out.println("[RAG] 待回填历史案例：" + histories.size() + " 条");
         String model = appProperties.getEmbedding().getModel();
         int dim = appProperties.getEmbedding().getDim();
-        int ok = 0, fail = 0;
+        int ok = 0, fail = 0, skip = 0;
         for (int i = 0; i < histories.size(); i++) {
             GenerationHistory h = histories.get(i);
-            try {
-                String desc = h.getGenerationDescription() == null || h.getGenerationDescription().isBlank()
-                        ? "AI图表生成" : h.getGenerationDescription();
-                String content = "需求：" + desc + "\n代码：\n" + h.getGenerationCode();
-                String title = desc.length() > 50 ? desc.substring(0, 50) + "..." : desc;
-                float[] vec = embeddingClient.embed(desc);
-                vectorStore.upsertHistory(h.getUserId(), h.getHistoryId(), title, desc, content, vec, model, dim);
-                ok++;
-            } catch (Exception e) {
-                fail++;
-                System.out.println("  [跳过] historyId=" + h.getHistoryId() + "：" + e.getMessage());
+            // [v1.2] 与 indexHistoryAsync 同一套准入标准：多系列坐标重复的图不进向量库
+            if (ChartCodeValidator.hasDuplicateSeries(h.getGenerationCode())) {
+                skip++;
+                System.out.println("  [跳过] historyId=" + h.getHistoryId() + "：多系列坐标重复");
+            } else {
+                try {
+                    String desc = h.getGenerationDescription() == null || h.getGenerationDescription().isBlank()
+                            ? "AI图表生成" : h.getGenerationDescription();
+                    String content = "需求：" + desc + "\n代码：\n" + h.getGenerationCode();
+                    String title = desc.length() > 50 ? desc.substring(0, 50) + "..." : desc;
+                    float[] vec = embeddingClient.embed(desc);
+                    vectorStore.upsertHistory(h.getUserId(), h.getHistoryId(), title, desc, content, vec, model, dim);
+                    ok++;
+                } catch (Exception e) {
+                    fail++;
+                    System.out.println("  [跳过] historyId=" + h.getHistoryId() + "：" + e.getMessage());
+                }
             }
             if ((i + 1) % BACKFILL_BATCH == 0) {
                 System.out.println("  进度 " + (i + 1) + "/" + histories.size() + "（成功 " + ok + "，失败 " + fail + "）");
                 sleepQuietly();
             }
         }
-        System.out.println("[RAG] 回填完成：成功 " + ok + "，失败 " + fail);
+        System.out.println("[RAG] 回填完成：成功 " + ok + "，跳过 " + skip + "，失败 " + fail);
+    }
+
+    /**
+     * purge：清理已污染的历史向量。
+     * <p>用于修复 v1.2 之前写入的错误案例（如两个 {@code \addplot} 坐标完全相同的折线图）——
+     * 它们会被当作 few-shot 范例反复喂回模型，形成自我强化循环。入库标准与
+     * {@link #backfill()} 及 {@code RagService#indexHistoryAsync} 保持一致。</p>
+     */
+    private void purge() {
+        List<RagVector> rows = vectorStore.loadAllHistory(PURGE_LIMIT);
+        System.out.println("[RAG] 待检查历史向量：" + rows.size() + " 条");
+        int removed = 0;
+        for (RagVector row : rows) {
+            if (ChartCodeValidator.hasDuplicateSeries(row.getContent())) {
+                vectorStore.deleteHistoryRef(row.getRefId());
+                removed++;
+                System.out.println("  [清理] refId=" + row.getRefId() + "（" + row.getEmbedText() + "）");
+            }
+        }
+        System.out.println("[RAG] 清理完成：删除 " + removed + " 条，保留 " + (rows.size() - removed) + " 条");
     }
 
     /** demo：召回演示（面试用），展示模板 + 指定用户历史的 Top-k */
@@ -145,7 +176,7 @@ public class RagCli implements CommandLineRunner {
         }
         System.out.println("[RAG] 查询：" + query + "（userId=" + userId + "）");
         float[] queryVec = embeddingClient.embed(query);
-        List<Retriever.Retrieved> hits = retriever.retrieve(userId, queryVec);
+        List<Retriever.Retrieved> hits = retriever.retrieve(userId, query, queryVec);
         if (hits.isEmpty()) {
             System.out.println("  无召回结果（低于阈值 " + appProperties.getRag().getMinScore() + " 或库为空）");
             return;

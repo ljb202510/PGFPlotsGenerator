@@ -104,9 +104,9 @@
               </div>
             </div>
             
-            <!-- 消息内容 -->
-            <div class="message-text" :class="{ 'error-text': message.isError }">
-              {{ message.content }}
+            <!-- 消息内容：助手气泡只展示自然语言，代码块与结构化 JSON 由下方代码预览承载 -->
+            <div v-if="displayText(message)" class="message-text" :class="{ 'error-text': message.isError }">
+              {{ displayText(message) }}
             </div>
 
             <!-- 用户消息底部操作区域 -->
@@ -1193,6 +1193,17 @@ const selectFile = (file) => {
     selectedFiles.value.push(file);
     ElMessage.success(`已选择文件: ${file.data_name}`);
   }
+}
+
+// 助手气泡只展示自然语言：剔除围栏代码块（latex/json），剔完为空则整块不渲染。
+// 模型输出常被 max_tokens 截断，末尾围栏没有闭合（history 329 即如此），
+// 所以成对围栏之外，还必须再剔除「从 ``` 一直到结尾」的残块。
+const displayText = (message) => {
+  if (message.role === 'user' || message.isError) return message.content
+  return (message.content || '')
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/```[\s\S]*$/g, '')
+    .trim()
 }
 
 // 滚动到底部

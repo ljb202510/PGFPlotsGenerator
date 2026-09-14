@@ -45,6 +45,18 @@ public class VectorStore {
                 .last("LIMIT " + limit));
     }
 
+    /** 加载全部历史向量（[v1.2] 清理工具用：不按 user 过滤，仍受 limit 保护） */
+    public List<RagVector> loadAllHistory(int limit) {
+        return mapper.selectList(new LambdaQueryWrapper<RagVector>()
+                .eq(RagVector::getSourceType, "history")
+                .last("LIMIT " + limit));
+    }
+
+    /** 删除一条历史案例向量（[v1.2] 清理不合格案例用） */
+    public void deleteHistoryRef(Integer refId) {
+        deleteByRef("history", refId);
+    }
+
     /** 加载模板向量（数量上限 app.rag.template-limit） */
     public List<RagVector> loadTemplates(int limit) {
         return mapper.selectList(new LambdaQueryWrapper<RagVector>()

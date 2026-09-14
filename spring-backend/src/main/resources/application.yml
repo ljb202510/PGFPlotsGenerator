@@ -96,12 +96,13 @@ app:
       api-key: ${NSCC_API_KEY:}
       api-url: ${NSCC_API_URL:https://maas.nscc-cs.cn/external/api/v1}
       model: ${QWEN_MODEL:Qwen3.5}
-    # [批次3.5] 硅基流动（OpenAI 兼容），默认免费档最大模型 THUDM/glm-4-9b-chat
+    # [批次3.5] 硅基流动（OpenAI 兼容）。[v1.2] 原默认 THUDM/glm-4-9b-chat 已被平台下架
+    # （调用返回 30003 Model disabled），改用同系列在架的免费模型 THUDM/GLM-4-9B-0414。
     siliconflow:
       enabled: ${SILICONFLOW_ENABLED:true}
       api-key: ${SILICONFLOW_API_KEY:}
       api-url: ${SILICONFLOW_API_URL:https://api.siliconflow.cn/v1}
-      model: ${SILICONFLOW_MODEL:THUDM/glm-4-9b-chat}
+      model: ${SILICONFLOW_MODEL:THUDM/GLM-4-9B-0414}
   mail:
     from: ${SMTP_FROM:PG Admin <2771008024@qq.com>}
     # 注册验证码有效期（分钟）
@@ -112,6 +113,9 @@ app:
     top-k-history: 3
     top-k-template: 2
     min-score: ${RAG_MIN_SCORE:0.55}
+    # [v1.4] 历史案例相似度上限：≥ 该值视为「与当前提问几乎相同」而剔除，
+    # 避免模型照抄上一次的完整代码（含上一次的错误）形成自我强化循环；模板库不受影响
+    max-history-score: ${RAG_MAX_HISTORY_SCORE:0.98}
     timeout-ms: ${RAG_TIMEOUT_MS:3000}
     history-limit: 500
     template-limit: 200

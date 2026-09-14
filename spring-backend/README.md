@@ -12,11 +12,12 @@
 | ORM | MyBatis-Plus 3.5.5（复杂聚合查询走 `resources/mapper/*.xml`） |
 | 鉴权 | Spring Security 无状态 JWT（jjwt 0.12.6）+ BCrypt |
 | 文件解析 | Apache POI 5.2.5（xlsx）+ 原生读取（csv/txt） |
-| HTTP 客户端 | Spring 6 `RestClient`（调用 DeepSeek / Qwen3.5） |
+| HTTP 客户端 | Spring 6 `RestClient`（三通道共用 OpenAI 兼容 `/chat/completions`：Qwen3.5 / GLM-4.9 / DeepSeek） |
+| RAG 检索 | 自实现向量检索：`EmbeddingClient`（`/embeddings`，`bge-m3` 1024 维）+ `VectorStore`（`rag_vector` 表，暴力余弦）+ `Retriever` + `PromptComposer` |
 | 邮件 | spring-boot-starter-mail（JavaMailSender） |
-| 编译 | `ProcessBuilder` 调 XeLaTeX（30s 超时） |
+| 编译 | `ProcessBuilder` 调 XeLaTeX（30s 超时）+ 编译前 `preprocess` 五步确定性修复 + 异步任务队列与 `Semaphore` 限流 |
 
-## 2. 与 Node 版的映射
+## 2. 与 Node 版的映射（历史对照：Node 代码已于 2026-09-13 删除）
 
 | Node | Java |
 |---|---|
@@ -58,10 +59,11 @@
 
 ```bat
 cd hello\spring-backend
-build.cmd     :: 自动选 JDK 17+ 并 mvn clean package
-run.cmd       :: 自动选 JDK 17+ 并启动 jar（jar 不存在则先构建）
-mvn-run.cmd   :: 自动选 JDK 17+ 并执行 mvn spring-boot:run（开发模式）
-verify.cmd    :: 启动 + 全量接口回归，输出 PASS/FAIL
+scripts\build.cmd     :: 自动选 JDK 17+ 并 mvn clean package
+scripts\run.cmd       :: 自动选 JDK 17+ 并启动 jar（jar 不存在则先构建）
+scripts\mvn-run.cmd   :: 自动选 JDK 17+ 并执行 mvn spring-boot:run（开发模式）
+scripts\verify.cmd    :: 启动 + 全量接口回归，输出 PASS/FAIL（最近一次 PASS=42 FAIL=0）
+scripts\rag_seed.cmd  :: 写入 RAG 内置模板库（另有 rag_demo / rag_backfill / rag_purge）
 ```
 
 脚本依次在以下位置挑选 JDK：`%PG_JAVA_HOME%` → `C:\Program Files\Microsoft\jdk-21*` → `C:\Program Files\Java\jdk-21` → `...\jdk-17` → `...\jdk-23`。
@@ -82,7 +84,7 @@ mvn spring-boot:run
 > ⚠️ **第二个常见坑**：直接 `mvn spring-boot:run` 报
 > `RunMojo has been compiled by a more recent version of the Java Runtime (class file version 61.0) ... only recognizes up to 52.0`
 > —— 同样是 Maven 跑在 **JDK 8** 上（61.0=Java 17，52.0=Java 8），Spring Boot 3 插件要求 Maven 自身运行在 JDK 17+。
-> 解决：先 `set "JAVA_HOME=...jdk-21..."`，或直接用 `mvn-run.cmd`。
+> 解决：先 `set "JAVA_HOME=...jdk-21..."`，或直接用 `scripts\mvn-run.cmd`。
 
 ### 4.3 VS Code 直接运行（开发期推荐，不用脚本）
 
@@ -92,7 +94,7 @@ mvn spring-boot:run
 2. 在「运行和调试」里选 **PG 后端（spring-backend，端口 3000）** 直接启动 —— 该配置已把**工作目录固定为 `hello/spring-backend`**，控制台用集成终端（UTF-8，中文日志不会乱码）；
 3. `settings.json` 已把 JDK 21 设为默认运行时（`C:\Program Files\Microsoft\jdk-21.0.2.13-hotspot`），如本机路径不同请改成自己的。
 
-纯终端等价方式（不用 `run.cmd`）：
+纯终端等价方式（不用 `scripts\run.cmd`）：
 
 ```bat
 chcp 65001                                          :: 中文日志不乱码
@@ -107,16 +109,17 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 
 ## 5. 配置（环境变量覆盖 application.yml）
 
-**配置优先级**：命令行环境变量 > `..\backend\.env`（自动导入，`optional`）> `application.yml` 默认值。
-因此 DB 连接、LLM 密钥、SMTP 与 Node 版共用同一份 `.env`，无需重复配置；文件不存在时回退下表默认值。
+**配置优先级**：命令行环境变量 > `..\data\.env`（自动导入，`optional`）> `application.yml` 默认值。
+因此 DB 连接、LLM / Embedding 密钥、SMTP 统一放在共享数据目录 `data/.env` 中，无需重复配置；文件不存在时回退下表默认值。
 
 | 变量 | 默认 | 说明 |
 |---|---|---|
 | `PORT` | 3000 | 服务端口 |
 | `JWT_SECRET` | 空（必填） | JWT 密钥，缺失启动失败 |
-| `DB_HOST/DB_PORT/DB_USER/DB_PASSWORD/DB_NAME` | localhost/3306/root/000/X | 与 Node `db.js` 默认一致 |
+| `DB_HOST/DB_PORT/DB_USER/DB_PASSWORD/DB_NAME` | localhost/3306/root/000/X | 与 `data/.env` 默认值一致 |
 | `SMTP_*` | — | 邮件验证码 |
 | `NSCC_API_KEY/URL`、`SILICONFLOW_API_KEY/URL/MODEL`、`DEEPSEEK_API_KEY/URL/MODEL` | — | 三个模型通道（见下） |
+| `EMBEDDING_API_KEY/URL/MODEL/DIM` | — / `https://api.siliconflow.cn/v1` / `BAAI/bge-m3` / `1024` | RAG 向量化（**与生成通道的 key 分开**，见下注） |
 | `QWEN_ENABLED` / `SILICONFLOW_ENABLED` / `DEEPSEEK_ENABLED` | `true` | 通道开关；`false` 时该层整层跳过且不可选为主模型（当前 DeepSeek 因余额为 0 设 `false`） |
 | `UPLOADS_DIR` | `../data/uploads` | 数据集目录（复用历史文件） |
 | `HISTORY_DIR` | `../data/storage/history` | 生成记录 JSON |
@@ -125,6 +128,9 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 | `XELATEX` / `LATEX_TIMEOUT_MS` | `xelatex` / 30000 | 编译器与超时 |
 | `LATEX_MAX_CONCURRENCY` | `2` | XeLaTeX 并发编译上限（批次2/G2，`Semaphore` 限流） |
 | `COMPILE_QUEUE_CAPACITY` | `100` | 编译任务队列容量（批次3.6 起可注入）；满载阈值 = `maxPoolSize(4) + 该值`，调小可用于验证「队列满 → 503」 |
+| `RAG_ENABLED` | `false` | RAG 检索增强总开关（开启需配置 `EMBEDDING_*` 并执行 `rag_seed` / `rag_backfill`） |
+| `RAG_MIN_SCORE` / `RAG_MAX_HISTORY_SCORE` | `0.55` / `0.98` | 召回下限 / 历史分区相似度**上限**（≥ 上限视为同题，剔除以防照抄上一次的错误） |
+| `RAG_TIMEOUT_MS` | `3000` | embedding 调用超时；超时或失败自动降级为无 RAG 提示词 |
 
 ### 模型通道与降级链（批次3.5）
 
@@ -133,7 +139,7 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 | 通道 key | 默认模型 | 默认地址 | 当前状态 |
 |---|---|---|---|
 | `qwen` | `Qwen3.5` | NSCC（`NSCC_API_URL`） | 启用（主通道） |
-| `siliconflow` | `THUDM/glm-4-9b-chat` | `https://api.siliconflow.cn/v1` | 启用（免费档，降级链第二层） |
+| `siliconflow` | `THUDM/GLM-4-9B-0414` | `https://api.siliconflow.cn/v1` | 启用（免费档，降级链第二层） |
 | `deepseek` | `deepseek-v4-flash` | `https://api.deepseek.com/v1` | **停用**（`DEEPSEEK_ENABLED=false`，账户余额为 0） |
 
 降级规则：
@@ -147,6 +153,16 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 
 > 注：`siliconflow` 用于生成的 key 与 embedding 用的 `EMBEDDING_API_KEY` **须分开**，避免配额混用后无法定位问题。
 
+### RAG 检索增强（批次1 / 批次3.7）
+
+`app.rag.enabled=true` 时，`ChatService.buildSystemPrompt` 会先经 `service/rag/` 召回 few-shot 再拼进 system 提示词：
+
+- **实现**：`EmbeddingClient`（OpenAI 兼容 `/embeddings`）+ `VectorStore`（`rag_vector` 表，暴力余弦，**不引入 pgvector**）+ `Retriever` + `PromptComposer`；分区 `template`（内置示范）与 `history`（按 `user_id` 隔离）。
+- **同题断链**：历史分区剔除「`embed_text` 与本次提问文字完全相同」及「相似度 ≥ `app.rag.max-history-score`（默认 0.98）」的记录；**模板库不受影响**。用于切断「照抄上一次结果、连错误一起复制」的自我强化循环。
+- **入库准入**：`util/ChartCodeValidator.hasDuplicateSeries`（多系列坐标完全相同）的代码不入库，避免错误案例被当作范例反复喂回。
+- **CLI**：`scripts/rag_seed.cmd`（模板库）/ `rag_demo.cmd`（带 query 看召回）/ `rag_backfill.cmd`（历史回填）/ `rag_purge.cmd`（清理污染向量）。
+- **降级**：未配置 `EMBEDDING_*`、超时或调用失败 → 自动退回无 RAG 提示词，**主链路不因 RAG 失败而失败**。
+
 ## 6. 包结构
 
 ```
@@ -157,9 +173,11 @@ com.pg.pgfplots
 ├── entity/     11 张表实体
 ├── mapper/     MyBatis-Plus Mapper（+ resources/mapper/*.xml）
 ├── dto/        请求/响应 DTO（字段名保持 Node 契约）
-├── client/     LlmClient（Qwen / DeepSeek）
-├── util/       FileStorage / FileContentReader / LatexCompiler / ChartCodeExtractor / PromptTemplates / SystemLogWriter / TimeFormat
-├── service/    13 个业务服务
+├── client/     LlmClient（三通道统一 OpenAI 兼容调用）
+├── util/       FileStorage / FileContentReader / LatexCompiler（含 preprocess 五步修复）/ ChartCodeExtractor（含字面 \n 还原）/ ChartCodeValidator（RAG 入库准入）/ StructuredOutputParser / PromptTemplates（R1-R12，v1.4）/ SystemLogWriter / TimeFormat
+├── service/    业务服务（ChatService 三通道降级链 / CompileService / CompileTaskService 异步编译队列 / VerificationService …）
+│   └── rag/    EmbeddingClient / VectorStore / Retriever / PromptComposer / RagService
+├── tools/      RagCli（--rag-cli=seed|demo|backfill|purge）
 └── controller/ 13 个控制器
 ```
 
@@ -169,13 +187,16 @@ com.pg.pgfplots
 
 ```bat
 cd hello\spring-backend
-build.cmd        :: 先确保能构建
-verify.cmd       :: 自动启动后端 + 回归全部接口，输出 PASS/FAIL
+scripts\build.cmd        :: 先确保能构建
+scripts\verify.cmd       :: 自动启动后端 + 回归全部接口，输出 PASS/FAIL
+mvn test                 :: 单测 39 例（LatexCompiler 14 / ChartCodeValidator 6 / Retriever 7 / ChartCodeExtractor 7 / StructuredOutputParser 5）
 ```
 
-`verify.js` 覆盖：鉴权（401/403/管理员登录）、管理后台（static / users / notices / log 统计，含 **responseTime 真实聚合、errorTypes 失败分类、responseTimeSeries 按日耗时序列**三条断言）、用户侧（notice / history / conversations / feedback / validate）、**数据集上传·列表·改名·下载·删除**、**XeLaTeX 异步编译（提交 task_id → 轮询终态 → duration_ms）+ PDF 鉴权流式返回**。
+`verify.js` 覆盖：鉴权（401/403/管理员登录）、管理后台（static / users / notices / log 统计，含 **responseTime 真实聚合、errorTypes 失败分类、responseTimeSeries 按日耗时序列**三条断言）、用户侧（notice / history / conversations / feedback / validate）、**数据集上传·列表·改名·下载·删除**、**XeLaTeX 异步编译（提交 task_id → 轮询终态 → duration_ms）+ PDF 鉴权流式返回**、**降级链语义**（内置 Node `http` stub，零密钥零外网：可降级 500 接力成功 / 不可降级 401 不重试 / 不传 model 回落主通道）、**编译队列满 → 503 且落库 `COMPILE_QUEUE_FULL`**。
 
-**最近一次结果（2026-09-14）：`PASS=31  FAIL=0  WARN=0`，全部通过。**
+**最近一次结果（2026-09-14）：`PASS=42  FAIL=0  WARN=0`，全部通过。**
+
+离线评估集：`node eval\eval.mjs --tag=<tag> --model=qwen`（需后端已启动）；最近一次 `v3.0-qwen-rag-on` 16 例 —— 生成成功率 / 可编译率 / 首轮通过率 / 零违例通过率均 1.0，平均 6687ms、P95 10969ms，结果见 `eval/results/`。
 
 ### 7.2 邮件验证码（需人工，会真实发信）
 
@@ -197,6 +218,8 @@ curl -X POST http://localhost:3000/api/verification/send-register-code -H "Conte
 | 数据查询 | 13 个前缀接口返回结构正确 |
 | 数据集 | 上传/列表/改名/下载/删除 全通过 |
 | 编译 | `POST /api/compile/82` → `data.{task_id,status:"queued",history_id}`（立即返回）；`GET /api/compile/task/{task_id}` 轮询至 `success`（含 `pdf_path/file_size/duration_ms`）；`GET /api/compile/82/pdf` → 200 流式 PDF |
+| 降级链 | 主通道 500 → 接力 `siliconflow` 成功且 `model_used=siliconflow`；401 确定性错误不重试、备用通道调用次数 0（本地 stub 断言，零密钥零外网） |
+| 编译队列 | `queue-capacity=1` 时并发提交 12 个编译 → 确实返回 503「队列已满」，且被拒任务落库 `COMPILE_QUEUE_FULL` |
 | UTF-8 | 中文正常（`curl.exe` 原始字节校验） |
 
 ## 8. 退役 Node 后端（✅ 已于 2026-09-13 执行完成）
@@ -207,7 +230,7 @@ curl -X POST http://localhost:3000/api/verification/send-register-code -H "Conte
 
 | 项 | 说明 |
 |---|---|
-| 数据库 | Java 通过 `..\backend\.env` 读取同一份 `DB_*`，连的是**同一个库 `X`**，**无需迁移数据、无需改 schema** |
+| 数据库 | Java 通过 `..\data\.env` 读取同一份 `DB_*`，连的是**同一个库 `X`**，**无需迁移数据、无需改 schema** |
 | `data/uploads` | Java 默认 `UPLOADS_DIR=../data/uploads`；历史文件与新增上传文件均在此目录，29 个历史数据集照常可读 |
 | `data/storage` | Java 默认 `HISTORY_DIR=../data/storage/history`、`CHARTS_DIR=../data/storage/generated_charts`；`generation_path` 以 `RELATIVE_BASE=..` 解析，**历史 PDF 可直接读取**（DB 前缀已同步改为 `data\`） |
 | 端口 | 默认 **3000**；退役后仅剩 Java 一个后端，前端 `API_BASE_URL` 无需修改 |
@@ -216,8 +239,8 @@ curl -X POST http://localhost:3000/api/verification/send-register-code -H "Conte
 
 ### 8.2 已执行的退役步骤（存档）
 
-1. ✅ 确认前端 `API_BASE_URL` 指向 Java 后端且联调通过（`verify.cmd` 基线 `PASS=27 FAIL=0`）。
-2. ✅ 保留 `backend/.env`、`backend/uploads`、`backend/storage`（Java 复用）。
+1. ✅ 确认前端 `API_BASE_URL` 指向 Java 后端且联调通过（`scripts\verify.cmd`，**当时基线** `PASS=27 FAIL=0`）。
+2. ✅ 保留 `.env`、`uploads/`、`storage/`（Java 复用；该目录随后改名为 `data/`，见 §8 开头）。
 3. ✅ 归档 `backend/migrations/001_conversations.js` 的建表 DDL 为 `hello/migrations/create_conversations_tables.sql`。
 4. ✅ 删除 `backend/` 下全部 Node 代码：`app.js`、`db.js`、`createAdmin.js`、`routes/`、`middleware/`、`services/`、`utils/`、`migrations/001_conversations.js`、`package.json`、`package-lock.json`、`yarn.lock`、`.env.example`、`node_modules`。
 5. ✅ 同步更新 `hello/README.md`、`docs/architecture.md`、`docs/development.md`、`docs/deployment.md`、`.github/copilot-instructions.md` 的后端描述。
