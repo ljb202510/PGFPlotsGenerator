@@ -1,0 +1,19 @@
+{
+  "history_id" : 348,
+  "user_id" : 15,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "直方图",
+  "ai_response" : "\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm,\n    height=7cm,\n    title={2023年部分城市GDP对比（单位：亿元）},\n    xlabel={城市},\n    ylabel={GDP（亿元）},\n    symbolic x coords={北京,上海,广州,深圳,杭州,苏州,成都,重庆},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=40000\n]\n\\addplot[fill=blue!70, draw=black] coordinates {\n    (北京,40184)\n    (上海,38100)\n    (广州,33107)\n    (深圳,33608)\n    (杭州,27259)\n    (苏州,20171)\n    (成都,17800)\n    (重庆,20020)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局 2023};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\"chart_type\": \"bar\", \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    width=12cm,\\n    height=7cm,\\n    title={2023年部分城市GDP对比（单位：亿元）},\\n    xlabel={城市},\\n    ylabel={GDP（亿元）},\\n    symbolic x coords={北京,上海,广州,深圳,杭州,苏州,成都,重庆},\\n    xtick=data,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at=(1.03,0.5), anchor=west, draw=black, fill=white},\\n    enlarge x limits=0.15,\\n    ymin=0, ymax=40000\\n]\\n\\\\addplot[fill=blue!70, draw=black] coordinates {\\n    (北京,40184)\\n    (上海,38100)\\n    (广州,33107)\\n    (深圳,33608)\\n    (杭州,27259)\\n    (苏州,20171)\\n    (成都,17800)\\n    (重庆,20020)\\n};\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局 2023};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\", \"summary\": \"城市GDP直方图\"}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm,\n    height=7cm,\n    title={2023年部分城市GDP对比（单位：亿元）},\n    xlabel={城市},\n    ylabel={GDP（亿元）},\n    symbolic x coords={北京,上海,广州,深圳,杭州,苏州,成都,重庆},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at=(1.03,0.5), anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=40000\n]\n\\addplot[fill=blue!70, draw=black] coordinates {\n    (北京,40184)\n    (上海,38100)\n    (广州,33107)\n    (深圳,33608)\n    (杭州,27259)\n    (苏州,20171)\n    (成都,17800)\n    (重庆,20020)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局 2023};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 直方图",
+  "created_at" : "2026-09-14T12:55:36.649Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 769,
+    "code_source" : "from_request",
+    "model_used" : "siliconflow"
+  }
+}

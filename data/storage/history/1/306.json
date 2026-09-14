@@ -1,0 +1,19 @@
+{
+  "history_id" : 306,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个 12 个月销售额柱状图，每个柱子都标数值，图例放到图外",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    bar width=14pt,\n    width=13cm, height=7cm,\n    title={2024年中国新能源汽车月度销量对比},\n    ylabel={销量（万辆）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    ymin=0, ymax=185,\n    enlarge x limits=0.15,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    grid=major,\n    major grid style={dotted, gray!40}\n]\n\\addplot[fill=blue!55, draw=blue!70,\n         nodes near coords, point meta=explicit symbolic,\n         every node near coord/.append style={anchor=south, font=\\scriptsize, fill=none, draw=none, inner sep=1pt}]\n    coordinates {\n        (1月,72.9)[73]   (2月,47.7)[48]   (3月,88.3)[88]\n        (4月,85.0)[85]   (5月,95.5)[96]   (6月,104.9)[105]\n        (7月,99.1)[99]   (8月,110.0)[110] (9月,128.7)[129]\n        (10月,143.0)[143] (11月,151.2)[151] (12月,159.6)[160]\n    };\n\\legend{新能源汽车销量}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国汽车工业协会（2024年全年新能源汽车销量1286.6万辆，柱顶标注为取整数值，单位：万辆）};\n\\end{axis}\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    bar width=14pt,\\n    width=13cm, height=7cm,\\n    title={2024年中国新能源汽车月度销量对比},\\n    ylabel={销量（万辆）},\\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\\n    xtick=data,\\n    ymin=0, ymax=185,\\n    enlarge x limits=0.15,\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    grid=major,\\n    major grid style={dotted, gray!40}\\n]\\n\\\\addplot[fill=blue!55, draw=blue!70,\\n         nodes near coords, point meta=explicit symbolic,\\n         every node near coord/.append style={anchor=south, font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt}]\\n    coordinates {\\n        (1月,72.9)[73]   (2月,47.7)[48]   (3月,88.3)[88]\\n        (4月,85.0)[85]   (5月,95.5)[96]   (6月,104.9)[105]\\n        (7月,99.1)[99]   (8月,110.0)[110] (9月,128.7)[129]\\n        (10月,143.0)[143] (11月,151.2)[151] (12月,159.6)[160]\\n    };\\n\\\\legend{新能源汽车销量}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国汽车工业协会（2024年全年新能源汽车销量1286.6万辆，柱顶标注为取整数值，单位：万辆）};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2024年中国新能源汽车月度销量柱状图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    bar width=14pt,\n    width=13cm, height=7cm,\n    title={2024年中国新能源汽车月度销量对比},\n    ylabel={销量（万辆）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    ymin=0, ymax=185,\n    enlarge x limits=0.15,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    grid=major,\n    major grid style={dotted, gray!40}\n]\n\\addplot[fill=blue!55, draw=blue!70,\n         nodes near coords, point meta=explicit symbolic,\n         every node near coord/.append style={anchor=south, font=\\scriptsize, fill=none, draw=none, inner sep=1pt}]\n    coordinates {\n        (1月,72.9)[73]   (2月,47.7)[48]   (3月,88.3)[88]\n        (4月,85.0)[85]   (5月,95.5)[96]   (6月,104.9)[105]\n        (7月,99.1)[99]   (8月,110.0)[110] (9月,128.7)[129]\n        (10月,143.0)[143] (11月,151.2)[151] (12月,159.6)[160]\n    };\n\\legend{新能源汽车销量}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国汽车工业协会（2024年全年新能源汽车销量1286.6万辆，柱顶标注为取整数值，单位：万辆）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个 12 个月销售额柱状图，每个柱子都标数值，图例放到图外",
+  "created_at" : "2026-09-14T11:12:22.922Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 1045,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "history_id" : 328,
+  "user_id" : 15,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "你使用的模型是什么",
+  "ai_response" : "\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=11cm, height=7cm,\n    title={模型性能对比},\n    xlabel={模型类型},\n    ylabel={准确率（%）},\n    symbolic x coords={模型A,模型B,模型C,模型D},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west}\n]\n\\addplot[fill=blue!45, draw=blue!70] coordinates {\n    (模型A,88)\n    (模型B,92)\n    (模型C,85)\n    (模型D,90)\n};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\"chart_type\": \"bar\", \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    width=11cm, height=7cm,\\n    title={模型性能对比},\\n    xlabel={模型类型},\\n    ylabel={准确率（%）},\\n    symbolic x coords={模型A,模型B,模型C,模型D},\\n    xtick=data,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west}\\n]\\n\\\\addplot[fill=blue!45, draw=blue!70] coordinates {\\n    (模型A,88)\\n    (模型B,92)\\n    (模型C,85)\\n    (模型D,90)\\n};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\", \"summary\": \"模型性能对比柱状图\"}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=11cm, height=7cm,\n    title={模型性能对比},\n    xlabel={模型类型},\n    ylabel={准确率（%）},\n    symbolic x coords={模型A,模型B,模型C,模型D},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west}\n]\n\\addplot[fill=blue!45, draw=blue!70] coordinates {\n    (模型A,88)\n    (模型B,92)\n    (模型C,85)\n    (模型D,90)\n};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 你使用的模型是什么",
+  "created_at" : "2026-09-14T12:10:11.414Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 497,
+    "code_source" : "from_request",
+    "model_used" : "siliconflow"
+  }
+}

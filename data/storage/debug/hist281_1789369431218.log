@@ -1,0 +1,314 @@
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex)
+ restricted \write18 enabled.
+entering extended mode
+
+(c:/Users/27710/Desktop/v2/PG/hello/data/storage/generated_charts/user1/temp_74
+88975056985785098/hist281.tex
+LaTeX2e <2024-11-01> patch level 2
+L3 programming layer <2025-01-18>
+(d:/texlive/2025/texmf-dist/tex/latex/standalone/standalone.cls
+Document Class: standalone 2025/02/22 v1.5a Class to compile TeX sub-files stan
+dalone
+(d:/texlive/2025/texmf-dist/tex/latex/tools/shellesc.sty)
+(d:/texlive/2025/texmf-dist/tex/generic/iftex/ifluatex.sty
+(d:/texlive/2025/texmf-dist/tex/generic/iftex/iftex.sty))
+(d:/texlive/2025/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(d:/texlive/2025/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(d:/texlive/2025/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(d:/texlive/2025/texmf-dist/tex/generic/xkeyval/keyval.tex))))
+(d:/texlive/2025/texmf-dist/tex/latex/standalone/standalone.cfg)
+(d:/texlive/2025/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2024/06/29 v1.4n Standard LaTeX document class
+(d:/texlive/2025/texmf-dist/tex/latex/base/size10.clo)))
+(d:/texlive/2025/texmf-dist/tex/latex/pgfplots/pgfplots.sty
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfplots.revision.tex)
+(d:/texlive/2025/texmf-dist/tex/latex/graphics/graphicx.sty
+(d:/texlive/2025/texmf-dist/tex/latex/graphics/graphics.sty
+(d:/texlive/2025/texmf-dist/tex/latex/graphics/trig.sty)
+(d:/texlive/2025/texmf-dist/tex/latex/graphics-cfg/graphics.cfg)
+(d:/texlive/2025/texmf-dist/tex/latex/graphics-def/xetex.def)))
+(d:/texlive/2025/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty
+(d:/texlive/2025/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty
+(d:/texlive/2025/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/pgf.revision.tex)))
+(d:/texlive/2025/texmf-dist/tex/latex/pgf/basiclayer/pgfcore.sty
+(d:/texlive/2025/texmf-dist/tex/latex/pgf/systemlayer/pgfsys.sty
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/utilities/pgfkeyslibraryfiltered.co
+de.tex)) (d:/texlive/2025/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-xetex.def
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-dvipdfmx.def
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-common-pdf.def))
+))
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.tex
+)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.tex
+)) (d:/texlive/2025/texmf-dist/tex/latex/xcolor/xcolor.sty
+(d:/texlive/2025/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(d:/texlive/2025/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcore.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code.te
+x)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.trigonometric
+.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.random.code.t
+ex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.comparison.co
+de.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.base.code.tex
+)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.round.code.te
+x)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.misc.code.tex
+)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerarithm
+etics.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex))
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfint.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathconstruct.cod
+e.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathusage.code.te
+x)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.code
+.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransformations.c
+ode.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequick.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreobjects.code.tex)
+
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathprocessing.co
+de.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.tex
+) (d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.tex
+)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransparency.code
+.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepatterns.code.tex
+) (d:/texlive/2025/texmf-dist/tex/generic/pgf/basiclayer/pgfcorerdf.code.tex)))
+ (d:/texlive/2025/texmf-dist/tex/generic/pgf/modules/pgfmoduleshapes.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.code.tex)
+(d:/texlive/2025/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-0-65.st
+y)
+(d:/texlive/2025/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-1-18.st
+y)) (d:/texlive/2025/texmf-dist/tex/latex/pgf/utilities/pgffor.sty
+(d:/texlive/2025/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex))
+(d:/texlive/2025/texmf-dist/tex/latex/pgf/math/pgfmath.sty
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex))
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/utilities/pgffor.code.tex))
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers.co
+de.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzli
+brarytopaths.code.tex)))
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfplots.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfplotscore.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/sys/pgfplotssysgeneric.code.te
+x))
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/libs/pgfplotslibrary.code.tex)
+
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/oldpgfcompatib/pgfplotsoldpgfs
+upp_loader.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/libraries/pgflibraryfpu.code.tex)
+Package pgfplots: loading complementary utilities for your pgf version...
+
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/oldpgfcompatib/pgfplotsoldpgfs
+upp_pgfutil-common-lists.tex))
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/util/pgfplotsutil.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsliststru
+cture.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsliststru
+ctureext.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsarray.co
+de.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsmatrix.c
+ode.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/numtable/pgfplotstableshared.c
+ode.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsdeque.co
+de.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/util/pgfplotsbinary.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/util/pgfplotsbinary.data.code.
+tex))
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/util/pgfplotsutil.verb.code.te
+x)
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/libs/pgflibrarypgfplots.surfsh
+ading.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/sys/pgflibrarypgfplots.surfsha
+ding.pgfsys-xetex.def
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/sys/pgflibrarypgfplots.surfsha
+ding.pgfsys-dvipdfmx.def))))
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/util/pgfplotscolormap.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/util/pgfplotscolor.code.tex))
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfplotsstackedplots.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfplotsplothandlers.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfplotsmeshplothandler.code.t
+ex
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfplotsmeshplotimage.code.tex
+))) (d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfplots.scaling.code.tex)
+
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfplotscoordprocessing.code.t
+ex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfplots.errorbars.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfplots.markers.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfplotsticks.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfplots.paths.code.tex)
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzli
+brarydecorations.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/modules/pgfmoduledecorations.code.t
+ex))
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzli
+brarydecorations.pathmorphing.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/libraries/decorations/pgflibrarydec
+orations.pathmorphing.code.tex))
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzli
+brarydecorations.pathreplacing.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/libraries/decorations/pgflibrarydec
+orations.pathreplacing.code.tex))
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/libs/tikzlibrarypgfplots.conto
+urlua.code.tex))
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzli
+braryplotmarks.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/libraries/pgflibraryplotmarks.code.
+tex))) (d:/texlive/2025/texmf-dist/tex/latex/pgf-pie/pgf-pie.sty
+(d:/texlive/2025/texmf-dist/tex/latex/pgf-pie/tikzlibrarypie.code.tex
+(d:/texlive/2025/texmf-dist/tex/latex/carlisle/scalefnt.sty)))
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/libs/tikzlibrarypgfplots.fillb
+etween.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfcontrib/tikzlibraryfillbetw
+een.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzli
+braryintersections.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgf/libraries/pgflibraryintersections.c
+ode.tex))
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfcontrib/tikzlibrarydecorati
+ons.softclip.code.tex
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/pgfcontrib/pgflibraryfillbetwe
+en.code.tex)))
+(d:/texlive/2025/texmf-dist/tex/generic/pgfplots/libs/tikzlibrarypgfplots.decor
+ations.softclip.code.tex))
+(d:/texlive/2025/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(d:/texlive/2025/texmf-dist/tex/latex/amsmath/amstext.sty
+(d:/texlive/2025/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(d:/texlive/2025/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(d:/texlive/2025/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(d:/texlive/2025/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(d:/texlive/2025/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(d:/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec.sty
+(d:/texlive/2025/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
+(d:/texlive/2025/texmf-dist/tex/latex/l3kernel/expl3.sty
+(d:/texlive/2025/texmf-dist/tex/latex/l3backend/l3backend-xetex.def)))
+(d:/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec-xetex.sty
+(d:/texlive/2025/texmf-dist/tex/latex/base/fontenc.sty)
+(d:/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec.cfg)))
+(d:/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK.sty
+(d:/texlive/2025/texmf-dist/tex/latex/ctex/ctexhook.sty)
+(d:/texlive/2025/texmf-dist/tex/latex/l3packages/xtemplate/xtemplate.sty)
+(d:/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK.cfg))
+No file hist281.aux.
+Package pgfplots notification 'compat/show suggested version=true': document ha
+s been generated with the most recent feature set (\pgfplotsset{compat=1.18}).
+
+! Undefined control sequence.
+\pgfkeyscurrentkey ->\n 
+                        ybar
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+! Undefined control sequence.
+\pgfkeyscurrentkey ->\n 
+                        width
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+! Undefined control sequence.
+\pgfkeyscurrentkey ->\n 
+                        height
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+! Undefined control sequence.
+\pgfkeyscurrentkey ->\n 
+                        title
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+! Undefined control sequence.
+\pgfkeyscurrentkey ->\n 
+                        ylabel
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+! Undefined control sequence.
+\pgfkeyscurrentkey ->\n 
+                        symbolic x coords
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+! Undefined control sequence.
+\pgfkeyscurrentkey ->\n 
+                        xtick
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+! Undefined control sequence.
+\pgfkeyscurrentkey ->\n 
+                        x tick label style
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+! Undefined control sequence.
+\pgfkeyscurrentkey ->\n 
+                        ymin
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+! Undefined control sequence.
+\pgfkeyscurrentkey ->\n 
+                        enlarge x limits
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+! Undefined control sequence.
+\pgfkeyscurrentkey ->\n 
+                        nodes near coords
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+! Undefined control sequence.
+\pgfkeyscurrentkey ->\n 
+                        every node near coord/.append style
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+! Undefined control sequence.
+\pgfkeyscurrentkey ->\n 
+                        legend style
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+! TeX capacity exceeded, sorry [input stack size=10000].
+\@nomath ...e \@font@warning {Command \noexpand #1
+                                                  invalid in math mode}\fi 
+l.19 ...={(1.03,0.5)}, anchor=west, font=\tiny}\n]
+                                                  \n\addplot[fill=blue!60, d...
+
+No pages of output.
+Transcript written on c:\Users\27710\Desktop\v2\PG\hello\data\storage\generated
+_charts\user1\temp_7488975056985785098/hist281.log.

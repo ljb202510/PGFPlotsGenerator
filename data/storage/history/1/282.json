@@ -1,0 +1,19 @@
+{
+  "history_id" : 282,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个带误差棒的实验数据对比柱状图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=10cm,\n    height=6cm,\n    title={不同算法准确率对比},\n    ylabel={准确率（\\%）},\n    symbolic x coords={算法 A, 算法 B, 算法 C, 算法 D},\n    xtick=data,\n    ymin=0,\n    ymax=95,\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    error bars/y dir=both,\n    error bars/y explicit\n]\n\\addplot +[error bars/.cd, y dir=both, y explicit] coordinates {\n    (算法 A, 85) +- (0, 2.5)\n    (算法 B, 88) +- (0, 3.0)\n    (算法 C, 82) +- (0, 2.2)\n    (算法 D, 90) +- (0, 3.5)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：实验模拟数据 (2023)};\n\\end{axis}\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\\\begin{axis}[\\\\n    ybar,\\\\n    width=10cm,\\\\n    height=6cm,\\\\n    title={不同算法准确率对比},\\\\n    ylabel={准确率（\\\\%）},\\\\n    symbolic x coords={算法 A, 算法 B, 算法 C, 算法 D},\\\\n    xtick=data,\\\\n    ymin=0,\\\\n    ymax=95,\\\\n    enlarge x limits=0.15,\\\\n    nodes near coords,\\\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\\\n    legend style={at={(1.03,0.5)}, anchor=west},\\\\n    error bars/y dir=both,\\\\n    error bars/y explicit\\\\n]\\\\n\\\\addplot +[error bars/.cd, y dir=both, y explicit] coordinates {\\\\n    (算法 A, 85) +- (0, 2.5)\\\\n    (算法 B, 88) +- (0, 3.0)\\\\n    (算法 C, 82) +- (0, 2.2)\\\\n    (算法 D, 90) +- (0, 3.5)\\\\n};\\\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：实验模拟数据 (2023)};\\\\n\\\\end{axis}\\\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2023年四种算法准确率对比带误差棒\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\\begin{axis}[\\n    ybar,\\n    width=10cm,\\n    height=6cm,\\n    title={不同算法准确率对比},\\n    ylabel={准确率（\\%）},\\n    symbolic x coords={算法 A, 算法 B, 算法 C, 算法 D},\\n    xtick=data,\\n    ymin=0,\\n    ymax=95,\\n    enlarge x limits=0.15,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west},\\n    error bars/y dir=both,\\n    error bars/y explicit\\n]\\n\\addplot +[error bars/.cd, y dir=both, y explicit] coordinates {\\n    (算法 A, 85) +- (0, 2.5)\\n    (算法 B, 88) +- (0, 3.0)\\n    (算法 C, 82) +- (0, 2.2)\\n    (算法 D, 90) +- (0, 3.5)\\n};\\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：实验模拟数据 (2023)};\\n\\end{axis}\\n\\end{tikzpicture}",
+  "generation_description" : " 画一个带误差棒的实验数据对比柱状图",
+  "created_at" : "2026-09-14T07:03:57.871Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 803,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "history_id" : 284,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个含正负值的月度盈亏柱状图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2023年度月度盈亏情况},\n    ylabel={盈亏（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    x tick label style={font=\\small, rotate=45, anchor=east},\n    ymin=-50, ymax=100,\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, fill=white, draw=black},\n    table/row sep=-1cm, % 调整行间距\n    table/row sep=1cm % 调整行间距\n]\n\\addplot[fill=red!50, draw=red!50] coordinates {\n    (1月, -20)\n    (2月, -10)\n    (3月, 15)\n    (4月, 25)\n    (5月, 30)\n    (6月, 40)\n    (7月, 50)\n    (8月, 45)\n    (9月, 35)\n    (10月, 20)\n    (11月, 10)\n    (12月, 5)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2023年度财务报表};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    title={2023年度月度盈亏情况},\\n    ylabel={盈亏（万元）},\\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\\n    xtick=data,\\n    x tick label style={font=\\\\small, rotate=45, anchor=east},\\n    ymin=-50, ymax=100,\\n    enlarge x limits=0.15,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, fill=white, draw=black},\\n    table/row sep=-1cm,\\n    table/row sep=1cm\\n]\\n\\\\addplot[fill=red!50, draw=red!50] coordinates {\\n    (1月, -20)\\n    (2月, -10)\\n    (3月, 15)\\n    (4月, 25)\\n    (5月, 30)\\n    (6月, 40)\\n    (7月, 50)\\n    (8月, 45)\\n    (9月, 35)\\n    (10月, 20)\\n    (11月, 10)\\n    (12月, 5)\\n};\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2023年度财务报表};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2023年各月盈亏柱状图，红柱表示亏损，绿柱表示盈利。\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2023年度月度盈亏情况},\n    ylabel={盈亏（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    x tick label style={font=\\small, rotate=45, anchor=east},\n    ymin=-50, ymax=100,\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, fill=white, draw=black},\n    table/row sep=-1cm,\n    table/row sep=1cm\n]\n\\addplot[fill=red!50, draw=red!50] coordinates {\n    (1月, -20)\n    (2月, -10)\n    (3月, 15)\n    (4月, 25)\n    (5月, 30)\n    (6月, 40)\n    (7月, 50)\n    (8月, 45)\n    (9月, 35)\n    (10月, 20)\n    (11月, 10)\n    (12月, 5)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2023年度财务报表};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个含正负值的月度盈亏柱状图",
+  "created_at" : "2026-09-14T07:04:19.611Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 876,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

@@ -1,0 +1,66 @@
+\documentclass[border=5pt]{standalone}
+% 命名色表必须在 pgfplots 之前声明：pgfplots 内部会先加载 xcolor，
+% 之后再 \usepackage[dvipsnames,svgnames]{xcolor} 会触发 Option clash
+\PassOptionsToPackage{dvipsnames,svgnames}{xcolor}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % 饼图：AI 代码可直接使用 \pie
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}  % 面积图 / 堆叠面积图 / \closedcycle 填充路径
+% 注：error bars 是 pgfplots 内置功能（在核心 pgfplots.errorbars.code.tex），不需要单独 \usepgfplotslibrary 加载
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% 支持中文
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{SimSun}
+\setmainfont{Times New Roman}
+
+\begin{document}
+
+\begin{tikzpicture}
+\begin{axis}[
+    area plot stack,
+    width=12cm, height=7cm,
+    title={2019--2024年三款产品累计销量趋势},
+    ylabel={累计销量（万台）},
+    symbolic x coords={2019,2020,2021,2022,2023,2024},
+    xtick=data,
+    ymin=0, ymax=60,
+    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},
+    grid=major,
+    major grid style={dotted, gray!40},
+    nodes near coords,
+    every node near coord/.append style={font=\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},
+    point meta=explicit symbolic
+]
+\addplot[fill=blue!50, draw=blue!60, area legend] coordinates {
+    (2019,10)[10]
+    (2020,12)[12]
+    (2021,15)[15]
+    (2022,18)[18]
+    (2023,22)[22]
+    (2024,26)[26]
+};
+\addplot[fill=orange!50, draw=orange!60, area legend] coordinates {
+    (2019,8)[8]
+    (2020,10)[10]
+    (2021,13)[13]
+    (2022,16)[16]
+    (2023,19)[19]
+    (2024,22)[22]
+};
+\addplot[fill=green!50, draw=green!60, area legend] coordinates {
+    (2019,5)[5]
+    (2020,7)[7]
+    (2021,9)[9]
+    (2022,11)[11]
+    (2023,13)[13]
+    (2024,15)[15]
+};
+\legend{产品A,产品B,产品C}
+\node[anchor=north west, font=\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：内部销售统计（2019--2024年,单位：万台）};
+\end{axis}
+\end{tikzpicture}
+
+\end{document}

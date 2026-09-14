@@ -1,0 +1,19 @@
+{
+  "history_id" : 315,
+  "user_id" : 15,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "折线图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={2020-2023 年中国新能源汽车产销量},\n    xlabel={年份},\n    ylabel={销量（万辆）},\n    symbolic x coords={2020, 2021, 2022, 2023},\n    xtick=data,\n    ymin=0,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[blue, mark=*, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}] coordinates {(2020,136.7) (2021,352.1) (2022,688.7) (2023,949.3)};\n\\addlegendentry{产量}\n\\addplot[red, mark=square*, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north}] coordinates {(2020,136.7) (2021,352.1) (2022,688.7) (2023,949.3)};\n\\addlegendentry{销量}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国汽车工业协会 (2024)};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"line\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    width=12cm, height=7cm,\\n    title={2020-2023 年中国新能源汽车产销量},\\n    xlabel={年份},\\n    ylabel={销量（万辆）},\\n    symbolic x coords={2020, 2021, 2022, 2023},\\n    xtick=data,\\n    ymin=0,\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\\n]\\n\\\\addplot[blue, mark=*, thick, nodes near coords, every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}] coordinates {(2020,136.7) (2021,352.1) (2022,688.7) (2023,949.3)};\\n\\\\addlegendentry{产量}\\n\\\\addplot[red, mark=square*, thick, nodes near coords, every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north}] coordinates {(2020,136.7) (2021,352.1) (2022,688.7) (2023,949.3)};\\n\\\\addlegendentry{销量}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国汽车工业协会 (2024)};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2020-2023年中国新能源汽车产销量折线图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={2020-2023 年中国新能源汽车产销量},\n    xlabel={年份},\n    ylabel={销量（万辆）},\n    symbolic x coords={2020, 2021, 2022, 2023},\n    xtick=data,\n    ymin=0,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[blue, mark=*, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}] coordinates {(2020,136.7) (2021,352.1) (2022,688.7) (2023,949.3)};\n\\addlegendentry{产量}\n\\addplot[red, mark=square*, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north}] coordinates {(2020,136.7) (2021,352.1) (2022,688.7) (2023,949.3)};\n\\addlegendentry{销量}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国汽车工业协会 (2024)};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 折线图",
+  "created_at" : "2026-09-14T11:40:26.888Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 1040,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

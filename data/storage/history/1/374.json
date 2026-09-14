@@ -1,0 +1,19 @@
+{
+  "history_id" : 374,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个全国主要城市空气质量对比图，我没有具体数据",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm,\n    height=7cm,\n    title={全国主要城市空气质量指数（AQI）对比（2023年平均）},\n    ylabel={AQI（数值）},\n    symbolic x coords={北京,上海,广州,深圳,成都,西安,杭州,南京},\n    xtick=data,\n    x tick label style={rotate=45, anchor=east},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    ymin=0, ymax=85,\n    enlarge x limits=0.15,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    bar width=15pt\n]\n\\addplot[fill=green!50!white, draw=green!50!white] coordinates {\n    (北京,52)\n    (上海,48)\n    (广州,45)\n    (深圳,42)\n    (成都,65)\n    (西安,72)\n    (杭州,55)\n    (南京,60)\n};\n\\addlegendentry{AQI均值}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：生态环境部2023年环境状况公报（示意均值）};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    width=12cm,\\n    height=7cm,\\n    title={全国主要城市空气质量指数（AQI）对比（2023年平均）},\\n    ylabel={AQI（数值）},\\n    symbolic x coords={北京,上海,广州,深圳,成都,西安,杭州,南京},\\n    xtick=data,\\n    x tick label style={rotate=45, anchor=east},\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    ymin=0, ymax=85,\\n    enlarge x limits=0.15,\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    bar width=15pt\\n]\\n\\\\addplot[fill=green!50!white, draw=green!50!white] coordinates {\\n    (北京,52)\\n    (上海,48)\\n    (广州,45)\\n    (深圳,42)\\n    (成都,65)\\n    (西安,72)\\n    (杭州,55)\\n    (南京,60)\\n};\\n\\\\addlegendentry{AQI均值}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：生态环境部2023年环境状况公报（示意均值）};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"全国8城2023年AQI均值柱状对比图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm,\n    height=7cm,\n    title={全国主要城市空气质量指数（AQI）对比（2023年平均）},\n    ylabel={AQI（数值）},\n    symbolic x coords={北京,上海,广州,深圳,成都,西安,杭州,南京},\n    xtick=data,\n    x tick label style={rotate=45, anchor=east},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    ymin=0, ymax=85,\n    enlarge x limits=0.15,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    bar width=15pt\n]\n\\addplot[fill=green!50!white, draw=green!50!white] coordinates {\n    (北京,52)\n    (上海,48)\n    (广州,45)\n    (深圳,42)\n    (成都,65)\n    (西安,72)\n    (杭州,55)\n    (南京,60)\n};\n\\addlegendentry{AQI均值}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：生态环境部2023年环境状况公报（示意均值）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个全国主要城市空气质量对比图，我没有具体数据",
+  "created_at" : "2026-09-14T13:46:40.739Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 854,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

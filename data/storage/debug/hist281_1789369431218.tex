@@ -1,0 +1,21 @@
+\documentclass[border=5pt]{standalone}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % 饼图：AI 代码可直接使用 \pie
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}  % 面积图 / 堆叠面积图 / \closedcycle 填充路径
+% 注：error bars 是 pgfplots 内置功能（在核心 pgfplots.errorbars.code.tex），不需要单独 \usepgfplotslibrary 加载
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}[dvipsnames,svgnames]  % 加载标准色名表（steelblue/teal/orange/coral 等），避免 AI 用预定义色名时报 Undefined color
+
+% 支持中文
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{SimSun}
+\setmainfont{Times New Roman}
+
+\begin{document}
+
+\begin{tikzpicture}\begin{axis}[\n    ybar,\n    width=12cm,\n    height=6cm,\n    title={2023年中国主要城市月降水量统计（北京）},\n    ylabel={降水量（mm）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    x tick label style={rotate=45, anchor=east, font=\small},\n    ymin=0, ymax=250,\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\tiny, fill=none, draw=none, inner sep=1pt, anchor=south, rotate=0},\n    legend style={at={(1.03,0.5)}, anchor=west, font=\tiny}\n]\n\addplot[fill=blue!60, draw=black] coordinates {\n    (1月,2) (2月,3) (3月,6) (4月,9) (5月,19) (6月,35) (7月,190) (8月,210) (9月,49) (10月,10) (11月,4) (12月,3)\n};\n\node[anchor=north west, font=\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国气象局2023年统计};\n\end{axis}\n\end{tikzpicture}
+
+\end{document}

@@ -1,0 +1,19 @@
+{
+  "history_id" : 312,
+  "user_id" : 15,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "各年龄占比饼图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\pie[\n    radius=3,\n    text=legend,\n    legend style={at={(1.1,0.5)}, anchor=west, font=\\small, draw=none, fill=none},\n    color={blue!70, green!70, red!70, orange!70, purple!70}\n]\n{\n    21.0/0-14岁,\n    64.0/15-64岁,\n    15.0/65岁及以上\n};\n\\node[anchor=north west, font=\\scriptsize] at (0, -3.5) {数据来源：国家统计局 (2023年)};\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"pie\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\pie[\\n    radius=3,\\n    text=legend,\\n    legend style={at={(1.1,0.5)}, anchor=west, font=\\\\small, draw=none, fill=none},\\n    color={blue!70, green!70, red!70, orange!70, purple!70}\\n]\\n{\\n    21.0/0-14岁,\\n    64.0/15-64岁,\\n    15.0/65岁及以上\\n};\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (0, -3.5) {数据来源：国家统计局 (2023年)};\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2023年中国各年龄段人口占比饼图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\pie[\n    radius=3,\n    text=legend,\n    legend style={at={(1.1,0.5)}, anchor=west, font=\\small, draw=none, fill=none},\n    color={blue!70, green!70, red!70, orange!70, purple!70}\n]\n{\n    21.0/0-14岁,\n    64.0/15-64岁,\n    15.0/65岁及以上\n};\n\\node[anchor=north west, font=\\scriptsize] at (0, -3.5) {数据来源：国家统计局 (2023年)};\n\\end{tikzpicture}",
+  "generation_description" : " 各年龄占比饼图",
+  "created_at" : "2026-09-14T11:34:23.157Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 351,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "history_id" : 332,
+  "user_id" : 15,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "请基于我上传的数据绘制折线图，展示数值随时间或类别变化的趋势；添加图表标题、X 轴与 Y 轴标签（含单位）、数据点标记与网格线，并加上图例。",
+  "ai_response" : "由于您未上传具体的数据文件，根据指令要求，我将基于**2020-2024年中国新能源汽车销量**的公开权威数据（来源：乘联会/中汽协）生成一组示意数据，绘制折线图以展示趋势。\n\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={2020--2024年中国新能源汽车销量趋势},\n    xlabel={年份},\n    ylabel={销量（万辆）},\n    symbolic x coords={2020,2021,2022,2023,2024},\n    xtick=data,\n    grid=major,\n    grid style={dashed, gray!40},\n    ymin=0, ymax=1300,\n    enlarge x limits=0.15,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[blue, mark=*, thick] coordinates {\n    (2020,136.7)\n    (2021,352.1)\n    (2022,688.7)\n    (2023,949.5)\n    (2024,1080.0)\n};\n\\addlegendentry{新能源汽车销量}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：乘联会/中汽协（2024年为全年预估）};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"line\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    width=12cm, height=7cm,\\n    title={2020--2024年中国新能源汽车销量趋势},\\n    xlabel={年份},\\n    ylabel={销量（万辆）},\\n    symbolic x coords={2020,2021,2022,2023,2024},\\n    xtick=data,\\n    grid=major,\\n    grid style={dashed, gray!40},\\n    ymin=0, ymax=1300,\\n    enlarge x limits=0.15,\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\\n]\\n\\\\addplot[blue, mark=*, thick] coordinates {\\n    (2020,136.7)\\n    (2021,352.1)\\n    (2022,688.7)\\n    (2023,949.5)\\n    (2024,1080.0)\\n};\\n\\\\addlegendentry{新能源汽车销量}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：乘联会/中汽协（2024年为全年预估）};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2020至2024年中国新能源汽车销量增长趋势图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={2020--2024年中国新能源汽车销量趋势},\n    xlabel={年份},\n    ylabel={销量（万辆）},\n    symbolic x coords={2020,2021,2022,2023,2024},\n    xtick=data,\n    grid=major,\n    grid style={dashed, gray!40},\n    ymin=0, ymax=1300,\n    enlarge x limits=0.15,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[blue, mark=*, thick] coordinates {\n    (2020,136.7)\n    (2021,352.1)\n    (2022,688.7)\n    (2023,949.5)\n    (2024,1080.0)\n};\n\\addlegendentry{新能源汽车销量}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：乘联会/中汽协（2024年为全年预估）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请基于我上传的数据绘制折线图，展示数值随时间或类别变化的趋势；添加图表标题、X 轴与 Y 轴标签（含单位）、数据点标记与网格线，并加上图例。",
+  "created_at" : "2026-09-14T12:19:58.007Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 802,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

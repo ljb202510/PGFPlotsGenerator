@@ -1,0 +1,19 @@
+{
+  "history_id" : 308,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个全国主要城市空气质量对比图，我没有具体数据",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=17cm,\n    height=8cm,\n    title={2023年全国主要城市PM2.5年均浓度对比},\n    ylabel={PM2.5年均浓度（微克/立方米）},\n    symbolic x coords={拉萨,海口,舟山,深圳,厦门,福州,贵阳,昆明,广州,上海,南京,北京,武汉,哈尔滨,成都,太原,西安,郑州,石家庄},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=30, anchor=east},\n    ymin=0,\n    ymax=58,\n    ytick={0,10,20,30,40,50},\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=south},\n    axis lines=left\n]\n% 数据按PM2.5年均浓度由低到高排列（左→右空气质量由优到差）\n\\addplot[fill=teal!60, draw=teal!80!black] coordinates {\n    (拉萨,12) (海口,15) (舟山,16) (深圳,17) (厦门,18) (福州,19) (贵阳,20)\n    (昆明,21) (广州,23) (上海,28) (南京,29) (北京,32) (武汉,36) (哈尔滨,37)\n    (成都,39) (太原,40) (西安,47) (郑州,49) (石家庄,51)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.28) {数据来源：生态环境部《2023中国生态环境状况公报》，全国168个重点城市PM2.5年均浓度实测值（微克/立方米）};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\"chart_type\": \"bar\", \"code\": \"\\\\begin{tikzpicture}\\\\begin{axis}[\\\\n    ybar,\\\\n    width=17cm,\\\\n    height=8cm,\\\\n    title={2023年全国主要城市PM2.5年均浓度对比},\\\\n    ylabel={PM2.5年均浓度（微克/立方米）},\\\\n    symbolic x coords={拉萨,海口,舟山,深圳,厦门,福州,贵阳,昆明,广州,上海,南京,北京,武汉,哈尔滨,成都,太原,西安,郑州,石家庄},\\\\n    xtick=data,\\\\n    x tick label style={font=\\\\scriptsize, rotate=30, anchor=east},\\\\n    ymin=0,\\\\n    ymax=58,\\\\n    ytick={0,10,20,30,40,50},\\\\n    ymajorgrids=true,\\\\n    grid style={dashed, gray!30},\\\\n    enlarge x limits=0.15,\\\\n    nodes near coords,\\\\n    every node near coord/.append style={font=\\\\tiny, fill=none, draw=none, inner sep=1pt, anchor=south},\\\\n    axis lines=left\\\\n]\\\\n% 数据按PM2.5年均浓度由低到高排列（左→右空气质量由优到差）\\\\n\\\\addplot[fill=teal!60, draw=teal!80!black] coordinates {\\\\n    (拉萨,12) (海口,15) (舟山,16) (深圳,17) (厦门,18) (福州,19) (贵阳,20)\\\\n    (昆明,21) (广州,23) (上海,28) (南京,29) (北京,32) (武汉,36) (哈尔滨,37)\\\\n    (成都,39) (太原,40) (西安,47) (郑州,49) (石家庄,51)\\\\n};\\\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.28) {数据来源：生态环境部《2023中国生态环境状况公报》，全国168个重点城市PM2.5年均浓度实测值（微克/立方米）};\\\\n\\\\end{axis}\\\\n\\\\end{tikzpicture}\", \"summary\": \"2023年全国19城PM2.5浓度柱状对比图\"}\n```",
+  "chart_code" : "\\begin{tikzpicture}\\begin{axis}[\n    ybar,\n    width=17cm,\n    height=8cm,\n    title={2023年全国主要城市PM2.5年均浓度对比},\n    ylabel={PM2.5年均浓度（微克/立方米）},\n    symbolic x coords={拉萨,海口,舟山,深圳,厦门,福州,贵阳,昆明,广州,上海,南京,北京,武汉,哈尔滨,成都,太原,西安,郑州,石家庄},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=30, anchor=east},\n    ymin=0,\n    ymax=58,\n    ytick={0,10,20,30,40,50},\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=south},\n    axis lines=left\n]\n% 数据按PM2.5年均浓度由低到高排列（左→右空气质量由优到差）\n\\addplot[fill=teal!60, draw=teal!80!black] coordinates {\n    (拉萨,12) (海口,15) (舟山,16) (深圳,17) (厦门,18) (福州,19) (贵阳,20)\n    (昆明,21) (广州,23) (上海,28) (南京,29) (北京,32) (武汉,36) (哈尔滨,37)\n    (成都,39) (太原,40) (西安,47) (郑州,49) (石家庄,51)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.28) {数据来源：生态环境部《2023中国生态环境状况公报》，全国168个重点城市PM2.5年均浓度实测值（微克/立方米）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个全国主要城市空气质量对比图，我没有具体数据",
+  "created_at" : "2026-09-14T11:12:48.079Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 1025,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

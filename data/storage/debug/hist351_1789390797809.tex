@@ -1,0 +1,41 @@
+\documentclass[border=5pt]{standalone}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % 饼图：AI 代码可直接使用 \pie
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}  % 面积图 / 堆叠面积图 / \closedcycle 填充路径
+% 注：error bars 是 pgfplots 内置功能（在核心 pgfplots.errorbars.code.tex），不需要单独 \usepgfplotslibrary 加载
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}[dvipsnames,svgnames]  % 加载标准色名表（steelblue/teal/orange/coral 等），避免 AI 用预定义色名时报 Undefined color
+
+% 支持中文
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{SimSun}
+\setmainfont{Times New Roman}
+
+\begin{document}
+
+\begin{tikzpicture}
+\begin{axis}[
+    ybar,
+    width=10cm, height=6cm,
+    title={各类型项目投资金额对比},
+    xlabel={项目类型},
+    ylabel={投资金额（万元）},
+    symbolic x coords={类型A,类型B,类型C,类型D,类型E},
+    xtick=data,
+    nodes near coords,
+    every node near coord/.append style={font=\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},
+    legend style={at=(1.03,0.5), anchor=west, draw=black, fill=white},
+    enlarge x limits=0.15,
+    bar width=0.4cm,
+    color={blue, red, green, orange, purple}
+]
+\addplot coordinates {(类型A,1200) (类型B,950) (类型C,1500) (类型D,800) (类型E,1100)};
+\addlegendentry{投资金额（万元）}
+\node[anchor=north west, font=\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：内部统计报表 2024};
+\end{axis}
+\end{tikzpicture}
+
+\end{document}

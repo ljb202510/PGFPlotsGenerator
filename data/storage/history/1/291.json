@@ -1,0 +1,19 @@
+{
+  "history_id" : 291,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个 2019-2024 年三款产品累计销量的堆叠面积图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    area legend,\n    stack plots=y,\n    width=12cm,\n    height=7cm,\n    title={2019-2024年三款产品累计销量},\n    ylabel={销量（万台）},\n    symbolic x coords={2019, 2020, 2021, 2022, 2023, 2024},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    ymin=0, ymax=160,\n    enlarge x limits=0.15\n]\n\\addplot[fill=blue!30, draw=blue!80, area legend] coordinates {(2019,20) (2020,25) (2021,32) (2022,40) (2023,48) (2024,55)};\n\\addplot[fill=green!30, draw=green!80, area legend] coordinates {(2019,15) (2020,18) (2021,22) (2022,26) (2023,30) (2024,35)};\n\\addplot[fill=red!30, draw=red!80, area legend] coordinates {(2019,10) (2020,12) (2021,15) (2022,18) (2023,22) (2024,26)};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2019-2024年度行业统计年报};\n\\end{axis}\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"area\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    area legend,\\n    stack plots=y,\\n    width=12cm,\\n    height=7cm,\\n    title={2019-2024年三款产品累计销量},\\n    ylabel={销量（万台）},\\n    symbolic x coords={2019, 2020, 2021, 2022, 2023, 2024},\\n    xtick=data,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    ymin=0, ymax=160,\\n    enlarge x limits=0.15\\n]\\n\\\\addplot[fill=blue!30, draw=blue!80, area legend] coordinates {(2019,20) (2020,25) (2021,32) (2022,40) (2023,48) (2024,55)};\\n\\\\addplot[fill=green!30, draw=green!80, area legend] coordinates {(2019,15) (2020,18) (2021,22) (2022,26) (2023,30) (2024,35)};\\n\\\\addplot[fill=red!30, draw=red!80, area legend] coordinates {(2019,10) (2020,12) (2021,15) (2022,18) (2023,22) (2024,26)};\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2019-2024年度行业统计年报};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2019-2024三款产品累计销量堆叠面积图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    area legend,\n    stack plots=y,\n    width=12cm,\n    height=7cm,\n    title={2019-2024年三款产品累计销量},\n    ylabel={销量（万台）},\n    symbolic x coords={2019, 2020, 2021, 2022, 2023, 2024},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    ymin=0, ymax=160,\n    enlarge x limits=0.15\n]\n\\addplot[fill=blue!30, draw=blue!80, area legend] coordinates {(2019,20) (2020,25) (2021,32) (2022,40) (2023,48) (2024,55)};\n\\addplot[fill=green!30, draw=green!80, area legend] coordinates {(2019,15) (2020,18) (2021,22) (2022,26) (2023,30) (2024,35)};\n\\addplot[fill=red!30, draw=red!80, area legend] coordinates {(2019,10) (2020,12) (2021,15) (2022,18) (2023,22) (2024,26)};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2019-2024年度行业统计年报};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个 2019-2024 年三款产品累计销量的堆叠面积图",
+  "created_at" : "2026-09-14T07:05:36.501Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 995,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

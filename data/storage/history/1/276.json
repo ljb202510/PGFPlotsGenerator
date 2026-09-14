@@ -1,0 +1,19 @@
+{
+  "history_id" : 276,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个 2023 年四个季度销售额对比柱状图，图例外置",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2023年各季度销售额对比},\n    ylabel={销售额（亿元）},\n    symbolic x coords={第一季度,第二季度,第三季度,第四季度},\n    xtick=data,\n    ymin=0, ymax=120,\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    legend entries={销售额}\n]\n\\addplot[fill=blue!60, draw=black, thick] coordinates {(第一季度,85) (第二季度,98) (第三季度,105) (第四季度,112)};\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局（2023年）};\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\\\begin{axis}[\\\\n    ybar,\\\\n    title={2023年各季度销售额对比},\\\\n    ylabel={销售额（亿元）},\\\\n    symbolic x coords={第一季度,第二季度,第三季度,第四季度},\\\\n    xtick=data,\\\\n    ymin=0, ymax=120,\\\\n    enlarge x limits=0.15,\\\\n    nodes near coords,\\\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\\\n    legend entries={销售额}\\\\n]\\\\n\\\\addplot[fill=blue!60, draw=black, thick] coordinates {(第一季度,85) (第二季度,98) (第三季度,105) (第四季度,112)};\\\\n\\\\end{axis}\\\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局（2023年）};\\\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2023年四季销售额柱状对比图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\\begin{axis}[\\n    ybar,\\n    title={2023年各季度销售额对比},\\n    ylabel={销售额（亿元）},\\n    symbolic x coords={第一季度,第二季度,第三季度,第四季度},\\n    xtick=data,\\n    ymin=0, ymax=120,\\n    enlarge x limits=0.15,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    legend entries={销售额}\\n]\\n\\addplot[fill=blue!60, draw=black, thick] coordinates {(第一季度,85) (第二季度,98) (第三季度,105) (第四季度,112)};\\n\\end{axis}\\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局（2023年）};\\n\\end{tikzpicture}",
+  "generation_description" : " 画一个 2023 年四个季度销售额对比柱状图，图例外置",
+  "created_at" : "2026-09-14T07:02:56.082Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 678,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

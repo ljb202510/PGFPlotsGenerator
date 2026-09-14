@@ -1,0 +1,19 @@
+{
+  "history_id" : 357,
+  "user_id" : 15,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "请基于我上传的数据绘制柱状图，比较各类别的数值大小；添加图表标题、坐标轴标签（含单位）与数值标注，使用清晰的配色并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各类别数值对比},\n    ylabel={数值（单位）},\n    symbolic x coords={类别 A, 类别 B, 类别 C, 类别 D, 类别 E},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    width=12cm,\n    height=7cm,\n    grid=major,\n    grid style={dashed, gray!40}\n]\n\\addplot[fill=blue!60, mark=*] coordinates {\n    (类别 A, 45)\n    (类别 B, 62)\n    (类别 C, 38)\n    (类别 D, 75)\n    (类别 E, 51)\n};\n\\addlegendentry{各类别数值}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：示意数据};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    title={各类别数值对比},\\n    ylabel={数值（单位）},\\n    symbolic x coords={类别 A, 类别 B, 类别 C, 类别 D, 类别 E},\\n    xtick=data,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    enlarge x limits=0.15,\\n    width=12cm,\\n    height=7cm,\\n    grid=major,\\n    grid style={dashed, gray!40}\\n]\\n\\\\addplot[fill=blue!60, mark=*] coordinates {\\n    (类别 A, 45)\\n    (类别 B, 62)\\n    (类别 C, 38)\\n    (类别 D, 75)\\n    (类别 E, 51)\\n};\\n\\\\addlegendentry{各类别数值}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：示意数据};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"各类别数值对比柱状图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各类别数值对比},\n    ylabel={数值（单位）},\n    symbolic x coords={类别 A, 类别 B, 类别 C, 类别 D, 类别 E},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    width=12cm,\n    height=7cm,\n    grid=major,\n    grid style={dashed, gray!40}\n]\n\\addplot[fill=blue!60, mark=*] coordinates {\n    (类别 A, 45)\n    (类别 B, 62)\n    (类别 C, 38)\n    (类别 D, 75)\n    (类别 E, 51)\n};\n\\addlegendentry{各类别数值}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：示意数据};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请基于我上传的数据绘制柱状图，比较各类别的数值大小；添加图表标题、坐标轴标签（含单位）与数值标注，使用清晰的配色并加上图例。",
+  "created_at" : "2026-09-14T13:06:28.057Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 738,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

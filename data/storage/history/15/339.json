@@ -1,0 +1,19 @@
+{
+  "history_id" : 339,
+  "user_id" : 15,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "直方图",
+  "ai_response" : "\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7cm,\n    title={2023年中国居民人均可支配收入分布直方图（单位：万元）},\n    xlabel={收入区间（万元）},\n    ylabel={频数（百万人）},\n    ymin=0, ymax=15,\n    xtick=data,\n    symbolic x coords={0-2, 2-4, 4-6, 6-8, 8-10, 10-12, 12-15, 15-20, 20+},\n    bar width=18pt,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15\n]\n\\addplot[fill=blue!70, draw=black] coordinates {\n    (0-2, 2.5)\n    (2-4, 6.2)\n    (4-6, 8.8)\n    (6-8, 10.5)\n    (8-10, 12.1)\n    (10-12, 10.8)\n    (12-15, 8.5)\n    (15-20, 4.2)\n    (20+, 1.8)\n};\n\\legend{2023年}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局《2023年国民经济和社会发展统计公报》};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\"chart_type\": \"bar\", \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    width=12cm,\\n    height=7cm,\\n    title={2023年中国居民人均可支配收入分布直方图（单位：万元）},\\n    xlabel={收入区间（万元）},\\n    ylabel={频数（百万人）},\\n    ymin=0, ymax=15,\\n    xtick=data,\\n    symbolic x coords={0-2, 2-4, 4-6, 6-8, 8-10, 10-12, 12-15, 15-20, 20+},\\n    bar width=18pt,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    enlarge x limits=0.15\\n]\\n\\\\addplot[fill=blue!70, draw=black] coordinates {\\n    (0-2, 2.5)\\n    (2-4, 6.2)\\n    (4-6, 8.8)\\n    (6-8, 10.5)\\n    (8-10, 12.1)\\n    (10-12, 10.8)\\n    (12-15, 8.5)\\n    (15-20, 4.2)\\n    (20+, 1.8)\\n};\\n\\\\legend{2023年}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局《2023年国民经济和社会发展统计公报》};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\", \"summary\": \"2023年居民收入分布\"}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7cm,\n    title={2023年中国居民人均可支配收入分布直方图（单位：万元）},\n    xlabel={收入区间（万元）},\n    ylabel={频数（百万人）},\n    ymin=0, ymax=15,\n    xtick=data,\n    symbolic x coords={0-2, 2-4, 4-6, 6-8, 8-10, 10-12, 12-15, 15-20, 20+},\n    bar width=18pt,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15\n]\n\\addplot[fill=blue!70, draw=black] coordinates {\n    (0-2, 2.5)\n    (2-4, 6.2)\n    (4-6, 8.8)\n    (6-8, 10.5)\n    (8-10, 12.1)\n    (10-12, 10.8)\n    (12-15, 8.5)\n    (15-20, 4.2)\n    (20+, 1.8)\n};\n\\legend{2023年}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局《2023年国民经济和社会发展统计公报》};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 直方图",
+  "created_at" : "2026-09-14T12:22:55.769Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 873,
+    "code_source" : "from_request",
+    "model_used" : "siliconflow"
+  }
+}

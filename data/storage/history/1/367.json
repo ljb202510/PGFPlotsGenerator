@@ -1,0 +1,19 @@
+{
+  "history_id" : 367,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个双系列折线图（产量与销量），标注错开避免重叠",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=11cm, height=6.5cm,\n    title={2019-2024 年产量与销量},\n    xlabel={年份}, ylabel={数量},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    nodes near coords,\n    every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt}\n]\n\\addplot[blue, mark=*, thick, nodes near coords, every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=south}] coordinates {(2019,320) (2020,410) (2021,455) (2022,520) (2023,610) (2024,690)};\n\\addlegendentry{产量}\n\\addplot[red, mark=square*, thick, nodes near coords, every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=north}] coordinates {(2019,300) (2020,392) (2021,440) (2022,505) (2023,590) (2024,665)};\n\\addlegendentry{销量}\n\\end{axis}\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"line\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    width=11cm, height=6.5cm,\\n    title={2019-2024 年产量与销量},\\n    xlabel={年份}, ylabel={数量},\\n    legend style={at={(1.03,0.5)}, anchor=west},\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\tiny, fill=none, draw=none, inner sep=1pt}\\n]\\n\\\\addplot[blue, mark=*, thick, nodes near coords, every node near coord/.append style={font=\\\\tiny, fill=none, draw=none, inner sep=1pt, anchor=south}] coordinates {(2019,320) (2020,410) (2021,455) (2022,520) (2023,610) (2024,690)};\\n\\\\addlegendentry{产量}\\n\\\\addplot[red, mark=square*, thick, nodes near coords, every node near coord/.append style={font=\\\\tiny, fill=none, draw=none, inner sep=1pt, anchor=north}] coordinates {(2019,300) (2020,392) (2021,440) (2022,505) (2023,590) (2024,665)};\\n\\\\addlegendentry{销量}\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"双系列折线图展示产量销量对比\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=11cm, height=6.5cm,\n    title={2019-2024 年产量与销量},\n    xlabel={年份}, ylabel={数量},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    nodes near coords,\n    every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt}\n]\n\\addplot[blue, mark=*, thick, nodes near coords, every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=south}] coordinates {(2019,320) (2020,410) (2021,455) (2022,520) (2023,610) (2024,690)};\n\\addlegendentry{产量}\n\\addplot[red, mark=square*, thick, nodes near coords, every node near coord/.append style={font=\\tiny, fill=none, draw=none, inner sep=1pt, anchor=north}] coordinates {(2019,300) (2020,392) (2021,440) (2022,505) (2023,590) (2024,665)};\n\\addlegendentry{销量}\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个双系列折线图（产量与销量），标注错开避免重叠",
+  "created_at" : "2026-09-14T13:45:32.016Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 823,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

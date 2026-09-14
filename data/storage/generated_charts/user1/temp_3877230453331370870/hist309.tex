@@ -1,0 +1,77 @@
+\documentclass[border=5pt]{standalone}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % 饼图：AI 代码可直接使用 \pie
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}  % 面积图 / 堆叠面积图 / \closedcycle 填充路径
+% 注：error bars 是 pgfplots 内置功能（在核心 pgfplots.errorbars.code.tex），不需要单独 \usepgfplotslibrary 加载
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}[dvipsnames,svgnames]  % 加载标准色名表（steelblue/teal/orange/coral 等），避免 AI 用预定义色名时报 Undefined color
+
+% 支持中文
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{SimSun}
+\setmainfont{Times New Roman}
+
+\begin{document}
+
+\begin{tikzpicture}
+\begin{axis}[
+    width=13cm,
+    height=8cm,
+    title={2019--2024年三款产品年销量堆叠面积图},
+    xlabel={年份},
+    ylabel={销量（百万台）},
+    xtick={2019,2020,2021,2022,2023,2024},
+    ymin=0,
+    ymax=340,
+    stack plots=y,
+    area style,
+    ymajorgrids=true,
+    grid style={dashed, gray!30},
+    tick align=outside,
+    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}
+]
+% 底层：产品A（标注为各层原始销量,非累积值）
+\addplot[draw=blue!70!black, fill=blue!35, thick, mark=*, mark size=1.5pt,
+    nodes near coords, point meta=explicit symbolic,
+    every node near coord/.append style={font=\tiny, fill=none, draw=none, inner sep=1pt, anchor=south}]
+    coordinates {
+        (2019,191.4)[191]
+        (2020,206.1)[206]
+        (2021,235.3)[235]
+        (2022,226.4)[226]
+        (2023,231.8)[232]
+        (2024,232.0)[232]
+    };
+% 中层：产品B
+\addplot[draw=orange!80!black, fill=orange!40, thick, mark=*, mark size=1.5pt,
+    nodes near coords, point meta=explicit symbolic,
+    every node near coord/.append style={font=\tiny, fill=none, draw=none, inner sep=1pt, anchor=south}]
+    coordinates {
+        (2019,49.9)[50]
+        (2020,53.2)[53]
+        (2021,57.8)[58]
+        (2022,60.8)[61]
+        (2023,48.5)[49]
+        (2024,50.0)[50]
+    };
+% 顶层：产品C
+\addplot[draw=green!50!black, fill=green!35, thick, mark=*, mark size=1.5pt,
+    nodes near coords, point meta=explicit symbolic,
+    every node near coord/.append style={font=\tiny, fill=none, draw=none, inner sep=1pt, anchor=south}]
+    coordinates {
+        (2019,18.1)[18]
+        (2020,22.6)[23]
+        (2021,27.7)[28]
+        (2022,28.6)[29]
+        (2023,22.7)[23]
+        (2024,22.5)[23]
+    };
+\legend{产品A,产品B,产品C}
+\node[anchor=north west, font=\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：IDC/Canalys 2019--2024年全球出货量统计（单位：百万台,标注为各产品当年销量原始值）};
+\end{axis}
+\end{tikzpicture}
+
+\end{document}

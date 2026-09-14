@@ -1,0 +1,19 @@
+{
+  "history_id" : 288,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个 12 个月销售额柱状图，每个柱子都标数值，图例放到图外",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2023年度月度销售额统计},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月, 2月, 3月, 4月, 5月, 6月, 7月, 8月, 9月, 10月, 11月, 12月},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    enlarge x limits=0.15,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n\\addplot[fill=steelblue!60, draw=steelblue, thick] coordinates {\n    (1月, 125.5)\n    (2月, 98.2)\n    (3月, 142.8)\n    (4月, 135.6)\n    (5月, 158.4)\n    (6月, 162.1)\n    (7月, 145.9)\n    (8月, 138.7)\n    (9月, 155.3)\n    (10月, 168.2)\n    (11月, 175.6)\n    (12月, 182.4)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2023年度内部销售报表};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    title={2023年度月度销售额统计},\\n    ylabel={销售额（万元）},\\n    symbolic x coords={1月, 2月, 3月, 4月, 5月, 6月, 7月, 8月, 9月, 10月, 11月, 12月},\\n    xtick=data,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    enlarge x limits=0.15,\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\\n]\\n\\\\addplot[fill=steelblue!60, draw=steelblue, thick] coordinates {\\n    (1月, 125.5)\\n    (2月, 98.2)\\n    (3月, 142.8)\\n    (4月, 135.6)\\n    (5月, 158.4)\\n    (6月, 162.1)\\n    (7月, 145.9)\\n    (8月, 138.7)\\n    (9月, 155.3)\\n    (10月, 168.2)\\n    (11月, 175.6)\\n    (12月, 182.4)\\n};\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2023年度内部销售报表};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2023年12个月销售额柱状图及数值标注\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2023年度月度销售额统计},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月, 2月, 3月, 4月, 5月, 6月, 7月, 8月, 9月, 10月, 11月, 12月},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    enlarge x limits=0.15,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n\\addplot[fill=steelblue!60, draw=steelblue, thick] coordinates {\n    (1月, 125.5)\n    (2月, 98.2)\n    (3月, 142.8)\n    (4月, 135.6)\n    (5月, 158.4)\n    (6月, 162.1)\n    (7月, 145.9)\n    (8月, 138.7)\n    (9月, 155.3)\n    (10月, 168.2)\n    (11月, 175.6)\n    (12月, 182.4)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2023年度内部销售报表};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个 12 个月销售额柱状图，每个柱子都标数值，图例放到图外",
+  "created_at" : "2026-09-14T07:05:09.546Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 808,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

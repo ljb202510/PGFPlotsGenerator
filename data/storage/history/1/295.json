@@ -1,0 +1,19 @@
+{
+  "history_id" : 295,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个 2018-2024 年新能源汽车销量的折线图，标注数据点",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7cm,\n    title={2018--2024年中国新能源汽车销量变化},\n    xlabel={年份},\n    ylabel={销量（万辆）},\n    xtick={2018,2019,2020,2021,2022,2023,2024},\n    ymin=0,\n    ymax=1500,\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    axis lines=left,\n    tick align=outside,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n\\addplot[blue, mark=*, thick] coordinates {\n    (2018,125.6)\n    (2019,120.6)\n    (2020,136.7)\n    (2021,352.1)\n    (2022,688.7)\n    (2023,949.5)\n    (2024,1286.6)\n};\n\\legend{新能源汽车销量}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.16) {数据来源：中国汽车工业协会（2018--2024年销量，单位：万辆）};\n\\end{axis}\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"line\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    width=12cm,\\n    height=7cm,\\n    title={2018--2024年中国新能源汽车销量变化},\\n    xlabel={年份},\\n    ylabel={销量（万辆）},\\n    xtick={2018,2019,2020,2021,2022,2023,2024},\\n    ymin=0,\\n    ymax=1500,\\n    ymajorgrids=true,\\n    grid style={dashed, gray!30},\\n    axis lines=left,\\n    tick align=outside,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\\n]\\n\\\\addplot[blue, mark=*, thick] coordinates {\\n    (2018,125.6)\\n    (2019,120.6)\\n    (2020,136.7)\\n    (2021,352.1)\\n    (2022,688.7)\\n    (2023,949.5)\\n    (2024,1286.6)\\n};\\n\\\\legend{新能源汽车销量}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.16) {数据来源：中国汽车工业协会（2018--2024年销量，单位：万辆）};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2018至2024年中国新能源汽车销量折线图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7cm,\n    title={2018--2024年中国新能源汽车销量变化},\n    xlabel={年份},\n    ylabel={销量（万辆）},\n    xtick={2018,2019,2020,2021,2022,2023,2024},\n    ymin=0,\n    ymax=1500,\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    axis lines=left,\n    tick align=outside,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n\\addplot[blue, mark=*, thick] coordinates {\n    (2018,125.6)\n    (2019,120.6)\n    (2020,136.7)\n    (2021,352.1)\n    (2022,688.7)\n    (2023,949.5)\n    (2024,1286.6)\n};\n\\legend{新能源汽车销量}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.16) {数据来源：中国汽车工业协会（2018--2024年销量，单位：万辆）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个 2018-2024 年新能源汽车销量的折线图，标注数据点",
+  "created_at" : "2026-09-14T11:10:16.968Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 852,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "history_id" : 327,
+  "user_id" : 15,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "你的模型",
+  "ai_response" : "\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=10cm,\n    height=6cm,\n    title={2023年中国主要城市GDP总量（万亿元）},\n    ylabel={GDP（万亿元）},\n    symbolic x coords={上海,北京,广州,深圳,重庆,成都,苏州,武汉,杭州,南京},\n    xtick=data,\n    x tick label style={rotate=45, anchor=east, font=\\small},\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize, \n        fill=none, \n        draw=none, \n        inner sep=1pt, \n        anchor=south\n    },\n    legend style={\n        at={(1.03,0.5)}, \n        anchor=west, \n        draw=black, \n        fill=white,\n        font=\\small\n    },\n    ymin=0,\n    ymax=5.0,\n    enlarge x limits=0.15,\n    bar width=10pt\n]\n\\addplot[fill=blue!60, draw=black] coordinates {\n    (上海,4.72)\n    (北京,4.37)\n    (广州,3.04)\n    (深圳,3.46)\n    (重庆,3.01)\n    (成都,2.09)\n    (苏州,2.47)\n    (武汉,2.01)\n    (杭州,1.88)\n    (南京,1.64)\n};\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2023年各城市统计公报};\n\\end{tikzpicture}\n```\n\n```json\n{\"chart_type\": \"bar\", \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    width=10cm,\\n    height=6cm,\\n    title={2023年中国主要城市GDP总量（万亿元）},\\n    ylabel={GDP（万亿元）},\\n    symbolic x coords={上海,北京,广州,深圳,重庆,成都,苏州,武汉,杭州,南京},\\n    xtick=data,\\n    x tick label style={rotate=45, anchor=east, font=\\\\small},\\n    nodes near coords,\\n    every node near coord/.append style={\\n        font=\\\\scriptsize, \\\\\\\\\\n        fill=none, \\\\\\\\\\n        draw=none, \\\\\\\\\\n        inner sep=1pt, \\\\\\\\\\n        anchor=south\\n    },\\n    legend style={\\n        at={(1.03,0.5)}, \\\\\\\\\\n        anchor=west, \\\\\\\\\\n        draw=black, \\\\\\\\\\n        fill=white,\\n        font=\\\\small\\n    },\\n    ymin=0,\\n    ymax=5.0,\\n    enlarge x limits=0.15,\\n    bar width=10pt\\n]\\n\\\\addplot[fill=blue!60, draw=black] coordinates {\\n    (上海,4.72)\\n    (北京,4.37)\\n    (广州,3.04)\\n    (深圳,3.46)\\n    (重庆,3.01)\\n    (成都,2.09)\\n    (苏州,2.47)\\n    (武汉,2.01)\\n    (杭州,1.88)\\n    (南京,1.64)\\n};\\n\\\\end{axis}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2023年各城市统计公报};\\n\\\\end{tikzpicture}\", \"summary\": \"主要城市GDP柱状图\"}",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=10cm,\n    height=6cm,\n    title={2023年中国主要城市GDP总量（万亿元）},\n    ylabel={GDP（万亿元）},\n    symbolic x coords={上海,北京,广州,深圳,重庆,成都,苏州,武汉,杭州,南京},\n    xtick=data,\n    x tick label style={rotate=45, anchor=east, font=\\small},\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize, \n        fill=none, \n        draw=none, \n        inner sep=1pt, \n        anchor=south\n    },\n    legend style={\n        at={(1.03,0.5)}, \n        anchor=west, \n        draw=black, \n        fill=white,\n        font=\\small\n    },\n    ymin=0,\n    ymax=5.0,\n    enlarge x limits=0.15,\n    bar width=10pt\n]\n\\addplot[fill=blue!60, draw=black] coordinates {\n    (上海,4.72)\n    (北京,4.37)\n    (广州,3.04)\n    (深圳,3.46)\n    (重庆,3.01)\n    (成都,2.09)\n    (苏州,2.47)\n    (武汉,2.01)\n    (杭州,1.88)\n    (南京,1.64)\n};\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：2023年各城市统计公报};\n\\end{tikzpicture}",
+  "generation_description" : " 你的模型",
+  "created_at" : "2026-09-14T12:09:38.035Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 979,
+    "code_source" : "from_request",
+    "model_used" : "siliconflow"
+  }
+}

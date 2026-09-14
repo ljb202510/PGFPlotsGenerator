@@ -1,0 +1,19 @@
+{
+  "history_id" : 313,
+  "user_id" : 15,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "请基于我上传的数据绘制饼图，展示各部分所占比例；添加图表标题、各扇区的标签与百分比，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n% 数据：2023年中国人口年龄结构（基于第七次人口普查及后续估算数据）\n% 0-14岁: 16.9%, 15-64岁: 63.4%, 65岁及以上: 19.7%\n\\definecolor{age014}{RGB}{102, 153, 255}\n\\definecolor{age1564}{RGB}{204, 204, 204}\n\\definecolor{age65plus}{RGB}{255, 102, 102}\n\n\\pie[\n    radius=3,\n    text=legend,\n    legend style={at={(1.2,0.5)}, anchor=west, font=\\small, draw=none, fill=none},\n    style={fill=white, draw=black},\n    text width=2cm\n]\n{\n    16.9/\\textcolor{age014}{0-14岁},\n    63.4/\\textcolor{age1564}{15-64岁},\n    19.7/\\textcolor{age65plus}{65岁及以上}\n};\n\n% 数据来源注记\n\\node[anchor=north west, font=\\scriptsize] at (0, -3.5) {数据来源：国家统计局 (2023年估算)};\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"pie\",\n  \"code\": \"\\\\begin{tikzpicture}\\n% 数据：2023年中国人口年龄结构（基于第七次人口普查及后续估算数据）\\n% 0-14岁: 16.9%, 15-64岁: 63.4%, 65岁及以上: 19.7%\\n\\\\definecolor{age014}{RGB}{102, 153, 255}\\n\\\\definecolor{age1564}{RGB}{204, 204, 204}\\n\\\\definecolor{age65plus}{RGB}{255, 102, 102}\\n\\n\\\\pie[\\n    radius=3,\\n    text=legend,\\n    legend style={at={(1.2,0.5)}, anchor=west, font=\\\\small, draw=none, fill=none},\\n    style={fill=white, draw=black},\\n    text width=2cm\\n]\\n{\\n    16.9/\\\\textcolor{age014}{0-14岁},\\n    63.4/\\\\textcolor{age1564}{15-64岁},\\n    19.7/\\\\textcolor{age65plus}{65岁及以上}\\n};\\n\\n% 数据来源注记\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (0, -3.5) {数据来源：国家统计局 (2023年估算)};\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2023年中国人口年龄结构占比饼图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n% 数据：2023年中国人口年龄结构（基于第七次人口普查及后续估算数据）\n% 0-14岁: 16.9%, 15-64岁: 63.4%, 65岁及以上: 19.7%\n\\definecolor{age014}{RGB}{102, 153, 255}\n\\definecolor{age1564}{RGB}{204, 204, 204}\n\\definecolor{age65plus}{RGB}{255, 102, 102}\n\n\\pie[\n    radius=3,\n    text=legend,\n    legend style={at={(1.2,0.5)}, anchor=west, font=\\small, draw=none, fill=none},\n    style={fill=white, draw=black},\n    text width=2cm\n]\n{\n    16.9/\\textcolor{age014}{0-14岁},\n    63.4/\\textcolor{age1564}{15-64岁},\n    19.7/\\textcolor{age65plus}{65岁及以上}\n};\n\n% 数据来源注记\n\\node[anchor=north west, font=\\scriptsize] at (0, -3.5) {数据来源：国家统计局 (2023年估算)};\n\\end{tikzpicture}",
+  "generation_description" : " 请基于我上传的数据绘制饼图，展示各部分所占比例；添加图表标题、各扇区的标签与百分比，并加上图例。",
+  "created_at" : "2026-09-14T11:38:50.947Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 632,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

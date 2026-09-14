@@ -1,0 +1,19 @@
+{
+  "history_id" : 351,
+  "user_id" : 15,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "请基于我上传的数据绘制柱状图，比较各类别的数值大小；添加图表标题、坐标轴标签（含单位）与数值标注，使用清晰的配色并加上图例。",
+  "ai_response" : "\n```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=10cm, height=6cm,\n    title={各类型项目投资金额对比},\n    xlabel={项目类型},\n    ylabel={投资金额（万元）},\n    symbolic x coords={类型A,类型B,类型C,类型D,类型E},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    bar width=0.4cm,\n    color={blue, red, green, orange, purple}\n]\n\\addplot coordinates {(类型A,1200) (类型B,950) (类型C,1500) (类型D,800) (类型E,1100)};\n\\addlegendentry{投资金额（万元）}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：内部统计报表 2024};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\"chart_type\": \"bar\", \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    width=10cm, height=6cm,\\n    title={各类型项目投资金额对比},\\n    xlabel={项目类型},\\n    ylabel={投资金额（万元）},\\n    symbolic x coords={类型A,类型B,类型C,类型D,类型E},\\n    xtick=data,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at=(1.03,0.5), anchor=west, draw=black, fill=white},\\n    enlarge x limits=0.15,\\n    bar width=0.4cm,\\n    color={blue, red, green, orange, purple}\\n]\\n\\\\addplot coordinates {(类型A,1200) (类型B,950) (类型C,1500) (类型D,800) (类型E,1100)};\\n\\\\addlegendentry{投资金额（万元）}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：内部统计报表 2024};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\", \"summary\": \"项目投资金额对比柱状图\"}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=10cm, height=6cm,\n    title={各类型项目投资金额对比},\n    xlabel={项目类型},\n    ylabel={投资金额（万元）},\n    symbolic x coords={类型A,类型B,类型C,类型D,类型E},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at=(1.03,0.5), anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    bar width=0.4cm,\n    color={blue, red, green, orange, purple}\n]\n\\addplot coordinates {(类型A,1200) (类型B,950) (类型C,1500) (类型D,800) (类型E,1100)};\n\\addlegendentry{投资金额（万元）}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：内部统计报表 2024};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请基于我上传的数据绘制柱状图，比较各类别的数值大小；添加图表标题、坐标轴标签（含单位）与数值标注，使用清晰的配色并加上图例。",
+  "created_at" : "2026-09-14T12:59:25.316Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 729,
+    "code_source" : "from_request",
+    "model_used" : "siliconflow"
+  }
+}
