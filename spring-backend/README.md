@@ -124,6 +124,7 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 | `RELATIVE_BASE` | `..` | `generation_path` 相对路径解析基准 |
 | `XELATEX` / `LATEX_TIMEOUT_MS` | `xelatex` / 30000 | 编译器与超时 |
 | `LATEX_MAX_CONCURRENCY` | `2` | XeLaTeX 并发编译上限（批次2/G2，`Semaphore` 限流） |
+| `COMPILE_QUEUE_CAPACITY` | `100` | 编译任务队列容量（批次3.6 起可注入）；满载阈值 = `maxPoolSize(4) + 该值`，调小可用于验证「队列满 → 503」 |
 
 ### 模型通道与降级链（批次3.5）
 

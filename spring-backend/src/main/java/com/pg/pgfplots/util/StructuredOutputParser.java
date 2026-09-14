@@ -46,7 +46,8 @@ public final class StructuredOutputParser {
         }
         try {
             JsonNode root = OM.readTree(json);
-            String code = root.path("code").asText("").trim();
+            // [批次3.6] Jackson 只解一层转义；若模型输出的是字面 \n（被压平），此处统一还原
+            String code = ChartCodeExtractor.normalizeEscapes(root.path("code").asText("").trim());
             if (code.isEmpty() || !code.contains("tikzpicture")) {
                 return null; // 结构不符 → 走兜底
             }

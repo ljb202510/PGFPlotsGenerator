@@ -1,5 +1,6 @@
 package com.pg.pgfplots.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -30,14 +31,17 @@ public class AsyncConfig {
      * [G1] 编译任务线程池（批次2/G2 两级限流的第一级）。
      * <p>与 RAG 池相反，编译任务不可静默丢弃：这里保留默认 AbortPolicy，
      * 由 {@code CompileTaskService.submit} 同步捕获拒绝异常并把任务标记 failed 后返回 503。</p>
+     * <p>[批次3.6] 队列容量改为可注入（默认 100 不变）。满载阈值 = {@code maxPoolSize(4) + 该值}，
+     * 注入小值即可在集成验证中真实触发「队列满 → 503 + 落 COMPILE_QUEUE_FULL」，无需改源码。</p>
      */
     @Bean("compileTaskExecutor")
-    public ThreadPoolTaskExecutor compileTaskExecutor() {
+    public ThreadPoolTaskExecutor compileTaskExecutor(
+            @Value("${app.compile.queue-capacity:100}") int queueCapacity) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setThreadNamePrefix("compile-task-");
         executor.setCorePoolSize(2);
         executor.setMaxPoolSize(4);
-        executor.setQueueCapacity(100);
+        executor.setQueueCapacity(queueCapacity);
         executor.initialize();
         return executor;
     }

@@ -153,7 +153,7 @@ function startLlmStub() {
  * [批次3.5] 启动指向本地 stub 的临时后端实例。
  * 用命令行属性注入 LLM 配置：Spring 中命令行参数优先级高于配置文件（含 .env 导入），必然覆盖生效。
  */
-function startTempBackend({ port, qwenModel, sfModel, stubPort }) {
+function startTempBackend({ port, qwenModel, sfModel, stubPort, queueCapacity }) {
   const stubBase = `http://127.0.0.1:${stubPort}/v1`;
   const args = [
     '-jar', JAR,
@@ -169,9 +169,20 @@ function startTempBackend({ port, qwenModel, sfModel, stubPort }) {
     `--app.llm.siliconflow.model=${sfModel}`,
     '--app.llm.deepseek.enabled=false',
   ];
+  // [批次3.6] 仅在显式传入时注入队列容量，避免影响降级链用例的默认行为
+  if (queueCapacity !== undefined) {
+    args.push(`--app.compile.queue-capacity=${queueCapacity}`);
+  }
   const outFd = fs.openSync(path.join(ROOT, `verify-fallback-${port}.log`), 'w');
   const errFd = fs.openSync(path.join(ROOT, `verify-fallback-${port}-err.log`), 'w');
   return spawn(findJava(), args, { stdio: ['ignore', outFd, errFd] });
+}
+
+/** [批次3.6] 从 api-stats 的 errorTypes 取指定分类计数（不存在返回 0）。 */
+function countErrorType(json, errorType) {
+  const list = (json && json.data && json.data.errorTypes) || [];
+  const hit = list.find((it) => it.error_type === errorType);
+  return hit ? hit.count : 0;
 }
 
 async function main() {
@@ -426,8 +437,57 @@ async function main() {
     stub.close();
   }
 
-  // ---------------- 7. 邮件验证码 ----------------
-  log('7. 邮件验证码（需人工确认）');
+  // ---------------- 7. 编译队列满（[批次3.6] 容量注入，验证「任务不被静默丢弃」） ----------------
+  log('7. 编译队列满（注入 queue-capacity=1 + 并发提交）');
+  const queueHistoryId = ((history.json && history.json.data && history.json.data.records) || [])
+    .map((r) => r.history_id)[0];
+  if (!queueHistoryId) {
+    warnMsg('编译队列满用例跳过', '当前用户暂无历史记录，无法构造编译请求');
+  } else {
+    const stubQueue = await startLlmStub();
+    const procQueue = startTempBackend({
+      port: 3120,
+      qwenModel: 'stub-ok',
+      sfModel: 'stub-ok',
+      stubPort: stubQueue.port,
+      queueCapacity: 1,
+    });
+    try {
+      const readyQ = await waitReady(procQueue, 60, 'http://localhost:3120');
+      if (readyQ < 0) {
+        check('编译队列满：临时实例就绪', false, '60s 内未就绪，详见 verify-fallback-3120.log');
+      } else {
+        const statsBefore = await req('GET', `${BASE}/api/admin/log/api-stats`, { token });
+        const queueFullBefore = countErrorType(statsBefore.json, 'COMPILE_QUEUE_FULL');
+
+        // 容量 = maxPoolSize(4) + queue(1) = 5：同一时刻压入 12 个请求，必然有被拒的
+        const submissions = await Promise.all(
+          Array.from({ length: 12 }, () => req('POST', `http://localhost:3120/api/compile/${queueHistoryId}`, {
+            token,
+            timeout: 15000,
+          })),
+        );
+        const rejected = submissions.filter((r) => r.status === 503);
+        check('编译队列满：并发提交确实触发 503（任务未被静默丢弃）', rejected.length > 0,
+          `状态码=${submissions.map((r) => r.status).join(',')}`);
+        check('编译队列满：503 带明确提示文案',
+          rejected.some((r) => r.json && r.json.message && r.json.message.includes('队列已满')),
+          `message=${rejected.map((r) => (r.json && r.json.message) || '').join(' | ')}`);
+
+        const statsAfter = await req('GET', `${BASE}/api/admin/log/api-stats`, { token });
+        const queueFullAfter = countErrorType(statsAfter.json, 'COMPILE_QUEUE_FULL');
+        check('编译队列满：被拒任务已落库 COMPILE_QUEUE_FULL',
+          queueFullAfter > queueFullBefore,
+          `before=${queueFullBefore} after=${queueFullAfter}`);
+      }
+    } finally {
+      stopProc(procQueue);
+      stubQueue.close();
+    }
+  }
+
+  // ---------------- 8. 邮件验证码 ----------------
+  log('8. 邮件验证码（需人工确认）');
   console.log('  [SKIP] 发送验证码会真实发信，未自动执行。');
   console.log('         手动验证（把 <你的邮箱> 换成真实待注册邮箱）：');
   console.log(`         curl -X POST ${BASE}/api/verification/send-register-code -H "Content-Type: application/json" -d "{\\"email\\":\\"<你的邮箱>\\"}"`);
@@ -455,7 +515,8 @@ async function main() {
   if (fail === 0) {
     for (const f of ['verify-app.log', 'verify-app-err.log',
       'verify-fallback-3100.log', 'verify-fallback-3100-err.log',
-      'verify-fallback-3110.log', 'verify-fallback-3110-err.log']) {
+      'verify-fallback-3110.log', 'verify-fallback-3110-err.log',
+      'verify-fallback-3120.log', 'verify-fallback-3120-err.log']) {
       try {
         fs.unlinkSync(path.join(ROOT, f));
       } catch (e) {

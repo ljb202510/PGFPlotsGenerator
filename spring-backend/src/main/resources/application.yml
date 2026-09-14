@@ -75,6 +75,10 @@ app:
     max-code-length: 50000
     # XeLaTeX 最大并发编译数（批次2/G2：Semaphore 限流，超出排队）
     max-concurrency: ${LATEX_MAX_CONCURRENCY:2}
+  # [批次3.6] 编译任务队列容量（第二级限流的排队区）：满载阈值 = maxPoolSize(4) + 该值。
+  # 调小可验证「队列满 → 503 + COMPILE_QUEUE_FULL 落库」这条「不静默丢弃」的路径。
+  compile:
+    queue-capacity: ${COMPILE_QUEUE_CAPACITY:100}
   llm:
     timeout-ms: ${AI_TIMEOUT_MS:45000}
     max-tokens: ${AI_MAX_TOKENS:8192}

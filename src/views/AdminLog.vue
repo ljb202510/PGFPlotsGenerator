@@ -95,7 +95,7 @@
     <!-- API调用统计 -->
     <div class="chart-section">
       <h2>API调用统计</h2>
-      <div class="chart-container">
+      <div>
         <div class="chart-filters">
           <el-date-picker
             v-model="dateRange"
@@ -305,7 +305,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed, nextTick } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import { 
   Refresh, 
@@ -332,6 +332,10 @@ let errorChartInstance = null
 let latencyChartInstance = null
 const errorChartEmpty = ref(true)
 const latencyChartEmpty = ref(true)
+
+// [批次3.6] 图表容器的 ResizeObserver 登记表：此前它们是各函数内的局部变量，
+// 函数返回后即失去引用、无法 disconnect，组件卸载时只能随 ECharts 实例一起泄漏
+const resizeObservers = []
 
 // [E2] 失败分类 → 中文标签；未收录的新分类直接显示原始值（不透掉）
 const ERROR_TYPE_LABELS = {
@@ -455,6 +459,23 @@ onMounted(() => {
   fetchSystemLogs()
 })
 
+// [批次3.6] 卸载时释放：先前没有 onUnmounted，切页往返会累积 ECharts 实例与观察者。
+// 顺序必须「先 disconnect 观察者、再 dispose 实例」——反过来的话，已销毁的实例被
+// resize 回调触发会抛错。
+onUnmounted(() => {
+  resizeObservers.forEach((observer) => observer.disconnect())
+  resizeObservers.length = 0
+  const instances = [chartInstance, errorChartInstance, latencyChartInstance]
+  instances.forEach((instance) => {
+    if (instance) {
+      instance.dispose()
+    }
+  })
+  chartInstance = null
+  errorChartInstance = null
+  latencyChartInstance = null
+})
+
 // 初始化图表
 const initChart = () => {
   if (!chartRef.value) return
@@ -468,6 +489,7 @@ const initChart = () => {
   })
   
   resizeObserver.observe(chartRef.value)
+  resizeObservers.push(resizeObserver)
 }
 
 // 获取系统健康概览
@@ -650,6 +672,7 @@ const initQualityChart = (el, instance) => {
   const created = echarts.init(el)
   const resizeObserver = new ResizeObserver(() => created.resize())
   resizeObserver.observe(el)
+  resizeObservers.push(resizeObserver)
   return created
 }
 

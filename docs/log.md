@@ -1205,6 +1205,40 @@ const response = await fetch(`${API\_BASE\_URL}/datasets/${row.id}`, {
 - **本批改动提交在 `hello` 仓库内**；`data/.env`（含新 key）已被 `hello/.gitignore` 忽略，不入库。
   **任何文档 / 计划文件均不含 key 明文。**
 
+### 批次3.6 落地（压平转义还原 + 图表生命周期 + 编译队列满验收，2026-09-14）
+
+**（a）压平转义还原（本批核心，修复 `bar_dense`）**
+- 根因：模型把换行输出成**字面 `\n`**（反斜杠 + n 两个字符）而非真实换行，整段 `tikzpicture` 挤成一行，XeLaTeX 直接报错。
+- 新增 `ChartCodeExtractor.normalizeEscapes`，接入**两条提取路径**：`ChartCodeExtractor.extract` / `extractFencedBlock`，以及 `StructuredOutputParser.parse` 的 `code` 出口（Jackson 只解一层转义，双重转义会漏到下游）。
+- **关键约束**：不能朴素替换——`\node` / `\newcommand` / `\newline` 与 `\text` / `\times` / `\tikz` / `\tiny` 等合法命令都以 `\n` / `\t` 开头。实现用「后面不跟 ASCII 字母」的 lookahead + 「前面不是反斜杠」的 lookbehind 双重保护。
+- 新增 `ChartCodeExtractorTest`（7 例）：还原正确性 + `\node`/`\text`/`\\`+n 等误伤反例，`mvn test` 7/7 通过。
+- **实测效果**：重跑 rag-on 一轮（`v2.1-qwen-rag-on`）→ **首轮通过率 0.938 → 1.0**、可编译率 1.0、零违例率 1.0，`bar_dense` 转为 PASS，平均耗时 8605ms（此前 9519ms）。产物未覆盖任何既有结果文件。
+
+**（b）AdminLog 图表生命周期**
+- 缺陷比原先记录的更深：不只缺 `onUnmounted`，三个 `ResizeObserver` 此前都是各函数内的**局部变量**，函数返回即失去引用、根本无法 disconnect。
+- 修复：新增 `resizeObservers` 登记表；`onUnmounted` 中**先 disconnect 观察者、再 dispose 三个 ECharts 实例**（顺序反了会让已销毁实例被 resize 回调触发而抛错）。
+- 顺带清理 `.chart-container` 空类名（该 class 无任何样式规则、也无其他引用）。
+- 验证：SPA 内往返切换 5 轮，canvas 数稳定为 3、**0 errors / 0 warnings**。**如实说明**：内存释放本身无法在浏览器端直接量化观测，此处验证的是生命周期钩子正确执行、dispose 无异常、功能不回退。
+
+**（c）COMPILE_QUEUE_FULL 验收（挂了两批的未闭环项，现已闭环）**
+- 障碍：`AsyncConfig` 的 `queueCapacity(100)` 是硬编码，满载阈值 = `maxPoolSize(4) + 100 = 104`，不改成可注入就只能靠「临时改源码」验收。
+- 改动：`queueCapacity` 提为可注入（`app.compile.queue-capacity`，环境变量 `COMPILE_QUEUE_CAPACITY`，**默认 100 不变**）。
+- 验证（`verify.js` 第 7 节）：临时实例注入 `queue-capacity=1`，同刻并发提交 12 个编译请求 → **确实触发 503**、响应带「队列已满」文案、且**被拒任务已落库 `COMPILE_QUEUE_FULL`**（以 `api-stats` 前后计数确认）。「任务不静默丢弃」由此从口号变为硬证据。
+
+**（d）回归**
+- `verify.js` **PASS=42 FAIL=0**（批次3.5 为 39，新增 3 条队列满用例；原 39 项无回退）。
+
+**（e）外层 `PG` 目录的 git 边界（此前记录有误，已更正）**
+- 事实：`PG/` 自身零 commit、且**没有 `.gitignore`**，却把 `hello` 记为 gitlink（指向旧 commit `80be36e`），并已 `git add` 了 44 个条目（40 个 `.codebuddy/plans/*` + `.trae/rules/*` + `.vscode/settings.json` + `hello`）。
+- 处理：新增外层 `.gitignore`（忽略 `hello/`、`.codebuddy/`、`.trae/`、`.vscode/`），并把上述 44 个条目全部 `git rm --cached` 移出索引。**工作区文件一个都没删**，两个仓库的提交历史均未被触碰。
+- 现状：外层索引为空，`git status` 只剩一个未跟踪的 `.gitignore`（未跟踪的 `.gitignore` 同样生效）。
+
+**（f）git 提交**：本批改动提交在 `hello` 仓库；外层不做任何提交动作。
+
+**（g）仍未覆盖（如实记录）**
+- `EMPTY_REPLY` / `CODE_EXTRACT_FAIL`：仍无稳定造数手段。
+- 降级链仍未做真实供应商故障验证（stub 验证的是链路语义，非真实厂商故障）。
+
 ### 待办（更新于 2026-09-14 晚）
 - ~~批次 1 主链路（A1 RAG + A2 Prompt 工程化 + A3 结构化输出 + RAG CLI）~~：**已完成并全部实测验收**（见上「批次1 主链路落地」）。
 - ~~E1 离线评估（T12）~~：**已完成**（Trae 执行，两轮 10 用例 first_pass_rate 均 1.0 基线饱和、avg 延迟 +9%；批次1 全部闭环，见上「5. E1 离线评估」）。
@@ -1212,8 +1246,12 @@ const response = await fetch(`${API\_BASE\_URL}/datasets/${row.id}`, {
 - ~~批次 3（E2 失败归类 + E3 质量看板 + 评估集 V2）~~：**代码、断言与人工验收均已完成**（verify **PASS=31 FAIL=0**；COMPILE_ERROR 造数实测；V2 rag-on 轮 16 例首轮通过率 1.0、零违例率 1.0（修正 R8 误报后）；前端质量看板两张图与三条空态规则经浏览器自动化实测通过。详见「批次3 落地」§8）。
 - ~~批次 3.5（模型三通道 + 降级链修复 + 耗时趋势图）~~：**已完成并实测验收**（verify **PASS=39 FAIL=0**；降级链三条路径由本地 stub 断言；耗时趋势图单日/多日经浏览器自动化复测；Qwen 双轮评测产出 `v2-qwen-rag-on/off`。详见「批次3.5 落地」）。
 - **DeepSeek 已停用**（账户余额为 0）：`.env` 设 `DEEPSEEK_ENABLED=false`，充值后改回 `true` 即恢复（无需改代码）。**不再需要重跑 `v2-rag-off`**——统一改用 Qwen 后，批次1 的 DeepSeek 基线（`rag-off.json`/`rag-on.json`）与当前结果不可比，已作废的 `v2-rag-off.json` 保留作诚实记录。
-- **新发现的遗留改进项**：Qwen 在 `bar_dense` 用例上稳定输出字面 `\n`（非真实换行）致编译失败；可在代码提取阶段还原转义序列，预计把首轮通过率从 0.938 拉回 1.0。
-- 仍未覆盖：`EMPTY_REPLY` / `CODE_EXTRACT_FAIL` 无稳定造数手段；`COMPILE_QUEUE_FULL` 需临时改 `queueCapacity`。
-- **本批明确未做（已记录）**：`AdminLog.vue` 无 `onUnmounted`（ECharts 实例与 ResizeObserver 不释放）与 `.chart-container` 空类名两处既有缺陷；前端 DeepSeek 选项置灰（按需求保留可选）。
+- ~~批次 3.6（压平转义还原 + AdminLog 生命周期 + COMPILE_QUEUE_FULL 验收 + 外层 git 边界）~~：**已完成并实测验收**——`verify.js` **PASS=42 FAIL=0**；rag-on 重跑首轮通过率回升至 **1.0**（`bar_dense` 转为 PASS）；队列满 503 与 `COMPILE_QUEUE_FULL` 落库均有硬证据；`AdminLog.vue` 两处既有缺陷已修（SPA 往返 5 轮 0 错误）；外层 `PG` 索引清空并新增 `.gitignore`。详见「批次3.6 落地」。
+- ~~字面 `\n` 致 `bar_dense` 编译失败~~ → **已修复**（批次3.6：`ChartCodeExtractor.normalizeEscapes`，首轮通过率回到 1.0）。
+- ~~`COMPILE_QUEUE_FULL` 未验收~~ → **已验收**（批次3.6：容量可注入 + 并发 12 请求触发 503 并落库）。
+- ~~`AdminLog.vue` 无 `onUnmounted` 与 `.chart-container` 空类名~~ → **已修复**（批次3.6）。
+- ~~外层 `PG` 目录 git 状态混乱~~ → **已整理**（批次3.6：44 个条目移出索引 + 新增外层 `.gitignore`；未删任何文件、未改任何历史）。
+- 仍未覆盖：`EMPTY_REPLY` / `CODE_EXTRACT_FAIL` 无稳定造数手段；降级链未做真实供应商故障验证（stub 验的是链路语义）。
+- 仍明确不做：前端 DeepSeek 选项置灰（按需求保留可选）；环形降级；耗时趋势图 (b)/(c) 方案。
 - 可选：种子模板库扩充（当前 7 条，冷门图型召回为空）。
 - 脚本归档：`build.cmd` / `run.cmd` / `mvn-run.cmd` / `verify.cmd` 已移入 `spring-backend/scripts/`（路径已适配新位置）。
