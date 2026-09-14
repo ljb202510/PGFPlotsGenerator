@@ -11,6 +11,7 @@
  */
 const { spawn, spawnSync } = require('child_process');
 const fs = require('fs');
+const http = require('http');
 const path = require('path');
 
 const BASE = process.env.VERIFY_BASE || 'http://localhost:3000';
@@ -80,10 +81,10 @@ async function req(method, url, { token, body, timeout = 15000 } = {}) {
   return { status: res.status, ok: res.ok, json };
 }
 
-async function waitReady(proc, seconds) {
+async function waitReady(proc, seconds, base = BASE) {
   for (let i = 0; i < seconds; i += 1) {
     try {
-      await fetch(`${BASE}/api/notice`, { signal: AbortSignal.timeout(2000) });
+      await fetch(`${base}/api/notice`, { signal: AbortSignal.timeout(2000) });
       return i + 1;
     } catch (e) {
       if (proc && proc.exitCode !== null) {
@@ -98,6 +99,79 @@ async function waitReady(proc, seconds) {
 function stopProc(proc) {
   if (!proc || proc.exitCode !== null) return;
   spawnSync('taskkill', ['/PID', String(proc.pid), '/T', '/F'], { stdio: 'ignore' });
+}
+
+/**
+ * [批次3.5] 本地 LLM stub：按请求体 model 字段决定行为，并统计各 model 的调用次数。
+ * 用于验证降级链，不依赖真实供应商与密钥（端口由系统分配，避免冲突）。
+ *   stub-500 → 500（可降级）   stub-401 → 401（不可降级）   其他 → 合法成功响应
+ */
+function startLlmStub() {
+  return new Promise((resolve) => {
+    const counts = {};
+    const server = http.createServer((req, res) => {
+      let raw = '';
+      req.on('data', (chunk) => { raw += chunk; });
+      req.on('end', () => {
+        let model = '';
+        try {
+          model = JSON.parse(raw).model || '';
+        } catch (e) {
+          model = '';
+        }
+        counts[model] = (counts[model] || 0) + 1;
+
+        const send = (status, payload) => {
+          res.writeHead(status, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(payload));
+        };
+        if (model === 'stub-500') {
+          send(500, { error: { message: 'stub upstream failure' } });
+          return;
+        }
+        if (model === 'stub-401') {
+          send(401, { error: { message: 'stub unauthorized' } });
+          return;
+        }
+        // 含 fenced 代码块：走通 LlmClient 解析与代码提取，避免被判为「输出无效」而触发同模型重试
+        send(200, {
+          choices: [{
+            message: { content: '```latex\n\\begin{tikzpicture}\n\\draw (0,0) -- (1,1);\n\\end{tikzpicture}\n```' },
+            finish_reason: 'stop',
+          }],
+          usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 },
+        });
+      });
+    });
+    server.listen(0, '127.0.0.1', () => {
+      resolve({ port: server.address().port, counts, close: () => server.close() });
+    });
+  });
+}
+
+/**
+ * [批次3.5] 启动指向本地 stub 的临时后端实例。
+ * 用命令行属性注入 LLM 配置：Spring 中命令行参数优先级高于配置文件（含 .env 导入），必然覆盖生效。
+ */
+function startTempBackend({ port, qwenModel, sfModel, stubPort }) {
+  const stubBase = `http://127.0.0.1:${stubPort}/v1`;
+  const args = [
+    '-jar', JAR,
+    `--server.port=${port}`,
+    '--app.rag.enabled=false',
+    '--app.llm.qwen.enabled=true',
+    `--app.llm.qwen.api-url=${stubBase}`,
+    '--app.llm.qwen.api-key=stub-key',
+    `--app.llm.qwen.model=${qwenModel}`,
+    '--app.llm.siliconflow.enabled=true',
+    `--app.llm.siliconflow.api-url=${stubBase}`,
+    '--app.llm.siliconflow.api-key=stub-key',
+    `--app.llm.siliconflow.model=${sfModel}`,
+    '--app.llm.deepseek.enabled=false',
+  ];
+  const outFd = fs.openSync(path.join(ROOT, `verify-fallback-${port}.log`), 'w');
+  const errFd = fs.openSync(path.join(ROOT, `verify-fallback-${port}-err.log`), 'w');
+  return spawn(findJava(), args, { stdio: ['ignore', outFd, errFd] });
 }
 
 async function main() {
@@ -286,8 +360,74 @@ async function main() {
     warnMsg('编译用例跳过', '当前用户暂无历史记录');
   }
 
-  // ---------------- 6. 邮件验证码 ----------------
-  log('6. 邮件验证码（需人工确认）');
+  // ---------------- 6. 降级链（[批次3.5] 本地 stub，不依赖真实供应商与密钥） ----------------
+  log('6. 降级链（stub 注入可降级 / 不可降级错误）');
+  const stub = await startLlmStub();
+  let procDegradable = null;
+  let procFatal = null;
+  try {
+    // 用例 A：主通道 500（可降级）→ 应接力到 siliconflow 并成功，且响应标注实际完成通道
+    procDegradable = startTempBackend({ port: 3100, qwenModel: 'stub-500', sfModel: 'stub-ok', stubPort: stub.port });
+    const readyA = await waitReady(procDegradable, 60, 'http://localhost:3100');
+    if (readyA < 0) {
+      check('降级链用例A：临时实例就绪', false, '60s 内未就绪，详见 verify-fallback-3100.log');
+    } else {
+      const okBeforeA = stub.counts['stub-ok'] || 0;
+      const chatA = await req('POST', 'http://localhost:3100/api/chat', {
+        token,
+        body: { message: '画一个简单的折线图' },
+        timeout: 90000,
+      });
+      check('用例A：主通道 500（可降级）→ 生成仍成功',
+        chatA.status === 200 && Boolean(chatA.json && chatA.json.success),
+        `http=${chatA.status} body=${JSON.stringify(chatA.json)}`);
+      const usedA = chatA.json && chatA.json.data && chatA.json.data.model_used;
+      check('用例A：响应标注实际完成通道 model_used=siliconflow', usedA === 'siliconflow', `model_used=${usedA}`);
+      check('用例A：备用通道确实被调用一次',
+        (stub.counts['stub-ok'] || 0) === okBeforeA + 1, `stub-ok=${stub.counts['stub-ok'] || 0}`);
+
+      // 用例 C（回归防护）：不传 model 时必须回落主通道 qwen，而不是抛 NPE
+      const qwen500BeforeC = stub.counts['stub-500'] || 0;
+      const chatC = await req('POST', 'http://localhost:3100/api/chat', {
+        token,
+        body: { message: '画一个简单的折线图' },
+        timeout: 90000,
+      });
+      check('用例C：未传 model → 回落主通道 qwen（不抛 NPE）',
+        chatC.status === 200 && Boolean(chatC.json && chatC.json.success),
+        `http=${chatC.status} body=${JSON.stringify(chatC.json)}`);
+      check('用例C：请求确实打到了 qwen 槽位',
+        (stub.counts['stub-500'] || 0) === qwen500BeforeC + 1, `stub-500=${stub.counts['stub-500'] || 0}`);
+    }
+
+    // 用例 B：主通道 401（不可降级）→ 应直接报错，不得消耗备用通道
+    procFatal = startTempBackend({ port: 3110, qwenModel: 'stub-401', sfModel: 'stub-ok', stubPort: stub.port });
+    const readyB = await waitReady(procFatal, 60, 'http://localhost:3110');
+    if (readyB < 0) {
+      check('降级链用例B：临时实例就绪', false, '60s 内未就绪，详见 verify-fallback-3110.log');
+    } else {
+      const okBeforeB = stub.counts['stub-ok'] || 0;
+      const fatalBeforeB = stub.counts['stub-401'] || 0;
+      const chatB = await req('POST', 'http://localhost:3110/api/chat', {
+        token,
+        body: { message: '画一个简单的折线图' },
+        timeout: 90000,
+      });
+      check('用例B：主通道 401（不可降级）→ 请求失败', chatB.status >= 400, `http=${chatB.status}`);
+      check('用例B：主通道被调用一次',
+        (stub.counts['stub-401'] || 0) === fatalBeforeB + 1, `stub-401=${stub.counts['stub-401'] || 0}`);
+      check('用例B：未降级到备用通道（确定性错误不重试）',
+        (stub.counts['stub-ok'] || 0) === okBeforeB,
+        `stub-ok 增量=${(stub.counts['stub-ok'] || 0) - okBeforeB}`);
+    }
+  } finally {
+    stopProc(procDegradable);
+    stopProc(procFatal);
+    stub.close();
+  }
+
+  // ---------------- 7. 邮件验证码 ----------------
+  log('7. 邮件验证码（需人工确认）');
   console.log('  [SKIP] 发送验证码会真实发信，未自动执行。');
   console.log('         手动验证（把 <你的邮箱> 换成真实待注册邮箱）：');
   console.log(`         curl -X POST ${BASE}/api/verification/send-register-code -H "Content-Type: application/json" -d "{\\"email\\":\\"<你的邮箱>\\"}"`);
@@ -313,7 +453,9 @@ async function main() {
   console.log('\n================ 结果 ================');
   console.log(`  PASS=${pass}  FAIL=${fail}  WARN=${warn}`);
   if (fail === 0) {
-    for (const f of ['verify-app.log', 'verify-app-err.log']) {
+    for (const f of ['verify-app.log', 'verify-app-err.log',
+      'verify-fallback-3100.log', 'verify-fallback-3100-err.log',
+      'verify-fallback-3110.log', 'verify-fallback-3110-err.log']) {
       try {
         fs.unlinkSync(path.join(ROOT, f));
       } catch (e) {

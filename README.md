@@ -1,5 +1,5 @@
 <!-- 本地使用说明：后端 cd spring-backend && run.cmd（开发模式 mvn-run.cmd）；前端 npm run serve（hello 根目录）；数据库 mysql -u root -p 登录输入密码 000; use X; source 1.sql; 并执行下方迁移（见 §4 快速开始）。 -->
-<!-- AI 接口配置在 data/.env（Java 后端启动时自动读取 ../data/.env，DEEPSEEK_* 与 NSCC_* 分别对应 DeepSeek 与 Qwen3.5）。 -->
+<!-- AI 接口配置在 data/.env（Java 后端启动时自动读取 ../data/.env：NSCC_* → Qwen3.5（主通道）、SILICONFLOW_* → GLM-4.9（降级链第二层）、DEEPSEEK_* → DeepSeek（当前 DEEPSEEK_ENABLED=false 停用，余额为 0））。 -->
 <!-- 注意：原 Node/Express 后端已于 2026-09-13 退役删除（移至本机D盘/PG）；其数据目录 backend/ 已改名为 data/，现仅保留 .env、uploads/、storage/ 共享运行时数据（Java 后端仍在使用），请勿删除。 -->
 <!-- 管理员账号预置：admin123 / 666666（见 1.sql 与 §8 版本说明）。admin@pgfplots.com user_id=1 -->
 # PGFPlotsGenerator 智能图表生成系统
@@ -146,7 +146,7 @@ npm run serve   # Vue CLI 开发服务器，默认 http://localhost:8080
 
 | 配置 | 位置 | 事实说明 |
 |---|---|---|
-| 环境变量 | `data/.env`（Java 启动时经 `application.yml` 自动导入，可用环境变量覆盖） | `JWT_SECRET`、SMTP_*（QQ 授权码）、`DEEPSEEK_API_KEY/URL`、`NSCC_API_KEY/URL`；详见 `spring-backend/README.md` §5 |
+| 环境变量 | `data/.env`（Java 启动时经 `application.yml` 自动导入，可用环境变量覆盖） | `JWT_SECRET`、SMTP_*（QQ 授权码）、`NSCC_*`（Qwen3.5）、`SILICONFLOW_*`（GLM-4.9）、`DEEPSEEK_*`，以及三个通道各自的 `*_ENABLED` 开关；详见 `spring-backend/README.md` §5 |
 | 后端地址 | `src/config.js` 的 `API_BASE_URL` | 默认 `http://localhost:3000`；前端所有页面统一从这里取值 |
 | 数据库连接 | `backend/.env` 的 `DB_HOST/DB_USER/DB_PASSWORD/DB_NAME` | 未设置时回退本地默认值 `localhost/root/000/X`（`application.yml`） |
 

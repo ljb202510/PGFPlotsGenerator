@@ -78,14 +78,26 @@ app:
   llm:
     timeout-ms: ${AI_TIMEOUT_MS:45000}
     max-tokens: ${AI_MAX_TOKENS:8192}
+    # [批次3.5] 降级链固定优先级：qwen → siliconflow → deepseek。
+    # 主通道失败时从其后逐个尝试，到链尾即止（不回绕）；enabled=false 的通道整层跳过，
+    # 既不参与接力也不允许被选为主模型。
     deepseek:
+      # 当前置 false：账户余额为 0，充值后改回 true 即恢复，无需改代码
+      enabled: ${DEEPSEEK_ENABLED:true}
       api-key: ${DEEPSEEK_API_KEY:}
       api-url: ${DEEPSEEK_API_URL:https://api.deepseek.com/v1}
       model: ${DEEPSEEK_MODEL:deepseek-v4-flash}
     qwen:
+      enabled: ${QWEN_ENABLED:true}
       api-key: ${NSCC_API_KEY:}
       api-url: ${NSCC_API_URL:https://maas.nscc-cs.cn/external/api/v1}
       model: ${QWEN_MODEL:Qwen3.5}
+    # [批次3.5] 硅基流动（OpenAI 兼容），默认免费档最大模型 THUDM/glm-4-9b-chat
+    siliconflow:
+      enabled: ${SILICONFLOW_ENABLED:true}
+      api-key: ${SILICONFLOW_API_KEY:}
+      api-url: ${SILICONFLOW_API_URL:https://api.siliconflow.cn/v1}
+      model: ${SILICONFLOW_MODEL:THUDM/glm-4-9b-chat}
   mail:
     from: ${SMTP_FROM:PG Admin <2771008024@qq.com>}
     # 注册验证码有效期（分钟）

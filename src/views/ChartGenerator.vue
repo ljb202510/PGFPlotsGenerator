@@ -287,14 +287,20 @@
               <el-icon><Folder /></el-icon>
               上传历史文件
             </el-button>
-            <el-button 
-              @click="toggleModel"
-              class="model-btn"
+            <!-- [批次3.5] 模型通道选择：placement=top 向上展开，避免被页面底部裁切 -->
+            <el-select
+              v-model="currentModel"
+              class="model-select"
               size="small"
+              placement="top"
             >
-              <el-icon><Switch /></el-icon>
-              当前模型：{{ currentModel === 'deepseek' ? 'Deepseek-V4-Flash' : 'Qwen3.5' }}
-            </el-button>
+              <el-option
+                v-for="opt in MODEL_OPTIONS"
+                :key="opt.key"
+                :label="opt.label"
+                :value="opt.key"
+              />
+            </el-select>
           </div>
         </div>
       </div>
@@ -430,7 +436,6 @@ import {
   Close,
   Promotion,
   Top,
-  Switch,
   CopyDocument, // 新增复制图标
   EditPen,
   DataLine,
@@ -492,17 +497,20 @@ const useTemplate = (t) => {
   nextTick(() => { inputRef.value?.focus() })
 }
 
-// 当前所选模型：qwen（默认）/ deepseek
+// [批次3.5] 模型通道单一映射源：顺序与后端降级优先级一致（qwen → siliconflow → deepseek）。
+// 展示名在此定义一次，供选择器、生成中提示、错误提示共用，避免多处硬编码导致文案不一致。
+const MODEL_OPTIONS = [
+  { key: 'qwen', label: 'Qwen3.5' },
+  { key: 'siliconflow', label: 'GLM-4.9' },
+  { key: 'deepseek', label: 'Deepseek-V4-Flash' }
+]
+
+// 当前所选模型通道（默认主通道 qwen）
 const currentModel = ref('qwen')
 
-// 切换模型
-const toggleModel = () => {
-  currentModel.value = currentModel.value === 'deepseek' ? 'qwen' : 'deepseek'
-}
-
-// 当前模型展示名（与底部按钮文案保持一致）
-const currentModelName = computed(() =>
-  currentModel.value === 'deepseek' ? 'Deepseek-V4-Flash' : 'Qwen3.5'
+// 当前所选模型的展示名（未命中时原样回显 key，避免显示空白）
+const currentModelName = computed(
+  () => MODEL_OPTIONS.find(o => o.key === currentModel.value)?.label || currentModel.value
 )
 
 // PDF相关
@@ -957,8 +965,8 @@ const sendMessage = async () => {
       return
     }
 
-    // 错误处理，与后端保持一致（按实际模型动态显示）
-    const modelName = currentModel.value === 'qwen' ? 'Qwen' : 'DeepSeek'
+    // 错误处理，与后端保持一致（按实际所选通道动态显示）
+    const modelName = currentModelName.value
     let errorMessage = ''
     if (error.code === 'NETWORK_ERROR' || error.message === 'Network Error') {
       errorMessage = `无法连接到${modelName} API，请检查网络设置`
@@ -2151,7 +2159,7 @@ onUnmounted(() => {
   border-top: 1px solid var(--border);
 }
 
-.upload-btn, .history-btn, .model-btn {
+.upload-btn, .history-btn {
   border-radius: 6px;
   padding: 6px 12px;
   display: flex;
@@ -2166,10 +2174,35 @@ onUnmounted(() => {
   height: auto;
 }
 
-.upload-btn:hover, .history-btn:hover, .model-btn:hover {
+.upload-btn:hover, .history-btn:hover {
   background: var(--bg-hover);
   border-color: var(--text-muted);
   transform: translateY(-1px);
+}
+
+/* [批次3.5] 模型选择下拉：视觉与原「当前模型」按钮保持一致 */
+.model-select {
+  width: 172px;
+}
+
+.model-select :deep(.el-select__wrapper) {
+  border-radius: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  box-shadow: none;
+  font-size: 12px;
+  min-height: 30px;
+  transition: all 0.3s;
+}
+
+.model-select :deep(.el-select__wrapper:hover) {
+  background: var(--bg-hover);
+  border-color: var(--text-muted);
+}
+
+.model-select :deep(.el-select__placeholder) {
+  color: var(--text-regular);
 }
 
 .upload-btn:active, .history-btn:active {

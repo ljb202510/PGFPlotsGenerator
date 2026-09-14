@@ -32,7 +32,7 @@
 |---|---|
 | 提示词集中管理 | `util/PromptTemplates.SYSTEM_PROMPT`（已逐字对齐原版） |
 | 提示词组装 + 数据集注入 | `service/ChatService.buildSystemPrompt` |
-| 双模型调用 + 降级链 | `client/LlmClient.chat`（`/chat/completions`）、`ChatService.generateWithFallback`（reasoning 兜底 → 同模型重试 → 切模型） |
+| 多通道调用 + 降级链 | `client/LlmClient.chat`（`/chat/completions`，三通道共用）、`ChatService.generateWithFallback`（reasoning 兜底 → 同模型纠正重试 → 硬错误按 `qwen → siliconflow → deepseek` 接力，`enabled=false` 整层跳过） |
 | 代码提取 | `util/ChartCodeExtractor`（围栏优先 + 裸 `tikzpicture` 兜底） |
 | 编译 + 危险序列校验 | `service/CompileService.compile`、`util/LatexCompiler`（`ProcessBuilder` 30s + `safeCleanup`） |
 | 系统日志 | `util/SystemLogWriter` → `system_log`（副作用式，不抛异常） |

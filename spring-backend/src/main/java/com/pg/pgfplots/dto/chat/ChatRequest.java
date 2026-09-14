@@ -20,7 +20,7 @@ public class ChatRequest {
     @JsonProperty("chart_code")
     private String chartCode;
 
-    /** 模型：qwen | deepseek */
+    /** 模型通道：qwen | siliconflow | deepseek（缺省或未知值回落 qwen） */
     private String model;
 
     /** 会话 ID（传入则持久化对话） */

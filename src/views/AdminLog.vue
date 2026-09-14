@@ -691,16 +691,22 @@ const renderLatencyChart = async () => {
   await nextTick()
   latencyChartInstance = initQualityChart(latencyChartRef.value, latencyChartInstance)
   if (!latencyChartInstance) return
+  // [批次3.5] 单日区间时每个 series 只有一个点：无线段可画、也分不清哪点是平均哪点是 P95，
+  // 因此仅在此时直接标数值；多日区间不加标签，避免密集标签互相遮挡（折线本身已可读）。
+  const pointLabel = list.length === 1
+    ? { show: true, position: 'top', fontSize: 11 }
+    : { show: false }
   latencyChartInstance.setOption({
     title: { text: '耗时趋势（按日）', left: 'center' },
     tooltip: { trigger: 'axis' },
-    legend: { data: ['平均', 'P95'], top: 24 },
+    // [批次3.5] 图例由 top:24 改为右上角：原位置与居中标题垂直重叠，被标题压住导致「图例不可见」
+    legend: { data: ['平均', 'P95'], top: 10, right: '5%' },
     grid: { left: '3%', right: '4%', bottom: '3%', top: '20%', containLabel: true },
     xAxis: { type: 'category', data: list.map((it) => it.date) },
     yAxis: { type: 'value', name: '毫秒' },
     series: [
-      { name: '平均', type: 'line', smooth: true, data: list.map((it) => it.avg) },
-      { name: 'P95', type: 'line', smooth: true, data: list.map((it) => it.p95) }
+      { name: '平均', type: 'line', smooth: true, data: list.map((it) => it.avg), label: pointLabel },
+      { name: 'P95', type: 'line', smooth: true, data: list.map((it) => it.p95), label: pointLabel }
     ]
   }, true)
 }

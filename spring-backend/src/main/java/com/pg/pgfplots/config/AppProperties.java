@@ -62,6 +62,8 @@ public class AppProperties {
         private int maxTokens = 8192;
         private Provider deepseek = new Provider();
         private Provider qwen = new Provider();
+        /** [批次3.5] 硅基流动通道（OpenAI 兼容），作降级链第二层 */
+        private Provider siliconflow = new Provider();
     }
 
     @Data
@@ -69,6 +71,12 @@ public class AppProperties {
         private String apiKey;
         private String apiUrl;
         private String model;
+        /**
+         * [批次3.5] 是否启用该通道；false 时在降级链中整层跳过，且不可被选为主模型。
+         * <p>默认 true。停用只需改环境变量（如 DEEPSEEK_ENABLED=false），无需删除 apiKey——
+         * 保留凭据线索，恢复时改回 true 即可。</p>
+         */
+        private boolean enabled = true;
     }
 
     @Data

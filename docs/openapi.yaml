@@ -234,8 +234,11 @@ paths:
                 chart_code: { type: string, description: 可选，直接指定代码则不再从回复提取 }
                 model:
                   type: string
-                  description: qwen=Qwen3.5(NSCC)；其他值走 DeepSeek deepseek-v4-flash
-                  enum: [qwen, deepseek]
+                  description: >-
+                    生成通道。qwen=Qwen3.5(NSCC，主通道)；siliconflow=GLM-4.9(硅基流动，降级链第二层)；
+                    deepseek=deepseek-v4-flash(当前已停用，选中会返回 400)。缺省或未知值回落 qwen。
+                    主通道失败时按固定优先级 qwen → siliconflow → deepseek 接力，到链尾即止不回绕。
+                  enum: [qwen, siliconflow, deepseek]
                   default: qwen
                 conversation_id: { type: integer, description: 传入则将本轮消息持久化到该会话 }
                 selected_files:
@@ -1297,6 +1300,12 @@ components:
             dataset_count: { type: integer }
             history_id: { type: integer, nullable: true }
             chart_code_length: { type: integer }
+            model_used:
+              type: string
+              description: >-
+                本次实际完成生成的通道（qwen/siliconflow/deepseek）。与请求的 model 不同即表示发生过降级，
+                用于区分「主通道自己跑通的」与「备用通道兜底完成的」。
+              enum: [qwen, siliconflow, deepseek]
     HistoryRecord:
       type: object
       description: 历史记录条目（历史页返回字段）

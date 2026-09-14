@@ -116,13 +116,35 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 | `JWT_SECRET` | 空（必填） | JWT 密钥，缺失启动失败 |
 | `DB_HOST/DB_PORT/DB_USER/DB_PASSWORD/DB_NAME` | localhost/3306/root/000/X | 与 Node `db.js` 默认一致 |
 | `SMTP_*` | — | 邮件验证码 |
-| `DEEPSEEK_API_KEY/URL`、`NSCC_API_KEY/URL` | — | 两个模型 |
+| `NSCC_API_KEY/URL`、`SILICONFLOW_API_KEY/URL/MODEL`、`DEEPSEEK_API_KEY/URL/MODEL` | — | 三个模型通道（见下） |
+| `QWEN_ENABLED` / `SILICONFLOW_ENABLED` / `DEEPSEEK_ENABLED` | `true` | 通道开关；`false` 时该层整层跳过且不可选为主模型（当前 DeepSeek 因余额为 0 设 `false`） |
 | `UPLOADS_DIR` | `../data/uploads` | 数据集目录（复用历史文件） |
 | `HISTORY_DIR` | `../data/storage/history` | 生成记录 JSON |
 | `CHARTS_DIR` | `../data/storage/generated_charts` | 编译产物 PDF |
 | `RELATIVE_BASE` | `..` | `generation_path` 相对路径解析基准 |
 | `XELATEX` / `LATEX_TIMEOUT_MS` | `xelatex` / 30000 | 编译器与超时 |
 | `LATEX_MAX_CONCURRENCY` | `2` | XeLaTeX 并发编译上限（批次2/G2，`Semaphore` 限流） |
+
+### 模型通道与降级链（批次3.5）
+
+三个通道共用同一个 OpenAI 兼容客户端（`LlmClient`），仅配置不同：
+
+| 通道 key | 默认模型 | 默认地址 | 当前状态 |
+|---|---|---|---|
+| `qwen` | `Qwen3.5` | NSCC（`NSCC_API_URL`） | 启用（主通道） |
+| `siliconflow` | `THUDM/glm-4-9b-chat` | `https://api.siliconflow.cn/v1` | 启用（免费档，降级链第二层） |
+| `deepseek` | `deepseek-v4-flash` | `https://api.deepseek.com/v1` | **停用**（`DEEPSEEK_ENABLED=false`，账户余额为 0） |
+
+降级规则：
+
+- 固定优先级 `qwen → siliconflow → deepseek`；主通道失败后**从其之后**逐个尝试，到链尾即止（**不回绕**）。
+- 只对「换通道可能成功」的错误接力：`402`/`408`/`429`/`5xx`，以及消息含 `insufficient balance`/`quota`/`rate limit` 的 4xx；
+  `400`/`401`/`403` 等确定性错误**直接报错、不重试**（避免把 45s 超时叠成 90s）。
+- `enabled=false` 或未配置 key 的层**整层跳过**，不发请求（空 key 请求会被上游回 401，误记成上游鉴权失败）。
+- 响应 `data.model_used` 与历史 `metadata.model_used` 记录**实际完成通道**；与请求的 `model` 不同即表示发生过降级。
+- 已知取舍：主模型选 `siliconflow` 时其后再无可用通道（deepseek 停用），即**无兜底**。
+
+> 注：`siliconflow` 用于生成的 key 与 embedding 用的 `EMBEDDING_API_KEY` **须分开**，避免配额混用后无法定位问题。
 
 ## 6. 包结构
 

@@ -1133,12 +1133,87 @@ const response = await fetch(`${API\_BASE\_URL}/datasets/${row.id}`, {
 
 **（g）遗留**：① 需充值后重跑 rag-off 才能给出 V2 的 RAG 增量；② `EMPTY_REPLY` / `CODE_EXTRACT_FAIL` 仍无稳定造数手段；③ 前端验收截图存放在系统临时目录（未纳入仓库）。
 
+### 批次3.5 落地（模型三通道 + 降级链修复 + 耗时趋势图，2026-09-14）
+
+**（a）模型通道扩为三个 + 前端可选**
+- 新增 `app.llm.siliconflow` 槽位（硅基流动，OpenAI 兼容，默认 `THUDM/glm-4-9b-chat`，免费档最大 9B/32K）。
+- 前端「当前模型」由两值循环按钮改为**向上展开的三项下拉**（`placement="top"`，避免被页面底部裁切）：Qwen3.5 / GLM-4.9 / Deepseek-V4-Flash。
+- 五处散落的二值三元判断（`normalizeModel`/`providerOf`/`labelOf`/`disableThinkingOf`/backup 选择）收敛为
+  `PROVIDER_CHAIN` 常量 + `resolve(modelKey)` 单一映射，避免新增通道时漏改。
+- `disableThinkingOf` 仍需按槽位区分：只有 Qwen 需要 `chat_template_kwargs`（NSCC 模板层专属），
+  误传给 GLM 可能被上游判为非法参数而触发一次方向相反的降级。
+
+**（b）降级链修复（本批核心）**
+- 旧实现只在「主通道返回内容为空」时才切 backup；**硬错误（余额不足/限流/5xx）直接从 `callOnce` 冒泡**成用户可见的 5xx——
+  这正是上一轮 16 连败「结构性不会自愈」的根因。
+- 现在：只对「换通道可能成功」的错误接力（402/408/429/5xx，及消息含 `insufficient balance`/`quota`/`rate limit` 的 4xx）；
+  400/401/403 等确定性错误**不重试**，避免把 45s 超时叠成 90s。
+- 固定优先级 `qwen → siliconflow → deepseek`，从主通道之后逐个尝试，**到链尾即止（不回绕）**；
+  `enabled=false` 或未配置 key 的层整层跳过，绝不用空 key 发请求（那样会被上游回 401 而误记成上游鉴权失败）。
+- **已知取舍**：主模型选「硅基流动」时其后再无可用通道（deepseek 已停用），即**无兜底**。按需求确认不做环形回绕。
+
+**（c）通道可停用（一行开关）**
+- `AppProperties.Provider` 新增 `enabled`（默认 true）；`.env` 加 `DEEPSEEK_ENABLED=false` 即停用 DeepSeek（余额为 0）。
+- **不删除 key**：保留凭据线索，充值后改回 `true`（或删除该行）即恢复，无需改代码。
+- DeepSeek 在前端**保留可选**（为充值后预留）；选中会返回 400 并说明恢复方法，**不静默改用其它模型**——
+  否则用户会误以为自己用的是 DeepSeek。
+
+**（d）降级可观测**
+- `FallbackResult` 增加 `usedModel`；响应 `data.model_used` 与历史 JSON `metadata.model_used` 记录**实际完成通道**；
+  降级成功打 `log.warn` 并写系统日志（不记录 key）。
+- `api_log` 表结构与 E2 七类归类口径**未改动**，不污染批次3 已建立的失败分类。
+
+**（e）耗时趋势图（方案 a）**
+- 实测定位根因：**图例并未消失，而是 `legend.top:24` 与居中 `title` 垂直重叠被压住**（放大 canvas 后可见标题下方被遮的图例标记）。
+- 修复：图例移至右上角（`top:10, right:'5%'`）；区间仅 1 天时两个数据点直接标数值（多日不加标签，避免密集遮挡）。
+- 复测：单日 → 图例可见 + `35216`/`8641` 两个数值标签；多日（注入 3 天数据）→ 双折线正常、无标签拥挤。
+
+**（f）验证（自动化，PASS=39 FAIL=0）**
+- `verify.js` 新增第 6 节「降级链」：内置 Node `http` stub（按请求体 `model` 返回 500/401/正常，并统计各 model 调用次数），
+  以命令行属性注入临时实例（:3100/:3110），**零密钥、零外网**。
+- 新增 8 条断言：① 可降级 500 → 接力成功且 `model_used=siliconflow`；② 不可降级 401 → 请求失败且备用通道**调用次数 0 增量**；
+  ③ 不传 `model` → 回落主通道（回归防护）。
+- **验证脚本抓出一个真实回归**：`resolve` 里 `List.of(...).contains(null)` 会抛 NPE（旧实现 `"qwen".equals(model)` 对 null 安全），
+  导致**不传 `model` 的请求直接 500**。已修复并加用例 ③ 固化。
+
+**（g）Qwen 双轮评测（唯一有效基线，与批次1/批次3 基线不可比）**
+- `eval.mjs` 新增 `--model=`（默认 `qwen`）；结果 JSON 记录 `model`、每例 `model_used`、`metrics.degraded_count`。
+- 产物：`eval/results/v2-qwen-rag-on.json` / `v2-qwen-rag-off.json`
+  （**未覆盖**批次1 的 `rag-off.json`/`rag-on.json`，也未删已作废的 `v2-rag-off.json`）。
+
+| 指标 | rag-on | rag-off |
+|---|---|---|
+| 生成成功率 / 可编译率 / 首轮通过率 | 1.0 / 0.938 / 0.938 | 1.0 / 0.938 / 0.938 |
+| 零违例通过率 | 0.938 | 0.938 |
+| avg / P95 chat 耗时 | 9519ms / 14310ms | 7567ms / 17200ms |
+| 降级发生次数 | 0 | 0 |
+
+- **本轮 RAG 未体现收益，反而增加约 26% 平均耗时**（9519 vs 7567ms），两轮通过率相同。如实记录，不做修饰。
+- 两轮唯一失败均为 `bar_dense`，**根因完全相同且可复现**：Qwen 输出的 `chart_code` 中换行是**字面 `\n` 字符串**而非真实换行，
+  整段 `tikzpicture` 挤成一行致 XeLaTeX 语法错误（失败样本 `data/storage/debug/hist265_*.tex`、`hist281_*.tex` 可复核）。
+  **非环境问题**（编译任务串行提交、1.4s 正常失败），故评测数字可信。
+- **遗留改进项（不在本批范围，未做）**：代码提取阶段还原字面 `\n`/`\t` 转义序列，预计可将该例拉回通过。
+
+**（h）本轮未覆盖（如实记录，不用假数据充数）**
+- `EMPTY_REPLY` / `CODE_EXTRACT_FAIL`：仍无稳定造数手段。
+- `COMPILE_QUEUE_FULL`：需临时改 `queueCapacity`，本批未做。
+- 降级链的真实供应商侧验证：本批用 stub 验证了**链路语义**（可降级/不可降级/回落），未制造真实供应商故障。
+
+**（i）git 状态更正（此前记录有误）**
+- **`hello/` 是独立 git 仓库**（15 个 commit），批次 0-3 基线已由 `0a0f590` 提交，本批改动在其之上。
+- 外层 `PG` 目录**自身零 commit**，且把 `hello` 记为嵌套仓库引用（mode `160000`）；其暂存区已 `git add` 了 `.codebuddy/plans/*` 等文件。
+- **本批改动提交在 `hello` 仓库内**；`data/.env`（含新 key）已被 `hello/.gitignore` 忽略，不入库。
+  **任何文档 / 计划文件均不含 key 明文。**
+
 ### 待办（更新于 2026-09-14 晚）
 - ~~批次 1 主链路（A1 RAG + A2 Prompt 工程化 + A3 结构化输出 + RAG CLI）~~：**已完成并全部实测验收**（见上「批次1 主链路落地」）。
 - ~~E1 离线评估（T12）~~：**已完成**（Trae 执行，两轮 10 用例 first_pass_rate 均 1.0 基线饱和、avg 延迟 +9%；批次1 全部闭环，见上「5. E1 离线评估」）。
 - ~~批次 2（G1 编译任务队列化 + G2 XeLaTeX 并发上限 + O1 链路耗时拆解）~~：**已完成并实测验收**（verify PASS=29 FAIL=0；并发限流、O1 落库与聚合均留硬证据，见上「批次2 落地」；重启语义/队列满 503 两项按约定只给复现步骤）。
 - ~~批次 3（E2 失败归类 + E3 质量看板 + 评估集 V2）~~：**代码、断言与人工验收均已完成**（verify **PASS=31 FAIL=0**；COMPILE_ERROR 造数实测；V2 rag-on 轮 16 例首轮通过率 1.0、零违例率 1.0（修正 R8 误报后）；前端质量看板两张图与三条空态规则经浏览器自动化实测通过。详见「批次3 落地」§8）。
-- **待充值后重跑（唯一未闭环项）**：`node eval/eval.mjs --tag=v2-rag-off`——DeepSeek 余额不足导致该轮作废，作废记录已标 `invalid_reason`。
-- 仍未覆盖：`EMPTY_REPLY` / `CODE_EXTRACT_FAIL` 无稳定造数手段（`UPSTREAM_API_ERROR` 已由 16 条自然样本覆盖）。
+- ~~批次 3.5（模型三通道 + 降级链修复 + 耗时趋势图）~~：**已完成并实测验收**（verify **PASS=39 FAIL=0**；降级链三条路径由本地 stub 断言；耗时趋势图单日/多日经浏览器自动化复测；Qwen 双轮评测产出 `v2-qwen-rag-on/off`。详见「批次3.5 落地」）。
+- **DeepSeek 已停用**（账户余额为 0）：`.env` 设 `DEEPSEEK_ENABLED=false`，充值后改回 `true` 即恢复（无需改代码）。**不再需要重跑 `v2-rag-off`**——统一改用 Qwen 后，批次1 的 DeepSeek 基线（`rag-off.json`/`rag-on.json`）与当前结果不可比，已作废的 `v2-rag-off.json` 保留作诚实记录。
+- **新发现的遗留改进项**：Qwen 在 `bar_dense` 用例上稳定输出字面 `\n`（非真实换行）致编译失败；可在代码提取阶段还原转义序列，预计把首轮通过率从 0.938 拉回 1.0。
+- 仍未覆盖：`EMPTY_REPLY` / `CODE_EXTRACT_FAIL` 无稳定造数手段；`COMPILE_QUEUE_FULL` 需临时改 `queueCapacity`。
+- **本批明确未做（已记录）**：`AdminLog.vue` 无 `onUnmounted`（ECharts 实例与 ResizeObserver 不释放）与 `.chart-container` 空类名两处既有缺陷；前端 DeepSeek 选项置灰（按需求保留可选）。
 - 可选：种子模板库扩充（当前 7 条，冷门图型召回为空）。
 - 脚本归档：`build.cmd` / `run.cmd` / `mvn-run.cmd` / `verify.cmd` 已移入 `spring-backend/scripts/`（路径已适配新位置）。
