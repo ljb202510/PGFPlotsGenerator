@@ -987,9 +987,158 @@ const response = await fetch(`${API\_BASE\_URL}/datasets/${row.id}`, {
 - 契约变更三处联动（后端端点 + verify.js 第 5 段 + 前端两处 `compileToPDF` 改轮询）必须在同一批落地；回归标准 FAIL=0（PASS 允许 27→28）。
 - 明确不做：compile_task 表持久化（演进版）、SSE、A4/G3/G4/O2/O4。
 
-### 待办（更新于 2026-09-13 晚）
+### 批次2 落地（G1 编译任务队列化 + G2 并发控制 + O1 耗时拆解，2026-09-14）
+
+> 施工图：`docs/plan-AI-批次2-执行方案.md`（T0–T8）。规模：后端 9 文件改动 + 1 新建，前端 1 新建 + 2 改动，1 条迁移。
+
+#### 1. G1 编译任务队列化（新契约）
+- 迁移 `hello/migrations/alter_api_log_duration_ms.sql`（`api_log.duration_ms BIGINT NULL AFTER prompt_version`，O1 用）。
+- 新增 `service/CompileTaskService`：内存任务表（`ConcurrentHashMap`；`MAX_TASKS=500`，超限淘汰最旧终态任务）+ `record CompileTask(taskId,userId,historyId,status,pdfPath,fileSize,error,durationMs,createdAt)`，状态 `queued→running→success/failed`；**不用 `@Async`**（避免同类自调用导致代理失效），直接向注入的线程池 `submit`。
+- `config/AsyncConfig` 新增 `compileTaskExecutor`（`compile-task-` 前缀 / core2 / max4 / queue100，保留默认 AbortPolicy）。**任务不可静默丢弃**：`submit` 捕获 `RejectedExecutionException` → 该任务标记 failed + 抛 503「编译任务队列已满，请稍后重试」——与 RAG 池「队列满即丢弃」的语义刻意区分。
+- 契约变更：`POST /api/compile/{history_id}` 由同步阻塞改为立即返回 `{task_id, status:"queued", history_id}`；新增 `GET /api/compile/task/{task_id}` 返回终态（success 含 `pdf_path/file_size/duration_ms`，failed 含 `error`），并做 userId 归属校验（越权与重启丢失统一 404 +「服务重启会清空任务状态，请重新提交编译」文案）。PDF 流式下载契约不变。
+- `CompileService.parseHistoryId` 提升为 `public static` 供 Controller 复用，避免逻辑复制。
+
+#### 2. G2 XeLaTeX 并发控制
+- `app.latex.max-concurrency`（默认 2，`LATEX_MAX_CONCURRENCY` 可覆盖）；`CompileTaskService` 内 `Semaphore` 在工作线程 `acquire()` + `finally release()`，等待时长计入任务 `duration_ms`。两级背压：线程池队列（100）→ Semaphore（2）。
+- 顺手清理：`LatexCompiler.validate(String)` 的硬编码 `50000` 参数化——新增 `validate(String, int)` 重载，原重载保留并委托；`CompileService` 改传 `app.latex.max-code-length`（该配置项此前从未被消费）。
+
+#### 3. O1 链路耗时拆解
+- `ChatService`：`generateWithFallback` 前后 `System.nanoTime()` 计时（含降级链全部重试时间），**成功与失败两条路径都写 `api_log.duration_ms`**（`saveGenerationHistory` / `recordFailedCall` 各增 `Long durationMs` 形参，三个 catch 分支分别传入）。
+- `AdminLogService.apiStats`：删除硬编码假数据 `avg=245 / p95=420`，改为从 `selectApiLogs` 明细用最近秩法（nearest-rank，第 `ceil(n*0.95)` 个样本）算真实 avg/P95 + `sample_count`，无数据时输出 `null / 0`；`AdminMapper.xml#selectApiLogs` 追加 `al.duration_ms`。
+- 前端 `AdminLog.vue` **未消费** `responseTime`（仅 L298 声明、模板无渲染），故本批不动它；耗时分位数可视化归批次3 E3。
+
+#### 4. 前端轮询改造 + 下游调用方适配
+- 新增 `src/utils/compile.js#submitAndPollCompile`：POST 提交 → 1.5s 间隔轮询（90s 上限 = 30s 编译超时 + 排队余量，单请求 15s 超时）；success 返回任务体、failed 抛后端 `error`、超时抛中文提示。查询阶段失败统一转纯文案 `Error`，避免调用方把「任务已丢失」误判成「历史记录不存在」（提交阶段失败仍保留 `error.response` 供 400/404/503 分支判断）。
+- `ChartGenerator.vue` / `MyHistory.vue` 的 `compileToPDF` 改为调用该工具；`compiling` / `compilingId` loading 语义、既有 ElMessage/`compileErrorDialogVisible` Dialog 全部保留。
+- **契约变更的回归影响扫尾**：`eval/eval.mjs`（批次1 的 E1 脚本）原先按同步契约读 `data.pdf_path` 判定 `compiled`，契约变更后会把「可编译率 / 首轮通过率」误判为 0；已同步改为「提交拿 task_id → 轮询终态」，避免评估脚本静默失真。
+
+#### 5. 验收（2026-09-14 实测）
+- **基线不回归**：`scripts\build.cmd && scripts\verify.cmd` → **PASS=29 FAIL=0 WARN=0**（原基线 27；第 5 段 2→3 项，另加 1 条 `responseTime` 断言）。
+- **提交即返回（G1）**：4 个编译任务并发提交，POST 响应 14–19ms（改造前最长阻塞 30s）。
+- **并发限流（G2 硬证据）**：4 个任务在 5ms 内全部入队；日志 `[COMPILE] 获得编译许可 … 剩余许可=0` 仅出现 2 次且时刻相同（12:35:37.304），后 2 个任务分别在前两个释放许可时（12:35:39.711 / 40.023）才获许可；终态 4/4 success，`duration_ms` 2408/2719/2404/2221ms（含排队）。
+- **O1 落库**：一次真实生成（history_id=240、`chart_type=bar`）→ `api_log` `call_id=293 call_status=success duration_ms=3157`；旧行 292/291 为 `NULL`，符合「迁移前无该数据」语义。
+- **O1 聚合**：`GET /api/admin/log/api-stats` → `responseTime={"avg":3157,"p95":3157,"sample_count":1}`，与 `SELECT COUNT/AVG/MAX(duration_ms)` 完全一致。
+- **未实跑（约定只给步骤）**：重启语义、队列满 503——步骤见下节。
+
+#### 6. 待手动复现的两项
+1. **重启语义**：提交编译拿 `task_id` → 重启后端 → 再查应 404 且文案含「服务重启会清空任务状态」。
+   ```cmd
+   curl -X POST http://localhost:3000/api/compile/239 -H "Authorization: Bearer %TOKEN%"
+   REM 记下返回的 task_id，重启后端后再查：
+   curl http://localhost:3000/api/compile/task/ct_xxx -H "Authorization: Bearer %TOKEN%"
+   ```
+2. **队列满 503**：把 `AsyncConfig#compileTaskExecutor` 的 `queueCapacity` 临时改 1（`maxPoolSize` 同步改小）→ rebuild → 并发提交 >5 个任务 → 应看到 503「编译任务队列已满，请稍后重试」且该任务状态为 failed（不静默丢弃）→ **改回 100 并 rebuild**。
+
+#### 7. 已知取舍与观察
+- 重启丢失任务状态是**本批已确认取舍**（`compile_task` 表持久化 + 启动恢复属演进版）。
+- ~~观察（未修，非本批范围）：`CompileService` 临时目录名为 `temp_ + System.currentTimeMillis()`…~~ → **已修复（2026-09-14）**，见下节。
+
+#### 8. 并发临时目录缺陷修复（2026-09-14）
+- **根因**：`CompileService` 编译工作目录名为 `temp_ + System.currentTimeMillis()`，碰撞条件是「**同一 userId + 同一毫秒**」（与 historyId 无关）；`Files.createDirectories` 对已存在目录静默通过，两个任务会拿到同一目录 → `hist{id}.tex` 互相覆盖、两个 xelatex 共用 `-output-directory` 互相踩踏、任务 A 的 `safeCleanup(tempDir)` 提前删掉任务 B 仍在使用的目录 → B 在 `Files.move(tempPdf, finalPdf)` 抛 `NoSuchFileException`，对外表现为来源不明的 500「编译失败」。批次2 的 `compileTaskExecutor`(core2/max4) + `Semaphore`(2) 让「两个 worker 同时进入 compile」成为常态（前端双击「生成PDF」即可触发），风险由理论变为现实。
+- **修复**（唯一改动点）：`Files.createTempDirectory(userStorageDir, "temp_")` 替代手写时间戳 —— JDK 原子创建唯一目录（`SecureRandom` 后缀 + 冲突自动重试），从根上消除「共享可变工作目录」；`safeCleanup` 此后只可能删自己的目录。契约、产物路径（`user{uid}/hist{id}.pdf`）、`relativeBase` 相对路径解析、失败样本落盘位置、4 处 `safeCleanup` 调用点与所有异常分支**均未改动**。
+- **验证（2026-09-14）**：
+  - 回归：`scripts\build.cmd && scripts\verify.cmd` → **PASS=29 FAIL=0 WARN=0**（无新增断言）。
+  - 并发定向：同一 `history_id=240` 每轮并发提交 2 次、共 3 轮（6 次编译），**全部 success**（duration_ms 2204/2210、2224/2840、2376/2390）；`data/storage/generated_charts/user1/` 下**无 `temp_*` 残留**。
+  - 窗口命中证据：日志显示每轮两条任务在**同一毫秒**获得编译许可（如 12:42:45.460 两个线程并行编译同一 history），即两次 `compile()` 进入时刻同毫秒——正是原缺陷的碰撞条件。
+  - **诚实口径**：修复前该竞争窗口仅「同毫秒」级，未能稳定复现原 500 失败；上述证据证明的是「并发窗口确实被进入且修复后全绿」，**不是**「已复现原 bug」。
+- 明确不做（已确认超出本次修复范围）：同 history 提交去重（queued/running 时复用）、启动清理 `temp_*` 残留目录。
+
+### 批次3 落地（E2 失败归类 + E3 质量看板 + 评估集 V2，2026-09-14）
+
+> 施工图：`docs/plan-AI-批次3-执行方案.md`（T0–T8）。规模：后端 5 文件改动 + 2 新建，前端 1 文件，评估 1 新建 + 2 改动，1 条迁移。
+
+#### 1. E2 失败归类（api_log 语义扩展为「AI 链路失败事件日志」）
+- 迁移 `hello/migrations/alter_api_log_error_type.sql`（`error_type VARCHAR(32) NULL AFTER duration_ms`，**已应用**）+ `ApiLog.errorType`。
+- 新增 `common/ErrorTypes`（7 类常量，避免分类字符串在多处拼写漂移）：`UPSTREAM_API_ERROR` / `UPSTREAM_CONNECTION_ERROR` / `UPSTREAM_UNKNOWN_ERROR` / `EMPTY_REPLY` / `CODE_EXTRACT_FAIL` / `COMPILE_ERROR` / `COMPILE_QUEUE_FULL`。
+- **顺带补齐两个既有缺口**：① 空回复兜底（`BAD_GATEWAY`）此前只写 `system_log`、**完全不落 api_log**，失败归类整整漏掉一类；② 「生成成功但提取不到图表代码」此前记 `success`，历史记录无法编译。现在前者记 `EMPTY_REPLY`，后者记 `CODE_EXTRACT_FAIL`，且**在同一条记录内**落为 failed（`saveGenerationHistory` 新增 `errorType` 形参，由分类决定 `call_status`），避免先写 success 再补 failed **双计 total_calls**；同时写入描述「未从生成内容中提取到可编译的图表代码」，让「最近失败调用」表有可读文案。
+- 编译类失败：**只在 `CompileTaskService`** 落库（`CompileService.compile` 的全仓唯一调用点），`COMPILE_ERROR`（run 的失败分支，带编译耗时）/ `COMPILE_QUEUE_FULL`（submit 被拒分支）；**不写 `prompt_version`**（编译发生在生成之后，无法得知当次生成版本，写当前版本会误读）。
+- 聚合：`AdminMapper.xml#selectApiLogs` 追加 `al.error_type`；`AdminLogService.apiStats` 新增 `errorTypes: [{error_type, count}]`（按 count 降序，空时为 `[]`）。
+- **口径声明**：失败计数覆盖**全链路**（含编译失败），因此 `summary.success_rate` 会因编译失败而下降——这是 E2 的设计意图，不是 bug。
+
+#### 2. E3 质量看板（复用既有监控页，不新增端点）
+- 后端 `apiStats` 新增 `responseTimeSeries: [{date, avg, p95, count}]`（按日聚合明细 `duration_ms`；无耗时的日期不产生数据点，区间内全无则为 `[]`）；抽出 `p95Of()` 供 `responseTime` 与按日序列共用最近秩法口径。
+- **耗时口径修正（执行中发现的偏差）**：api_log 现在同时存 LLM 与编译耗时，首版把编译失败的 `duration_ms`（26ms）也算进了 `responseTime`，把 avg 从 3157 拉低到 1592。已加 `isCompileFailure()` 过滤——**耗时指标只统计生成链路（LLM）**，与批次2「两段耗时不混算」的口径一致；实测复验 `avg=3157 / sample_count=1`。
+- 前端 `AdminLog.vue`（**单文件改动**）：新增 2 张卡片（平均耗时 / P95 耗时 + 样本数，null 显示「—」）+「质量看板」区块 2 张图（失败分类分布饼图、按日 avg/P95 双折线）；图表实例改为**惰性创建**（两个容器由 `v-if` 控制，首屏可能不存在）；`ERROR_TYPE_LABELS` 提供中文标签、未收录的新分类显示原始值不透掉。
+- **空态三规则**全部实现：`sample_count === 0` 不画图走空态、`avg/p95` 为 null 显示「—」（不被 `|| 0` 兜底）、`errorTypes` 为空不画全 0 饼图。
+
+#### 3. 评估集 V2（把「通过」细化为「通过且零违例」）
+- 新增 `eval/violations.mjs`（零依赖）七类静态违例检测：R1 图例位置 / R2 轴外文字 / R3 标注与数据点成对 / R5 误差棒语法 / R6 单图结构 / R7 分类坐标逗号 / R8 多系列标注错开。
+- **R4（量纲一致性）明确不做静态检测**：它依赖数据语义标度判断（「万元 vs 元」「人 vs 万人」），正则会大量误报，产出不可信的评估数字 → 保留人工评审。R7 也只查 LaTeX 结构上下文（`symbolic x coords` / `coordinates` 花括号内），**不对全文扫全角逗号**，避免把中文标签里的正常标点误判。
+- `eval.mjs`：逐用例对 `chart_code` 跑检测，`cases[]` 增 `violation_free` / `violations`，`metrics` 增 `zero_violation_rate`（通过且零违例 / 总数）与 `violation_counts`（按规则计数），汇总表打印两行、逐用例行加 `viol=`。
+- `cases.json`：**原 10 条 id 与文案完全不变**（保证与批次1 的 rag-off / rag-on 历史数据可比），追加 6 条 V2 用例（多系列误差棒 / 双 y 轴 / 12 月密集标注+图例外置 / 歧义表述 / 缺数据 / 堆叠面积）。
+- 自检证据（**未跑真实评估**）：两个脚本 `node --check` 通过；`detectViolations` 对空代码与合规样例返回 `[]`、对违约样例命中 R1/R2/R3/R5/R6、对全角分类坐标命中 R7、对多系列同侧标注命中 R8，且「上下错开的正确写法」与含中文正文逗号的合法代码均返回 `[]`（零误报）。
+
+#### 4. 附带修复：编译失败信息为空
+- 造数时发现 `LatexCompiler.run` 的 `catch (Exception e)` 把 `ProcessBuilder` 异常（如「找不到 xelatex」）直接吞掉，`output` 为空 → 任务 `error` 与 `api_log.call_error` **双双空白**，用户只看到「编译失败」却没有任何线索。已在该 catch 中追加 `xelatex 执行异常: <msg>`（**仅补错误信息**，不改编译/超时/清理逻辑）。复验：任务 error 与 call_error 均带出 `Cannot run program "no-such-xelatex-cmd"`。
+
+#### 5. 回归断言（T7）
+- `verify.js` 新增 2 条**类型断言**（不依赖真实数据、允许空数组，避免为迎合断言而造数据）：`errorTypes` 为数组、`responseTimeSeries` 为数组且元素含 `date/avg/p95/count`。
+- 基线：**PASS 29 → 31，FAIL=0 WARN=0**。
+
+#### 6. 验收（2026-09-14 实测）
+- 基线不回归：`scripts\build.cmd && scripts\verify.cmd` → **PASS=31 FAIL=0 WARN=0**。
+- **COMPILE_ERROR 造数**（`set "XELATEX=no-such-xelatex-cmd"` 后启动）：提交编译 → 任务终态 `failed`、`duration_ms=21`、`error` 带异常原因；连做 3 次 → `api_log` **每次各 1 行**（`COMPILE_ERROR` × 3，无重复落库），`summary.total_calls` 每次 **+1**（**无双计**）；行内 `prompt_version=NULL`、`history_id=240`、`duration_ms` 有值。
+- **E3 聚合**：`errorTypes=[{error_type:COMPILE_ERROR,count:3}]`；`responseTime={avg:3157,p95:3157,sample_count:1}`、`responseTimeSeries=[{date:2026-09-14,avg:3157,p95:3157,count:1}]`（编译耗时已排除）。
+- 前端生产构建通过（`vue-cli-service build`，仅既有 bundle 体积告警）。
+- 造数痕迹已清理：debug 目录下本次生成的 4 个 `hist240_*` 样本、临时脚本与临时日志全部删除（既有 `hist139/140/166` 历史样本保留未动）。
+
+#### 7. 未执行（约定只给步骤 / 需人工确认）
+1. **`CODE_EXTRACT_FAIL` / `EMPTY_REPLY` 无法稳定造数**：需上游模型返回「非空但无代码」或「空内容」，本地不能确定性触发。可 `INSERT` 假行只用于验证前端展示，**不等于链路验证**——本批未做，也未声称这两类已通过实测。
+2. **`COMPILE_QUEUE_FULL`**：需把 `compileTaskExecutor.queueCapacity` 临时改 1 并二次 rebuild（破坏性），步骤见施工图 §10#6，**未执行**。
+3. **前端目视验收**：`cd hello && npm run serve` → `/admin`，确认两张图渲染、日期切到批次2 之前（无 `duration_ms`）时三张空态规则生效（无 0 值柱 / 无空饼图 / 卡片显示「—」）。
+4. **评估集 V2 实跑**：`node eval/eval.mjs --tag=v2` 会触发真实 LLM 调用（16 用例），按约定**需使用者确认后自行执行**。
+
+#### 8. 评估集 V2 双轮实跑与前端目视验收（2026-09-14 追加）
+
+**（a）R8 检测器误报修正（重要）**
+- 首轮 rag-on 跑出 `zero_violation_rate=0.875`、违例分布 `{R8_LABEL_STAGGER:2}`（`bar_stacked` / `bar_negative`）。逐条比对生成代码后确认**两条都是启发式误报**：
+  - `bar_stacked`（history 245）是 `ybar stacked` **堆叠柱图**、X=5——R8 规则原文只针对「折线/曲线、≥2 系列、X≥8 个点」，柱图不在范围内，且 `anchor=center` 对堆叠段是合理写法；
+  - `bar_negative`（history 249）是**单系列**柱图，`nodes near coords` 计数被下一行 `nodes near coords align=auto` 撑成了 2。
+- 修正 `eval/violations.mjs`：R8 改为「用 `\addplot` 计系列数 + `countXPoints()` 估 X 点数 + 排除 `ybar`」，与规则原文对齐。
+- **重放而非重跑**：对 `v2-rag-on.json` 各用例的**已落盘生成代码**（`data/storage/history/1/<historyId>.json` 的 `chart_code`）重跑检测器并回写 `violations/violation_free/metrics`，加 `detector_replay` 标记——**零模型调用**。结果：两条误报消失，**`zero_violation_rate` 由 0.875 修正为 1.0，违例分布 `{}`**。
+  > 教训：不查证就会得到一个「虚假的区分度」（0.875）。评估数字的可信度取决于检测器正确性，**误报比漏报更有害**。
+- R8 修正后回归自检 5/5 通过：真违例（2 系列折线 X=8 全 `anchor=south`）命中；已错开 / X=5 / 堆叠柱图 / 单系列柱图+`align=auto` 均不命中。
+
+**（b）rag-on 轮结果（有效）**：`eval/results/v2-rag-on.json`
+| 指标 | 值 |
+|---|---|
+| 用例数 | 16（原 10 + V2 6） |
+| 生成成功率 / 可编译率 / 首轮通过率 | 1.0 / 1.0 / 1.0 |
+| **零违例通过率** | **1.0**（修正检测器后） |
+| 违例分布 | `{}` |
+| avg / P95 chat 耗时 | 16871ms / 35916ms |
+
+结论：**V2 用例下仍未产生真实违例**，"零违例"维度同样饱和（与批次1 在通过率上的饱和一致）。
+
+**（c）rag-off 轮作废（阻塞）**：`eval/results/v2-rag-off.json`（已写入 `invalid_reason` 标记）
+- 16 例**全部生成失败**、耗时 0.7–1.3s 快速失败；应用日志为 `[CHAT] DeepSeek API调用错误: Insufficient Balance`。
+- 根因：**DeepSeek 账户余额不足**（第一轮 16 次调用耗尽），**与 `RAG_ENABLED=false` 无关**——已核实 rag-off 轮应用日志无任何 `[RAG]` 行、rag-on 轮每例均有 `[RAG] 召回 3–5 条`，开关切换本身生效。
+- 该轮**不可作为 rag-off 基线**；待充值后重跑 `node eval/eval.mjs --tag=v2-rag-off` 覆盖即可（脚本与用例无需改动）。
+
+**（d）副产品：上游错误分类拿到自然样本**
+- 这 16 次失败被如实落库：`api_log` 新增 **16 条 `UPSTREAM_API_ERROR`**（`call_status=failed`、`duration_ms` 600–1300ms、`call_error='Insufficient Balance'`）。
+- 因此本文件 §7 中「无法稳定造数」的结论**对上游错误类已被自然样本覆盖**（`UPSTREAM_API_ERROR` 由"未覆盖"升级为"有真实样本"）；`EMPTY_REPLY` / `CODE_EXTRACT_FAIL` 仍未覆盖。
+- 分类聚合实测：`errorTypes=[{UPSTREAM_API_ERROR,16},{COMPILE_ERROR,3}]`，失败计数与库内一致。
+
+**（e）前端质量看板目视验收（浏览器自动化，已完成）**
+- 环境：后端 + `npm run serve`（:8080）→ `playwright-cli` 打开 `/login` → 管理员登录 → `/admin/log`。
+- **默认态**：失败分类分布显示「上游接口错误 + 编译失败」两个扇区（中文标签生效）；耗时趋势显示 2026-09-14 两个数据点；卡片 `平均耗时 8744 ms / P95 35216 ms / 样本 33`——与 SQL 交叉验证**完全一致**（`n=33, avg=8744, p95=35216`，已排除编译类行）。
+- **空态**（日期切到 2026-09-13：该日 49 行，`duration_ms` 与 `error_type` 全为空）三条规则全部通过：
+  1. `sample_count=0` → **`qualityCanvas=0`**（未创建任何画布，无 0 值柱、无空饼图）；
+  2. 耗时卡片显示 **「—」+「样本 0」**（不是「0 ms」）；
+  3. 两张空态文案出现：**「暂无失败记录」**、**「该区间暂无耗时数据」**。
+- 附带观察（非缺陷）：该日趋势图仍显示 4 条失败调用——那是 `call_status` 口径，这些行来自批次3 之前、`error_type` 为 NULL，故不计入失败分类，两者不矛盾。
+
+**（f）评估产物**：`v2-rag-on.json`（有效，含 `detector_replay` 标记）、`v2-rag-off.json`（无效，含 `invalid_reason`）；批次1 的 `rag-off.json` / `rag-on.json` **未被覆盖**。
+
+**（g）遗留**：① 需充值后重跑 rag-off 才能给出 V2 的 RAG 增量；② `EMPTY_REPLY` / `CODE_EXTRACT_FAIL` 仍无稳定造数手段；③ 前端验收截图存放在系统临时目录（未纳入仓库）。
+
+### 待办（更新于 2026-09-14 晚）
 - ~~批次 1 主链路（A1 RAG + A2 Prompt 工程化 + A3 结构化输出 + RAG CLI）~~：**已完成并全部实测验收**（见上「批次1 主链路落地」）。
 - ~~E1 离线评估（T12）~~：**已完成**（Trae 执行，两轮 10 用例 first_pass_rate 均 1.0 基线饱和、avg 延迟 +9%；批次1 全部闭环，见上「5. E1 离线评估」）。
-- 批次 2（G1 编译任务队列化 + G2 XeLaTeX 并发上限 + O1 链路耗时拆解）：**施工图已就绪**（`docs/plan-AI-批次2-执行方案.md`），待执行。
+- ~~批次 2（G1 编译任务队列化 + G2 XeLaTeX 并发上限 + O1 链路耗时拆解）~~：**已完成并实测验收**（verify PASS=29 FAIL=0；并发限流、O1 落库与聚合均留硬证据，见上「批次2 落地」；重启语义/队列满 503 两项按约定只给复现步骤）。
+- ~~批次 3（E2 失败归类 + E3 质量看板 + 评估集 V2）~~：**代码、断言与人工验收均已完成**（verify **PASS=31 FAIL=0**；COMPILE_ERROR 造数实测；V2 rag-on 轮 16 例首轮通过率 1.0、零违例率 1.0（修正 R8 误报后）；前端质量看板两张图与三条空态规则经浏览器自动化实测通过。详见「批次3 落地」§8）。
+- **待充值后重跑（唯一未闭环项）**：`node eval/eval.mjs --tag=v2-rag-off`——DeepSeek 余额不足导致该轮作废，作废记录已标 `invalid_reason`。
+- 仍未覆盖：`EMPTY_REPLY` / `CODE_EXTRACT_FAIL` 无稳定造数手段（`UPSTREAM_API_ERROR` 已由 16 条自然样本覆盖）。
 - 可选：种子模板库扩充（当前 7 条，冷门图型召回为空）。
 - 脚本归档：`build.cmd` / `run.cmd` / `mvn-run.cmd` / `verify.cmd` 已移入 `spring-backend/scripts/`（路径已适配新位置）。

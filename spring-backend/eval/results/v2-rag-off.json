@@ -1,0 +1,195 @@
+{
+  "tag": "v2-rag-off",
+  "run_at": "2026-09-14 13:16:46+08:00",
+  "base": "http://localhost:3000",
+  "invalid_reason": "本轮 16 例全部生成失败，根因是 DeepSeek 账户余额不足（call_error='Insufficient Balance'，16 条 api_log 记为 UPSTREAM_API_ERROR），与 RAG 开关无关。**本文件是无效运行记录，不可作为 rag-off 基线**；待充值后重跑 --tag=v2-rag-off 覆盖。",
+  "note": "与 v2-rag-on.json 对比时请忽略本文件。",
+  "cases": [
+    {
+      "id": "bar_quarter",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 4916,
+      "history_id": null
+    },
+    {
+      "id": "line_trend",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 1144,
+      "history_id": null
+    },
+    {
+      "id": "pie_share",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 1393,
+      "history_id": null
+    },
+    {
+      "id": "scatter",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 1304,
+      "history_id": null
+    },
+    {
+      "id": "bar_stacked",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 1305,
+      "history_id": null
+    },
+    {
+      "id": "bar_dense",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 1333,
+      "history_id": null
+    },
+    {
+      "id": "error_bar",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 1207,
+      "history_id": null
+    },
+    {
+      "id": "line_multi",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 989,
+      "history_id": null
+    },
+    {
+      "id": "bar_negative",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 1229,
+      "history_id": null
+    },
+    {
+      "id": "bar_ambiguity",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 902,
+      "history_id": null
+    },
+    {
+      "id": "combo_errorbar_multi",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 1322,
+      "history_id": null
+    },
+    {
+      "id": "dual_axis",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 807,
+      "history_id": null
+    },
+    {
+      "id": "dense_legend_outside",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 1032,
+      "history_id": null
+    },
+    {
+      "id": "ambiguous_trend",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 934,
+      "history_id": null
+    },
+    {
+      "id": "missing_data",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 679,
+      "history_id": null
+    },
+    {
+      "id": "stacked_area",
+      "ok": false,
+      "gen_ok": false,
+      "code_ok": false,
+      "compile_ok": false,
+      "violation_free": true,
+      "violations": [],
+      "latency_ms": 787,
+      "history_id": null
+    }
+  ],
+  "metrics": {
+    "total": 16,
+    "gen_success_rate": 0,
+    "compile_rate": 0,
+    "first_pass_rate": 0,
+    "zero_violation_rate": 0,
+    "violation_counts": {},
+    "avg_latency_ms": 1330,
+    "p95_latency_ms": 4916
+  }
+}

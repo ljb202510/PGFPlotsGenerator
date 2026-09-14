@@ -168,6 +168,26 @@ async function main() {
   const apiStats = await req('GET', `${BASE}/api/admin/log/api-stats`, { token });
   check('/api/admin/log/api-stats', apiStats.json && apiStats.json.success && apiStats.json.data.summary);
 
+  // [O1] responseTime 由真实 api_log.duration_ms 聚合（无数据时 sample_count=0、avg/p95 为 null）
+  const responseTime = apiStats.json && apiStats.json.data && apiStats.json.data.responseTime;
+  check('/api/admin/log/api-stats 返回真实耗时聚合 responseTime',
+    Boolean(responseTime) && Number.isFinite(responseTime.sample_count),
+    `responseTime=${JSON.stringify(responseTime)}`);
+
+  // [E2] 失败分类计数；无数据时为 []，故只断言类型（不依赖真实数据）
+  const errorTypes = apiStats.json && apiStats.json.data && apiStats.json.data.errorTypes;
+  check('/api/admin/log/api-stats 返回失败分类计数 errorTypes',
+    Array.isArray(errorTypes),
+    `errorTypes=${JSON.stringify(errorTypes)}`);
+
+  // [E3] 按日耗时序列；无数据时为 []，同理只断言类型与元素字段
+  const timeSeriesRt = apiStats.json && apiStats.json.data && apiStats.json.data.responseTimeSeries;
+  check('/api/admin/log/api-stats 返回按日耗时序列 responseTimeSeries',
+    Array.isArray(timeSeriesRt)
+      && timeSeriesRt.every((it) => it && it.date !== undefined && it.avg !== undefined
+        && it.p95 !== undefined && it.count !== undefined),
+    `responseTimeSeries=${JSON.stringify(timeSeriesRt)}`);
+
   const sysLogs = await req('GET', `${BASE}/api/admin/log/system-logs?page=1&pageSize=2`, { token });
   check('/api/admin/log/system-logs 分页', sysLogs.json && sysLogs.json.success && sysLogs.json.data.pagination);
 
@@ -234,18 +254,33 @@ async function main() {
   const dsDel = await req('DELETE', `${BASE}/api/datasets/${newId}`, { token });
   check('数据集删除成功', dsDel.json && dsDel.json.success);
 
-  // ---------------- 5. 编译链路 ----------------
+  // ---------------- 5. XeLaTeX 编译链路（G1 异步契约） ----------------
   log('5. XeLaTeX 编译链路');
   const records = (history.json && history.json.data.records) || [];
   if (records.length > 0) {
     const hid = records[0].history_id;
-    const compiled = await req('POST', `${BASE}/api/compile/${hid}`, { token, timeout: 60000 });
-    if (compiled.json && compiled.json.success) {
-      check(`编译 history_id=${hid} 返回 data.pdf_path`, Boolean(compiled.json.data.pdf_path));
-      const pdfRes = await fetch(`${BASE}/api/compile/${hid}/pdf`, { headers: { Authorization: `Bearer ${token}` } });
-      check('PDF 归属鉴权流式返回 200', pdfRes.status === 200, `实际=${pdfRes.status}`);
+    const submitted = await req('POST', `${BASE}/api/compile/${hid}`, { token, timeout: 15000 });
+    const taskId = submitted.json && submitted.json.data && submitted.json.data.task_id;
+    if (submitted.json && submitted.json.success && taskId) {
+      // 轮询终态：1.5s 间隔，最多 40 次（60s，覆盖 30s 编译超时 + 排队余量）
+      let finalTask = null;
+      for (let i = 0; i < 40; i++) {
+        await new Promise((r) => setTimeout(r, 1500));
+        const poll = await req('GET', `${BASE}/api/compile/task/${taskId}`, { token, timeout: 15000 });
+        const t = poll.json && poll.json.data;
+        if (t && (t.status === 'success' || t.status === 'failed')) { finalTask = t; break; }
+      }
+      if (finalTask && finalTask.status === 'success') {
+        check(`编译 history_id=${hid} 任务终态 success 且含 pdf_path`, Boolean(finalTask.pdf_path));
+        check(`任务含耗时 duration_ms`, Number.isFinite(finalTask.duration_ms));
+        const pdfRes = await fetch(`${BASE}/api/compile/${hid}/pdf`, { headers: { Authorization: `Bearer ${token}` } });
+        check('PDF 归属鉴权流式返回 200', pdfRes.status === 200, `实际=${pdfRes.status}`);
+      } else {
+        warnMsg(`编译任务未成功（history_id=${hid}）`,
+          `终态=${finalTask ? finalTask.status : '轮询超时'}；可能未安装 XeLaTeX；error=${finalTask && finalTask.error}`);
+      }
     } else {
-      warnMsg(`编译用例未通过（history_id=${hid}）`, `可能未安装 XeLaTeX 或该记录无代码；详情=${compiled.json && compiled.json.message}`);
+      warnMsg('编译任务提交失败', `详情=${submitted.json && submitted.json.message}`);
     }
   } else {
     warnMsg('编译用例跳过', '当前用户暂无历史记录');

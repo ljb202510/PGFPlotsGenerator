@@ -447,6 +447,7 @@ import AppSpinner from '@/components/ui/AppSpinner.vue'
 // API配置
 import { API_BASE_URL } from '@/config';
 import { fetchPdfBlobUrl } from '@/utils/pdf';
+import { submitAndPollCompile } from '@/utils/compile';
 import { getUserToken } from '@/utils/auth';
 
 // 获取token（统一身份入口：只认用户会话）
@@ -1018,12 +1019,9 @@ const compileToPDF = async (message) => {
       return
     }
     
-    await axios.post(`${API_BASE_URL}/api/compile/${message.historyId}`, {}, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    
+    // [G1] 提交编译任务并轮询至终态（不再同步阻塞）
+    await submitAndPollCompile(message.historyId, token)
+
     ElMessage.success('PDF生成成功！')
 
     // 通过鉴权接口获取 PDF Blob 并预览

@@ -85,6 +85,8 @@ mysql> source 1.sql;                                      # 建库建表 + 预�
 mysql> source migrations/add_notice_feedback_columns.sql; # notice 表追加定向/反馈字段
 mysql> source migrations/create_notice_read_table.sql;    # notice_read 每用户已读表
 mysql> source migrations/create_conversations_tables.sql; # conversations / conversation_messages（自 Node 迁移脚本归档）
+mysql> source migrations/alter_api_log_duration_ms.sql;   # api_log 加 duration_ms（批次2/O1 耗时拆解）
+mysql> source migrations/alter_api_log_error_type.sql;    # api_log 加 error_type（批次3/E2 失败归类）
 mysql> exit;
 ```
 

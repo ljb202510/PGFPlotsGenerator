@@ -1,0 +1,18 @@
+{
+  "history_id" : 246,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个 12 个月降水量的密集柱状图（ybar 紧凑写法）",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar, width=14cm, height=7cm,\n    title={2023年上海各月降水量},\n    ylabel={降水量（毫米）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    x tick label style={font=\\scriptsize},\n    bar width=9pt,\n    ymin=0, ymax=260,\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    enlarge x limits=0.15,\n    nodes near coords,\n    point meta=explicit symbolic,\n    every node near coord/.append style={anchor=south, font=\\scriptsize, fill=none, draw=none, inner sep=1pt}\n]\n\\addplot[fill=blue!60, draw=blue!60] coordinates {\n    (1月,62.3)[62]\n    (2月,53.7)[54]\n    (3月,71.4)[71]\n    (4月,68.5)[69]\n    (5月,103.6)[104]\n    (6月,220.8)[221]\n    (7月,145.3)[145]\n    (8月,158.2)[158]\n    (9月,60.4)[60]\n    (10月,55.1)[55]\n    (11月,78.6)[79]\n    (12月,30.2)[30]\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.20) {数据来源：上海市气象局 2023 年逐月降水量统计（约数，单位：毫米）};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\"chart_type\": \"bar\", \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar, width=14cm, height=7cm,\\n    title={2023年上海各月降水量},\\n    ylabel={降水量（毫米）},\\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\\n    xtick=data,\\n    x tick label style={font=\\\\scriptsize},\\n    bar width=9pt,\\n    ymin=0, ymax=260,\\n    ymajorgrids=true,\\n    grid style={dashed, gray!30},\\n    enlarge x limits=0.15,\\n    nodes near coords,\\n    point meta=explicit symbolic,\\n    every node near coord/.append style={anchor=south, font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt}\\n]\\n\\\\addplot[fill=blue!60, draw=blue!60] coordinates {\\n    (1月,62.3)[62]\\n    (2月,53.7)[54]\\n    (3月,71.4)[71]\\n    (4月,68.5)[69]\\n    (5月,103.6)[104]\\n    (6月,220.8)[221]\\n    (7月,145.3)[145]\\n    (8月,158.2)[158]\\n    (9月,60.4)[60]\\n    (10月,55.1)[55]\\n    (11月,78.6)[79]\\n    (12月,30.2)[30]\\n};\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.20) {数据来源：上海市气象局 2023 年逐月降水量统计（约数，单位：毫米）};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\", \"summary\": \"2023年上海12个月降水量密集柱状图\"}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar, width=14cm, height=7cm,\n    title={2023年上海各月降水量},\n    ylabel={降水量（毫米）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    x tick label style={font=\\scriptsize},\n    bar width=9pt,\n    ymin=0, ymax=260,\n    ymajorgrids=true,\n    grid style={dashed, gray!30},\n    enlarge x limits=0.15,\n    nodes near coords,\n    point meta=explicit symbolic,\n    every node near coord/.append style={anchor=south, font=\\scriptsize, fill=none, draw=none, inner sep=1pt}\n]\n\\addplot[fill=blue!60, draw=blue!60] coordinates {\n    (1月,62.3)[62]\n    (2月,53.7)[54]\n    (3月,71.4)[71]\n    (4月,68.5)[69]\n    (5月,103.6)[104]\n    (6月,220.8)[221]\n    (7月,145.3)[145]\n    (8月,158.2)[158]\n    (9月,60.4)[60]\n    (10月,55.1)[55]\n    (11月,78.6)[79]\n    (12月,30.2)[30]\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.20) {数据来源：上海市气象局 2023 年逐月降水量统计（约数，单位：毫米）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个 12 个月降水量的密集柱状图（ybar 紧凑写法）",
+  "created_at" : "2026-09-14T05:09:19.709Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 958,
+    "code_source" : "from_request"
+  }
+}

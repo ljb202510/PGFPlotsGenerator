@@ -52,13 +52,18 @@ public final class LatexCompiler {
     private LatexCompiler() {
     }
 
-    /** 编译前安全校验。 */
+    /** 编译前安全校验（使用默认长度上限）。 */
     public static Validation validate(String code) {
+        return validate(code, MAX_CODE_LENGTH);
+    }
+
+    /** 编译前安全校验（批次2/T2：长度上限可由 app.latex.max-code-length 配置驱动）。 */
+    public static Validation validate(String code, int maxCodeLength) {
         if (code == null || code.isEmpty()) {
             return new Validation(false, "图表代码为空，无法编译");
         }
-        if (code.length() > MAX_CODE_LENGTH) {
-            return new Validation(false, "图表代码过长（超过 50000 字符），请重新生成后再试");
+        if (code.length() > maxCodeLength) {
+            return new Validation(false, "图表代码过长（超过 " + maxCodeLength + " 字符），请重新生成后再试");
         }
         for (Dangerous item : DANGEROUS) {
             if (Pattern.compile(item.pattern()).matcher(code).find()) {
@@ -194,6 +199,9 @@ __CHART_CODE__
             reader.join(2000);
             return new CompileResult(Files.exists(pdfPath), output.toString());
         } catch (Exception e) {
+            // 记录执行异常本身（如「找不到 xelatex」）：否则 output 为空，
+            // 调用方拿到的失败信息整体空白，既无任务 error 也无 api_log.call_error 可读
+            output.append("xelatex 执行异常: ").append(e.getMessage()).append('\n');
             return new CompileResult(Files.exists(pdfPath), output.toString());
         }
     }

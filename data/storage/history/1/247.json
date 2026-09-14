@@ -1,0 +1,18 @@
+{
+  "history_id" : 247,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个带误差棒的实验数据对比柱状图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar, width=12cm, height=7cm,\n    title={2023年长江中下游单季稻不同氮肥处理产量对比（含标准差）},\n    ylabel={籽粒产量（公斤/亩）},\n    symbolic x coords={常规尿素,减氮10\\%,减氮20\\%,减氮30\\%,控释掺混肥},\n    xtick=data,\n    x tick label style={font=\\scriptsize},\n    enlarge x limits=0.15,\n    ymin=0, ymax=800,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[fill=blue!55, draw=blue!70!black, error bars/.cd, y dir=both, y explicit]\n  coordinates {\n    (常规尿素,628) +- (0,32)\n    (减氮10\\%,615) +- (0,27)\n    (减氮20\\%,596) +- (0,24)\n    (减氮30\\%,558) +- (0,21)\n    (控释掺混肥,641) +- (0,26)\n  };\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国农业科学院农业资源与农业区划研究所2023年长江中下游单季稻定位试验（n=4，误差棒为标准差）};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\"chart_type\": \"bar\", \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar, width=12cm, height=7cm,\\n    title={2023年长江中下游单季稻不同氮肥处理产量对比（含标准差）},\\n    ylabel={籽粒产量（公斤/亩）},\\n    symbolic x coords={常规尿素,减氮10\\\\%,减氮20\\\\%,减氮30\\\\%,控释掺混肥},\\n    xtick=data,\\n    x tick label style={font=\\\\scriptsize},\\n    enlarge x limits=0.15,\\n    ymin=0, ymax=800,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\\n]\\n\\\\addplot[fill=blue!55, draw=blue!70!black, error bars/.cd, y dir=both, y explicit]\\n  coordinates {\\n    (常规尿素,628) +- (0,32)\\n    (减氮10\\\\%,615) +- (0,27)\\n    (减氮20\\\\%,596) +- (0,24)\\n    (减氮30\\\\%,558) +- (0,21)\\n    (控释掺混肥,641) +- (0,26)\\n  };\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国农业科学院农业资源与农业区划研究所2023年长江中下游单季稻定位试验（n=4，误差棒为标准差）};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\", \"summary\": \"2023年水稻氮肥试验产量对比柱状图\"}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar, width=12cm, height=7cm,\n    title={2023年长江中下游单季稻不同氮肥处理产量对比（含标准差）},\n    ylabel={籽粒产量（公斤/亩）},\n    symbolic x coords={常规尿素,减氮10\\%,减氮20\\%,减氮30\\%,控释掺混肥},\n    xtick=data,\n    x tick label style={font=\\scriptsize},\n    enlarge x limits=0.15,\n    ymin=0, ymax=800,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}\n]\n\\addplot[fill=blue!55, draw=blue!70!black, error bars/.cd, y dir=both, y explicit]\n  coordinates {\n    (常规尿素,628) +- (0,32)\n    (减氮10\\%,615) +- (0,27)\n    (减氮20\\%,596) +- (0,24)\n    (减氮30\\%,558) +- (0,21)\n    (控释掺混肥,641) +- (0,26)\n  };\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：中国农业科学院农业资源与农业区划研究所2023年长江中下游单季稻定位试验（n=4，误差棒为标准差）};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个带误差棒的实验数据对比柱状图",
+  "created_at" : "2026-09-14T05:09:31.500Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 836,
+    "code_source" : "from_request"
+  }
+}

@@ -50,6 +50,8 @@ public class AppProperties {
         private long timeoutMs = 30000L;
         /** 图表代码最大长度（字符） */
         private int maxCodeLength = 50000;
+        /** XeLaTeX 最大并发编译数（批次2/G2，Semaphore 限流） */
+        private int maxConcurrency = 2;
     }
 
     @Data

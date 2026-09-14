@@ -28,4 +28,10 @@ public class ApiLog {
 
     /** 提示词版本号（批次1/A2），值取 PromptTemplates.VERSION */
     private String promptVersion;
+
+    /** LLM 调用耗时（毫秒），批次2/O1；编译耗时记在编译任务终态，不落 api_log */
+    private Long durationMs;
+
+    /** 失败分类（批次3/E2），取值见 {@link com.pg.pgfplots.common.ErrorTypes}；成功调用为 null */
+    private String errorType;
 }

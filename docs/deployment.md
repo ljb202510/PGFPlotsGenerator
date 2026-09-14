@@ -70,6 +70,8 @@ mysql -u root -p X < hello/1.sql                                      # 建库�
 mysql -u root -p X < hello/migrations/add_notice_feedback_columns.sql  # notice 加定向/反馈字段
 mysql -u root -p X < hello/migrations/create_notice_read_table.sql     # notice_read 已读表
 mysql -u root -p X < hello/migrations/create_conversations_tables.sql  # 建 conversations / conversation_messages
+mysql -u root -p X < hello/migrations/alter_api_log_duration_ms.sql    # api_log 加 duration_ms（批次2/O1 耗时拆解）
+mysql -u root -p X < hello/migrations/alter_api_log_error_type.sql     # api_log 加 error_type（批次3/E2 失败归类）
 ```
 
 > 部署常踩坑（log.md）：`1.sql` 首行是 `DROP DATABASE IF EXISTS X;`，会**清空重建**，切勿在生产已有数据时直接执行；建议导出为纯建表语句或先备份。

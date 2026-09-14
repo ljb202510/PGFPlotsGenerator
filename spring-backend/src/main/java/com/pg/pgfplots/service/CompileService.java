@@ -74,11 +74,13 @@ public class CompileService {
         Path tempDir = null;
         try {
             Files.createDirectories(userStorageDir);
-            tempDir = userStorageDir.resolve("temp_" + System.currentTimeMillis());
-            Files.createDirectories(tempDir);
+            // JDK 原子创建唯一目录：避免同一 userId 在同一毫秒并发编译时共用工作目录，
+            // 导致 xelatex 输出互相踩踏、且 safeCleanup 误删其他任务仍在使用的目录
+            tempDir = Files.createTempDirectory(userStorageDir, "temp_");
 
             String processed = LatexCompiler.preprocess(code);
-            LatexCompiler.Validation validation = LatexCompiler.validate(processed);
+            LatexCompiler.Validation validation =
+                    LatexCompiler.validate(processed, appProperties.getLatex().getMaxCodeLength());
             if (!validation.valid()) {
                 LatexCompiler.safeCleanup(tempDir);
                 throw BusinessException.badRequest(validation.message());
@@ -145,7 +147,8 @@ public class CompileService {
         }
     }
 
-    private Integer parseHistoryId(String raw) {
+    /** 解析 history_id，非法即 400（批次2/T4：提升为 public static 供 CompileController 复用）。 */
+    public static Integer parseHistoryId(String raw) {
         try {
             return Integer.valueOf(raw);
         } catch (Exception e) {

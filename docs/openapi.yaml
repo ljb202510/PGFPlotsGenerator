@@ -286,8 +286,8 @@ paths:
   /api/compile/{history_id}:
     post:
       tags: [编译]
-      summary: 编译历史代码为 PDF
-      description: 只读取库内 generation_code 编译（不接受 body 覆盖代码）；成功则移动到 storage/generated_charts 并更新 generation_path。
+      summary: 提交编译任务（批次2/G1 异步，立即返回 task_id）
+      description: 只读取库内 generation_code 编译（不接受 body 覆盖代码）；任务入 compileTaskExecutor 队列后立即返回，需用 GET /api/compile/task/{task_id} 轮询终态。成功则把 PDF 移动到 storage/generated_charts 并更新 generation_path。
       parameters:
         - name: history_id
           in: path
@@ -295,7 +295,44 @@ paths:
           schema: { type: integer }
       responses:
         "200":
-          description: 编译成功
+          description: 任务已提交（status 恒为 queued）
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  message: { type: string, example: 编译任务已提交 }
+                  data:
+                    type: object
+                    properties:
+                      task_id: { type: string, example: ct_1789360537294_18244 }
+                      status: { type: string, enum: [queued] }
+                      history_id: { type: integer }
+        "400":
+          description: history_id 非法
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+        "503":
+          description: 编译任务队列已满（该任务被标记 failed，不静默丢弃）
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageFail" }
+
+  /api/compile/task/{task_id}:
+    get:
+      tags: [编译]
+      summary: 查询编译任务状态（轮询终态）
+      description: 仅任务提交者（userId 归属校验）可查询；服务重启会清空内存任务表，此时返回 404 并提示重新提交。
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: 查询成功
           content:
             application/json:
               schema:
@@ -306,21 +343,15 @@ paths:
                   data:
                     type: object
                     properties:
+                      task_id: { type: string }
                       history_id: { type: integer }
-                      pdf_path: { type: string }
-                      file_size: { type: integer }
-        "400":
-          description: 历史无效或无可用图表代码
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/MessageFail" }
+                      status: { type: string, enum: [queued, running, success, failed] }
+                      pdf_path: { type: string, nullable: true }
+                      file_size: { type: integer, nullable: true }
+                      error: { type: string, nullable: true }
+                      duration_ms: { type: integer, nullable: true, description: 含排队等待时间 }
         "404":
-          description: 历史不存在或无权访问
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/MessageFail" }
-        "500":
-          description: XeLaTeX 编译失败（含 stderr）
+          description: 任务不存在、无权访问，或服务重启后已丢失
           content:
             application/json:
               schema: { $ref: "#/components/schemas/MessageFail" }
@@ -1141,6 +1172,12 @@ paths:
     get:
       tags: [管理员]
       summary: API 调用统计
+      description: >-
+        响应 data 含 summary（total_calls/success_calls/failed_calls/success_rate，失败计数覆盖全链路含编译失败）、
+        timeSeries（按日 total/success/failed）、recentFailures（最近失败调用）、
+        responseTime（生成链路 LLM 耗时 avg/p95/sample_count，编译耗时不计入）、
+        errorTypes（失败分类计数，批次3/E2）、responseTimeSeries（按日 avg/p95/count，批次3/E3）。
+        后两者无数据时为空数组。
       security: []
       responses:
         "200":

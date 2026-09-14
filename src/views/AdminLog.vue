@@ -62,6 +62,33 @@
             </div>
           </div>
         </el-card>
+
+        <!-- [E3] 耗时指标：avg/p95 为 null（区间内无 duration_ms 数据）时显示「—」，不允许被兜底成 0 -->
+        <el-card class="overview-card">
+          <div class="card-content">
+            <div class="card-icon primary">
+              <el-icon><Timer /></el-icon>
+            </div>
+            <div class="card-info">
+              <div class="card-title">平均耗时</div>
+              <div class="card-value">{{ apiStats.responseTime.avg == null ? '—' : apiStats.responseTime.avg + ' ms' }}</div>
+              <div class="card-subtitle">样本 {{ apiStats.responseTime.sample_count || 0 }}</div>
+            </div>
+          </div>
+        </el-card>
+
+        <el-card class="overview-card">
+          <div class="card-content">
+            <div class="card-icon warning">
+              <el-icon><Timer /></el-icon>
+            </div>
+            <div class="card-info">
+              <div class="card-title">P95 耗时</div>
+              <div class="card-value">{{ apiStats.responseTime.p95 == null ? '—' : apiStats.responseTime.p95 + ' ms' }}</div>
+              <div class="card-subtitle">样本 {{ apiStats.responseTime.sample_count || 0 }}</div>
+            </div>
+          </div>
+        </el-card>
       </div>
     </div>
 
@@ -134,6 +161,21 @@
               </template>
             </el-table-column>
           </el-table>
+        </div>
+      </div>
+    </div>
+
+    <!-- [E2/E3] 质量看板：失败分类分布 + 按日耗时趋势；无数据时走空态，不画 0 值图 -->
+    <div class="chart-section">
+      <h2>质量看板</h2>
+      <div class="quality-grid">
+        <div class="chart-wrapper">
+          <div v-if="errorChartEmpty" class="chart-empty">暂无失败记录</div>
+          <div v-else ref="errorChartRef" style="width: 100%; height: 360px;"></div>
+        </div>
+        <div class="chart-wrapper">
+          <div v-if="latencyChartEmpty" class="chart-empty">该区间暂无耗时数据</div>
+          <div v-else ref="latencyChartRef" style="width: 100%; height: 360px;"></div>
         </div>
       </div>
     </div>
@@ -263,14 +305,15 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import { 
   Refresh, 
   Monitor, 
   Connection, 
   Warning, 
-  User 
+  User,
+  Timer
 } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import { API_BASE_URL } from '@/config';
@@ -281,6 +324,26 @@ const loading = ref(false)
 const logsLoading = ref(false)
 const chartRef = ref(null)
 let chartInstance = null
+
+// [E2/E3] 质量看板：失败分类分布 + 按日耗时趋势（容器由 v-if 控制，实例惰性创建）
+const errorChartRef = ref(null)
+const latencyChartRef = ref(null)
+let errorChartInstance = null
+let latencyChartInstance = null
+const errorChartEmpty = ref(true)
+const latencyChartEmpty = ref(true)
+
+// [E2] 失败分类 → 中文标签；未收录的新分类直接显示原始值（不透掉）
+const ERROR_TYPE_LABELS = {
+  UPSTREAM_API_ERROR: '上游接口错误',
+  UPSTREAM_CONNECTION_ERROR: '上游连接失败',
+  UPSTREAM_UNKNOWN_ERROR: '上游未知错误',
+  EMPTY_REPLY: '空回复',
+  CODE_EXTRACT_FAIL: '代码提取失败',
+  COMPILE_ERROR: '编译失败',
+  COMPILE_QUEUE_FULL: '编译队列已满'
+}
+const errorTypeLabel = (type) => ERROR_TYPE_LABELS[type] || type
 
 // 排序相关变量（参考DataUpload.vue）
 const sortField = ref('log_time') // 默认按日志时间排序
@@ -295,7 +358,9 @@ const apiStats = reactive({
   summary: {},
   timeSeries: [],
   recentFailures: [],
-  responseTime: {}
+  responseTime: {},
+  errorTypes: [],
+  responseTimeSeries: []
 })
 
 // 系统健康概览
@@ -451,6 +516,8 @@ const fetchApiStats = async () => {
     if (result.success) {
       Object.assign(apiStats, result.data)
       renderChart()
+      renderErrorChart()
+      renderLatencyChart()
     }
   } catch (error) {
     console.error('获取API统计失败:', error)
@@ -571,6 +638,71 @@ const renderChart = () => {
   }
   
   chartInstance.setOption(option)
+}
+
+// [E3] 惰性初始化质量看板图表：容器由 v-if 控制，首屏可能不存在；写法对齐 initChart
+const initQualityChart = (el, instance) => {
+  if (!el) return instance
+  if (instance) {
+    instance.resize()
+    return instance
+  }
+  const created = echarts.init(el)
+  const resizeObserver = new ResizeObserver(() => created.resize())
+  resizeObserver.observe(el)
+  return created
+}
+
+// [E2] 失败分类分布（饼图）：无分类数据时不画图，走空态
+const renderErrorChart = async () => {
+  const list = apiStats.errorTypes || []
+  errorChartEmpty.value = list.length === 0
+  if (errorChartEmpty.value) {
+    if (errorChartInstance) {
+      errorChartInstance.clear()
+    }
+    return
+  }
+  await nextTick()
+  errorChartInstance = initQualityChart(errorChartRef.value, errorChartInstance)
+  if (!errorChartInstance) return
+  errorChartInstance.setOption({
+    title: { text: '失败分类分布', left: 'center' },
+    tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+    legend: { bottom: 0 },
+    series: [{
+      type: 'pie',
+      radius: ['40%', '65%'],
+      data: list.map((it) => ({ name: errorTypeLabel(it.error_type), value: it.count }))
+    }]
+  }, true)
+}
+
+// [E3] 耗时趋势（按日 avg / P95 双折线）：区间内无耗时数据时不画图，走空态
+const renderLatencyChart = async () => {
+  const list = apiStats.responseTimeSeries || []
+  latencyChartEmpty.value = list.length === 0
+  if (latencyChartEmpty.value) {
+    if (latencyChartInstance) {
+      latencyChartInstance.clear()
+    }
+    return
+  }
+  await nextTick()
+  latencyChartInstance = initQualityChart(latencyChartRef.value, latencyChartInstance)
+  if (!latencyChartInstance) return
+  latencyChartInstance.setOption({
+    title: { text: '耗时趋势（按日）', left: 'center' },
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['平均', 'P95'], top: 24 },
+    grid: { left: '3%', right: '4%', bottom: '3%', top: '20%', containLabel: true },
+    xAxis: { type: 'category', data: list.map((it) => it.date) },
+    yAxis: { type: 'value', name: '毫秒' },
+    series: [
+      { name: '平均', type: 'line', smooth: true, data: list.map((it) => it.avg) },
+      { name: 'P95', type: 'line', smooth: true, data: list.map((it) => it.p95) }
+    ]
+  }, true)
 }
 
 // 查看错误详情
@@ -808,6 +940,28 @@ const formatLabel = (key) => {
 
 .chart-wrapper {
   margin-bottom: 20px;
+}
+
+/* [E3] 质量看板：窄屏自动降为单列 */
+.quality-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 20px;
+}
+
+/* [E3] 图表空态：占位高度与图表一致，避免布局跳动 */
+.chart-empty {
+  height: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #909399;
+}
+
+/* [E3] 卡片副标题（如「样本 12」） */
+.card-subtitle {
+  font-size: 12px;
+  color: #909399;
 }
 
 .api-details {

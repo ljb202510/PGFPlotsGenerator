@@ -112,6 +112,7 @@
     <!-- ==================== AdminLog ==================== -->
     <select id="selectApiLogs" resultType="map">
         SELECT al.call_id, al.user_id, al.history_id, al.call_status, al.call_error,
+               al.duration_ms, al.error_type,
                DATE_FORMAT(al.call_time, '%Y-%m-%d %H:%i:%s') AS call_time,
                u.username,
                gh.generation_description

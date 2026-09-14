@@ -142,13 +142,15 @@ flowchart LR
 
 #### 3.2.3 编译（compile）
 
-- 入口：`controller/CompileController` → `service/CompileService`
-- 接口：`GET /:history_id/pdf`（鉴权流式返回 PDF 文件）、`POST /:history_id`（编译，均需认证）
+- 入口：`controller/CompileController` → `service/CompileTaskService`（批次2/G1 异步任务）→ `service/CompileService`
+- 接口：`POST /:history_id`（提交编译任务，**批次2/G1 起立即返回 `{task_id, status:"queued", history_id}`，不再同步阻塞**）、`GET /task/:task_id`（轮询终态：success 含 `pdf_path/file_size/duration_ms`，failed 含 `error`；按 userId 校验归属，越权或服务重启后丢失统一 404）、`GET /:history_id/pdf`（鉴权流式返回 PDF 文件），均需认证
 - 关键事实：
-  - **POST 只读取库内 `generation_history.generation_code`**，**不接受请求体 code 覆盖**；先校验历史存在且属于当前用户
+  - **POST 只读取库内 `generation_history.generation_code`**，**不接受请求体 code 覆盖**；历史存在性与归属校验在工作线程内完成
+  - **异步执行（G1）**：内存任务表（`queued→running→success/failed`，重启丢失为已知取舍）+ `compileTaskExecutor`（core2/max4/queue100）；队列满**不静默丢弃**，任务标记 failed 并返回 503
+  - **并发上限（G2）**：`Semaphore` 限流真实 XeLaTeX 进程并发 = `app.latex.max-concurrency`（默认 2），等待时长计入任务 `duration_ms`
   - 若代码含完整 `document` 结构则抽取文档体并清理 documentclass/usepackage
   - 中文文档：`standalone` 文档类 + `pgfplots/compat=1.18` + `xeCJK`，**中文字体 SimSun、西文 Times New Roman**
-  - `util/LatexCompiler`：`xelatex -interaction=nonstopmode`，超时 **30s**；以 PDF 是否存在判成败
+  - `util/LatexCompiler`：`xelatex -interaction=nonstopmode`，超时 **30s**；以 PDF 是否存在判成败；代码长度上限由 `app.latex.max-code-length` 驱动
   - 成功：PDF 移动至 `storage/generated_charts/user{userId}/hist{historyId}.pdf`，更新 `generation_path`（相对路径）；失败必清理临时目录
 - PDF 访问：已移除 `/storage` 无鉴权静态托管；前端通过 `GET /api/compile/:id/pdf` 携带 JWT，服务端按 `user_id` 校验归属后流式返回，前端 `fetch → blob → objectURL` 预览（`src/utils/pdf.js`）
 
@@ -260,15 +262,21 @@ sequenceDiagram
         CHAT-->>CG: {reply, chart_code, history_id}
     end
     CG->>COM: POST /api/compile/{history_id}
+    COM->>COM: CompileTaskService.submit → compileTaskExecutor 入队
+    COM-->>CG: {task_id, status:"queued"}（立即返回，不再阻塞 30s）
+    loop 每 1.5s 轮询（上限 90s）
+        CG->>COM: GET /api/compile/task/{task_id}
+    end
+    COM->>COM: 取 Semaphore 许可（并发 ≤ app.latex.max-concurrency）
     COM->>DB: 查 generation_code（仅库内代码，不接受 body.code）
     COM->>COM: preprocess + createChineseLatexDocument(standalone+xeCJK)
     COM->>TEX: xelatex -interaction=nonstopmode（30s 超时）
     alt 编译失败
         TEX-->>COM: stderr
-        COM-->>CG: 500 + 错误输出
+        COM-->>CG: task status=failed + error（截断 500）
     else 成功
         COM->>FS: hist{id}.pdf → user{uid}/ 目录，更新 generation_path
-        COM-->>CG: {pdf_url}
+        COM-->>CG: task status=success + pdf_path/file_size/duration_ms
         CG->>CG: fetch GET /api/compile/:id/pdf（Bearer）→ blob objectURL 预览
     end
 ```
@@ -438,7 +446,7 @@ erDiagram
 | `users` | user_id/username/email/password/role | `1.sql:5-12` | 预置管理员 `admin123/666666`（`1.sql:14-20`） |
 | `data_file` | data_id/user_id/data_name/data_size/file_path/... | `1.sql:22-34` | user_id FK ON DELETE CASCADE |
 | `generation_history` | history_id/user_id/data_id/generation_code/generation_path | `1.sql:36-46` | data_id FK SET NULL |
-| `api_log` | call_id/user_id/history_id/call_status/call_error | `1.sql:48-57` | 关联历史 |
+| `api_log` | call_id/user_id/history_id/call_status/call_error + **prompt_version**（批次1/A2）+ **duration_ms**（批次2/O1）+ **error_type**（批次3/E2） | `1.sql:48-57` + `migrations/alter_api_log_prompt_version.sql` + `migrations/alter_api_log_duration_ms.sql` + `migrations/alter_api_log_error_type.sql` | 关联历史；批次3 起语义为「**AI 链路失败事件日志**」（含编译失败）；duration_ms 供聚合 avg/P95（只统计生成链路，编译耗时不混算），error_type 供失败归类计数 |
 | `feedback` | feedback_id/user_id/type/content/answer/answer_time | `1.sql:59-68` | — |
 | `system_log` | sys_id/system_status/error | `1.sql:70-75` | writeSystemLog 写入 |
 | `email_verification_codes` | email/code/expires_at | `1.sql:77-85` | 10 分钟过期 |
@@ -456,6 +464,8 @@ mysql -u root -p000 X < 1.sql
 mysql -u root -p000 X < migrations/add_notice_feedback_columns.sql
 mysql -u root -p000 X < migrations/create_notice_read_table.sql
 mysql -u root -p000 X < migrations/create_conversations_tables.sql
+mysql -u root -p000 X < migrations/alter_api_log_duration_ms.sql
+mysql -u root -p000 X < migrations/alter_api_log_error_type.sql
 ```
 
 ## 6. 技术栈清单

@@ -1,5 +1,6 @@
 package com.pg.pgfplots.service;
 
+import com.pg.pgfplots.common.ErrorTypes;
 import com.pg.pgfplots.entity.SystemLog;
 import com.pg.pgfplots.mapper.AdminMapper;
 import com.pg.pgfplots.mapper.SystemLogMapper;
@@ -89,16 +90,100 @@ public class AdminLogService {
         summary.put("failed_calls", failed);
         summary.put("success_rate", successRate);
 
+        // [O1] 从 selectApiLogs 已回传的 duration_ms 明细算真实 avg/P95；无数据时输出 null，不再造假数据
+        // [E3] 口径：只统计生成链路（LLM）耗时——编译类失败的 duration_ms 属「编译耗时」，排除在外，两段耗时不混算
+        List<Long> durations = logs.stream()
+                .filter(log -> !isCompileFailure(log))
+                .map(log -> log.get("duration_ms"))
+                .filter(value -> value instanceof Number)
+                .map(value -> ((Number) value).longValue())
+                .sorted()
+                .toList();
         Map<String, Object> responseTime = new LinkedHashMap<>();
-        responseTime.put("avg", 245);
-        responseTime.put("p95", 420);
+        if (durations.isEmpty()) {
+            responseTime.put("avg", null);
+            responseTime.put("p95", null);
+            responseTime.put("sample_count", 0);
+        } else {
+            responseTime.put("avg", Math.round(durations.stream().mapToLong(Long::longValue).average().orElse(0)));
+            responseTime.put("p95", p95Of(durations));
+            responseTime.put("sample_count", durations.size());
+        }
+
+        // [E2] 失败分类计数（按 error_type 聚合；与 call_status 无关，成功行不带分类）
+        Map<String, Integer> typeCounts = new LinkedHashMap<>();
+        for (Map<String, Object> log : logs) {
+            Object type = log.get("error_type");
+            if (type == null) {
+                continue;
+            }
+            typeCounts.merge(type.toString(), 1, Integer::sum);
+        }
+        List<Map<String, Object>> errorTypes = typeCounts.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .map(entry -> {
+                    Map<String, Object> item = new LinkedHashMap<>();
+                    item.put("error_type", entry.getKey());
+                    item.put("count", entry.getValue());
+                    return item;
+                })
+                .toList();
+
+        // [E3] 按日耗时序列（avg / P95 / 样本数）：无 duration_ms 的日期不产生数据点，区间内全无则为空数组
+        Map<String, List<Long>> durationsByDate = new TreeMap<>();
+        for (Map<String, Object> log : logs) {
+            if (isCompileFailure(log)) {
+                continue;
+            }
+            Object duration = log.get("duration_ms");
+            if (!(duration instanceof Number)) {
+                continue;
+            }
+            String date = extractDate(log.get("call_time"));
+            if (date.isEmpty()) {
+                continue;
+            }
+            durationsByDate.computeIfAbsent(date, key -> new ArrayList<>()).add(((Number) duration).longValue());
+        }
+        List<Map<String, Object>> responseTimeSeries = new ArrayList<>(durationsByDate.size());
+        for (Map.Entry<String, List<Long>> entry : durationsByDate.entrySet()) {
+            List<Long> values = entry.getValue();
+            values.sort(Long::compareTo);
+            Map<String, Object> item = new LinkedHashMap<>();
+            item.put("date", entry.getKey());
+            item.put("avg", Math.round(values.stream().mapToLong(Long::longValue).average().orElse(0)));
+            item.put("p95", p95Of(values));
+            item.put("count", values.size());
+            responseTimeSeries.add(item);
+        }
 
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("summary", summary);
         data.put("timeSeries", timeSeries);
         data.put("recentFailures", recentFailures);
         data.put("responseTime", responseTime);
+        data.put("errorTypes", errorTypes);
+        data.put("responseTimeSeries", responseTimeSeries);
         return data;
+    }
+
+    /**
+     * [E3] 是否为编译类失败事件（COMPILE_ERROR / COMPILE_QUEUE_FULL）。
+     * <p>这类行的 duration_ms 是「编译耗时」，与生成链路的 LLM 耗时属两段，不能混算进 responseTime。</p>
+     */
+    private boolean isCompileFailure(Map<String, Object> log) {
+        Object type = log.get("error_type");
+        if (type == null) {
+            return false;
+        }
+        String value = type.toString();
+        return ErrorTypes.COMPILE_ERROR.equals(value) || ErrorTypes.COMPILE_QUEUE_FULL.equals(value);
+    }
+
+    /** [E3] 最近秩法（nearest-rank）：升序列表中第 ceil(n*0.95) 个样本（批次2/O1 与批次3/E3 共用口径）。 */
+    private long p95Of(List<Long> sortedAsc) {
+        int index = (int) Math.ceil(sortedAsc.size() * 0.95) - 1;
+        return sortedAsc.get(Math.max(0, Math.min(sortedAsc.size() - 1, index)));
     }
 
     /** 系统日志（分页 + 筛选 + 近 7 天统计）。 */

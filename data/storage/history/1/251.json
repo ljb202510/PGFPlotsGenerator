@@ -1,0 +1,18 @@
+{
+  "history_id" : 251,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个多系列带误差棒的性能对比柱状图：方案A 520±28，方案B 568±35，方案C 602±22，方案D 585±30",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm, height=7cm,\n    title={四种方案性能得分对比（含标准差误差棒）},\n    ylabel={性能得分（分）},\n    symbolic x coords={方案A,方案B,方案C,方案D},\n    xtick=data,\n    x tick label style={font=\\small},\n    enlarge x limits=0.15,\n    ymin=0, ymax=750,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n\\addplot +[fill=blue!50, draw=blue!70!black,\n           error bars/.cd, y dir=both, y explicit]\n  coordinates {\n    (方案A,520) +- (0,28)\n    (方案B,568) +- (0,35)\n    (方案C,602) +- (0,22)\n    (方案D,585) +- (0,30)\n  };\n\\legend{性能得分}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {注：误差棒为各方案性能得分的标准差};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\"chart_type\": \"bar\", \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    width=12cm, height=7cm,\\n    title={四种方案性能得分对比（含标准差误差棒）},\\n    ylabel={性能得分（分）},\\n    symbolic x coords={方案A,方案B,方案C,方案D},\\n    xtick=data,\\n    x tick label style={font=\\\\small},\\n    enlarge x limits=0.15,\\n    ymin=0, ymax=750,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\\n]\\n\\\\addplot +[fill=blue!50, draw=blue!70!black,\\n           error bars/.cd, y dir=both, y explicit]\\n  coordinates {\\n    (方案A,520) +- (0,28)\\n    (方案B,568) +- (0,35)\\n    (方案C,602) +- (0,22)\\n    (方案D,585) +- (0,30)\\n  };\\n\\\\legend{性能得分}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {注：误差棒为各方案性能得分的标准差};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\", \"summary\": \"四方案性能对比误差棒柱状图\"}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm, height=7cm,\n    title={四种方案性能得分对比（含标准差误差棒）},\n    ylabel={性能得分（分）},\n    symbolic x coords={方案A,方案B,方案C,方案D},\n    xtick=data,\n    x tick label style={font=\\small},\n    enlarge x limits=0.15,\n    ymin=0, ymax=750,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n\\addplot +[fill=blue!50, draw=blue!70!black,\n           error bars/.cd, y dir=both, y explicit]\n  coordinates {\n    (方案A,520) +- (0,28)\n    (方案B,568) +- (0,35)\n    (方案C,602) +- (0,22)\n    (方案D,585) +- (0,30)\n  };\n\\legend{性能得分}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {注：误差棒为各方案性能得分的标准差};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个多系列带误差棒的性能对比柱状图：方案A 520±28，方案B 568±35，方案C 602±22，方案D 585±30",
+  "created_at" : "2026-09-14T05:11:17.960Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 833,
+    "code_source" : "from_request"
+  }
+}

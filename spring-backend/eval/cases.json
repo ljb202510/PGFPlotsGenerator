@@ -8,5 +8,12 @@
   { "id": "error_bar",     "message": "画一个带误差棒的实验数据对比柱状图" },
   { "id": "line_multi",    "message": "画一个双系列折线图（产量与销量），标注错开避免重叠" },
   { "id": "bar_negative",  "message": "画一个含正负值的月度盈亏柱状图" },
-  { "id": "bar_ambiguity", "message": "画一个十年人口增长趋势图" }
+  { "id": "bar_ambiguity", "message": "画一个十年人口增长趋势图" },
+
+  { "id": "combo_errorbar_multi",  "message": "画一个多系列带误差棒的性能对比柱状图：方案A 520±28，方案B 568±35，方案C 602±22，方案D 585±30" },
+  { "id": "dual_axis",             "message": "画一个双 y 轴图：左轴是产量（万吨）、右轴是同比增速（%），2019-2024 年" },
+  { "id": "dense_legend_outside",  "message": "画一个 12 个月销售额柱状图，每个柱子都标数值，图例放到图外" },
+  { "id": "ambiguous_trend",       "message": "我有一份近几年的人口数据，帮我看看变化" },
+  { "id": "missing_data",          "message": "画一个全国主要城市空气质量对比图，我没有具体数据" },
+  { "id": "stacked_area",          "message": "画一个 2019-2024 年三款产品累计销量的堆叠面积图" }
 ]

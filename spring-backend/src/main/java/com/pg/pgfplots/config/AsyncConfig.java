@@ -25,4 +25,20 @@ public class AsyncConfig {
         executor.initialize();
         return executor;
     }
+
+    /**
+     * [G1] 编译任务线程池（批次2/G2 两级限流的第一级）。
+     * <p>与 RAG 池相反，编译任务不可静默丢弃：这里保留默认 AbortPolicy，
+     * 由 {@code CompileTaskService.submit} 同步捕获拒绝异常并把任务标记 failed 后返回 503。</p>
+     */
+    @Bean("compileTaskExecutor")
+    public ThreadPoolTaskExecutor compileTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setThreadNamePrefix("compile-task-");
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(4);
+        executor.setQueueCapacity(100);
+        executor.initialize();
+        return executor;
+    }
 }

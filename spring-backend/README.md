@@ -122,6 +122,7 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 | `CHARTS_DIR` | `../data/storage/generated_charts` | 编译产物 PDF |
 | `RELATIVE_BASE` | `..` | `generation_path` 相对路径解析基准 |
 | `XELATEX` / `LATEX_TIMEOUT_MS` | `xelatex` / 30000 | 编译器与超时 |
+| `LATEX_MAX_CONCURRENCY` | `2` | XeLaTeX 并发编译上限（批次2/G2，`Semaphore` 限流） |
 
 ## 6. 包结构
 
@@ -149,9 +150,9 @@ build.cmd        :: 先确保能构建
 verify.cmd       :: 自动启动后端 + 回归全部接口，输出 PASS/FAIL
 ```
 
-`verify.js` 覆盖：鉴权（401/403/管理员登录）、管理后台（static / users / notices / log 统计）、用户侧（notice / history / conversations / feedback / validate）、**数据集上传·列表·改名·下载·删除**、**XeLaTeX 编译 + PDF 鉴权流式返回**。
+`verify.js` 覆盖：鉴权（401/403/管理员登录）、管理后台（static / users / notices / log 统计，含 **responseTime 真实聚合、errorTypes 失败分类、responseTimeSeries 按日耗时序列**三条断言）、用户侧（notice / history / conversations / feedback / validate）、**数据集上传·列表·改名·下载·删除**、**XeLaTeX 异步编译（提交 task_id → 轮询终态 → duration_ms）+ PDF 鉴权流式返回**。
 
-**最近一次结果（2026-09-13）：`PASS=27  FAIL=0  WARN=0`，全部通过。**
+**最近一次结果（2026-09-14）：`PASS=31  FAIL=0  WARN=0`，全部通过。**
 
 ### 7.2 邮件验证码（需人工，会真实发信）
 
@@ -172,7 +173,7 @@ curl -X POST http://localhost:3000/api/verification/send-register-code -H "Conte
 | 登录 | 管理员 `admin123/666666` → `data.{user,token}` |
 | 数据查询 | 13 个前缀接口返回结构正确 |
 | 数据集 | 上传/列表/改名/下载/删除 全通过 |
-| 编译 | `POST /api/compile/82` → `data.{history_id,pdf_path,file_size}`；`GET /api/compile/82/pdf` → 200 流式 PDF |
+| 编译 | `POST /api/compile/82` → `data.{task_id,status:"queued",history_id}`（立即返回）；`GET /api/compile/task/{task_id}` 轮询至 `success`（含 `pdf_path/file_size/duration_ms`）；`GET /api/compile/82/pdf` → 200 流式 PDF |
 | UTF-8 | 中文正常（`curl.exe` 原始字节校验） |
 
 ## 8. 退役 Node 后端（✅ 已于 2026-09-13 执行完成）

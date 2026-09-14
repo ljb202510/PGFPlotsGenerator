@@ -73,6 +73,8 @@ app:
     executable: ${XELATEX:xelatex}
     timeout-ms: ${LATEX_TIMEOUT_MS:30000}
     max-code-length: 50000
+    # XeLaTeX 最大并发编译数（批次2/G2：Semaphore 限流，超出排队）
+    max-concurrency: ${LATEX_MAX_CONCURRENCY:2}
   llm:
     timeout-ms: ${AI_TIMEOUT_MS:45000}
     max-tokens: ${AI_MAX_TOKENS:8192}

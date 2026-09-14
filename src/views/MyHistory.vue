@@ -288,6 +288,7 @@ import CodeBlock from '@/components/ui/CodeBlock.vue'
 // API配置
 import { API_BASE_URL } from '@/config';
 import { fetchPdfBlobUrl } from '@/utils/pdf';
+import { submitAndPollCompile } from '@/utils/compile';
 import { getUserToken } from '@/utils/auth';
 const previewingPdfId = ref(null)
 
@@ -491,13 +492,9 @@ const compileToPDF = async (historyId) => {
       return
     }
     
-    // 调用后端编译接口
-    await axios.post(`${API_BASE_URL}/api/compile/${historyId}`, {}, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    
+    // [G1] 提交编译任务并轮询至终态（不再同步阻塞）
+    await submitAndPollCompile(historyId, token)
+
     // 显示成功消息
     ElMessage.success('PDF生成成功！')
     

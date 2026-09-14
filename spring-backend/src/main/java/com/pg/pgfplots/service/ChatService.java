@@ -7,6 +7,7 @@ import com.pg.pgfplots.client.LlmClient;
 import com.pg.pgfplots.client.LlmConnectionException;
 import com.pg.pgfplots.client.LlmResponse;
 import com.pg.pgfplots.common.BusinessException;
+import com.pg.pgfplots.common.ErrorTypes;
 import com.pg.pgfplots.config.AppProperties;
 import com.pg.pgfplots.dto.chat.ChatRequest;
 import com.pg.pgfplots.entity.ApiLog;
@@ -83,13 +84,15 @@ public class ChatService {
 
         String aiReply;
         var usage = (com.fasterxml.jackson.databind.JsonNode) null;
+        // [O1] LLM 段耗时（含降级链重试的全部时间），成功与失败两条路径都落 api_log.duration_ms
+        long llmStart = System.nanoTime();
         try {
             FallbackResult result = generateWithFallback(systemPrompt, message, requestedModel);
             aiReply = result.reply();
             usage = result.usage();
         } catch (LlmApiException e) {
             log.error("[CHAT] {} API调用错误: {}", label, e.getMessage());
-            recordFailedCall(userId, e.getMessage());
+            recordFailedCall(userId, e.getMessage(), elapsedMs(llmStart), ErrorTypes.UPSTREAM_API_ERROR);
             systemLogWriter.error("[CHAT] " + label + " API调用错误: " + e.getMessage());
             throw new BusinessException(HttpStatus.resolve(e.getStatusCode()) != null
                     ? HttpStatus.valueOf(e.getStatusCode())
@@ -97,16 +100,17 @@ public class ChatService {
                     label + " API错误: " + e.getMessage());
         } catch (LlmConnectionException e) {
             log.error("[CHAT] {} API调用错误: {}", label, e.getMessage());
-            recordFailedCall(userId, e.getMessage());
+            recordFailedCall(userId, e.getMessage(), elapsedMs(llmStart), ErrorTypes.UPSTREAM_CONNECTION_ERROR);
             systemLogWriter.error("[CHAT] " + label + " API调用错误: " + e.getMessage());
             throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "无法连接到" + label + " API，请检查网络设置");
         } catch (Exception e) {
             log.error("[CHAT] {} API调用错误: {}", label, e.getMessage(), e);
-            recordFailedCall(userId, e.getMessage());
+            recordFailedCall(userId, e.getMessage(), elapsedMs(llmStart), ErrorTypes.UPSTREAM_UNKNOWN_ERROR);
             systemLogWriter.error("[CHAT] " + label + " API调用错误: " + e.getMessage());
             throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, "服务器内部错误: " + e.getMessage());
         }
+        long llmDurationMs = elapsedMs(llmStart);
 
         log.info("用户 {} 调用了 {} API，附带数据集: {}", userId, label,
                 request.getDataIds() == null ? "无" : request.getDataIds());
@@ -114,6 +118,8 @@ public class ChatService {
         // 空回复兜底
         if (aiReply == null || aiReply.trim().isEmpty()) {
             systemLogWriter.error("[CHAT] " + label + " 内容为空 + 降级全失败 (用户 " + userId + ")");
+            // [E2] 补齐：空回复此前只写 system_log，未落 api_log，导致失败归类漏掉一整类
+            recordFailedCall(userId, "AI 返回内容为空", elapsedMs(llmStart), ErrorTypes.EMPTY_REPLY);
             throw new BusinessException(HttpStatus.BAD_GATEWAY, "AI 返回内容为空，请重试。");
         }
 
@@ -128,8 +134,13 @@ public class ChatService {
             finalChartCode = ChartCodeExtractor.extract(aiReply);
         }
 
-        // 保存历史
-        SavedHistory saved = saveGenerationHistory(userId, message, aiReply, request.getDataIds(), finalChartCode);
+        // [E2] 生成链路走完但拿不到可编译代码 → 归为 CODE_EXTRACT_FAIL（单行落库，禁止双计）
+        String errorType = (finalChartCode == null || finalChartCode.trim().isEmpty())
+                ? ErrorTypes.CODE_EXTRACT_FAIL : null;
+
+        // 保存历史（[O1] 带上 LLM 段耗时；[E2] 带上失败分类）
+        SavedHistory saved = saveGenerationHistory(userId, message, aiReply, request.getDataIds(),
+                finalChartCode, llmDurationMs, errorType);
 
         // 会话联动
         if (request.getConversationId() != null) {
@@ -244,7 +255,8 @@ public class ChatService {
 
     /** 保存生成历史（DB + JSON 落盘 + api_log）。失败返回 null，不影响主流程。 */
     private SavedHistory saveGenerationHistory(Integer userId, String userInput, String aiResponse,
-                                               List<Integer> dataIds, String chartCode) {
+                                               List<Integer> dataIds, String chartCode, Long durationMs,
+                                               String errorType) {
         try {
             Integer dataId = null;
             String fileName = "";
@@ -311,10 +323,18 @@ public class ChatService {
             ApiLog apiLog = new ApiLog();
             apiLog.setUserId(userId);
             apiLog.setHistoryId(historyId);
-            apiLog.setCallStatus("success");
+            // [E2] 分类非空即失败：在同一条记录内决定状态，避免先写 success 再补 failed 造成双计
+            apiLog.setCallStatus(errorType == null ? "success" : "failed");
             apiLog.setCallTime(LocalDateTime.now());
             // [A2] 记录提示词版本，便于同一用例换版本对比
             apiLog.setPromptVersion(PromptTemplates.VERSION);
+            // [O1] LLM 调用耗时（毫秒），供 AdminLogService 聚合 avg/P95
+            apiLog.setDurationMs(durationMs);
+            if (errorType != null) {
+                apiLog.setErrorType(errorType);
+                // 让「最近失败调用」表的描述列有可读文案，而不是空白
+                apiLog.setCallError("未从生成内容中提取到可编译的图表代码");
+            }
             apiLogMapper.insert(apiLog);
             log.info("✅ API调用日志已记录，call_id: {}", apiLog.getCallId());
 
@@ -371,8 +391,8 @@ public class ChatService {
         }
     }
 
-    /** 记录失败的 API 调用日志。 */
-    private void recordFailedCall(Integer userId, String errorMessage) {
+    /** 记录失败的 API 调用日志（[O1] 失败也落耗时；[E2] 带上失败分类）。 */
+    private void recordFailedCall(Integer userId, String errorMessage, Long durationMs, String errorType) {
         try {
             String message = errorMessage == null ? "未知错误" : errorMessage;
             ApiLog apiLog = new ApiLog();
@@ -381,12 +401,20 @@ public class ChatService {
             apiLog.setCallTime(LocalDateTime.now());
             // [A2] 记录提示词版本，便于同一用例换版本对比
             apiLog.setPromptVersion(PromptTemplates.VERSION);
+            apiLog.setDurationMs(durationMs);
+            // [E2] 失败分类
+            apiLog.setErrorType(errorType);
             apiLog.setCallError(message.length() > 500 ? message.substring(0, 500) : message);
             apiLogMapper.insert(apiLog);
             log.info("❌ API调用失败日志已记录，用户ID: {}", userId);
         } catch (Exception e) {
             log.error("保存API失败日志时出错: {}", e.getMessage());
         }
+    }
+
+    /** [O1] 纳秒计时转毫秒。 */
+    private static long elapsedMs(long startNanos) {
+        return (System.nanoTime() - startNanos) / 1_000_000;
     }
 
     private String writeJson(Object value) {
