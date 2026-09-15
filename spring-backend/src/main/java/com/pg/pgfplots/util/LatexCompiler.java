@@ -6,8 +6,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -73,7 +76,7 @@ public final class LatexCompiler {
         return new Validation(true, "");
     }
 
-    /** 预处理：全角逗号归一、截取文档主体、行级清除脚手架、非法 color 键剔除、at 坐标补花括号、空 axis 剔除、直方图补 ybar、ymax 覆盖不足修正、ybar 边距兜底。 */
+    /** 预处理：全角逗号归一、截取文档主体、行级清除脚手架、非法 color 键剔除、at 坐标补花括号、空 axis 剔除、直方图补 ybar、ymax 覆盖不足修正、ybar 边距兜底、X 轴分类标签旋转兜底。 */
     public static String preprocess(String originalCode) {
         try {
             if (originalCode == null || originalCode.trim().isEmpty()) {
@@ -98,8 +101,8 @@ public final class LatexCompiler {
                     .trim();
 
             String chartCode = cleaned.isEmpty() ? originalCode : cleaned;
-            return fixYbarEnlargeLimits(stripEmptyAxes(addYbarForHistogram(
-                    ensureYmaxCoversData(braceAtCoordinates(dropInvalidColorKey(chartCode))))));
+            return abbreviateDenseYbarLabels(mergeSplitYbarAddplots(fixXTickLabels(fixYbarEnlargeLimits(stripEmptyAxes(addYbarForHistogram(
+                    ensureYmaxCoversData(braceAtCoordinates(dropInvalidColorKey(chartCode)))))))));
         } catch (Exception e) {
             return originalCode;
         }
@@ -222,6 +225,61 @@ public final class LatexCompiler {
         return UNBRACED_AT.matcher(code).replaceAll("at={$1}");
     }
 
+    /** 已存在的 x tick label style（含花括号整体），用于判断是否覆盖注入 */
+    private static final Pattern XTICK_STYLE =
+            Pattern.compile("x\\s+tick\\s+label\\s+style\\s*=\\s*\\{[^}]*\\}");
+    /** 其中的 rotate 数值，用于区分作者真实意图（rotate=0 视为未生效的错误写法） */
+    private static final Pattern XTICK_ROTATE_VALUE =
+            Pattern.compile("rotate\\s*=\\s*(-?\\d+(?:\\.\\d+)?)");
+
+    /** 评估后的 X 轴分类标签样式注入点：symbolic x coords 右花括号之后 */
+    private static final Pattern SYMBOLIC_END = Pattern.compile("symbolic\\s+x\\s+coords=\\s*\\{[^}]*\\}");
+
+    /**
+     * P4：X 轴分类标签旋转兜底。
+     * <p>真实事故（回归 2026-09-14，用例 30/31/27）：symbolic x coords 分类较多、标签为长中文或短缩略词时，
+     * AI 或未写 x tick label style、或写了 rotate=0 / align=center，导致 X 轴底层分类名互相压盖。</p>
+     * <p>判据：ybar 且分类数 ≥ 6。此时旋转是避免重叠的可靠手段；</p>
+     * <ul>
+     *   <li>已有 x tick label style 且旋转非零 → 尊重作者意图，不动；</li>
+     *   <li>已有但 rotate=0（等于没旋转，正是事故写法）→ 整体覆盖为旋转 30°；</li>
+     *   <li>未写 → 注入旋转 30°。</li>
+     * </ul>
+     */
+    private static String fixXTickLabels(String code) {
+        if (!YBAR.matcher(code).find()) {
+            return code;
+        }
+        Matcher sym = SYMBOLIC.matcher(code);
+        if (!sym.find()) {
+            return code;
+        }
+        List<String> labels = Arrays.stream(sym.group(1).split(","))
+                .map(String::trim).filter(s -> !s.isEmpty()).toList();
+        int n = labels.size();
+        // 需要旋转的判断：分类够多且标签不短（短两字省名即使多也可横排），或分类适中但标签偏长。
+        // 例 25（14 个「广东/江苏」等 2 字省名）不旋转；例 27/30（≥6 且标签 ≥3 字）、例 31（5 个 4 字）旋转。
+        int maxLen = labels.stream().mapToInt(String::length).max().orElse(0);
+        boolean needRotate = (n >= 6 && maxLen >= 3) || (n >= 4 && maxLen >= 4);
+        if (!needRotate) {
+            return code;
+        }
+        String style = "x tick label style={font=\\scriptsize, rotate=30, anchor=east}";
+        Matcher existing = XTICK_STYLE.matcher(code);
+        if (existing.find()) {
+            Matcher rotv = XTICK_ROTATE_VALUE.matcher(existing.group(0));
+            if (rotv.find() && Math.abs(Double.parseDouble(rotv.group(1))) > 0.0001) {
+                return code; // 作者已显式选择了非零旋转，尊重
+            }
+            return code.substring(0, existing.start()) + style + code.substring(existing.end());
+        }
+        Matcher end = SYMBOLIC_END.matcher(code);
+        if (!end.find()) {
+            return code;
+        }
+        return code.substring(0, end.end()) + ", " + style + code.substring(end.end());
+    }
+
     /** P3：N≥7 时把任意 enlarge x limits 统一为比例 0.15。 */
     private static String fixYbarEnlargeLimits(String code) {
         Matcher symMatch = SYMBOLIC.matcher(code);
@@ -250,6 +308,189 @@ public final class LatexCompiler {
             out = ybar.replaceFirst(Matcher.quoteReplacement("ybar, enlarge x limits=0.15"));
         }
         return out;
+    }
+
+    // ---------------- P5：合并「为区分正负值而拆分的 addplot」----------------
+
+    /** addplot 块：`\addplot[opts] coordinates { ... };` */
+    private static final Pattern ADDPLOT_COORDS =
+            Pattern.compile("\\\\addplot\\s*(?:\\[[^\\]]*\\])?\\s*coordinates\\s*\\{[^{}]*\\}\\s*;", Pattern.DOTALL);
+    /** 坐标点 (x,y)，x 为任意非括号/非逗号串，y 为带符号数值 */
+    private static final Pattern POINT_X = Pattern.compile("\\(([^,()]+),");
+    /**
+     * P5：合并「x 坐标互不重叠」的多个 ybar addplot。
+     * <p>真实事故（用例 27）：AI 为区分正/负利润把同一组季度数据拆成两个 {@code \addplot}——
+     * 正系列 5 点、负系列 3 点，x 不全对应。pgfplots 把每个 addplot 当独立系列并排分配柱位，
+     * 负值柱（2023Q2/2023Q4/2024Q3）被推到错位槽位、甚至挤出可视区/半裁，看起来「没显示」。</p>
+     * <p>判据（只合并"同一逻辑数据集被拆"的情形，绝不动真正的多系列并排图）：</p>
+     * <ul>
+     *   <li>是 ybar（非 stacked）；</li>
+     *   <li>存在 ≥2 个 addplot；</li>
+     *   <li>所有 addplot 的 x 坐标**两两互不重叠**（否则就是真多系列，合并会破坏柱位）。</li>
+     * </ul>
+     * 合并后所有点进同一个 addplot，柱位立即归位。正负方向的区分靠负值柱自然朝下体现。
+     */
+    private static String mergeSplitYbarAddplots(String code) {
+        if (!YBAR.matcher(code).find() || code.contains("stacked")) {
+            return code;
+        }
+        List<String> blocks = new ArrayList<>();
+        Matcher am = ADDPLOT_COORDS.matcher(code);
+        while (am.find()) {
+            blocks.add(am.group());
+        }
+        if (blocks.size() < 2) {
+            return code;
+        }
+
+        // 检查 x 是否两两互不重叠
+        Set<String> seen = new HashSet<>();
+        for (String block : blocks) {
+            Matcher pm = POINT_X.matcher(block);
+            while (pm.find()) {
+                if (!seen.add(pm.group(1).trim())) {
+                    return code; // 存在重叠 x → 真多系列，不合并
+                }
+            }
+        }
+
+        // 合并：取第一个 addplot 的选项，把所有坐标拼接进一个 addplot
+        Matcher first = Pattern.compile("\\\\addplot(\\s*(?:\\[[^\\]]*\\])?\\s*coordinates\\s*\\{)").matcher(blocks.get(0));
+        if (!first.find()) {
+            return code;
+        }
+        StringBuilder mergedCoords = new StringBuilder();
+        for (String block : blocks) {
+            Matcher cm = Pattern.compile("coordinates\\s*\\{([^{}]*)\\}").matcher(block);
+            if (cm.find()) {
+                mergedCoords.append(' ').append(cm.group(1).trim());
+            }
+        }
+        String mergedBlock = "\\addplot" + first.group(1) + mergedCoords + " };";
+        return code.replace(blocks.get(0), mergedBlock).replace(blocks.get(1), "")
+                .replace(blocks.size() > 2 ? blocks.get(2) : "\u0000", "");
+    }
+
+    // ---------------- P6：密集柱状图长数字标注缩写为「万」----------------
+
+    /** addplot 选项区：`\addplot[opts]` */
+    private static final Pattern ADDPLOT_OPTS = Pattern.compile("\\\\addplot\\s*(\\[[^\\]]*\\])?");
+    /** 坐标块内单个坐标 (x,y) 及其可选 [label]（不含嵌套括号） */
+    private static final Pattern COORD_POINT = Pattern.compile("\\(([^()]+)\\)(\\[[^\\]]*\\])?");
+
+    /**
+     * P6：密集柱状图长数字标注缩写（防柱顶标注重叠）。
+     * <p>真实事故（用例 25）：AI 在 14 根柱顶写了完整长数字（如 135673），超出柱间距互相压盖。</p>
+     * <p>判据：ybar（非 stacked）、addplot 坐标数 ≥ 8、且存在 |y| ≥ 10000 的数值。</p>
+     * <p>做法：给坐标追加 {@code [a.b万]} 显示标签（y 保留真实值保证柱高），并给 addplot 注入
+     * {@code point meta=explicit symbolic} 让方括号标签生效。已带 [label] 的坐标不再重复缩写。</p>
+     */
+    private static String abbreviateDenseYbarLabels(String code) {
+        if (!YBAR.matcher(code).find() || code.contains("stacked")) {
+            return code;
+        }
+        Matcher am = ADDPLOT_COORDS.matcher(code);
+        if (!am.find()) {
+            return code;
+        }
+        String block = am.group();
+        // 统计坐标数与是否已带 point meta
+        boolean hasPointMeta = block.contains("point meta=explicit symbolic");
+        List<Matcher> points = new ArrayList<>();
+        Matcher cm = COORDINATES_BLOCK.matcher(block);
+        String coordsBody = cm.find() ? cm.group(1) : "";
+        int coordCount = 0;
+        long maxAbs = 0;
+        Matcher pm = COORD_POINT.matcher(coordsBody);
+        while (pm.find()) {
+            coordCount++;
+            String inner = pm.group(1);
+            int comma = inner.indexOf(',');
+            if (comma < 0) {
+                continue;
+            }
+            String yRaw = inner.substring(comma + 1).trim();
+            try {
+                long abs = Math.abs((long) Math.floor(Double.parseDouble(yRaw)));
+                maxAbs = Math.max(maxAbs, abs);
+            } catch (NumberFormatException ignored) {
+                // 非数值 y（符号标签）跳过
+            }
+        }
+        if (coordCount < 8 || maxAbs < 10000) {
+            return code;
+        }
+
+        // 逐坐标缩写
+        Matcher cp = COORD_POINT.matcher(coordsBody);
+        StringBuffer sb = new StringBuffer();
+        while (cp.find()) {
+            String whole = cp.group(0);
+            String inner = cp.group(1);
+            int comma = inner.indexOf(',');
+            String rep = whole;
+            // 已带 [label] 的坐标不再重复缩写（group(0) 含 label 时 whole.contains("[") 为真）
+            if (comma > 0 && !whole.contains("[")) {
+                String x = inner.substring(0, comma).trim();
+                String yRaw = inner.substring(comma + 1).trim();
+                try {
+                    double y = Double.parseDouble(yRaw);
+                    if (Math.abs(y) >= 10000) {
+                        String abbr = formatWan(y);
+                        rep = "(" + x + "," + yRaw + ")[" + abbr + "]";
+                    }
+                } catch (NumberFormatException ignored) {
+                    // 非数值 y 保留原样
+                }
+            }
+            cp.appendReplacement(sb, Matcher.quoteReplacement(rep));
+        }
+        cp.appendTail(sb);
+        String newBody = sb.toString();
+        String newBlock = block.replace(coordsBody, newBody);
+
+        // 注入 point meta=explicit symbolic（若 addplot 无选项则补一对空括号）
+        boolean singlePlot = countOccurrences(code, "\\addplot") == 1;
+        if (!hasPointMeta) {
+            Matcher opts = ADDPLOT_OPTS.matcher(newBlock);
+            if (opts.find() && opts.group(1) != null) {
+                newBlock = newBlock.substring(0, opts.start(1) + 1)
+                        + "point meta=explicit symbolic, "
+                        + newBlock.substring(opts.start(1) + 1);
+            } else {
+                newBlock = "\\addplot[point meta=explicit symbolic] " + newBlock.substring(newBlock.indexOf("coordinates"));
+            }
+        }
+        // [v2.1] 密集柱图（≥10 柱且已缩写）即使缩写、柱间距仍窄 → 缩小标注字体为 \tiny 并清空内边距，减小左右宽度占用
+        if (singlePlot && !newBlock.contains("font=\\tiny")) {
+            String marker = "\\addplot";
+            int dot = newBlock.indexOf(marker) + marker.length();
+            if (newBlock.charAt(dot) == '[') {
+                newBlock = newBlock.substring(0, dot + 1)
+                        + "every node near coord/.append style={font=\\tiny, inner sep=0pt}, "
+                        + newBlock.substring(dot + 1);
+            }
+        }
+        return code.replace(block, newBlock);
+    }
+
+    private static int countOccurrences(String s, String sub) {
+        int count = 0, idx = 0;
+        while ((idx = s.indexOf(sub, idx)) >= 0) {
+            count++;
+            idx += sub.length();
+        }
+        return count;
+    }
+
+    /** 数值 ÷10000、保留 1 位小数、去尾零，加「万」。 */
+    private static String formatWan(double y) {
+        double w = y / 10000.0;
+        String s = String.format(java.util.Locale.ROOT, "%.1f", w);
+        if (s.endsWith(".0")) {
+            s = s.substring(0, s.length() - 2);
+        }
+        return s + "万";
     }
 
     /** 文档外壳模板，{@code __CHART_CODE__} 处替换为图表代码。 */

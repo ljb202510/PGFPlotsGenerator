@@ -1,0 +1,19 @@
+{
+  "history_id" : 455,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个 12 个月降水量的密集柱状图（ybar 紧凑写法）",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm,\n    height=7cm,\n    title={12个月降水量分布},\n    ylabel={降水量（mm）},\n    symbolic x coords={1月, 2月, 3月, 4月, 5月, 6月, 7月, 8月, 9月, 10月, 11月, 12月},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=30, anchor=east},\n    ymin=0, ymax=160,\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west}\n]\n\\addplot[fill=blue!60, draw=black] coordinates {\n    (1月, 25) (2月, 30) (3月, 45) (4月, 55) (5月, 70) (6月, 95)\n    (7月, 150) (8月, 140) (9月, 85) (10月, 50) (11月, 35) (12月, 28)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：模拟示意数据};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    width=12cm,\\n    height=7cm,\\n    title={12个月降水量分布},\\n    ylabel={降水量（mm）},\\n    symbolic x coords={1月, 2月, 3月, 4月, 5月, 6月, 7月, 8月, 9月, 10月, 11月, 12月},\\n    xtick=data,\\n    x tick label style={font=\\\\scriptsize, rotate=30, anchor=east},\\n    ymin=0, ymax=160,\\n    enlarge x limits=0.15,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west}\\n]\\n\\\\addplot[fill=blue!60, draw=black] coordinates {\\n    (1月, 25) (2月, 30) (3月, 45) (4月, 55) (5月, 70) (6月, 95)\\n    (7月, 150) (8月, 140) (9月, 85) (10月, 50) (11月, 35) (12月, 28)\\n};\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：模拟示意数据};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"展示12个月降水量的密集柱状分布\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm,\n    height=7cm,\n    title={12个月降水量分布},\n    ylabel={降水量（mm）},\n    symbolic x coords={1月, 2月, 3月, 4月, 5月, 6月, 7月, 8月, 9月, 10月, 11月, 12月},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=30, anchor=east},\n    ymin=0, ymax=160,\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west}\n]\n\\addplot[fill=blue!60, draw=black] coordinates {\n    (1月, 25) (2月, 30) (3月, 45) (4月, 55) (5月, 70) (6月, 95)\n    (7月, 150) (8月, 140) (9月, 85) (10月, 50) (11月, 35) (12月, 28)\n};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：模拟示意数据};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 画一个 12 个月降水量的密集柱状图（ybar 紧凑写法）",
+  "created_at" : "2026-09-15T02:20:32.661Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 806,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

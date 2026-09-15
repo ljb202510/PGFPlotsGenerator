@@ -1,0 +1,19 @@
+{
+  "history_id" : 468,
+  "user_id" : 16,
+  "data_id" : 131,
+  "file_name" : "03-pie-share.xlsx",
+  "dataset_name" : "03-pie-share",
+  "user_input" : "请根据我上传的数据绘制饼图，展示各品牌市场份额占比；为每个扇区标注品牌名称与百分比数值；添加图表标题与图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\pie[radius=2.5, text=legend, text height=1.5em, legend style={at={(1.05,0.5)}, anchor=west, font=\\small, /tikz/every even column/.append style={column sep=0.5cm}}]{\n  32/品牌A,\n  26/品牌B,\n  18/品牌C,\n  14/品牌D,\n  10/品牌E\n}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：用户上传数据};\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"pie\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\pie[radius=2.5, text=legend, text height=1.5em, legend style={at={(1.05,0.5)}, anchor=west, font=\\\\small, /tikz/every even column/.append style={column sep=0.5cm}}]{\\n  32/品牌A,\\n  26/品牌B,\\n  18/品牌C,\\n  14/品牌D,\\n  10/品牌E\\n}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：用户上传数据};\\n\\\\end{tikzpicture}\",\n  \"summary\": \"展示五大品牌市场份额占比的饼图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\pie[radius=2.5, text=legend, text height=1.5em, legend style={at={(1.05,0.5)}, anchor=west, font=\\small, /tikz/every even column/.append style={column sep=0.5cm}}]{\n  32/品牌A,\n  26/品牌B,\n  18/品牌C,\n  14/品牌D,\n  10/品牌E\n}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：用户上传数据};\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制饼图，展示各品牌市场份额占比；为每个扇区标注品牌名称与百分比数值；添加图表标题与图例。",
+  "created_at" : "2026-09-15T02:46:32.306Z",
+  "metadata" : {
+    "data_ids" : [ 131 ],
+    "has_chart_code" : true,
+    "code_length" : 347,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

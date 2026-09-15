@@ -1,0 +1,19 @@
+{
+  "history_id" : 459,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个十年人口增长趋势图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7cm,\n    title={中国十年人口增长趋势},\n    xlabel={年份},\n    ylabel={人口（亿人）},\n    symbolic x coords={2014,2015,2016,2017,2018,2019,2020,2021,2022,2023},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=30, anchor=east},\n    ymin=13.0,\n    ymax=14.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    mark=*,\n    thick\n]\n\\addplot[blue] coordinates {\n    (2014,13.682)\n    (2015,13.746)\n    (2016,13.827)\n    (2017,13.901)\n    (2018,13.953)\n    (2019,14.001)\n    (2020,14.118)\n    (2021,14.126)\n    (2022,14.118)\n    (2023,14.097)\n};\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局};\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"line\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    width=12cm,\\n    height=7cm,\\n    title={中国十年人口增长趋势},\\n    xlabel={年份},\\n    ylabel={人口（亿人）},\\n    symbolic x coords={2014,2015,2016,2017,2018,2019,2020,2021,2022,2023},\\n    xtick=data,\\n    x tick label style={font=\\\\scriptsize, rotate=30, anchor=east},\\n    ymin=13.0,\\n    ymax=14.15,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west},\\n    mark=*,\\n    thick\\n]\\n\\\\addplot[blue] coordinates {\\n    (2014,13.682)\\n    (2015,13.746)\\n    (2016,13.827)\\n    (2017,13.901)\\n    (2018,13.953)\\n    (2019,14.001)\\n    (2020,14.118)\\n    (2021,14.126)\\n    (2022,14.118)\\n    (2023,14.097)\\n};\\n\\\\end{axis}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局};\\n\\\\end{tikzpicture}\",\n  \"summary\": \"中国2014-2023年人口增长趋势折线图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7cm,\n    title={中国十年人口增长趋势},\n    xlabel={年份},\n    ylabel={人口（亿人）},\n    symbolic x coords={2014,2015,2016,2017,2018,2019,2020,2021,2022,2023},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=30, anchor=east},\n    ymin=13.0,\n    ymax=14.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    mark=*,\n    thick\n]\n\\addplot[blue] coordinates {\n    (2014,13.682)\n    (2015,13.746)\n    (2016,13.827)\n    (2017,13.901)\n    (2018,13.953)\n    (2019,14.001)\n    (2020,14.118)\n    (2021,14.126)\n    (2022,14.118)\n    (2023,14.097)\n};\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局};\n\\end{tikzpicture}",
+  "generation_description" : " 画一个十年人口增长趋势图",
+  "created_at" : "2026-09-15T02:21:26.873Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 856,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

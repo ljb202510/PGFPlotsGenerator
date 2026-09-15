@@ -5,7 +5,7 @@ USE X;
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(10) NOT NULL,
-    email VARCHAR(20) NOT NULL,
+    email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     role ENUM('user', 'admin') NOT NULL DEFAULT 'user', 
     register_time DATETIME DEFAULT CURRENT_TIMESTAMP

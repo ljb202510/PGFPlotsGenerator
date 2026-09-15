@@ -1,0 +1,446 @@
+{
+  "runAt": "2026-09-14T15:13:31.942Z",
+  "base": "http://localhost:3000",
+  "model": "qwen",
+  "email": "202326010121@hnu.edu.cn",
+  "results": [
+    {
+      "id": "01",
+      "name": "折线图",
+      "ok": true,
+      "history_id": 410,
+      "chart_code_length": 952,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "compile": {
+        "status": "success",
+        "file_size": 34811,
+        "duration_ms": 2946
+      }
+    },
+    {
+      "id": "02",
+      "name": "柱状图",
+      "ok": true,
+      "history_id": 411,
+      "chart_code_length": 664,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各车间产量对比},\n    yl",
+      "compile": {
+        "status": "success",
+        "file_size": 33953,
+        "duration_ms": 2219
+      }
+    },
+    {
+      "id": "03",
+      "name": "饼图",
+      "ok": true,
+      "history_id": 412,
+      "chart_code_length": 246,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\pie[radius=3, text=legend, style={font=\\small}, te",
+      "compile": {
+        "status": "failed",
+        "error": "This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex)\n restricted \\write18 enabled."
+      }
+    },
+    {
+      "id": "04",
+      "name": "散点图",
+      "ok": true,
+      "history_id": 413,
+      "chart_code_length": 762,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    only marks,\n    mark=*,\n    mark ",
+      "compile": {
+        "status": "success",
+        "file_size": 32486,
+        "duration_ms": 2382
+      }
+    },
+    {
+      "id": "05",
+      "name": "分组柱状图",
+      "ok": true,
+      "history_id": 414,
+      "chart_code_length": 820,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=10cm,\n    height=",
+      "compile": {
+        "status": "success",
+        "file_size": 35965,
+        "duration_ms": 2338
+      }
+    },
+    {
+      "id": "06",
+      "name": "双折线图",
+      "ok": true,
+      "history_id": 415,
+      "chart_code_length": 1266,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "compile": {
+        "status": "success",
+        "file_size": 37926,
+        "duration_ms": 2458
+      }
+    },
+    {
+      "id": "07",
+      "name": "堆积柱状图",
+      "ok": true,
+      "history_id": 416,
+      "chart_code_length": 1096,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar stacked,\n    width=10cm,\n   ",
+      "compile": {
+        "status": "success",
+        "file_size": 36199,
+        "duration_ms": 2403
+      }
+    },
+    {
+      "id": "08",
+      "name": "大数值柱状图",
+      "ok": true,
+      "history_id": 417,
+      "chart_code_length": 767,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算收入对比},\n",
+      "compile": {
+        "status": "success",
+        "file_size": 36752,
+        "duration_ms": 2437
+      }
+    },
+    {
+      "id": "09",
+      "name": "公开数据",
+      "ok": true,
+      "history_id": 418,
+      "chart_code_length": 712,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2019—2023年全国死亡人口",
+      "compile": {
+        "status": "success",
+        "file_size": 27658,
+        "duration_ms": 2289
+      }
+    },
+    {
+      "id": "10",
+      "name": "内联数据",
+      "ok": true,
+      "history_id": 419,
+      "chart_code_length": 685,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={某省近五年粮食产量},\n    ",
+      "compile": {
+        "status": "success",
+        "file_size": 28210,
+        "duration_ms": 2468
+      }
+    },
+    {
+      "id": "11",
+      "name": "面积图",
+      "ok": true,
+      "history_id": 420,
+      "chart_code_length": 924,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "compile": {
+        "status": "success",
+        "file_size": 37371,
+        "duration_ms": 2424
+      }
+    },
+    {
+      "id": "12",
+      "name": "水平条形图",
+      "ok": true,
+      "history_id": 421,
+      "chart_code_length": 728,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    xbar,\n    title={各城市轨道交通运营里程对比},\n",
+      "compile": {
+        "status": "success",
+        "file_size": 37158,
+        "duration_ms": 2399
+      }
+    },
+    {
+      "id": "13",
+      "name": "直方图",
+      "ok": true,
+      "history_id": 422,
+      "chart_code_length": 674,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={某班成绩各分数段人数分布},\n ",
+      "compile": {
+        "status": "success",
+        "file_size": 31257,
+        "duration_ms": 2336
+      }
+    },
+    {
+      "id": "14",
+      "name": "误差棒柱状图",
+      "ok": true,
+      "history_id": 423,
+      "chart_code_length": 752,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各施肥方案平均亩产对比},\n  ",
+      "compile": {
+        "status": "success",
+        "file_size": 33706,
+        "duration_ms": 2483
+      }
+    },
+    {
+      "id": "15",
+      "name": "对数轴折线",
+      "ok": true,
+      "history_id": 424,
+      "chart_code_length": 1004,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "compile": {
+        "status": "success",
+        "file_size": 37631,
+        "duration_ms": 2357
+      }
+    },
+    {
+      "id": "16",
+      "name": "平滑折线",
+      "ok": true,
+      "history_id": 425,
+      "chart_code_length": 1005,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "compile": {
+        "status": "success",
+        "file_size": 36176,
+        "duration_ms": 2403
+      }
+    },
+    {
+      "id": "17",
+      "name": "堆叠面积图",
+      "skip": true
+    },
+    {
+      "id": "18",
+      "name": "百分比堆积柱状图",
+      "ok": true,
+      "history_id": 426,
+      "chart_code_length": 1186,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar stacked,\n    title={各地区财政支出结",
+      "compile": {
+        "status": "success",
+        "file_size": 35551,
+        "duration_ms": 2417
+      }
+    },
+    {
+      "id": "19",
+      "name": "图例不遮挡(R1)",
+      "ok": true,
+      "history_id": 427,
+      "chart_code_length": 763,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算收入对比},\n",
+      "compile": {
+        "status": "success",
+        "file_size": 36749,
+        "duration_ms": 2438
+      }
+    },
+    {
+      "id": "20",
+      "name": "轴外无文字(R2)",
+      "ok": true,
+      "history_id": 428,
+      "chart_code_length": 657,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各车间产量对比},\n    yl",
+      "compile": {
+        "status": "success",
+        "file_size": 27561,
+        "duration_ms": 2265
+      }
+    },
+    {
+      "id": "21",
+      "name": "标注成对(R3)",
+      "ok": true,
+      "history_id": 429,
+      "chart_code_length": 952,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "compile": {
+        "status": "success",
+        "file_size": 34433,
+        "duration_ms": 2372
+      }
+    },
+    {
+      "id": "22",
+      "name": "单位量级(R4)",
+      "ok": true,
+      "history_id": 430,
+      "chart_code_length": 738,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算支出对比},\n",
+      "compile": {
+        "status": "success",
+        "file_size": 35973,
+        "duration_ms": 2317
+      }
+    },
+    {
+      "id": "23",
+      "name": "禁误差棒(R5)",
+      "ok": true,
+      "history_id": 431,
+      "chart_code_length": 952,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "compile": {
+        "status": "success",
+        "file_size": 34427,
+        "duration_ms": 2329
+      }
+    },
+    {
+      "id": "24",
+      "name": "单图结构(R6)",
+      "ok": true,
+      "history_id": 432,
+      "chart_code_length": 761,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    only marks,\n    mark=*,\n    mark ",
+      "compile": {
+        "status": "success",
+        "file_size": 32494,
+        "duration_ms": 2317
+      }
+    },
+    {
+      "id": "25",
+      "name": "半角逗号(R7)",
+      "ok": true,
+      "history_id": 433,
+      "chart_code_length": 877,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={14省份/直辖市GDP对比},\n",
+      "compile": {
+        "status": "success",
+        "file_size": 43426,
+        "duration_ms": 2432
+      }
+    },
+    {
+      "id": "26",
+      "name": "标注错开(R8)",
+      "ok": true,
+      "history_id": 434,
+      "chart_code_length": 1608,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=14cm, height=7cm,\n    title",
+      "compile": {
+        "status": "success",
+        "file_size": 38410,
+        "duration_ms": 2455
+      }
+    },
+    {
+      "id": "27",
+      "name": "负值",
+      "ok": true,
+      "history_id": 435,
+      "chart_code_length": 1122,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={公司2023—2024年各季度净",
+      "compile": {
+        "status": "success",
+        "file_size": 36166,
+        "duration_ms": 2357
+      }
+    },
+    {
+      "id": "28",
+      "name": "单数据点",
+      "ok": true,
+      "history_id": 436,
+      "chart_code_length": 610,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={项目投资额对比},\n    yl",
+      "compile": {
+        "status": "success",
+        "file_size": 33191,
+        "duration_ms": 2213
+      }
+    },
+    {
+      "id": "29",
+      "name": "超长中文标签",
+      "ok": true,
+      "history_id": 437,
+      "chart_code_length": 951,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=14cm,\n    height=",
+      "compile": {
+        "status": "success",
+        "file_size": 42203,
+        "duration_ms": 2352
+      }
+    },
+    {
+      "id": "30",
+      "name": "极小/极大值",
+      "ok": true,
+      "history_id": 438,
+      "chart_code_length": 795,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各项目投资额对比},\n    y",
+      "compile": {
+        "status": "success",
+        "file_size": 41623,
+        "duration_ms": 2359
+      }
+    },
+    {
+      "id": "31",
+      "name": "小数/百分比",
+      "ok": true,
+      "history_id": 439,
+      "chart_code_length": 699,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各渠道转化率对比},\n    y",
+      "compile": {
+        "status": "success",
+        "file_size": 36702,
+        "duration_ms": 2507
+      }
+    },
+    {
+      "id": "32",
+      "name": "退化值",
+      "ok": true,
+      "history_id": 440,
+      "chart_code_length": 830,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=6.5cm,\n    tit",
+      "compile": {
+        "status": "success",
+        "file_size": 30347,
+        "duration_ms": 2377
+      }
+    }
+  ]
+}

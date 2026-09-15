@@ -1,0 +1,19 @@
+{
+  "history_id" : 481,
+  "user_id" : 16,
+  "data_id" : 142,
+  "file_name" : "16-smooth-temp.csv",
+  "dataset_name" : "16-smooth-temp",
+  "user_input" : "请根据我上传的数据绘制平滑曲线图，展示 1—12 月平均气温变化（呈倒 U 形）；曲线平滑过渡；添加图表标题、X 轴（月份）与 Y 轴（平均气温/℃）标签，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={1—12月平均气温变化趋势},\n    xlabel={月份},\n    ylabel={平均气温（℃）},\n    symbolic x coords={1月, 2月, 3月, 4月, 5月, 6月, 7月, 8月, 9月, 10月, 11月, 12月},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=0},\n    ymin=0, ymax=32,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    width=12cm,\n    height=7cm,\n    grid=none\n]\n\\addplot[smooth, color=blue, mark=*, thick, mark options={solid}] coordinates {\n    (1月, 2.1)\n    (2月, 4.3)\n    (3月, 9.6)\n    (4月, 15.8)\n    (5月, 21.2)\n    (6月, 25.4)\n    (7月, 28.6)\n    (8月, 27.9)\n    (9月, 23.1)\n    (10月, 17.2)\n    (11月, 9.8)\n    (12月, 3.5)\n};\n\\addlegendentry{平均气温}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：气象观测数据};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"line\",\n  \"code\": \"\\\\begin{tikzpicture}\\\\begin{axis}[\\\\n    title={1—12月平均气温变化趋势},\\\\n    xlabel={月份},\\\\n    ylabel={平均气温（℃）},\\\\n    symbolic x coords={1月, 2月, 3月, 4月, 5月, 6月, 7月, 8月, 9月, 10月, 11月, 12月},\\\\n    xtick=data,\\\\n    x tick label style={font=\\\\scriptsize, rotate=0},\\\\n    ymin=0, ymax=32,\\\\n    nodes near coords,\\\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\\\n    width=12cm,\\\\n    height=7cm,\\\\n    grid=none\\\\n]\\\\n\\\\addplot[smooth, color=blue, mark=*, thick, mark options={solid}] coordinates {\\\\n    (1月, 2.1)\\\\n    (2月, 4.3)\\\\n    (3月, 9.6)\\\\n    (4月, 15.8)\\\\n    (5月, 21.2)\\\\n    (6月, 25.4)\\\\n    (7月, 28.6)\\\\n    (8月, 27.9)\\\\n    (9月, 23.1)\\\\n    (10月, 17.2)\\\\n    (11月, 9.8)\\\\n    (12月, 3.5)\\\\n};\\\\n\\\\addlegendentry{平均气温}\\\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：气象观测数据};\\\\n\\\\end{axis}\\\\n\\\\end{tikzpicture}\",\n  \"summary\": \"展示12个月平均气温呈倒U形变化的平滑曲线图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\\begin{axis}[\n    title={1—12月平均气温变化趋势},\n    xlabel={月份},\n    ylabel={平均气温（℃）},\n    symbolic x coords={1月, 2月, 3月, 4月, 5月, 6月, 7月, 8月, 9月, 10月, 11月, 12月},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=0},\n    ymin=0, ymax=32,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    width=12cm,\n    height=7cm,\n    grid=none\n]\n\\addplot[smooth, color=blue, mark=*, thick, mark options={solid}] coordinates {\n    (1月, 2.1)\n    (2月, 4.3)\n    (3月, 9.6)\n    (4月, 15.8)\n    (5月, 21.2)\n    (6月, 25.4)\n    (7月, 28.6)\n    (8月, 27.9)\n    (9月, 23.1)\n    (10月, 17.2)\n    (11月, 9.8)\n    (12月, 3.5)\n};\n\\addlegendentry{平均气温}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：气象观测数据};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制平滑曲线图，展示 1—12 月平均气温变化（呈倒 U 形）；曲线平滑过渡；添加图表标题、X 轴（月份）与 Y 轴（平均气温/℃）标签，并加上图例。",
+  "created_at" : "2026-09-15T02:49:34.281Z",
+  "metadata" : {
+    "data_ids" : [ 142 ],
+    "has_chart_code" : true,
+    "code_length" : 923,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

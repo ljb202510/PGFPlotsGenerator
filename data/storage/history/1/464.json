@@ -1,0 +1,19 @@
+{
+  "history_id" : 464,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个全国主要城市空气质量对比图，我没有具体数据",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={全国主要城市空气质量对比 (AQI指数)},\n    ylabel={AQI指数 (数值)},\n    symbolic x coords={北京,上海,广州,深圳,成都,杭州,武汉,西安},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=30, anchor=east},\n    ymin=0, ymax=120,\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    width=10cm,\n    height=6cm\n]\n\\addplot[fill=blue!50] coordinates {\n    (北京,68)\n    (上海,55)\n    (广州,42)\n    (深圳,38)\n    (成都,95)\n    (杭州,48)\n    (武汉,72)\n    (西安,105)\n};\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：模拟示意数据 (基于典型季节均值)};\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    title={全国主要城市空气质量对比 (AQI指数)},\\n    ylabel={AQI指数 (数值)},\\n    symbolic x coords={北京,上海,广州,深圳,成都,杭州,武汉,西安},\\n    xtick=data,\\n    x tick label style={font=\\\\scriptsize, rotate=30, anchor=east},\\n    ymin=0, ymax=120,\\n    enlarge x limits=0.15,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    width=10cm,\\n    height=6cm\\n]\\n\\\\addplot[fill=blue!50] coordinates {\\n    (北京,68)\\n    (上海,55)\\n    (广州,42)\\n    (深圳,38)\\n    (成都,95)\\n    (杭州,48)\\n    (武汉,72)\\n    (西安,105)\\n};\\n\\\\end{axis}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：模拟示意数据 (基于典型季节均值)};\\n\\\\end{tikzpicture}\",\n  \"summary\": \"八大城市空气质量AQI指数柱状对比图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={全国主要城市空气质量对比 (AQI指数)},\n    ylabel={AQI指数 (数值)},\n    symbolic x coords={北京,上海,广州,深圳,成都,杭州,武汉,西安},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=30, anchor=east},\n    ymin=0, ymax=120,\n    enlarge x limits=0.15,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    width=10cm,\n    height=6cm\n]\n\\addplot[fill=blue!50] coordinates {\n    (北京,68)\n    (上海,55)\n    (广州,42)\n    (深圳,38)\n    (成都,95)\n    (杭州,48)\n    (武汉,72)\n    (西安,105)\n};\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：模拟示意数据 (基于典型季节均值)};\n\\end{tikzpicture}",
+  "generation_description" : " 画一个全国主要城市空气质量对比图，我没有具体数据",
+  "created_at" : "2026-09-15T02:22:12.368Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 793,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

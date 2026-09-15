@@ -1,0 +1,19 @@
+{
+  "history_id" : 423,
+  "user_id" : 16,
+  "data_id" : 107,
+  "file_name" : "14-errorbar-yield.csv",
+  "dataset_name" : "14-errorbar-yield",
+  "user_input" : "请根据我上传的数据绘制带误差棒的柱状图，展示各施肥方案的平均亩产及其标准差；误差棒表示标准差；在柱顶标注平均亩产数值（单位：公斤）；添加图表标题、X 轴（施肥方案）与 Y 轴（平均亩产/公斤）标签，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各施肥方案平均亩产对比},\n    ylabel={平均亩产（公斤）},\n    xlabel={施肥方案},\n    symbolic x coords={方案A, 方案B, 方案C, 方案D},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=650\n]\n\\addplot+[error bars/.cd, y dir=both, y explicit] \n    coordinates {(方案A,520)+-(0,28) (方案B,568)+-(0,35) (方案C,602)+-(0,22) (方案D,585)+-(0,30)};\n\\addlegendentry{平均亩产}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：14-errorbar-yield (14-errorbar-yield.csv)};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    title={各施肥方案平均亩产对比},\\n    ylabel={平均亩产（公斤）},\\n    xlabel={施肥方案},\\n    symbolic x coords={方案A, 方案B, 方案C, 方案D},\\n    xtick=data,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    enlarge x limits=0.15,\\n    ymin=0,\\n    ymax=650\\n]\\n\\\\addplot+[error bars/.cd, y dir=both, y explicit] \\n    coordinates {(方案A,520)+-(0,28) (方案B,568)+-(0,35) (方案C,602)+-(0,22) (方案D,585)+-(0,30)};\\n\\\\addlegendentry{平均亩产}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：14-errorbar-yield (14-errorbar-yield.csv)};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"带误差棒的施肥方案亩产对比柱状图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各施肥方案平均亩产对比},\n    ylabel={平均亩产（公斤）},\n    xlabel={施肥方案},\n    symbolic x coords={方案A, 方案B, 方案C, 方案D},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=650\n]\n\\addplot+[error bars/.cd, y dir=both, y explicit] \n    coordinates {(方案A,520)+-(0,28) (方案B,568)+-(0,35) (方案C,602)+-(0,22) (方案D,585)+-(0,30)};\n\\addlegendentry{平均亩产}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：14-errorbar-yield (14-errorbar-yield.csv)};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制带误差棒的柱状图，展示各施肥方案的平均亩产及其标准差；误差棒表示标准差；在柱顶标注平均亩产数值（单位：公斤）；添加图表标题、X 轴（施肥方案）与 Y 轴（平均亩产/公斤）标签，并加上图例。",
+  "created_at" : "2026-09-14T15:10:48.855Z",
+  "metadata" : {
+    "data_ids" : [ 107 ],
+    "has_chart_code" : true,
+    "code_length" : 752,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

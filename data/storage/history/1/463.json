@@ -1,0 +1,19 @@
+{
+  "history_id" : 463,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "我有一份近几年的人口数据，帮我看看变化",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=6cm,\n    title={全国人口总量变化趋势},\n    xlabel={年份},\n    ylabel={人口总量（万人）},\n    symbolic x coords={2019, 2020, 2021, 2022, 2023},\n    xtick=data,\n    ymin=140000,\n    ymax=141500,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    x tick label style={font=\\scriptsize, anchor=east, rotate=0}\n]\n\\addplot[blue, mark=*, thick, thick] coordinates {\n    (2019, 140541)\n    (2020, 141177)\n    (2021, 141260)\n    (2022, 141175)\n    (2023, 140967)\n};\n\\legend{全国总人口}\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局 2024};\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"line\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    width=10cm,\\n    height=6cm,\\n    title={全国人口总量变化趋势},\\n    xlabel={年份},\\n    ylabel={人口总量（万人）},\\n    symbolic x coords={2019, 2020, 2021, 2022, 2023},\\n    xtick=data,\\n    ymin=140000,\\n    ymax=141500,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    enlarge x limits=0.15,\\n    x tick label style={font=\\\\scriptsize, anchor=east, rotate=0}\\n]\\n\\\\addplot[blue, mark=*, thick, thick] coordinates {\\n    (2019, 140541)\\n    (2020, 141177)\\n    (2021, 141260)\\n    (2022, 141175)\\n    (2023, 140967)\\n};\\n\\\\legend{全国总人口}\\n\\\\end{axis}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局 2024};\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2019-2023年人口总量先升后降\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm,\n    height=6cm,\n    title={全国人口总量变化趋势},\n    xlabel={年份},\n    ylabel={人口总量（万人）},\n    symbolic x coords={2019, 2020, 2021, 2022, 2023},\n    xtick=data,\n    ymin=140000,\n    ymax=141500,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    x tick label style={font=\\scriptsize, anchor=east, rotate=0}\n]\n\\addplot[blue, mark=*, thick, thick] coordinates {\n    (2019, 140541)\n    (2020, 141177)\n    (2021, 141260)\n    (2022, 141175)\n    (2023, 140967)\n};\n\\legend{全国总人口}\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局 2024};\n\\end{tikzpicture}",
+  "generation_description" : " 我有一份近几年的人口数据，帮我看看变化",
+  "created_at" : "2026-09-15T02:22:04.257Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 824,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

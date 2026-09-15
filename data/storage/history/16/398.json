@@ -1,0 +1,19 @@
+{
+  "history_id" : 398,
+  "user_id" : 16,
+  "data_id" : 72,
+  "file_name" : "01-line-sales.csv",
+  "dataset_name" : "01-line-sales",
+  "user_input" : "请根据我上传的数据绘制折线图，展示 1—12 月销售额变化趋势；折线添加圆形数据点标记，并在每个数据点上方标注销售额数值（单位：万元）；添加图表标题、X 轴（月份）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={1—12月销售额变化趋势},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    grid=major,\n    grid style={dashed, gray!30},\n    ymin=0, ymax=200,\n    enlarge x limits=0.15\n]\n\\addplot[blue, mark=*, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}] coordinates {\n    (1月,86) (2月,92) (3月,105) (4月,98) (5月,112) (6月,126) (7月,119) (8月,138) (9月,150) (10月,143) (11月,162) (12月,175)\n};\n\\addlegendentry{销售额}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：01-line-sales.csv};\n\\end{axis}\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"line\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    width=12cm, height=7cm,\\n    title={1—12月销售额变化趋势},\\n    xlabel={月份},\\n    ylabel={销售额（万元）},\\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\\n    xtick=data,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    grid=major,\\n    grid style={dashed, gray!30},\\n    ymin=0, ymax=200,\\n    enlarge x limits=0.15\\n]\\n\\\\addplot[blue, mark=*, thick, nodes near coords, every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}] coordinates {\\n    (1月,86) (2月,92) (3月,105) (4月,98) (5月,112) (6月,126) (7月,119) (8月,138) (9月,150) (10月,143) (11月,162) (12月,175)\\n};\\n\\\\addlegendentry{销售额}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：01-line-sales.csv};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"展示1至12月销售额变化趋势的折线图。\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={1—12月销售额变化趋势},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    grid=major,\n    grid style={dashed, gray!30},\n    ymin=0, ymax=200,\n    enlarge x limits=0.15\n]\n\\addplot[blue, mark=*, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}] coordinates {\n    (1月,86) (2月,92) (3月,105) (4月,98) (5月,112) (6月,126) (7月,119) (8月,138) (9月,150) (10月,143) (11月,162) (12月,175)\n};\n\\addlegendentry{销售额}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：01-line-sales.csv};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制折线图，展示 1—12 月销售额变化趋势；折线添加圆形数据点标记，并在每个数据点上方标注销售额数值（单位：万元）；添加图表标题、X 轴（月份）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "created_at" : "2026-09-14T15:02:02.325Z",
+  "metadata" : {
+    "data_ids" : [ 72 ],
+    "has_chart_code" : true,
+    "code_length" : 952,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "history_id" : 421,
+  "user_id" : 16,
+  "data_id" : 105,
+  "file_name" : "12-hbar-metro.csv",
+  "dataset_name" : "12-hbar-metro",
+  "user_input" : "请根据我上传的数据绘制水平条形图，对比各城市轨道交通运营里程；在每根条形末端标注里程数值（单位：km）；添加图表标题、X 轴（运营里程/km）与 Y 轴（城市）标签，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    xbar,\n    title={各城市轨道交通运营里程对比},\n    xlabel={运营里程（km）},\n    ylabel={城市},\n    symbolic y coords={上海,北京,成都,广州,深圳,杭州,武汉,南京},\n    ytick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=west},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge y limits=0.15,\n    xmin=0,\n    xmax=900\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(831,上海) (807,北京) (632,成都) (621,广州) (567,深圳) (516,杭州) (486,武汉) (459,南京)};\n\\addlegendentry{轨道交通运营里程}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：12-hbar-metro (12-hbar-metro.csv)};\n\\end{axis}\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    xbar,\\n    title={各城市轨道交通运营里程对比},\\n    xlabel={运营里程（km）},\\n    ylabel={城市},\\n    symbolic y coords={上海,北京,成都,广州,深圳,杭州,武汉,南京},\\n    ytick=data,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=west},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    enlarge y limits=0.15,\\n    xmin=0,\\n    xmax=900\\n]\\n\\\\addplot[fill=blue!60, mark=*] coordinates {(831,上海) (807,北京) (632,成都) (621,广州) (567,深圳) (516,杭州) (486,武汉) (459,南京)};\\n\\\\addlegendentry{轨道交通运营里程}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：12-hbar-metro (12-hbar-metro.csv)};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"各城市轨道交通运营里程水平条形图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    xbar,\n    title={各城市轨道交通运营里程对比},\n    xlabel={运营里程（km）},\n    ylabel={城市},\n    symbolic y coords={上海,北京,成都,广州,深圳,杭州,武汉,南京},\n    ytick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=west},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge y limits=0.15,\n    xmin=0,\n    xmax=900\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(831,上海) (807,北京) (632,成都) (621,广州) (567,深圳) (516,杭州) (486,武汉) (459,南京)};\n\\addlegendentry{轨道交通运营里程}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：12-hbar-metro (12-hbar-metro.csv)};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制水平条形图，对比各城市轨道交通运营里程；在每根条形末端标注里程数值（单位：km）；添加图表标题、X 轴（运营里程/km）与 Y 轴（城市）标签，并加上图例。",
+  "created_at" : "2026-09-14T15:10:32.306Z",
+  "metadata" : {
+    "data_ids" : [ 105 ],
+    "has_chart_code" : true,
+    "code_length" : 728,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

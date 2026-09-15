@@ -1,0 +1,19 @@
+{
+  "history_id" : 387,
+  "user_id" : 16,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "请绘制近五年（2019—2023 年）全国死亡人口的柱状图，并在每根柱子上方标注数值（单位：万人）；添加图表标题、X 轴（年份）与 Y 轴（出生人口/万人）标签，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={近五年全国死亡人口统计},\n    ylabel={死亡人口（万人）},\n    xlabel={年份},\n    symbolic x coords={2019,2020,2021,2022,2023},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=1050\n]\n\\addplot[fill=red!60, mark=*] coordinates {\n    (2019,998)\n    (2020,997)\n    (2021,1014)\n    (2022,1041)\n    (2023,1110)\n};\n\\addlegendentry{死亡人口}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局 2024年统计公报};\n\\end{axis}\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    title={近五年全国死亡人口统计},\\n    ylabel={死亡人口（万人）},\\n    xlabel={年份},\\n    symbolic x coords={2019,2020,2021,2022,2023},\\n    xtick=data,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    enlarge x limits=0.15,\\n    ymin=0,\\n    ymax=1050\\n]\\n\\\\addplot[fill=red!60, mark=*] coordinates {\\n    (2019,998)\\n    (2020,997)\\n    (2021,1014)\\n    (2022,1041)\\n    (2023,1110)\\n};\\n\\\\addlegendentry{死亡人口}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局 2024年统计公报};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2019-2023年全国死亡人口柱状图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={近五年全国死亡人口统计},\n    ylabel={死亡人口（万人）},\n    xlabel={年份},\n    symbolic x coords={2019,2020,2021,2022,2023},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=1050\n]\n\\addplot[fill=red!60, mark=*] coordinates {\n    (2019,998)\n    (2020,997)\n    (2021,1014)\n    (2022,1041)\n    (2023,1110)\n};\n\\addlegendentry{死亡人口}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：国家统计局 2024年统计公报};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请绘制近五年（2019—2023 年）全国死亡人口的柱状图，并在每根柱子上方标注数值（单位：万人）；添加图表标题、X 轴（年份）与 Y 轴（出生人口/万人）标签，并加上图例。",
+  "created_at" : "2026-09-14T15:00:54.739Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 714,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "history_id" : 399,
+  "user_id" : 16,
+  "data_id" : 87,
+  "file_name" : "22-expense-raw.csv",
+  "dataset_name" : "22-expense-raw",
+  "user_input" : "请根据我上传的数据绘制柱状图，展示各城市一般公共预算支出；在每根柱子上方标注支出数值；添加图表标题、X 轴（城市）与 Y 轴（一般公共预算支出）标签，并加上图例。请确保 Y 轴数值与数据保持同一单位量级，避免刻度异常。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算支出对比},\n    ylabel={一般公共预算支出（亿元）},\n    xlabel={城市},\n    symbolic x coords={上海, 北京, 重庆, 深圳, 杭州, 苏州},\n    xtick=data,\n    x tick label style={font=\\small},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=1000\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(上海,988) (北京,797) (重庆,572) (深圳,479) (杭州,278) (苏州,265)};\n\\addlegendentry{一般公共预算支出}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：22-expense-raw.csv};\n\\end{axis}\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    title={各城市一般公共预算支出对比},\\n    ylabel={一般公共预算支出（亿元）},\\n    xlabel={城市},\\n    symbolic x coords={上海, 北京, 重庆, 深圳, 杭州, 苏州},\\n    xtick=data,\\n    x tick label style={font=\\\\small},\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    enlarge x limits=0.15,\\n    ymin=0,\\n    ymax=1000\\n]\\n\\\\addplot[fill=blue!60, mark=*] coordinates {(上海,988) (北京,797) (重庆,572) (深圳,479) (杭州,278) (苏州,265)};\\n\\\\addlegendentry{一般公共预算支出}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：22-expense-raw.csv};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"各城市一般公共预算支出对比柱状图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算支出对比},\n    ylabel={一般公共预算支出（亿元）},\n    xlabel={城市},\n    symbolic x coords={上海, 北京, 重庆, 深圳, 杭州, 苏州},\n    xtick=data,\n    x tick label style={font=\\small},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=1000\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(上海,988) (北京,797) (重庆,572) (深圳,479) (杭州,278) (苏州,265)};\n\\addlegendentry{一般公共预算支出}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：22-expense-raw.csv};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制柱状图，展示各城市一般公共预算支出；在每根柱子上方标注支出数值；添加图表标题、X 轴（城市）与 Y 轴（一般公共预算支出）标签，并加上图例。请确保 Y 轴数值与数据保持同一单位量级，避免刻度异常。",
+  "created_at" : "2026-09-14T15:02:07.516Z",
+  "metadata" : {
+    "data_ids" : [ 87 ],
+    "has_chart_code" : true,
+    "code_length" : 738,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

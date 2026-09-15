@@ -1,0 +1,19 @@
+{
+  "history_id" : 447,
+  "user_id" : 16,
+  "data_id" : 126,
+  "file_name" : "27-negative-profit.csv",
+  "dataset_name" : "27-negative-profit",
+  "user_input" : "请根据我上传的数据绘制柱状图，展示公司 2023—2024 各季度净利润；负值用与正值不同（或相反方向）的柱子表示；在每根柱子上方/下方标注数值（单位：万元）；添加图表标题、X 轴（季度）与 Y 轴（净利润/万元）标签，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2023—2024 各季度净利润},\n    ylabel={净利润（万元）},\n    xlabel={季度},\n    symbolic x coords={2023Q1,2023Q2,2023Q3,2023Q4,2024Q1,2024Q2,2024Q3,2024Q4},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=0},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt},\n    enlarge x limits=0.15,\n    ymin=-120,\n    ymax=360,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    legend entries={净利润}\n]\n% 正值柱子（向上）\n\\addplot[fill=blue!60, mark=*] coordinates {(2023Q1,120) (2023Q3,210) (2024Q1,260) (2024Q2,180) (2024Q4,320)};\n% 负值柱子（向下，用红色表示）\n\\addplot[fill=red!60, mark=*] coordinates {(2023Q2,-85) (2023Q4,-40) (2024Q3,-30)};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：27-negative-profit.csv};\n\\end{axis}\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    title={2023—2024 各季度净利润},\\n    ylabel={净利润（万元）},\\n    xlabel={季度},\\n    symbolic x coords={2023Q1,2023Q2,2023Q3,2023Q4,2024Q1,2024Q2,2024Q3,2024Q4},\\n    xtick=data,\\n    x tick label style={font=\\\\scriptsize, rotate=0},\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt},\\n    enlarge x limits=0.15,\\n    ymin=-120,\\n    ymax=360,\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    legend entries={净利润}\\n]\\n% 正值柱子（向上）\\n\\\\addplot[fill=blue!60, mark=*] coordinates {(2023Q1,120) (2023Q3,210) (2024Q1,260) (2024Q2,180) (2024Q4,320)};\\n% 负值柱子（向下，用红色表示）\\n\\\\addplot[fill=red!60, mark=*] coordinates {(2023Q2,-85) (2023Q4,-40) (2024Q3,-30)};\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：27-negative-profit.csv};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2023-2024季度净利润柱状图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2023—2024 各季度净利润},\n    ylabel={净利润（万元）},\n    xlabel={季度},\n    symbolic x coords={2023Q1,2023Q2,2023Q3,2023Q4,2024Q1,2024Q2,2024Q3,2024Q4},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=0},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt},\n    enlarge x limits=0.15,\n    ymin=-120,\n    ymax=360,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    legend entries={净利润}\n]\n% 正值柱子（向上）\n\\addplot[fill=blue!60, mark=*] coordinates {(2023Q1,120) (2023Q3,210) (2024Q1,260) (2024Q2,180) (2024Q4,320)};\n% 负值柱子（向下，用红色表示）\n\\addplot[fill=red!60, mark=*] coordinates {(2023Q2,-85) (2023Q4,-40) (2024Q3,-30)};\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：27-negative-profit.csv};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制柱状图，展示公司 2023—2024 各季度净利润；负值用与正值不同（或相反方向）的柱子表示；在每根柱子上方/下方标注数值（单位：万元）；添加图表标题、X 轴（季度）与 Y 轴（净利润/万元）标签，并加上图例。",
+  "created_at" : "2026-09-14T16:05:42.515Z",
+  "metadata" : {
+    "data_ids" : [ 126 ],
+    "has_chart_code" : true,
+    "code_length" : 899,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

@@ -1,0 +1,292 @@
+{
+  "runAt": "2026-09-14T15:03:10.451Z",
+  "base": "http://localhost:3000",
+  "model": "qwen",
+  "email": "202326010121@hnu.edu.cn",
+  "results": [
+    {
+      "id": "01",
+      "name": "折线图",
+      "ok": true,
+      "history_id": 379,
+      "chart_code_length": 965,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=6.5cm,\n    tit"
+    },
+    {
+      "id": "02",
+      "name": "柱状图",
+      "ok": true,
+      "history_id": 380,
+      "chart_code_length": 664,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各车间产量对比},\n    yl"
+    },
+    {
+      "id": "03",
+      "name": "饼图",
+      "ok": true,
+      "history_id": 381,
+      "chart_code_length": 139,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\pie[radius=3, text=legend, title={各品牌市场份额占比}, sum="
+    },
+    {
+      "id": "04",
+      "name": "散点图",
+      "ok": true,
+      "history_id": 382,
+      "chart_code_length": 762,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    only marks,\n    mark=*,\n    mark "
+    },
+    {
+      "id": "05",
+      "name": "分组柱状图",
+      "ok": true,
+      "history_id": 383,
+      "chart_code_length": 841,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm, height=7cm,"
+    },
+    {
+      "id": "06",
+      "name": "双折线图",
+      "ok": true,
+      "history_id": 384,
+      "chart_code_length": 1313,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title"
+    },
+    {
+      "id": "07",
+      "name": "堆积柱状图",
+      "ok": true,
+      "history_id": 385,
+      "chart_code_length": 1032,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar stacked,\n    title={各区域季度销量累"
+    },
+    {
+      "id": "08",
+      "name": "大数值柱状图",
+      "ok": true,
+      "history_id": 386,
+      "chart_code_length": 724,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算收入对比},\n"
+    },
+    {
+      "id": "09",
+      "name": "公开数据",
+      "ok": true,
+      "history_id": 387,
+      "chart_code_length": 714,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={近五年全国死亡人口统计},\n  "
+    },
+    {
+      "id": "10",
+      "name": "内联数据",
+      "ok": true,
+      "history_id": 388,
+      "chart_code_length": 709,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={某省近五年粮食产量统计},\n  "
+    },
+    {
+      "id": "11",
+      "name": "面积图",
+      "ok": true,
+      "history_id": 389,
+      "chart_code_length": 1023,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=6.5cm,\n    tit"
+    },
+    {
+      "id": "12",
+      "name": "水平条形图",
+      "ok": true,
+      "history_id": 390,
+      "chart_code_length": 743,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    xbar,\n    title={各城市轨道交通运营里程对比},\n"
+    },
+    {
+      "id": "13",
+      "name": "直方图",
+      "ok": true,
+      "history_id": 391,
+      "chart_code_length": 666,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={某班成绩分数段人数分布},\n  "
+    },
+    {
+      "id": "14",
+      "name": "误差棒柱状图",
+      "ok": true,
+      "history_id": 392,
+      "chart_code_length": 735,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各施肥方案平均亩产对比},\n  "
+    },
+    {
+      "id": "15",
+      "name": "对数轴折线",
+      "ok": true,
+      "history_id": 393,
+      "chart_code_length": 1016,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title"
+    },
+    {
+      "id": "16",
+      "name": "平滑折线",
+      "ok": true,
+      "history_id": 394,
+      "chart_code_length": 1028,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title"
+    },
+    {
+      "id": "17",
+      "name": "堆叠面积图",
+      "skip": true
+    },
+    {
+      "id": "18",
+      "name": "百分比堆积柱状图",
+      "ok": true,
+      "history_id": 395,
+      "chart_code_length": 1166,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar stacked,\n    title={各地区财政支出结"
+    },
+    {
+      "id": "19",
+      "name": "图例不遮挡(R1)",
+      "ok": true,
+      "history_id": 396,
+      "chart_code_length": 803,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算收入对比},\n"
+    },
+    {
+      "id": "20",
+      "name": "轴外无文字(R2)",
+      "ok": true,
+      "history_id": 397,
+      "chart_code_length": 658,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各车间产量对比},\n    yl"
+    },
+    {
+      "id": "21",
+      "name": "标注成对(R3)",
+      "ok": true,
+      "history_id": 398,
+      "chart_code_length": 952,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title"
+    },
+    {
+      "id": "22",
+      "name": "单位量级(R4)",
+      "ok": true,
+      "history_id": 399,
+      "chart_code_length": 738,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算支出对比},\n"
+    },
+    {
+      "id": "23",
+      "name": "禁误差棒(R5)",
+      "ok": true,
+      "history_id": 400,
+      "chart_code_length": 952,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title"
+    },
+    {
+      "id": "24",
+      "name": "单图结构(R6)",
+      "ok": true,
+      "history_id": 401,
+      "chart_code_length": 762,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    only marks,\n    mark=*,\n    mark "
+    },
+    {
+      "id": "25",
+      "name": "半角逗号(R7)",
+      "ok": true,
+      "history_id": 402,
+      "chart_code_length": 860,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={14省份/直辖市GDP对比},\n"
+    },
+    {
+      "id": "26",
+      "name": "标注错开(R8)",
+      "ok": true,
+      "history_id": 403,
+      "chart_code_length": 1607,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title"
+    },
+    {
+      "id": "27",
+      "name": "负值",
+      "ok": true,
+      "history_id": 404,
+      "chart_code_length": 882,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={公司2023—2024各季度净利"
+    },
+    {
+      "id": "28",
+      "name": "单数据点",
+      "ok": true,
+      "history_id": 405,
+      "chart_code_length": 610,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={一期项目投资额},\n    yl"
+    },
+    {
+      "id": "29",
+      "name": "超长中文标签",
+      "ok": true,
+      "history_id": 406,
+      "chart_code_length": 908,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各区域销售额对比},\n    x"
+    },
+    {
+      "id": "30",
+      "name": "极小/极大值",
+      "ok": true,
+      "history_id": 407,
+      "chart_code_length": 770,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各项目投资额},\n    yla"
+    },
+    {
+      "id": "31",
+      "name": "小数/百分比",
+      "ok": true,
+      "history_id": 408,
+      "chart_code_length": 694,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各渠道转化率对比},\n    y"
+    },
+    {
+      "id": "32",
+      "name": "退化值",
+      "ok": true,
+      "history_id": 409,
+      "chart_code_length": 832,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=6.5cm,\n    tit"
+    }
+  ]
+}

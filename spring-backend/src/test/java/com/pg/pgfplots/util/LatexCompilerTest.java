@@ -156,4 +156,157 @@ class LatexCompilerTest {
                 + "\\addplot coordinates {(A,1) (B,2)};\n\\end{axis}\n\\end{tikzpicture}";
         assertEquals(code, LatexCompiler.preprocess(code), "已带花括号的 at 坐标不得重复补");
     }
+
+    // ---------------- [v1.8] X 轴分类标签旋转兜底（回归 2026-09-14：用例 30/31/27） ----------------
+
+    @Test
+    void rotatesLongXTickLabelsOnDenseYbar() {
+        // 用例 31：5 个长中文分类、AI 未写 x tick label style → 底部标签重叠
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[\n"
+                + "    ybar,\n"
+                + "    symbolic x coords={官方商城, 直播带货, 社群团购, 线下门店, 老客推荐},\n"
+                + "    xtick=data\n]\n"
+                + "\\addplot coordinates {(官方商城,3.25) (直播带货,5.68)};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        assertTrue(out.contains("x tick label style={font=\\scriptsize, rotate=30, anchor=east}"),
+                "密集长分类应自动注入旋转 30°，实际: " + out);
+    }
+
+    @Test
+    void overridesRotateZeroStyles() {
+        // 用例 30：AI 写了 rotate=0（等于没旋转）→ 判断为事故写法，覆盖为旋转 30°
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[\n"
+                + "    ybar,\n"
+                + "    symbolic x coords={地铁三期工程, 跨江大桥, 老旧小区改造, 智慧交通平台, 城市绿道工程, 社区公园},\n"
+                + "    x tick label style={font=\\small, rotate=0, align=center}\n]\n"
+                + "\\addplot coordinates {(地铁三期工程,980000) (跨江大桥,326000)};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        assertTrue(out.contains("x tick label style={font=\\scriptsize, rotate=30, anchor=east}"),
+                "rotate=0 是导致重叠的错误写法，应被覆盖为旋转 30°，实际: " + out);
+        assertFalse(out.contains("rotate=0"), "rotate=0 必须被替换");
+    }
+
+    @Test
+    void respectsNonZeroRotation() {
+        // 作者已显式选择非零旋转 → 尊重，不做覆盖
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[\n"
+                + "    ybar,\n"
+                + "    symbolic x coords={地铁三期工程, 跨江大桥, 老旧小区改造, 智慧交通平台, 城市绿道工程, 社区公园},\n"
+                + "    x tick label style={font=\\small, rotate=-45, anchor=east}\n]\n"
+                + "\\addplot coordinates {(地铁三期工程,980000) (跨江大桥,326000)};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        assertEquals(code, LatexCompiler.preprocess(code), "非零旋转体现作者意图，不得覆盖");
+    }
+
+    @Test
+    void keepsFewCategoriesWithoutRotation() {
+        // 分类数 < 6（如用例 25 之外的常规小图）一律不动
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[ybar,\n"
+                + "    symbolic x coords={一季度,二季度,三季度,四季度},\n"
+                + "    xtick=data\n]\n"
+                + "\\addplot coordinates {(一季度,45) (二季度,60) (三季度,75) (四季度,90)};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        assertEquals(code, LatexCompiler.preprocess(code), "分类 < 6 时不注入旋转");
+    }
+
+    // ---------------- [v1.9] 合并「为区分正负值而拆分的 addplot」（回归 2026-09-14：用例 27） ----------------
+
+    @Test
+    void mergesSplitAddplotsForNegativeValues() {
+        // 用例 27：AI 为区分正/负利润拆成两个 addplot，x 两两互不重叠 → 应合并回一个
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[\n"
+                + "    ybar,\n"
+                + "    symbolic x coords={2023Q1,2023Q2,2023Q3,2023Q4,2024Q1,2024Q2,2024Q3,2024Q4},\n"
+                + "    xtick=data\n]\n"
+                + "% 正利润\n"
+                + "\\addplot[fill=blue!60, nodes near coords, every node near coord/.append style={anchor=south}] coordinates {\n"
+                + "    (2023Q1,120) (2023Q3,210) (2024Q1,260) (2024Q2,180) (2024Q4,320)\n};\n"
+                + "% 负利润\n"
+                + "\\addplot[fill=red!60, nodes near coords, every node near coord/.append style={anchor=north}] coordinates {\n"
+                + "    (2023Q2,-85) (2023Q4,-40) (2024Q3,-30)\n};\n"
+                + "\\addlegendentry{净利润}\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        // 合并后只剩一个 addplot，且包含全部 8 个点
+        long addplots = out.split("\\\\addplot", -1).length - 1;
+        assertEquals(1, addplots, "拆分的 addplot 应被合并为 1 个，实际: " + out);
+        assertTrue(out.contains("(2023Q2,-85)"), "负值点必须保留");
+        assertTrue(out.contains("(2024Q4,320)"), "正值点必须保留");
+        assertFalse(out.contains("fill=red"), "合并后不应再保留第二个 addplot 的红色填充");
+    }
+
+    @Test
+    void keepsGenuineMultiSeriesUntouched() {
+        // 真多系列：两个 addplot 的 x 坐标重叠（同一 X 两根柱）→ 绝不合并
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[ybar]\n"
+                + "\\addplot[fill=blue!50] coordinates {(Q1,100) (Q2,120) (Q3,140)};\n"
+                + "\\addplot[fill=red!50] coordinates {(Q1,80) (Q2,90) (Q3,110)};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        assertEquals(code, LatexCompiler.preprocess(code), "x 重叠的多系列图不得合并");
+    }
+
+    // ---------------- [v2.0] 密集柱状图长数字缩写为「万」（回归 2026-09-14：用例 25） ----------------
+
+    @Test
+    void abbreviatesDenseLongNumberLabelsToWan() {
+        // 用例 25：14 省 GDP（亿元）完整长数字 135673 → 13.6万
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[\n"
+                + "    ybar,\n"
+                + "    symbolic x coords={广东,江苏,山东,浙江,四川,河南,湖北,福建,湖南,上海,安徽,河北,北京,陕西},\n"
+                + "    nodes near coords\n]\n"
+                + "\\addplot[fill=blue!60, mark=*] coordinates {\n"
+                + "    (广东,135673) (江苏,128222) (山东,92069) (浙江,82553) (四川,60132) (河南,59132) (湖北,55803)\n"
+                + "    (福建,54355) (湖南,50012) (上海,47218) (安徽,47050) (河北,43944) (北京,43760) (陕西,33786)\n};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        assertTrue(out.contains("point meta=explicit symbolic"), "应注入 point meta=explicit symbolic: " + out);
+        assertTrue(out.contains("(广东,135673)[13.6万]"), "135673 应缩写为 13.6万: " + out);
+        assertTrue(out.contains("(陕西,33786)[3.4万]"), "33786 应缩写为 3.4万: " + out);
+        assertTrue(out.contains("135673"), "y 真实值必须保留以保持柱高正确");
+        assertTrue(out.contains("font=\\tiny"), "密集单柱图应注入 \\tiny 缩字号防重叠: " + out);
+        assertTrue(out.contains("inner sep=0pt"), "密集单柱图应清空标注内边距进一步防重叠: " + out);
+    }
+
+    @Test
+    void keepsDenseShortNumbersWithoutAbbreviation() {
+        // 坐标多但数值小（<10000）→ 不缩写（注意 N≥7 时会注入 enlarge x limits，故用 contains 断言）
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[ybar,\n"
+                + "    symbolic x coords={一,二,三,四,五,六,七,八},\n"
+                + "    nodes near coords\n]\n"
+                + "\\addplot coordinates {(一,120) (二,90) (三,80) (四,75) (五,60) (六,50) (七,40) (八,30)};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        assertFalse(out.contains("万]"), "数值 <10000 时不得缩写: " + out);
+        assertTrue(out.contains("(一,120)"), "坐标必须原样保留");
+        assertFalse(out.contains("point meta=explicit symbolic"), "不应注入 point meta: " + out);
+    }
+
+    @Test
+    void keepsExistingLabelsUntouched() {
+        // 已带 [label]（AI 已用 point meta 缩写）→ 不再重复缩写
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[ybar,\n"
+                + "    symbolic x coords={广东,江苏,山东,浙江,四川,河南,湖北,福建,湖南,上海,安徽,河北,北京,陕西},\n"
+                + "    nodes near coords\n]\n"
+                + "\\addplot[fill=blue!60, point meta=explicit symbolic] coordinates {\n"
+                + "    (广东,135673)[13.6万] (江苏,128222)[12.8万] (山东,92069)[9.2万] (浙江,82553)[8.3万]\n"
+                + "    (四川,60132)[6万] (河南,59132)[5.9万] (湖北,55803)[5.6万] (福建,54355)[5.4万]\n"
+                + "    (湖南,50012)[5万] (上海,47218)[4.7万] (安徽,47050)[4.7万] (河北,43944)[4.4万]\n"
+                + "    (北京,43760)[4.4万] (陕西,33786)[3.4万]\n};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        // 统计 [13.6万] 出现次数，应恰好 1 次（未重复缩写）
+        assertEquals(1, countOccurrences(out, "[13.6万]"), "已带 label 不得重复缩写: " + out);
+        assertTrue(out.contains("point meta=explicit symbolic"), "原有的 point meta 应保留");
+    }
+
+    private static int countOccurrences(String s, String sub) {
+        int count = 0, idx = 0;
+        while ((idx = s.indexOf(sub, idx)) >= 0) {
+            count++;
+            idx += sub.length();
+        }
+        return count;
+    }
 }

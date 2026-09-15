@@ -1,0 +1,19 @@
+{
+  "history_id" : 445,
+  "user_id" : 16,
+  "data_id" : 124,
+  "file_name" : "31-conversion-rate.csv",
+  "dataset_name" : "31-conversion-rate",
+  "user_input" : "请根据我上传的数据绘制柱状图，对比各渠道转化率；在每根柱子上方标注转化率数值，保留两位小数并带百分号（%）；添加图表标题、X 轴（渠道）与 Y 轴（转化率/%）标签，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各渠道转化率对比},\n    ylabel={转化率（\\%）},\n    xlabel={渠道},\n    symbolic x coords={官方商城,直播带货,社群团购,线下门店,老客推荐},\n    xtick=data,\n    x tick label style={font=\\scriptsize, align=center},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(官方商城,3.25) (直播带货,5.68) (社群团购,7.42) (线下门店,2.14) (老客推荐,9.36)};\n\\addlegendentry{转化率}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：31-conversion-rate.csv};\n\\end{axis}\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    title={各渠道转化率对比},\\n    ylabel={转化率（\\\\%）},\\n    xlabel={渠道},\\n    symbolic x coords={官方商城,直播带货,社群团购,线下门店,老客推荐},\\n    xtick=data,\\n    x tick label style={font=\\\\scriptsize, align=center},\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    enlarge x limits=0.15,\\n    ymin=0\\n]\\n\\\\addplot[fill=blue!60, mark=*] coordinates {(官方商城,3.25) (直播带货,5.68) (社群团购,7.42) (线下门店,2.14) (老客推荐,9.36)};\\n\\\\addlegendentry{转化率}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：31-conversion-rate.csv};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"各渠道转化率对比柱状图，数值已标注。\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各渠道转化率对比},\n    ylabel={转化率（\\%）},\n    xlabel={渠道},\n    symbolic x coords={官方商城,直播带货,社群团购,线下门店,老客推荐},\n    xtick=data,\n    x tick label style={font=\\scriptsize, align=center},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(官方商城,3.25) (直播带货,5.68) (社群团购,7.42) (线下门店,2.14) (老客推荐,9.36)};\n\\addlegendentry{转化率}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：31-conversion-rate.csv};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制柱状图，对比各渠道转化率；在每根柱子上方标注转化率数值，保留两位小数并带百分号（%）；添加图表标题、X 轴（渠道）与 Y 轴（转化率/%）标签，并加上图例。",
+  "created_at" : "2026-09-14T15:40:37.822Z",
+  "metadata" : {
+    "data_ids" : [ 124 ],
+    "has_chart_code" : true,
+    "code_length" : 739,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

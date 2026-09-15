@@ -1,0 +1,19 @@
+{
+  "history_id" : 383,
+  "user_id" : 16,
+  "data_id" : 76,
+  "file_name" : "05-groupedbar-products.xlsx",
+  "dataset_name" : "05-groupedbar-products",
+  "user_input" : "请根据我上传的数据绘制分组柱状图，对比产品A与产品B在各季度的销量；两类产品使用不同颜色并在柱顶标注销量数值（单位：万件）；添加图表标题、X 轴（季度）与 Y 轴（销量/万件）标签，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=12cm, height=7cm,\n    title={各季度产品A与产品B销量对比},\n    xlabel={季度},\n    ylabel={销量（万件）},\n    symbolic x coords={一季度,二季度,三季度,四季度},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0,\n    bar width=10pt,\n    legend cell align={left}\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(一季度,45) (二季度,52) (三季度,60) (四季度,68)};\n\\addplot[fill=orange!60, mark=*] coordinates {(一季度,38) (二季度,55) (三季度,58) (四季度,74)};\n\\addlegendentry{产品A}\n\\addlegendentry{产品B}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：05-groupedbar-products.xlsx};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\\\begin{axis}[\\\\n    ybar,\\\\n    width=12cm, height=7cm,\\\\n    title={各季度产品A与产品B销量对比},\\\\n    xlabel={季度},\\\\n    ylabel={销量（万件）},\\\\n    symbolic x coords={一季度,二季度,三季度,四季度},\\\\n    xtick=data,\\\\n    nodes near coords,\\\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\\\n    enlarge x limits=0.15,\\\\n    ymin=0,\\\\n    bar width=10pt,\\\\n    legend cell align={left}\\\\n]\\\\n\\\\addplot[fill=blue!60, mark=*] coordinates {(一季度,45) (二季度,52) (三季度,60) (四季度,68)};\\\\n\\\\addplot[fill=orange!60, mark=*] coordinates {(一季度,38) (二季度,55) (三季度,58) (四季度,74)};\\\\n\\\\addlegendentry{产品A}\\\\n\\\\addlegendentry{产品B}\\\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：05-groupedbar-products.xlsx};\\\\n\\\\end{axis}\\\\n\\\\end{tikzpicture}\",\n  \"summary\": \"分组柱状图对比产品A与B季度销量\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\\begin{axis}[\n    ybar,\n    width=12cm, height=7cm,\n    title={各季度产品A与产品B销量对比},\n    xlabel={季度},\n    ylabel={销量（万件）},\n    symbolic x coords={一季度,二季度,三季度,四季度},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0,\n    bar width=10pt,\n    legend cell align={left}\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(一季度,45) (二季度,52) (三季度,60) (四季度,68)};\n\\addplot[fill=orange!60, mark=*] coordinates {(一季度,38) (二季度,55) (三季度,58) (四季度,74)};\n\\addlegendentry{产品A}\n\\addlegendentry{产品B}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：05-groupedbar-products.xlsx};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制分组柱状图，对比产品A与产品B在各季度的销量；两类产品使用不同颜色并在柱顶标注销量数值（单位：万件）；添加图表标题、X 轴（季度）与 Y 轴（销量/万件）标签，并加上图例。",
+  "created_at" : "2026-09-14T15:00:28.927Z",
+  "metadata" : {
+    "data_ids" : [ 76 ],
+    "has_chart_code" : true,
+    "code_length" : 841,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

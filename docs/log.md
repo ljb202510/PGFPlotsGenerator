@@ -1,7 +1,7 @@
 # 开发日志 — PGFPlotsGenerator
 > 本日志为历史记录，权威技术文档以 README.md 为准
 > 项目：PGFPlotsGenerator（前端 Vue3 + 后端 Spring Boot + MySQL；2026-09-13 前为 Node/Express）
-> 记录区间：2025-12-03 ～ 2026-09-14
+> 记录区间：2025-12-03 ～ 2026-09-15
 
 ## 目录
 - 一、前期已完成项
@@ -1337,3 +1337,34 @@ const response = await fetch(`${API\_BASE\_URL}/datasets/${row.id}`, {
 **（e）未做 / 遗留（如实记录）**
 - 按需求未做：`data/storage`、`data/uploads` 的 `.gitignore` 与 `git rm --cached`（运行时产物**仍被 git 跟踪**，本次未动索引）；前端 DeepSeek 选项置灰；环形降级；`ChartGenerator.vue`（2492 行）拆分；前端 request 封装层（G5）与路由守卫（G6）。
 - 规则仍由三处并存（提示词文本 / `eval/violations.mjs` / `ChartCodeValidator`）且**靠人工同步**：本次已对齐口径，但新增规则时仍需三处同改，未做统一规则集抽象。
+
+### 2026-09-15 视觉回归硬修复（X 轴标签重叠 / 密集数值标注重叠 / 拆 addplot 柱位错乱）
+
+**背景**：自动化回归（`run-cases.mjs --compile`）发现 5 例编译通过、但**视觉层**出问题。脚本只验"可编译 + 编译成功"，不验渲染，故这些为人工/bbox 检查发现。本次给 `LatexCompiler.preprocess` 新增**三个确定性预处理兜底**，不依赖模型听话。
+
+**（a）X 轴分类标签旋转兜底 —— `fixXTickLabels`（用例 30/31/27）**
+- 事故：`symbolic x coords` 分类较多、标签较长时，AI 或未写 `x tick label style`（31）、或写了 `rotate=0`（30），X 轴底层分类名互相压盖。
+- 判据：ybar 且按「数量 × 最长标签」综合判断——`(分类数≥6 且最长标签≥3字)` 或 `(分类数≥4 且最长标签≥4字)`。例 25（14 个两字省名）**不**误注入。
+- 动作：注入 `x tick label style={font=\scriptsize, rotate=30, anchor=east}`；三种情况收敛——若有非零旋转**尊重作者不动**；若 `rotate=0` 视为事故写法**整体覆盖**；若未写则注入。
+- 单测 3 例：长分类注入 / rotate=0 覆盖 / 非零旋转尊重 / 短分类（<6）不动。
+
+**（b）拆 addplot 合并 —— `mergeSplitYbarAddplots`（用例 27 根因）**
+- 事故：AI 为区分正/负利润拆成两个 `\addplot`（正系列 5 点、负系列 3 点，x 不全对应）。pgfplots 当多系列并排分配柱位 → `2023Q2/2023Q4/2024Q3` 负值柱被推到错位槽位、挤出可视区，看起来"没显示"。
+- 判据（**只合并"同一数据集被拆"，绝不动真多系列**）：ybar 非 stacked、≥2 个 addplot、且所有 addplot 的 x 坐标**两两互不重叠**。
+- 动作：取第一个 addplot 选项，把全部坐标合并进单个 addplot → 柱位立即归位，负值柱自然朝下体现正负。
+- 单测：合并（断言只剩 1 个 addplot、负值保留、无第二个红色填充）/ 真多系列 x 重叠时不误合并。
+
+**（c）密集柱状图长数字缩写 —— `abbreviateDenseYbarLabels`（用例 25）**
+- 事故：AI 在 14 根柱顶写完整长数字（135673）超出柱间距互相压盖；提示词里"密集柱须 point-meta 缩写"规则 qwen 不遵守。
+- 判据：ybar 非 stacked、addplot 坐标数 ≥8、且存在 |y|≥10000。
+- 动作：每坐标追加 `[a.b万]` 显示标签（**y 保留真实值**保证柱高）+ 给 addplot 注入 `point meta=explicit symbolic`；已带 [label] 的坐标不重复缩写；单 addplot 且已缩写时再注入 `every node near coord/.append style={font=\tiny, inner sep=0pt}` 缩字号清内边距进一步防碰。缩写单位按「万」（用户确认），y 轴标签已含单位。
+- 单测：135673→13.6万 / 值<10000 不缩写 / 已带 label 不重复。
+
+**（d）回归验证**
+- `mvn test` 全绿（`LatexCompilerTest` 新增 10 例：旋转 4 + 合并 2 + 缩写 3 + 保留多系列 1）。
+- 重跑用例 25/27（`--compile`）：均 `compile=success`（hist 449 / hist 447），编译注入未破坏语法。
+- **实测口径（bbox 检测，pdftotext 精确定位）**：27 拆柱合并后 3 个负值柱归位；25 缩写为 `13.6万` 生效，标注从 `\scriptsize` 长数字的重叠缩到 `\tiny` 后约 **1pt** 级碰触（14 根等宽柱间距的物理下限）。**1pt 为字体下限，再减需去掉「万」后缀或降数字精度（取舍，未做，待用户定夺）。**
+
+**（f）记录**
+- `docs/manual-test-cases-checklist.md` 新增 `D. 回归问题记录`，列 03/25/27/30/31 五例的现象/根因/处置。
+- 新增测试资产文档 `docs/test-assets.md`（单测 / 冒烟 verify.js / 评估集 eval / 数据 / 文档一览，含运行命令与路径）。

@@ -1,0 +1,17 @@
+{
+  "runAt": "2026-09-14T14:59:56.916Z",
+  "base": "http://localhost:3000",
+  "model": "qwen",
+  "email": "202326010121@hnu.edu.cn",
+  "results": [
+    {
+      "id": "25",
+      "name": "半角逗号(R7)",
+      "ok": true,
+      "history_id": 378,
+      "chart_code_length": 834,
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={14省份/直辖市GDP对比},\n"
+    }
+  ]
+}

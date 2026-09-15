@@ -1,7 +1,7 @@
 {
-  "tag": "v2.1-qwen-rag-on",
+  "tag": "v3.0-qwen-rag-off",
   "model": "qwen",
-  "run_at": "2026-09-14 19:13:06+08:00",
+  "run_at": "2026-09-15 10:22:47+08:00",
   "base": "http://localhost:3000",
   "cases": [
     {
@@ -12,8 +12,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 6877,
-      "history_id": 294,
+      "latency_ms": 19314,
+      "history_id": 450,
       "model_used": "qwen"
     },
     {
@@ -24,8 +24,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 6602,
-      "history_id": 295,
+      "latency_ms": 21984,
+      "history_id": 451,
       "model_used": "qwen"
     },
     {
@@ -36,8 +36,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 11701,
-      "history_id": 296,
+      "latency_ms": 11272,
+      "history_id": 452,
       "model_used": "qwen"
     },
     {
@@ -48,8 +48,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 9751,
-      "history_id": 297,
+      "latency_ms": 8395,
+      "history_id": 453,
       "model_used": "qwen"
     },
     {
@@ -60,8 +60,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 9167,
-      "history_id": 298,
+      "latency_ms": 6835,
+      "history_id": 454,
       "model_used": "qwen"
     },
     {
@@ -72,8 +72,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 7169,
-      "history_id": 299,
+      "latency_ms": 5858,
+      "history_id": 455,
       "model_used": "qwen"
     },
     {
@@ -84,8 +84,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 3244,
-      "history_id": 300,
+      "latency_ms": 17545,
+      "history_id": 456,
       "model_used": "qwen"
     },
     {
@@ -96,8 +96,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 7822,
-      "history_id": 301,
+      "latency_ms": 8202,
+      "history_id": 457,
       "model_used": "qwen"
     },
     {
@@ -108,8 +108,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 8458,
-      "history_id": 302,
+      "latency_ms": 9913,
+      "history_id": 458,
       "model_used": "qwen"
     },
     {
@@ -120,8 +120,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 11326,
-      "history_id": 303,
+      "latency_ms": 6416,
+      "history_id": 459,
       "model_used": "qwen"
     },
     {
@@ -132,8 +132,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 5759,
-      "history_id": 304,
+      "latency_ms": 4629,
+      "history_id": 460,
       "model_used": "qwen"
     },
     {
@@ -142,10 +142,15 @@
       "gen_ok": true,
       "code_ok": true,
       "compile_ok": true,
-      "violation_free": true,
-      "violations": [],
-      "latency_ms": 10322,
-      "history_id": 305,
+      "violation_free": false,
+      "violations": [
+        {
+          "rule": "R1_LEGEND_POS",
+          "reason": "使用了 legend to name=… 暂存后另处引用（R1 禁止）"
+        }
+      ],
+      "latency_ms": 9354,
+      "history_id": 461,
       "model_used": "qwen"
     },
     {
@@ -156,8 +161,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 7820,
-      "history_id": 306,
+      "latency_ms": 5626,
+      "history_id": 462,
       "model_used": "qwen"
     },
     {
@@ -168,8 +173,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 11322,
-      "history_id": 307,
+      "latency_ms": 5635,
+      "history_id": 463,
       "model_used": "qwen"
     },
     {
@@ -180,8 +185,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 7771,
-      "history_id": 308,
+      "latency_ms": 5075,
+      "history_id": 464,
       "model_used": "qwen"
     },
     {
@@ -192,8 +197,8 @@
       "compile_ok": true,
       "violation_free": true,
       "violations": [],
-      "latency_ms": 12568,
-      "history_id": 309,
+      "latency_ms": 29417,
+      "history_id": 465,
       "model_used": "qwen"
     }
   ],
@@ -202,10 +207,12 @@
     "gen_success_rate": 1,
     "compile_rate": 1,
     "first_pass_rate": 1,
-    "zero_violation_rate": 1,
-    "violation_counts": {},
+    "zero_violation_rate": 0.938,
+    "violation_counts": {
+      "R1_LEGEND_POS": 1
+    },
     "degraded_count": 0,
-    "avg_latency_ms": 8605,
-    "p95_latency_ms": 12568
+    "avg_latency_ms": 10967,
+    "p95_latency_ms": 29417
   }
 }

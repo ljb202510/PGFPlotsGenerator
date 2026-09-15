@@ -126,5 +126,9 @@ app:
     dim: ${EMBEDDING_DIM:1024}
 
 logging:
+  charset:
+    # 控制台日志按 GBK 输出，以匹配 Windows 终端/预览面板的 GBK 解码（避免中文乱码）。
+    # 仅影响日志输出的控制台编码，文件读写、HTTP 报文等仍保持 UTF-8。
+    console: GBK
   level:
     com.pg.pgfplots: info

@@ -1,0 +1,19 @@
+{
+  "history_id" : 452,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "画一个全球智能手机市场份额饼图，图例放右侧",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\pie[radius=2.5, text=legend, legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}] {\n  21.1/Samsung,\n  15.2/Xiaomi,\n  13.8/Huawei,\n  12.5/Apple,\n  10.1/Oppo,\n  7.9/Vivo,\n  9.4/Other\n}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：IDC 2023年Q4全球数据};\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"pie\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\pie[radius=2.5, text=legend, legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}] {\\n  21.1/Samsung,\\n  15.2/Xiaomi,\\n  13.8/Huawei,\\n  12.5/Apple,\\n  10.1/Oppo,\\n  7.9/Vivo,\\n  9.4/Other\\n}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：IDC 2023年Q4全球数据};\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2023年Q4全球智能手机市场份额分布\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\pie[radius=2.5, text=legend, legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}] {\n  21.1/Samsung,\n  15.2/Xiaomi,\n  13.8/Huawei,\n  12.5/Apple,\n  10.1/Oppo,\n  7.9/Vivo,\n  9.4/Other\n}\n\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15) {数据来源：IDC 2023年Q4全球数据};\n\\end{tikzpicture}",
+  "generation_description" : " 画一个全球智能手机市场份额饼图，图例放右侧",
+  "created_at" : "2026-09-15T02:20:02.473Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 339,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}
