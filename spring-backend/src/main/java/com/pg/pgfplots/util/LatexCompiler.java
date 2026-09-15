@@ -396,7 +396,6 @@ public final class LatexCompiler {
         String block = am.group();
         // 统计坐标数与是否已带 point meta
         boolean hasPointMeta = block.contains("point meta=explicit symbolic");
-        List<Matcher> points = new ArrayList<>();
         Matcher cm = COORDINATES_BLOCK.matcher(block);
         String coordsBody = cm.find() ? cm.group(1) : "";
         int coordCount = 0;
