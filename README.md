@@ -1,10 +1,10 @@
 <!-- 本地使用说明：后端 cd spring-backend && scripts\run.cmd（开发模式 scripts\mvn-run.cmd）；前端在 hello 根目录 npm run serve；数据库 mysql -u root -p 登录输入密码 000; use X; source 1.sql; 并执行下方迁移（见 §4 快速开始）。 -->
 <!-- AI 接口配置在 data/.env（Java 后端启动时自动读取 ../data/.env）：NSCC_* → Qwen3.5（主通道）、SILICONFLOW_* → GLM-4.9（降级链第二层）、DEEPSEEK_* → DeepSeek（当前 DEEPSEEK_ENABLED=false 停用，余额为 0）；EMBEDDING_* → RAG 向量化（bge-m3，与生成通道分开计费）。 -->
-<!-- 注意：原 Node/Express 后端已于 2026-09-13 退役删除并归档到仓库外；其数据目录 backend/ 已改名为 data/，现仅保留 .env、uploads/、storage/ 共享运行时数据（Java 后端仍在使用），请勿删除。 -->
+<!-- 注意：data/ 目录现仅保留 .env、uploads/、storage/ 共享运行时数据（Java 后端仍在使用），请勿删除。 -->
 <!-- 管理员账号预置：admin123 / 666666（见 1.sql 与 §9 版本说明）。admin@pgfplots.com user_id=1 -->
 # PGFPlotsGenerator 智能图表生成系统
 
-> 通过自然语言（可附带 Excel/CSV 数据集）生成 PGFPlots/TikZ 图表代码，再用 XeLaTeX 编译为 PDF 在线预览与下载的全栈应用。前端 Vue 3 + 后端 Spring Boot（`spring-backend/`）+ MySQL（原 Node/Express 后端已退役）。
+> 通过自然语言（可附带 Excel/CSV 数据集）生成 PGFPlots/TikZ 图表代码，再用 XeLaTeX 编译为 PDF 在线预览与下载的全栈应用。前端 Vue 3 + 后端 Spring Boot（`spring-backend/`）+ MySQL。
 
 - **普通用户**：对话式生成图表 → 编译 PDF → 历史回溯 / 数据集管理 / 多轮会话 / 反馈与通知
 - **管理员**：用户管理、系统通知发布、反馈处理、系统日志与 API 统计
@@ -35,7 +35,6 @@
 | 前端 | Vue `^3.2.13` + Vue Router 4 + **Vuex 4**（非 Pinia）；Element Plus `^2.11.9` + `@element-plus/icons-vue`（无 Font Awesome）；ECharts `^6.0.0`（管理员监控）；axios（组件直调，**无 src/api 封装层**）；mitt 事件总线 | `package.json` |
 | 构建 | **Vue CLI 5**（`vue-cli-service serve/build`，**非 Vite**） | `package.json`、`vue.config.js` |
 | 后端 | **Spring Boot `3.2.12` + MyBatis-Plus `3.5.5`**（`spring-backend/`，Java 17）；HikariCP 连接池；Spring Security 无状态 JWT + BCrypt；响应统一 `{success,data,message}` | `spring-backend/README.md` |
-| 后端（已退役） | 原 Node.js + Express 后端（13 路由）已于 2026-09-13 全量退役删除，Java 版接口路径与行为等价 | `docs/log.md` |
 | 大模型调用 | Spring 6 `RestClient` 调 **Qwen3.5**（湖大超算 NSCC MaaS，主通道）→ **GLM-4.9**（硅基流动，降级第二层）→ **DeepSeek**（已停用）；三通道共用 OpenAI 兼容 `/chat/completions` | `client/LlmClient.java`、`service/ChatService.java` |
 | RAG 检索增强 | 自实现向量检索：`EmbeddingClient`（OpenAI 兼容 `/embeddings`，`BAAI/bge-m3`，1024 维）+ `VectorStore`（`rag_vector` 表，暴力余弦，**不引入 pgvector / 向量库**）+ `Retriever` + `PromptComposer` | `service/rag/` |
 | 输出解析 | JSON 结构化输出 → `StructuredOutputParser`（Jackson）→ `ChartCodeExtractor`（围栏块提取 + 字面 `\n` 转义还原）双层兜底 | `util/StructuredOutputParser.java` |
@@ -45,7 +44,7 @@
 | 上传/解析 | Spring `MultipartFile`（≤100MB）+ Apache POI 5.2.5（xlsx） | `controller/DatasetController.java`、`util/FileContentReader.java` |
 | 存储 | MySQL（库名 `X`，**11 张表**）+ 文件系统（`data/uploads/`、`data/storage/`，Java 默认沿用） | `1.sql` + `migrations/` |
 
-> 注意：`data/` 目录（由原 Node 后端目录 `backend/` 改名而来）现为**共享运行时数据目录**，仅保留 `.env`（Java 启动依赖）、`uploads/`、`storage/`，请勿删除该目录。
+> 注意：`data/` 目录现为**共享运行时数据目录**，仅保留 `.env`（Java 启动依赖）、`uploads/`、`storage/`，请勿删除该目录。
 
 ## 3. 目录结构
 
@@ -71,7 +70,7 @@ hello/
 │   ├── scripts/             # 一键脚本：build / run / mvn-run / verify / rag_seed / rag_demo / rag_backfill / rag_purge
 │   ├── eval/                # 离线评估：cases.json（16 例）+ eval.mjs + violations.mjs + results/*.json
 │   └── src/main/java/com/pg/pgfplots/service/rag/   # RAG：EmbeddingClient / VectorStore / Retriever / PromptComposer
-└── data/                    # 共享运行时数据目录（原 backend/ 改名而来，请勿删除）
+└── data/                    # 共享运行时数据目录（Java 后端使用，请勿删除）
     ├── .env                 # 环境配置（Java 启动时自动读取；含 DB/SMTP/LLM/Embedding 密钥，勿提交 .env）
     ├── uploads/             # 数据集原文件（Java 默认 UPLOADS_DIR 指向此处）
     └── storage/             # history/{uid}/{id}.json、generated_charts/user{uid}/hist{id}.pdf
@@ -92,7 +91,7 @@ mysql -u root -p000          # 密码 000 与 data/.env 默认值一致
 mysql> source 1.sql;                                      # 建库建表 + 预置管理员（注意会 DROP 重建）
 mysql> source migrations/add_notice_feedback_columns.sql; # notice 表追加定向/反馈字段
 mysql> source migrations/create_notice_read_table.sql;    # notice_read 每用户已读表
-mysql> source migrations/create_conversations_tables.sql; # conversations / conversation_messages（自 Node 迁移脚本归档）
+mysql> source migrations/create_conversations_tables.sql; # conversations / conversation_messages
 mysql> source migrations/alter_api_log_duration_ms.sql;   # api_log 加 duration_ms（批次2/O1 耗时拆解）
 mysql> source migrations/alter_api_log_error_type.sql;    # api_log 加 error_type（批次3/E2 失败归类）
 mysql> exit;
@@ -281,9 +280,8 @@ node eval/eval.mjs --tag=<tag> --model=qwen   # 离线评估集（需后端已�
 | v3.7 | 2026-09-14 | **生成质量硬修复 + 规则口径对齐**：RAG 同题断链（文字相同 / 相似度 ≥0.98 剔除）+ 入库准入 + `rag_purge` 清理 9 条污染向量；`LatexCompiler.preprocess` 五步确定性修复；提示词升 `v1.4-pie-no-axis`（R9–R12 + 饼图专项）；修复文档外壳 xcolor 选项位置（命名色恢复渲染）；`eval/violations.mjs` 补 R9/R12 与提示词口径对齐；README 补齐 AI 链路与实测数据，重跑评估集产出 `v3.0-qwen-rag-on`（16 例全通过、零违例） |
 | v3.6 | 2026-09-14 | **压平转义还原 + 生命周期 + 队列满验收**：`ChartCodeExtractor.normalizeEscapes` 修复字面 `\n`（`bar_dense` 首轮通过率 0.938 → 1.0）；`AdminLog.vue` 三个 `ResizeObserver` 登记与 `onUnmounted` 释放；`COMPILE_QUEUE_CAPACITY` 可注入并实测「队列满 → 503 + 落库」 |
 | v3.5 | 2026-09-14 | **模型三通道 + 降级链修复**：新增 `siliconflow` 通道；降级链从「仅空回复触发」改为「硬错误按 `qwen → siliconflow → deepseek` 接力」（此前 16 连败的根因）；通道 `enabled` 开关；`model_used` 可观测；`verify.js` 新增降级链 stub 断言 |
-| v3.4 | 2026-09-13 | **目录整理**：清理残留垃圾（backend.log/texput.log/空目录等）；共享数据目录 `backend/` 改名为 `data/`（配置、DB `generation_path` 前缀、文档同步更新），语义更清晰 |
-| v3.3 | 2026-09-13 | **Node 后端退役**：删除 `hello/backend/` 下全部 Node/Express 代码（app.js/routes/services 等），`backend/` 原地保留为共享运行时数据目录（`.env` + `uploads/` + `storage/`）；唯一后端为 `spring-backend/`；`conversations` 建表 DDL 归档至 `migrations/create_conversations_tables.sql`（详见 `docs/log.md`） |
-| v3.2 | 2026-09-13 | **新增 Java 后端**：`spring-backend/`（Spring Boot 3.2 + MyBatis-Plus 3.5）全量重写 Node/Express 后端（13 路由 / 11 表 / JWT 鉴权 / AI 生成 / XeLaTeX 编译 / 上传 / 邮件 / 管理后台），响应统一 `{success,data,message}` 并同步适配前端；Node 后端保留待退役（详见 `docs/log.md` 2026-09-13） |
+| v3.4 | 2026-09-13 | **目录整理**：清理残留垃圾（texput.log/空目录等）；共享数据目录定名为 `data/`（配置、DB `generation_path` 前缀、文档同步更新），语义更清晰 |
+| v3.2 | 2026-09-13 | **新增 Java 后端**：`spring-backend/`（Spring Boot 3.2 + MyBatis-Plus 3.5）实现 13 路由 / 11 表 / JWT 鉴权 / AI 生成 / XeLaTeX 编译 / 上传 / 邮件 / 管理后台，响应统一 `{success,data,message}` 并同步适配前端（详见 `docs/log.md` 2026-09-13） |
 | v3.1 | 2026-09-07 | **全量 P0 安全加固 + 配置修复**：`/api/admin/*` 统一挂 `authenticateToken + requireAdmin`；PDF 移除无鉴权静态托管改归属校验流式返回（前端 Blob 预览）；LaTeX 编译前危险序列校验；数据库凭据改读 `.env`（缺省回退本地默认）；JWT 去除兜底密钥（缺失启动即退出）；密码 6-16 位；修复 `.env` 旧占位 `DB_*` 导致的本地连库失败（详见 `docs/log.md` 2026-09-07） |
 | v3.0 | 2026-09-05 | **精简重构为总入口**；修正与代码不一致处（如后端路由前缀实为 **13 个**，非 v2.0 所述 14 个）；详细 API/部署/架构内容迁至 docs/ 专项文档，避免多份重复维护 |
 | v2.0 | 2026-07-16 | 旧版主文档（API 明细等已迁移，其「与旧文档差异」并入 `docs/architecture.md` §7） |

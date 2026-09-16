@@ -1,7 +1,7 @@
 # 开发日志 — PGFPlotsGenerator
 > 本日志为历史记录，权威技术文档以 README.md 为准
 > 项目：PGFPlotsGenerator（前端 Vue3 + 后端 Spring Boot + MySQL；2026-09-13 前为 Node/Express）
-> 记录区间：2025-12-03 ～ 2026-09-15
+> 记录区间：2025-12-03 ～ 2026-09-16
 
 ## 目录
 - 一、前期已完成项
@@ -1368,3 +1368,115 @@ const response = await fetch(`${API\_BASE\_URL}/datasets/${row.id}`, {
 **（f）记录**
 - `docs/manual-test-cases-checklist.md` 新增 `D. 回归问题记录`，列 03/25/27/30/31 五例的现象/根因/处置。
 - 新增测试资产文档 `docs/test-assets.md`（单测 / 冒烟 verify.js / 评估集 eval / 数据 / 文档一览，含运行命令与路径）。
+
+---
+
+### 2026-09-16 RAG 语料质量治理 + L1 模板库扩容 + 六类缺陷修复与 8 项确定性改进
+
+**主题**：把 RAG 从「生成成功即入库、从不判定」改造成「**按判定者可靠性分级**」；并借模板库扩容的**人工视觉复核**，反向发现 6 类此前未覆盖的渲染缺陷，全部落成确定性预处理与提示词规则。全量详录见 `docs/rag-corpus-quality.md` 与 `docs/rag-templates-review/README.md`。
+
+#### （a）RAG 语料质量治理（批次 A–C）
+
+**问题**：索引时机在**编译之前**——`ChatService.saveGenerationHistory` 生成成功即调 `indexHistoryAsync`，而编译是用户随后手动触发的独立异步任务，两者无先后约束；准入规则只有 `ChartCodeValidator.hasDuplicateSeries` 一条。实际门槛 = 「有代码 + 多系列坐标不完全重复」，**编译成功、语法、语义、视觉全部不检查**。用模型自己的输出当范例教模型 = **闭环自举**：输出错时同样强化错误。
+
+**改造前基线**（只读 SQL，2026-09-16）：`history` **352** 条 / `template` 7 条；T1 内容里没有 tikz **26**、T2 从未编译成功 **83**、T3 编译确认失败 **3**、T4 无数据集 **198**、T5 同一需求重复旧副本 **243**（同一句需求最多重复入库 **19 次**）。用户分布 `user4=159 / user1=83 / user16=72 / user15=32 / user11=5`。
+
+> T5 是「RAG 为何量不出效果」的一个具体原因：`top-k-history=3`，而同一句需求最多重复入库 19 次 → **3 个名额被同一需求的副本占满，实际只召回 1 条范例**；又因 `loadHistory` 原本只有 `LIMIT` 没有 `ORDER BY`（取到**最早写入**的 N 条），很可能取到的还是最旧那条。
+
+**设计**：把「**入库**」与「**可召回**」解耦，按判定者可靠性三级分级。
+
+| 等级 | 判定者 | 是否召回 | 实现 |
+|---|---|---|---|
+| `golden` | 人工定义真值 | ✅ | 模板分区（7 条） |
+| `verified` | 编译成功 **且** 静态零违例 | ✅ | `--rag-cli=verify:<userId>` 离线定级 |
+| `unverified` | 无 | ❌（等价于下架，**但不删数据、完全可逆**） | 默认等级 |
+
+仅**历史分区**按 `app.rag.min-quality`（默认 `verified`）过滤；模板分区恒为 `golden`、不受影响；**过滤后为空自动回退**并记日志，绝不把检索变哑。
+
+- **批次 A**：新增 `ChartCodeValidator.violationsForIngest` 规则集（`NO_TIKZ` + R1/R2/R3/R5/R6/R8/R9/R12，**显式排除**已被编译前预处理兜底的 R7/R10/R11——纳入会误杀有效案例）；两条入库接入点改用规则集；**提取兜底收紧「两处都改」**（`ChatService` 三出口汇聚点 + `saveGenerationHistory` 内那条**独立的**兜底提取，只改一处不生效）；顺带修掉 `finalChartCode` 为 null 时 `chart_code_length` 的潜在 NPE。
+- **批次 B**：迁移 `migrations/alter_rag_vector_quality.sql`（新增 `quality` / `data_source` 并回填）；`RagCli.purge` 改为**只读分类报告**（默认不删除任何数据），删除能力保留在 `purge:apply`。
+- **批次 C**：新增 `RagQuality`（纯静态判定）；`VectorStore` 读写等级与来源，并**给 `loadHistory` / `loadAllHistory` 补 `ORDER BY vector_id DESC`**（修「只取最早 N 条」缺陷）；`Retriever` 分级过滤 + **空召回回退**；新增 `verify:<userId>` **离线定级**（纯读取+更新、**不调用大模型**、幂等：先全量重置再判定，去重保留 `vector_id` 最大的一条）；`seed` 写入置 `golden`。
+
+**实测验证**：`mvn test` **48 → 62 → 67 全绿**；零误杀断言覆盖 R7/R10/R11 **均不命中**；`scripts/verify.cmd` **PASS=42 FAIL=0 WARN=0**（批次 A 后与最终各一次，无回退）；真实生成 history **502**（代码 442 字符、含 tikz）证明收紧**未误伤正常提取**；迁移回填 `history` unverified 352 / `template` golden 7；`verify:1` 83 条 → 跳过 6（从未编译成功）+ 6（命中准入判据）→ 合格 72 → **去重后 verified 20 条**；`rag_demo` 召回非空（`history#502` 0.83 / `#367` 0.72 / `#205` 0.71 + `template#7` 0.56 / `template#1` 0.55）；`purge` 报告 T1 26 / T5 243 / 合计 269，**未删任何数据**。
+
+**两处与计划的偏离**：① 收紧校验**不放进** `ChartCodeExtractor` / `StructuredOutputParser`——核实后发现会连带影响 `attemptOn` 的纠正重试判定（让"你是谁"这类非图表提问也触发一次重试），故改放 `ChatService` 汇聚点；② 原计划「直接删除 T1」，实测 T5 达 243 条（占历史分区 69%），破坏性过大且删除方式未经确认 → 改为**零删除方案**。
+
+**一处根因判断的修正**：改造前判断「闲聊被当代码」是兜底提取过松、会**持续产生**；实测修正为 **T1 的 26 条主要是历史遗留**（Java 版非 tikz 代码只有 2 条且都在 09-13 上线当天，09-14 之后无新增），**不是当前仍在持续产生的问题**。
+
+**一次误判的排查（记录备查）**：首次跑 `verify.cmd` 出现 `PASS=39 WARN=1`（第 5 节编译链路失败），一度疑为收紧校验造成的回归；排查结论**不是回归**——`verify.js` 第 5 节取当前用户**最新一条**历史，而运行前最新的是 **499 号**（2026-09-15 23:37 产生、`generation_code` 为空，**早于本次改动**）；用真实生成补齐前置条件（history 502）后回到 PASS=42。属 `verify.js` 的**测试脆弱性**，非产品缺陷。
+
+#### （b）L1 模板库扩容 —— 逐张目视复核推翻了 checklist 自评
+
+**背景**：模板分区仅 7 条，冷门图型召回为空（批次 D 遗留项）。候选取 checklist「实测通过」的 `user_id=16` 466–496 区间共 14 条（去掉与 C6 部分重叠的分组柱状图）。
+
+**做法**：`mysql -N -B -r` 从数据库**直出代码**（不经人工转写）→ `pdftoppm` 把 PDF 渲染成 PNG → **逐张目视** → 与代码逐行对照。
+
+**结果：14 个候选全部「编译成功」，但 13 个有真实缺陷，只有 1 个（492）干净。**
+
+| 缺陷 | 例数 | 表现 |
+|---|---|---|
+| ① `xbar` 坐标写成 `(分类,数值)`（应为 `(数值,分类)`） | 1（477） | pgfplots 无法把中文当 x 数值 → **数据点整批静默丢弃**，只剩空坐标轴、Y 轴分类错乱 |
+| ② `fill=steelblue` —— xcolor 未定义的 CSS 风格小写色名 | 1（477） | 报 `xcolor Error` 但**填充静默回落成黑色**，编译仍"成功"、PDF 照常生成 |
+| ③ 字面 `\n` 未还原（`]\ncoordinates`） | 1（490） | axis 选项在此处被截断、整张图被吞掉 → **873 字节 / 2 页全白 PDF** |
+| ④ 数据来源注记写成**文件名**（`18-pctstack-expense.xlsx` 等） | 3（482/493/494） | 会教模型把内部文件名写进图表 |
+| ⑤ 注记位置错 / 注记**根本不渲染** | 13 | 见下 |
+| ⑥ 轴用 `·10⁵`、柱顶标注用「万」，**两套量纲记法** | 1（489） | 数值本身一致，但同一张图两套记法、观感混乱 |
+
+**缺陷 ⑤ 的两种坏法——`axis description cs` 两种写法都是坏的**：
+
+- 写在 `\end{axis}` **之后**（7 例：477/478/480/491/493/494/496）：坐标系已失效 → 报 `! Undefined control sequence`，节点的左下位置只是**碰巧**对；
+- 写在 axis **之内**（6 例：476/481/482/489/490/495）：**不报错**，但文字被排版进 **nullfont**（日志满屏 `Missing character … in font nullfont`）→ **PDF 里能提取到文字、画面上却什么都没有**。
+
+统一改为：位置移到 `\end{axis}` **之后**（仍在 `tikzpicture` 内），锚点换成 `(current bounding box.south west)`。
+
+**推翻了 checklist 自评**：`docs/test/manual-test-cases-checklist.md` §B.3 把**全部 32 例**都记为「PDF 显示正常 = 是 / 通过」，其中**用例 12（空图）与用例 26（白纸）都是错的** → 该列**不可信**（未做过真正的视觉核对）。
+
+**连带结论（重要）**：`verified`（编译成功 + 静态零违例）这个判据**同样会把上述垃圾判成合格**——477 与 490 都会被判 `verified`。故 **人工看图是唯一可靠的判定者**，这也正是把候选做成可审核物料的原因。
+
+**处置**：14 条全部产出修正版（`hist<id>-fixed.tex/.pdf/.png`），其中 491 采用**双色方案**（两个 `\addplot` 的 `symbolic x coords` 完全相同 + 都加 `bar shift=0pt`，靠 `point meta` 的**空标签 `[]`** 抑制补 0 点的标注；因 x 有重叠，**不会被 `mergeSplitYbarAddplots` 合并**）。原版错误代码与产物**已按要求删除**，缺陷记录保留在审核包 README 中。
+
+#### （c）8 项确定性改进落地
+
+| # | 位置 | 改动 |
+|---|---|---|
+| 1 | `LatexCompiler.fixHorizontalBarCoords`（新增 P7） | 仅当同时出现 `xbar` 与 `symbolic y coords`、且某个 `coordinates` 块内**每个**点都是「第一段非数值 + 第二段数值」时整块交换；有一个不符即跳过，绝不误伤 |
+| 2 | `LatexCompiler.fixUndefinedColors`（新增 P8） | 裸色名按小写查表换回规范写法（110+ 驼峰色名 + grey/gray 变体）；查不到的一律原样保留（绝不猜色） |
+| 3 | `ChartCodeExtractor.normalizeEscapes` | 判据改为「`\n` 后跟的字母串**若不构成已知的、以 n 开头的 LaTeX 命令**则按换行还原」（白名单 46 个命令）；**并接入 `preprocess` 首步**——提取层只管新生成，预处理层让**历史存量记录**（如 490）同样被救回 |
+| 4+5 | `LatexCompiler.normalizeSourceNote`（新增 P9） | 把所有 `\node … at (axis description cs:…)` 统一搬到 `\end{axis}` 之后、锚点换 `(current bounding box.south west)` |
+| 6 | `LatexCompiler.run` | 编译后校验 PDF 体积：**< 2048 字节判为空白产物 → 返回失败**，并把原因写进编译日志（正常产物实测最小 12.7KB，空白产物 873 字节） |
+| 7 | `PromptTemplates` | 新增 **R13–R16** + 4 条反例 + 自检 **18–20** 条；`VERSION` → `v1.5-coord-color-note` |
+| 8 | 流程约定 | 本地复核模板时**同时跑真实 `preprocess`**（用 `target/classes` + 单文件 Java 程序直接调用），既看「裸代码是否已正确」，也看「生产会不会改坏」 |
+
+> `preprocess` 链同时改为**顺序写法**（逐步赋值），替代原来的深层嵌套调用，便于阅读与增删步骤。
+
+**顺带修正一处原有的错误指导（重要）**：提示词**原自检第 6 条**要求「数据来源注记在 `\end{axis}` **之前**」——而那**正是导致注记不可见的写法**（文字进 nullfont）。这很可能就是那 6 例注记消失的根源。已改为「写在 `\end{axis}` 之后、用 `(current bounding box.south west)` 定位，未使用 `axis description cs`」；`【反例】`中「把数据来源等文字写在 axis 外」一条同步改为「写在 `\end{tikzpicture}` 之后（跑出图外）」。
+
+#### （d）验证
+
+- `mvn test`：**67 → 79 例全绿**（新增 12 例覆盖每个新步骤的正反例：`ChartCodeExtractorTest` +4、`LatexCompilerTest` +8）
+- **端到端**：把数据库里两个出错的原版代码取出，**只过一遍新 `preprocess`** 再编译——
+
+| 案例 | 修复前 | 过 `preprocess` 后 | 人工修正版（对照） |
+|---|---|---|---|
+| hist477 | 空坐标轴，25.8KB | **29419 字节，8 根蓝柱全对、注记可见、编译零错误** | 29410 字节 |
+| hist490 | **873 字节 / 2 页白纸** | **32815 字节，三条折线全对、注记可见、编译零错误** | 32808 字节 |
+
+→ 这两个缺陷已**不需要人工介入**，新预处理会自动修好。
+
+#### （e）本次新增 / 更新的文档
+
+- **新增** `docs/rag-corpus-quality.md`：语料治理记录（问题 / 基线 / 分级设计 / 逐批改动与偏离 / 实跑验证 / **6 项剩余盲区** / 复现命令 / 一键回退方式）
+- **新增** `docs/rag-l1-candidates.md`：模板库扩容候选清单（14 条 + 未纳入理由 + 可信度依据修正）
+- **新增** `docs/rag-templates-review/`：**45 个文件**——14 组入库模板 `hist<id>-fixed.tex / .pdf / .png` + `header.tex` / `footer.tex`（编译外壳）+ `README.md`（核验方法 / 逐条判定 / 六类缺陷 / 修正表 / 8 项落地明细 / 端到端验证 / 需求原文）
+- **更新** `docs/manual-test-cases-checklist.md` 相关口径说明；`cv-java` 简历素材同步至 **R1–R16 / 自检 20 条 / 反例 15 条 / `v1.5-coord-color-note`**，并修正多处行号引用
+
+#### （f）剩余盲区（**必须如实理解，不要高估**）
+
+1. **`verified` 仍有盲区**：「编译成功 + 静态零违例」**不等于**语义/视觉正确——本次 477（空图）与 490（白纸）都会被判 `verified`；其中 **R4（数值与坐标轴量纲一致）与视觉重叠没有自动判据**，只能人工抽检。
+2. 项目**没有用户级单次生成质量信号**：`feedback` 表是功能建议 / 界面 / bug 类通用反馈，**无 history 关联、无评分**。
+3. **示意数据不可自动识别**：`data_source` 只能标 `dataset` / `no-dataset`，「使用公开统计」与「模型自拟示意数据」都不带数据集、无法区分。
+4. 「编译成功」用 `generation_path` 非空判定，而 `COMPILE_ERROR` 同时覆盖 LaTeX 报错 / xelatex 执行异常 / 任务中断，**环境类失败也会被保守判为"未验证"**（方向安全，但会少收录）。
+5. **只对账号 1 做了离线定级**，其余账号 4/15/16 共 **332 条仍为 `unverified`**、不参与召回。
+6. **提示词 / 检索消融实验仍延后**：在语料分级完成前做该实验，结论会被脏语料污染，故先治理后测量。
+
+**回退方式**：把 `app.rag.min-quality` 设为 `unverified`（或环境变量 `RAG_MIN_QUALITY=unverified`）即等价于「不过滤」，行为回到改造前；`verify` 可重复执行、可随时重算。
