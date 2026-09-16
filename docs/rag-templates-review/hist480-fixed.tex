@@ -1,0 +1,37 @@
+\begin{tikzpicture}
+\begin{axis}
+    [title={2015—2024 年平台注册用户数增长趋势},
+    xlabel={年份},
+    ylabel={注册用户数（万人）},
+    xtick=data,
+    symbolic x coords={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},
+    width=12cm,
+    height=8cm,
+    ymode=log,
+    log basis y={10},
+    ymin=1, ymax=3000,
+    nodes near coords,
+    every node near coord/.append style={font=\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},
+    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},
+    mark=*,
+    mark size=3pt,
+    thick,
+    grid=major,
+    grid style={dashed, gray!30}
+]
+\addplot[blue, mark=*, thick] coordinates {
+    (2015,2.5)
+    (2016,6.8)
+    (2017,18.4)
+    (2018,46.2)
+    (2019,105.7)
+    (2020,230.5)
+    (2021,468.9)
+    (2022,860.3)
+    (2023,1420.6)
+    (2024,2150.4)
+};
+\legend{注册用户数}
+\end{axis}
+\node[anchor=north west, font=\scriptsize] at (current bounding box.south west) {数据来源：平台公开数据};
+\end{tikzpicture}

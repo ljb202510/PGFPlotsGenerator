@@ -21,11 +21,52 @@ public class VectorStore {
 
     private final RagVectorMapper mapper;
 
-    /** 写入/覆盖一条历史案例向量（仅生成成功的记录会进来） */
+    /** 写入/覆盖一条历史案例向量（默认 unverified：入库即不可召回，待离线定级提升） */
     public void upsertHistory(Integer userId, Integer refId, String title, String embedText, String content,
                               float[] vec, String model, int dim) {
+        upsertHistory(userId, refId, title, embedText, content, vec, model, dim,
+                RagQuality.UNVERIFIED, null);
+    }
+
+    /**
+     * [语料治理] 带质量等级与数据来源的写入/覆盖。
+     *
+     * @param quality    golden | verified | unverified；新入库一律 {@link RagQuality#UNVERIFIED}，
+     *                   由 {@code --rag-cli=verify:<userId>} 离线定级提升
+     * @param dataSource dataset | no-dataset（**只标有无数据集**，无法识别「模型自拟示意数据」）
+     */
+    public void upsertHistory(Integer userId, Integer refId, String title, String embedText, String content,
+                              float[] vec, String model, int dim, String quality, String dataSource) {
         deleteByRef("history", refId);
-        insert("history", userId, refId, title, embedText, content, vec, model, dim);
+        insert("history", userId, refId, title, embedText, content, vec, model, dim, quality, dataSource);
+    }
+
+    /**
+     * [语料治理] 批量更新指定历史案例的质量等级（离线定级用）。
+     *
+     * @return 实际更新行数
+     */
+    public int markHistoryQuality(List<Integer> refIds, String quality) {
+        if (refIds == null || refIds.isEmpty()) {
+            return 0;
+        }
+        RagVector patch = new RagVector();
+        patch.setQuality(quality);
+        return mapper.update(patch, new LambdaQueryWrapper<RagVector>()
+                .eq(RagVector::getSourceType, "history")
+                .in(RagVector::getRefId, refIds));
+    }
+
+    /** [语料治理] 批量更新指定历史案例的数据来源标记。 */
+    public int markHistoryDataSource(List<Integer> refIds, String dataSource) {
+        if (refIds == null || refIds.isEmpty()) {
+            return 0;
+        }
+        RagVector patch = new RagVector();
+        patch.setDataSource(dataSource);
+        return mapper.update(patch, new LambdaQueryWrapper<RagVector>()
+                .eq(RagVector::getSourceType, "history")
+                .in(RagVector::getRefId, refIds));
     }
 
     /** 批量重建模板库（seed 专用）：先清空 template 分区再全量写入；模板 refId 由 seed 固定为 1..N */
@@ -37,18 +78,25 @@ public class VectorStore {
         }
     }
 
-    /** 加载当前用户的历史向量（数量上限 app.rag.history-limit，防全表膨胀） */
+    /**
+     * 加载当前用户的历史向量（数量上限 app.rag.history-limit，防全表膨胀）。
+     * <p>[语料治理] 补 {@code ORDER BY vector_id DESC}：原实现只有 {@code LIMIT} 而没有排序，
+     * 取到的是「最早写入的 N 条」——一旦某用户超过上限，<b>新入库的案例将永远读不到</b>。
+     * 改为取最新 N 条；当前规模（单用户百级）下行为不变。</p>
+     */
     public List<RagVector> loadHistory(Integer userId, int limit) {
         return mapper.selectList(new LambdaQueryWrapper<RagVector>()
                 .eq(RagVector::getSourceType, "history")
                 .eq(RagVector::getUserId, userId)
+                .orderByDesc(RagVector::getVectorId)
                 .last("LIMIT " + limit));
     }
 
-    /** 加载全部历史向量（[v1.2] 清理工具用：不按 user 过滤，仍受 limit 保护） */
+    /** 加载全部历史向量（[v1.2] 清理工具用：不按 user 过滤，仍受 limit 保护；同样按 vector_id 倒序） */
     public List<RagVector> loadAllHistory(int limit) {
         return mapper.selectList(new LambdaQueryWrapper<RagVector>()
                 .eq(RagVector::getSourceType, "history")
+                .orderByDesc(RagVector::getVectorId)
                 .last("LIMIT " + limit));
     }
 
@@ -71,7 +119,8 @@ public class VectorStore {
     }
 
     private void insert(String sourceType, Integer userId, Integer refId, String title,
-                        String embedText, String content, float[] vec, String model, int dim) {
+                        String embedText, String content, float[] vec, String model, int dim,
+                        String quality, String dataSource) {
         RagVector row = new RagVector();
         row.setSourceType(sourceType);
         row.setUserId(userId);
@@ -82,6 +131,9 @@ public class VectorStore {
         row.setEmbedding(toJson(vec));
         row.setDim(dim);
         row.setModel(model);
+        // [语料治理] 等级与来源：未知/未指定一律按最低级（保守优先 → 不参与召回）
+        row.setQuality(quality == null ? RagQuality.UNVERIFIED : quality);
+        row.setDataSource(dataSource);
         mapper.insert(row);
     }
 

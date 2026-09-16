@@ -1,0 +1,36 @@
+\documentclass[border=5pt]{standalone}
+% 命名色表必须在 pgfplots 之前声明：pgfplots 内部会先加载 xcolor，
+% 之后再 \usepackage[dvipsnames,svgnames]{xcolor} 会触发 Option clash
+\PassOptionsToPackage{dvipsnames,svgnames}{xcolor}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % 饼图：AI 代码可直接使用 \pie
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}  % 面积图 / 堆叠面积图 / \closedcycle 填充路径
+% 注：error bars 是 pgfplots 内置功能（在核心 pgfplots.errorbars.code.tex），不需要单独 \usepgfplotslibrary 加载
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% 支持中文
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{SimSun}
+\setmainfont{Times New Roman}
+
+\begin{document}
+
+\begin{tikzpicture}\begin{axis}[
+    ybar,
+    title={各车间产量对比},
+    ylabel={产量（台）},
+    symbolic x coords={一车间,二车间,三车间},
+    xtick=data,
+    nodes near coords,
+    every node near coord/.append style={font=\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},
+    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}
+]
+\addplot coordinates {(一车间,4520) (二车间,6100) (三车间,3890)};
+\legend{产量}
+\end{axis}
+\end{tikzpicture}
+
+\end{document}

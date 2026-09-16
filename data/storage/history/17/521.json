@@ -1,0 +1,19 @@
+{
+  "history_id" : 521,
+  "user_id" : 17,
+  "data_id" : 168,
+  "file_name" : "15-logaxis-users.csv",
+  "dataset_name" : "15-logaxis-users",
+  "user_input" : "请根据我上传的数据绘制折线图，展示 2015—2024 年平台注册用户数的增长（呈指数增长）；Y 轴使用对数坐标；折线添加数据点标记并标注数值（单位：万人）；添加图表标题、X 轴（年份）与 Y 轴（注册用户数/万人，对数刻度）标签，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={2015—2024年平台注册用户数增长趋势},\n    xlabel={年份},\n    ylabel={注册用户数（万人），对数刻度},\n    symbolic x coords={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=0, anchor=center},\n    ymode=log,\n    log basis y={10},\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.1,\n    ymin=1, ymax=5000\n]\n\\addplot[blue, mark=*, thick, nodes near coords] coordinates {\n    (2015,2.5) (2016,6.8) (2017,18.4) (2018,46.2) (2019,105.7)\n    (2020,230.5) (2021,468.9) (2022,860.3) (2023,1420.6) (2024,2150.4)\n};\n\\addlegendentry{注册用户数}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：15-logaxis-users.csv};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={2015—2024年平台注册用户数增长趋势},\n    xlabel={年份},\n    ylabel={注册用户数（万人），对数刻度},\n    symbolic x coords={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=0, anchor=center},\n    ymode=log,\n    log basis y={10},\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.1,\n    ymin=1, ymax=5000\n]\n\\addplot[blue, mark=*, thick, nodes near coords] coordinates {\n    (2015,2.5) (2016,6.8) (2017,18.4) (2018,46.2) (2019,105.7)\n    (2020,230.5) (2021,468.9) (2022,860.3) (2023,1420.6) (2024,2150.4)\n};\n\\addlegendentry{注册用户数}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：15-logaxis-users.csv};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制折线图，展示 2015—2024 年平台注册用户数的增长（呈指数增长）；Y 轴使用对数坐标；折线添加数据点标记并标注数值（单位：万人）；添加图表标题、X 轴（年份）与 Y 轴（注册用户数/万人，对数刻度）标签，并加上图例。",
+  "created_at" : "2026-09-16T05:27:59.027Z",
+  "metadata" : {
+    "data_ids" : [ 168 ],
+    "has_chart_code" : true,
+    "code_length" : 1002,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

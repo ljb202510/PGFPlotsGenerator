@@ -63,4 +63,39 @@ class ChartCodeExtractorTest {
         String out = ChartCodeExtractor.extractFencedBlock(reasoning);
         assertTrue(out.contains("\\begin{tikzpicture}\n\\end{tikzpicture}"), "reasoning 兜底路径同样应还原");
     }
+
+    // ---------- [v2.2] 盲区修复：\n 后面跟字母、但整体不构成已知命令 ----------
+
+    @Test
+    void restoresLiteralNFollowedByLettersWhenNotACommand() {
+        // 真实事故（模板 hist490）：...anchor=south}]\ncoordinates { 里 \n 后面紧跟 c，
+        // 原判据「后面不跟 ASCII 字母」把它放行 → axis 选项在 ] 处被截断 → 整张图被吞掉，
+        // 产出 873 字节 / 2 页的全白 PDF（编译却"成功"）。
+        String pressed = "\\begin{axis}[\\n    ybar\\n]\\ncoordinates {(1,1)};";
+        String out = ChartCodeExtractor.normalizeEscapes(pressed);
+        assertTrue(out.contains("]\ncoordinates {(1,1)};"), "应还原为真实换行: " + out);
+        assertFalse(out.contains("\\ncoordinates"), "不应残留字面 \\n");
+    }
+
+    @Test
+    void restoresLiteralNBeforeWordsThatMerelyLookLikeCommands() {
+        // "nbegin" / "naddplot" 都不是命令 → 还原为换行
+        assertEquals("a\nbegin{axis}b", ChartCodeExtractor.normalizeEscapes("a\\nbegin{axis}b"));
+        assertEquals("x\naddplot y", ChartCodeExtractor.normalizeEscapes("x\\naddplot y"));
+    }
+
+    @Test
+    void keepsEveryWhitelistedNCommand() {
+        // 白名单内的 \n 开头命令必须逐字保留（回归保护：不能为了修盲区而误伤）
+        String code = "\\node[a] at (1,1) {x}; \\nodepart{lower} \\neq \\newline \\nodepart{two}"
+                + " \\newcommand{\\x}{y} \\nobreak \\nsubseteq";
+        assertEquals(code, ChartCodeExtractor.normalizeEscapes(code));
+    }
+
+    @Test
+    void keepsLiteralNAtEndOrFollowedByNonLetter() {
+        assertEquals("a\nb", ChartCodeExtractor.normalizeEscapes("a\\nb"));
+        assertEquals("a\n", ChartCodeExtractor.normalizeEscapes("a\\n"));
+        assertEquals("a\n1", ChartCodeExtractor.normalizeEscapes("a\\n1"));
+    }
 }

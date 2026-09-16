@@ -1,0 +1,19 @@
+{
+  "history_id" : 550,
+  "user_id" : 17,
+  "data_id" : 190,
+  "file_name" : "13-hist-scores.csv",
+  "dataset_name" : "13-hist-scores",
+  "user_input" : "请根据我上传的数据绘制直方图，展示某班成绩各分数段的人数分布；在每根柱子上方标注人数；添加图表标题、X 轴（分数段）与 Y 轴（人数）标签。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={某班成绩分数段人数分布},\n    ylabel={人数},\n    symbolic x coords={0-59, 60-69, 70-79, 80-89, 90-100},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=22,\n    x tick label style={font=\\scriptsize, rotate=0, anchor=center}\n]\n\\addplot[fill=blue!60] coordinates {(0-59,3) (60-69,8) (70-79,15) (80-89,18) (90-100,12)};\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：某班成绩统计};\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\\\begin{axis}[\\\\n    ybar,\\\\n    title={某班成绩分数段人数分布},\\\\n    ylabel={人数},\\\\n    symbolic x coords={0-59, 60-69, 70-79, 80-89, 90-100},\\\\n    xtick=data,\\\\n    nodes near coords,\\\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\\\n    legend style={at={(1.03,0.5)}, anchor=west},\\\\n    enlarge x limits=0.15,\\\\n    ymin=0,\\\\n    ymax=22,\\\\n    x tick label style={font=\\\\scriptsize, rotate=0, anchor=center}\\\\n]\\\\n\\\\addplot[fill=blue!60] coordinates {(0-59,3) (60-69,8) (70-79,15) (80-89,18) (90-100,12)};\\\\n\\\\end{axis}\\\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (current bounding box.south west) {数据来源：某班成绩统计};\\\\n\\\\end{tikzpicture}\",\n  \"summary\": \"某班成绩分数段人数分布柱状图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\\begin{axis}[\n    ybar,\n    title={某班成绩分数段人数分布},\n    ylabel={人数},\n    symbolic x coords={0-59, 60-69, 70-79, 80-89, 90-100},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=22,\n    x tick label style={font=\\scriptsize, rotate=0, anchor=center}\n]\n\\addplot[fill=blue!60] coordinates {(0-59,3) (60-69,8) (70-79,15) (80-89,18) (90-100,12)};\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：某班成绩统计};\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制直方图，展示某班成绩各分数段的人数分布；在每根柱子上方标注人数；添加图表标题、X 轴（分数段）与 Y 轴（人数）标签。",
+  "created_at" : "2026-09-16T05:42:06.130Z",
+  "metadata" : {
+    "data_ids" : [ 190 ],
+    "has_chart_code" : true,
+    "code_length" : 678,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

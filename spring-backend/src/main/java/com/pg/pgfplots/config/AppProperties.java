@@ -111,6 +111,15 @@ public class AppProperties {
          * <p>只作用于历史分区；模板库是通用图型示范，不受该上限约束。</p>
          */
         private double maxHistoryScore = 0.98;
+        /**
+         * [语料治理] 历史分区的最低可召回等级：golden | verified | unverified。
+         * <p>默认 {@code verified}：只有被独立判据（编译成功 且 静态零违例）确认过的案例才参与召回；
+         * 未定级的案例天然不召回（等价于已下架，但不删数据、完全可逆）。</p>
+         * <p>模板分区不受此配置影响（全部为 {@code golden}，天然可信）。
+         * 设为 {@code unverified} 即等价于「不过滤」，可用于一键回退。</p>
+         * <p>兜底：若过滤后历史分区召回为空，Retriever 会自动回退为不过滤并记日志，绝不把检索变哑。</p>
+         */
+        private String minQuality = "verified";
     }
 
     /** OpenAI 兼容 /v1/embeddings 配置（如 SiliconFlow BAAI/bge-m3 或阿里百炼 text-embedding-v4） */

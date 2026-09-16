@@ -1,0 +1,19 @@
+{
+  "history_id" : 537,
+  "user_id" : 17,
+  "data_id" : 179,
+  "file_name" : "32-equal-quarters.csv",
+  "dataset_name" : "32-equal-quarters",
+  "user_input" : "请根据我上传的数据绘制折线图，展示各季度销量；折线添加数据点标记并标注数值（单位：万件）；添加图表标题、X 轴（季度）与 Y 轴（销量/万件）标签，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm, height=6cm,\n    title={各季度销量变化},\n    xlabel={季度},\n    ylabel={销量（万件）},\n    symbolic x coords={一季度, 二季度, 三季度, 四季度},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=110\n]\n\\addplot[blue, mark=*, thick, nodes near coords] coordinates {\n    (一季度,0) (二季度,100) (三季度,100) (四季度,100)\n};\n\\addlegendentry{销量}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：32-equal-quarters.csv};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"line\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    width=10cm, height=6cm,\\n    title={各季度销量变化},\\n    xlabel={季度},\\n    ylabel={销量（万件）},\\n    symbolic x coords={一季度, 二季度, 三季度, 四季度},\\n    xtick=data,\\n    nodes near coords,\\n    every node near coord/.append style={\\n        font=\\\\scriptsize,\\n        fill=none,\\n        draw=none,\\n        inner sep=1pt,\\n        anchor=south\\n    },\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    enlarge x limits=0.15,\\n    ymin=0, ymax=110\\n]\\n\\\\addplot[blue, mark=*, thick, nodes near coords] coordinates {\\n    (一季度,0) (二季度,100) (三季度,100) (四季度,100)\\n};\\n\\\\addlegendentry{销量}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (current bounding box.south west) {数据来源：32-equal-quarters.csv};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"展示各季度销量变化的折线图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm, height=6cm,\n    title={各季度销量变化},\n    xlabel={季度},\n    ylabel={销量（万件）},\n    symbolic x coords={一季度, 二季度, 三季度, 四季度},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=110\n]\n\\addplot[blue, mark=*, thick, nodes near coords] coordinates {\n    (一季度,0) (二季度,100) (三季度,100) (四季度,100)\n};\n\\addlegendentry{销量}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：32-equal-quarters.csv};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制折线图，展示各季度销量；折线添加数据点标记并标注数值（单位：万件）；添加图表标题、X 轴（季度）与 Y 轴（销量/万件）标签，并加上图例。",
+  "created_at" : "2026-09-16T05:31:07.937Z",
+  "metadata" : {
+    "data_ids" : [ 179 ],
+    "has_chart_code" : true,
+    "code_length" : 750,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

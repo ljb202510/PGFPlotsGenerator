@@ -8,8 +8,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -76,14 +79,22 @@ public final class LatexCompiler {
         return new Validation(true, "");
     }
 
-    /** 预处理：全角逗号归一、截取文档主体、行级清除脚手架、非法 color 键剔除、at 坐标补花括号、空 axis 剔除、直方图补 ybar、ymax 覆盖不足修正、ybar 边距兜底、X 轴分类标签旋转兜底。 */
+    /**
+     * 预处理（确定性修复链）：
+     * 全角逗号归一、截取文档主体、行级清除脚手架，
+     * 再依次：水平条形图坐标顺序修正、未定义色名修正、非法 color 键剔除、at 坐标补花括号、
+     * ymax 覆盖不足修正、直方图补 ybar、空 axis 剔除、ybar 边距兜底、X 轴分类标签旋转兜底、
+     * 拆分 addplot 合并、密集柱标注缩写，最后把数据来源注记搬到 axis 外并改用稳定锚点。
+     */
     public static String preprocess(String originalCode) {
         try {
             if (originalCode == null || originalCode.trim().isEmpty()) {
                 return originalCode;
             }
 
-            String code = originalCode.replace("，", ",");
+            // 字面 \n 还原：提取层已做过一次；这里再兜一次，让「历史存量记录」同样受益
+            // （真实事故：模板 hist490 的字面 \n 是提取层修复前落库的，重编译时靠这一步救回）
+            String code = ChartCodeExtractor.normalizeEscapes(originalCode).replace("，", ",");
 
             String beginDoc = "\\begin{document}";
             String endDoc = "\\end{document}";
@@ -101,8 +112,21 @@ public final class LatexCompiler {
                     .trim();
 
             String chartCode = cleaned.isEmpty() ? originalCode : cleaned;
-            return abbreviateDenseYbarLabels(mergeSplitYbarAddplots(fixXTickLabels(fixYbarEnlargeLimits(stripEmptyAxes(addYbarForHistogram(
-                    ensureYmaxCoversData(braceAtCoordinates(dropInvalidColorKey(chartCode)))))))));
+            // 顺序有意义：坐标顺序与色名必须先修正，后面的步骤（ymax 修正、密集标注缩写、合并）都依赖
+            // 正确的数值与颜色；注记搬运放最后，作用在最终代码上。
+            String fixed = chartCode;
+            fixed = fixHorizontalBarCoords(fixed);
+            fixed = fixUndefinedColors(fixed);
+            fixed = dropInvalidColorKey(fixed);
+            fixed = braceAtCoordinates(fixed);
+            fixed = ensureYmaxCoversData(fixed);
+            fixed = addYbarForHistogram(fixed);
+            fixed = stripEmptyAxes(fixed);
+            fixed = fixYbarEnlargeLimits(fixed);
+            fixed = fixXTickLabels(fixed);
+            fixed = mergeSplitYbarAddplots(fixed);
+            fixed = abbreviateDenseYbarLabels(fixed);
+            return normalizeSourceNote(fixed);
         } catch (Exception e) {
             return originalCode;
         }
@@ -492,6 +516,185 @@ public final class LatexCompiler {
         return s + "万";
     }
 
+    // ---------------- P7：水平条形图坐标顺序修正 ----------------
+
+    private static final Pattern XBAR_WORD = Pattern.compile("\\bxbar\\b");
+    private static final Pattern SYMBOLIC_Y = Pattern.compile("symbolic\\s+y\\s+coords\\s*=");
+    /** 纯数值分量 */
+    private static final Pattern PURE_NUMBER = Pattern.compile("[-+]?\\d+(?:\\.\\d+)?");
+    /** 坐标对 (…)，内部不含嵌套括号 */
+    private static final Pattern POINT_PAIR = Pattern.compile("\\(([^()]*)\\)");
+
+    /**
+     * P7：修正水平条形图的坐标顺序。
+     * <p>真实事故（模板 hist477）：{@code xbar} + {@code symbolic y coords} 时坐标必须写
+     * {@code (数值, 分类)}，模型却写成 {@code (分类, 数值)}。pgfplots 无法把中文字符串当 x 数值解析，
+     * <b>数据点被整批丢弃 → 只剩一个空坐标轴</b>，Y 轴分类名还会错乱（北京/北京/北京/上海…），
+     * 而编译<b>完全成功</b>并产出正常大小的 PDF。</p>
+     * <p>判据（保守，绝不误伤）：代码同时出现 {@code xbar} 与 {@code symbolic y coords}，
+     * 且某个 {@code coordinates} 块内<b>每个</b>坐标对都满足「第一段非数值 且 第二段是数值」时，
+     * 整块交换；只要有一个不满足（例如本来就是正确的 {@code (数值,分类)}），该块原样跳过。</p>
+     */
+    private static String fixHorizontalBarCoords(String code) {
+        if (!XBAR_WORD.matcher(code).find() || !SYMBOLIC_Y.matcher(code).find()) {
+            return code;
+        }
+        Matcher blocks = COORDINATES_BLOCK.matcher(code);
+        StringBuffer sb = new StringBuffer();
+        while (blocks.find()) {
+            String swapped = swapSymbolicFirstPoints(blocks.group(1));
+            blocks.appendReplacement(sb, Matcher.quoteReplacement(
+                    swapped == null ? blocks.group(0) : "coordinates {" + swapped + "}"));
+        }
+        blocks.appendTail(sb);
+        return sb.toString();
+    }
+
+    /** 全部坐标都是「(非数值, 数值)」时交换两段并返回新 body；否则返回 null（表示不修改）。 */
+    private static String swapSymbolicFirstPoints(String body) {
+        Matcher pm = POINT_PAIR.matcher(body);
+        StringBuilder out = new StringBuilder();
+        int last = 0;
+        int count = 0;
+        while (pm.find()) {
+            String inner = pm.group(1);
+            int comma = inner.indexOf(',');
+            if (comma < 0) {
+                return null;
+            }
+            String first = inner.substring(0, comma).trim();
+            String second = inner.substring(comma + 1).trim();
+            if (PURE_NUMBER.matcher(first).matches() || !PURE_NUMBER.matcher(second).matches()) {
+                return null;
+            }
+            out.append(body, last, pm.start())
+                    .append('(').append(second).append(',').append(first).append(')');
+            last = pm.end();
+            count++;
+        }
+        if (count == 0) {
+            return null;
+        }
+        out.append(body, last, body.length());
+        return out.toString();
+    }
+
+    // ---------------- P8：xcolor 未定义色名修正 ----------------
+
+    /** {@code fill=} / {@code draw=} / {@code color=} 后面直接跟的裸色名 */
+    private static final Pattern BARE_COLOR =
+            Pattern.compile("\\b(fill|draw|color)\\s*=\\s*([A-Za-z][A-Za-z0-9]*)");
+
+    /** 小写（CSS 风格）→ xcolor / pgf 已定义的规范色名 */
+    private static final Map<String, String> COLOR_ALIAS = buildColorAlias();
+
+    private static Map<String, String> buildColorAlias() {
+        String[] names = {
+                "AliceBlue", "AntiqueWhite", "Aquamarine", "Beige", "Bisque", "BlanchedAlmond",
+                "BlueViolet", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral",
+                "CornflowerBlue", "Crimson", "DarkBlue", "DarkCyan", "DarkGoldenrod", "DarkGray",
+                "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange",
+                "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue",
+                "DarkSlateGray", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue",
+                "DimGray", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Gainsboro",
+                "GhostWhite", "Gold", "Goldenrod", "GreenYellow", "HotPink", "IndianRed",
+                "Indigo", "Khaki", "Lavender", "LawnGreen", "LemonChiffon", "LightBlue",
+                "LightCoral", "LightCyan", "LightGoldenrod", "LightGray", "LightGreen",
+                "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray",
+                "LightSteelBlue", "LimeGreen", "Linen", "MediumBlue", "MediumOrchid",
+                "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen",
+                "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose",
+                "Moccasin", "NavajoWhite", "NavyBlue", "OldLace", "OliveDrab", "OrangeRed",
+                "Orchid", "PaleGoldenrod", "PaleGreen", "PaleTurquoise", "PaleVioletRed",
+                "PapayaWhip", "PeachPuff", "Peru", "Plum", "PowderBlue", "RosyBrown", "RoyalBlue",
+                "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver",
+                "SkyBlue", "SlateBlue", "SlateGray", "Snow", "SpringGreen", "SteelBlue", "Tan",
+                "TealBlue", "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "WhiteSmoke",
+                "YellowGreen"
+        };
+        Map<String, String> m = new HashMap<>();
+        for (String n : names) {
+            m.putIfAbsent(n.toLowerCase(Locale.ROOT), n);
+        }
+        // 英式拼写与常见变体
+        m.put("grey", "gray");
+        m.put("darkgrey", "darkgray");
+        m.put("lightgrey", "lightgray");
+        return m;
+    }
+
+    /**
+     * P8：把 xcolor 里不存在的裸色名换回规范写法。
+     * <p>真实事故（模板 hist477）：{@code fill=steelblue} —— svgnames 里有的是驼峰式的
+     * {@code SteelBlue}，全小写的 {@code steelblue} <b>并未定义</b>。此时 xcolor 报
+     * {@code ! Package xcolor Error: Undefined color 'steelblue'}，填充色静默回落成黑色，
+     * <b>而编译仍然"成功"、照常产出 PDF</b>。</p>
+     * <p>做法：裸色名按小写查表换成规范写法；查不到的一律原样保留（绝不猜色）。</p>
+     */
+    private static String fixUndefinedColors(String code) {
+        Matcher m = BARE_COLOR.matcher(code);
+        StringBuffer sb = new StringBuffer();
+        boolean changed = false;
+        while (m.find()) {
+            String canonical = COLOR_ALIAS.get(m.group(2).toLowerCase(Locale.ROOT));
+            String rep = (canonical == null) ? m.group(0) : m.group(1) + "=" + canonical;
+            if (!rep.equals(m.group(0))) {
+                changed = true;
+            }
+            m.appendReplacement(sb, Matcher.quoteReplacement(rep));
+        }
+        m.appendTail(sb);
+        return changed ? sb.toString() : code;
+    }
+
+    // ---------------- P9：数据来源注记位置归一 ----------------
+
+    /** {@code \node[选项] at (axis description cs:…) {文本};} */
+    private static final Pattern AXIS_DESC_NODE = Pattern.compile(
+            "\\\\node(\\s*\\[[^\\]]*\\])?\\s*at\\s*\\(axis description cs:[^)]*\\)\\s*(\\{[^{}]*\\})\\s*;");
+
+    /**
+     * P9：把画在 {@code axis description cs} 上的注记搬到 axis 之外、改用与坐标系无关的锚点。
+     * <p>逐张复核 14 份候选模板时，这类注记<b>两种情况都是坏的</b>（共命中 10 例）：</p>
+     * <ul>
+     *   <li>写在 {@code \end{axis}} <b>之后</b>：坐标系已失效 → {@code ! Undefined control sequence}，
+     *       节点只是"碰巧"落在左下角（7 例）；</li>
+     *   <li>写在 axis <b>之内</b>：不报错，但文本被排版进 {@code nullfont}
+     *       （日志满屏 {@code Missing character ... in font nullfont}）→
+     *       <b>PDF 里能提取到文字、画面上却什么都没有</b>（6 例，含重叠计数）。</li>
+     * </ul>
+     * <p>统一改为：位置移到 {@code \end{axis}} 之后，锚点换成
+     * {@code (current bounding box.south west)}——既不依赖 axis 坐标系，也不会被 axis 裁掉。</p>
+     */
+    private static String normalizeSourceNote(String code) {
+        if (!code.contains("axis description cs:")) {
+            return code;
+        }
+        Matcher m = AXIS_DESC_NODE.matcher(code);
+        StringBuilder notes = new StringBuilder();
+        StringBuffer body = new StringBuffer();
+        boolean found = false;
+        while (m.find()) {
+            found = true;
+            String opts = m.group(1) == null ? "" : m.group(1);
+            notes.append("\\node").append(opts)
+                    .append(" at (current bounding box.south west) ")
+                    .append(m.group(2)).append(";\n");
+            m.appendReplacement(body, "");
+        }
+        if (!found) {
+            return code;
+        }
+        m.appendTail(body);
+        String cleaned = body.toString();
+        int end = cleaned.lastIndexOf("\\end{axis}");
+        if (end < 0) {
+            return code;
+        }
+        int insertAt = end + "\\end{axis}".length();
+        return cleaned.substring(0, insertAt) + "\n" + notes + cleaned.substring(insertAt);
+    }
+
     /** 文档外壳模板，{@code __CHART_CODE__} 处替换为图表代码。 */
     private static final String DOC_TEMPLATE = """
 \\documentclass[border=5pt]{standalone}
@@ -523,7 +726,15 @@ __CHART_CODE__
         return DOC_TEMPLATE.replace("__CHART_CODE__", chartCode == null ? "" : chartCode);
     }
 
-    /** 调用 xelatex 编译，30s 超时；以 PDF 是否存在判定成败。 */
+    /**
+     * [v2.2] 产物级空白检测阈值（字节）。
+     * <p>真实事故（模板 hist490）：代码里的字面 {@code \n} 让 axis 选项解析在此处断掉、整张图被吞掉，
+     * 但 xelatex <b>退出码为 0、PDF 也确实生成</b>——只有 873 字节 / 2 页全白。
+     * 正常 standalone 图表产物是 10KB~50KB 量级（实测最小 12.7KB），故 2KB 以下判为空白产物。</p>
+     */
+    private static final long MIN_VALID_PDF_BYTES = 2048;
+
+    /** 调用 xelatex 编译，30s 超时；以「PDF 存在且不是空白产物」判定成败。 */
     public static CompileResult run(Path texFile, Path outputDir, String executable, long timeoutMs) {
         String fileName = stripExtension(texFile.getFileName().toString());
         Path pdfPath = outputDir.resolve(fileName + ".pdf");
@@ -557,12 +768,32 @@ __CHART_CODE__
                 process.destroyForcibly();
             }
             reader.join(2000);
-            return new CompileResult(Files.exists(pdfPath), output.toString());
+            boolean blank = isBlankPdf(pdfPath, output);
+            return new CompileResult(Files.exists(pdfPath) && !blank, output.toString());
         } catch (Exception e) {
             // 记录执行异常本身（如「找不到 xelatex」）：否则 output 为空，
             // 调用方拿到的失败信息整体空白，既无任务 error 也无 api_log.call_error 可读
             output.append("xelatex 执行异常: ").append(e.getMessage()).append('\n');
-            return new CompileResult(Files.exists(pdfPath), output.toString());
+            boolean blank = isBlankPdf(pdfPath, output);
+            return new CompileResult(Files.exists(pdfPath) && !blank, output.toString());
+        }
+    }
+
+    /**
+     * 判定是否为「空白产物」：PDF 存在但体积小于阈值。
+     * <p>命中时把原因写进编译日志，避免下游只看到一句没有上下文的失败。</p>
+     */
+    private static boolean isBlankPdf(Path pdfPath, StringBuilder output) {
+        try {
+            if (!Files.exists(pdfPath) || Files.size(pdfPath) >= MIN_VALID_PDF_BYTES) {
+                return false;
+            }
+            output.append("[产物检测] PDF 已生成但体积异常（")
+                    .append(Files.size(pdfPath)).append(" 字节 < ").append(MIN_VALID_PDF_BYTES)
+                    .append("），判定为空白图；常见原因：字面 \\n 未还原导致 axis 选项被截断。\n");
+            return true;
+        } catch (IOException e) {
+            return false;
         }
     }
 

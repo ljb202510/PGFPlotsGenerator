@@ -1,0 +1,590 @@
+{
+  "runAt": "2026-09-16T05:31:11.012Z",
+  "base": "http://localhost:3000",
+  "model": "qwen",
+  "email": "2872978580@qq.com",
+  "rag": "on",
+  "rag_env": null,
+  "compile": true,
+  "metrics": {
+    "total": 32,
+    "executed": 31,
+    "code_rate": 1,
+    "compile_rate": 1,
+    "first_pass_rate": 1,
+    "zero_violation_rate": 0.968,
+    "violation_counts": {
+      "R7_FULLWIDTH_COMMA": 1
+    },
+    "degraded_count": 0,
+    "avg_latency_ms": 8206,
+    "p95_latency_ms": 20407
+  },
+  "results": [
+    {
+      "id": "01",
+      "name": "折线图",
+      "ok": true,
+      "history_id": 507,
+      "chart_code_length": 892,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={1-12月销售额变化趋势},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    x tick label style={font=\\small, rotate=0, anchor=center},\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    },\n    ymin=80, ymax=180,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.05\n]\n\\addplot[blue, mark=*, thick] coordinates {\n    (1月,86) (2月,92) (3月,105) (4月,98) (5月,112) (6月,126)\n    (7月,119) (8月,138) (9月,150) (10月,143) (11月,162) (12月,175)\n};\n\\addlegendentry{销售额}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：01-line-sales.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "latency_ms": 7213,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 34659,
+        "duration_ms": 2390
+      }
+    },
+    {
+      "id": "02",
+      "name": "柱状图",
+      "ok": true,
+      "history_id": 508,
+      "chart_code_length": 667,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各车间产量对比},\n    xlabel={车间},\n    ylabel={产量（台）},\n    symbolic x coords={一车间,二车间,三车间,四车间,五车间},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(一车间,4520) (二车间,6100) (三车间,3890) (四车间,5230) (五车间,2980)};\n\\addlegendentry{产量}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：02-bar-workshop.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各车间产量对比},\n    xl",
+      "latency_ms": 4662,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 33948,
+        "duration_ms": 2082
+      }
+    },
+    {
+      "id": "03",
+      "name": "饼图",
+      "ok": true,
+      "history_id": 509,
+      "chart_code_length": 303,
+      "chart_code": "\\begin{tikzpicture}\n\\pie[radius=3, text=legend, legend style={at={(1.03,0.5)}, anchor=west, font=\\scriptsize}, text=pin, pin distance=1.2]\n{32/品牌A, 26/品牌B, 18/品牌C, 14/品牌D, 10/品牌E}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：03-pie-share.xlsx};\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\pie[radius=3, text=legend, legend style={at={(1.03",
+      "latency_ms": 3275,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 29769,
+        "duration_ms": 2097
+      }
+    },
+    {
+      "id": "04",
+      "name": "散点图",
+      "ok": true,
+      "history_id": 510,
+      "chart_code_length": 762,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=8cm,\n    title={广告费用与销量关系散点图},\n    xlabel={广告费用（万元）},\n    ylabel={销量（件）},\n    only marks,\n    mark=*,\n    mark size=4pt,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.1,\n    enlarge y limits=0.1\n]\n\\addplot coordinates {\n    (5,42) (8,60) (10,75) (12,90) (15,105)\n    (18,128) (20,140) (25,166) (28,188) (30,205)\n};\n\\addlegendentry{销量}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：04-scatter-ad-sales.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=8cm,\n    title",
+      "latency_ms": 20407,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 32019,
+        "duration_ms": 2084
+      }
+    },
+    {
+      "id": "05",
+      "name": "分组柱状图",
+      "ok": true,
+      "history_id": 511,
+      "chart_code_length": 871,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar=10pt,\n    width=12cm, height=7cm,\n    title={各季度产品A与产品B销量对比},\n    xlabel={季度},\n    ylabel={销量（万件）},\n    symbolic x coords={一季度,二季度,三季度,四季度},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    },\n    ymin=0, ymax=90,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    bar width=20pt\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(一季度,45) (二季度,52) (三季度,60) (四季度,68)};\n\\addplot[fill=red!60, mark=*] coordinates {(一季度,38) (二季度,55) (三季度,58) (四季度,74)};\n\\addlegendentry{产品A}\n\\addlegendentry{产品B}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：05-groupedbar-products.xlsx};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar=10pt,\n    width=12cm, height",
+      "latency_ms": 5902,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 36117,
+        "duration_ms": 2055
+      }
+    },
+    {
+      "id": "06",
+      "name": "双折线图",
+      "ok": true,
+      "history_id": 512,
+      "chart_code_length": 1156,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={1-12月线下与线上渠道销售额对比},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    x tick label style={font=\\small, rotate=0, anchor=center},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.05,\n    ymin=30, ymax=150\n]\n\\addplot[blue, mark=*, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}] coordinates {\n    (1月,60) (2月,55) (3月,72) (4月,68) (5月,80) (6月,76)\n    (7月,90) (8月,95) (9月,88) (10月,96) (11月,102) (12月,110)\n};\n\\addlegendentry{线下渠道}\n\\addplot[red, mark=square*, thick, nodes near coords, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=north}] coordinates {\n    (1月,35) (2月,42) (3月,50) (4月,58) (5月,66) (6月,75)\n    (7月,84) (8月,92) (9月,100) (10月,112) (11月,125) (12月,140)\n};\n\\addlegendentry{线上渠道}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：06-multiline-channels.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "latency_ms": 8071,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 37898,
+        "duration_ms": 2151
+      }
+    },
+    {
+      "id": "07",
+      "name": "堆积柱状图",
+      "ok": true,
+      "history_id": 513,
+      "chart_code_length": 1437,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar stacked,\n    width=12cm, height=7cm,\n    title={各区域季度销量堆积图},\n    xlabel={季度},\n    ylabel={销量（万吨）},\n    symbolic x coords={一季度,二季度,三季度,四季度},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=center\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=100,\n    point meta=explicit symbolic\n]\n\\addplot[fill=blue!50, nodes near coords, point meta=explicit symbolic,\n         every node near coord/.append style={anchor=center, font=\\scriptsize, fill=none, draw=none}]\n    coordinates {(一季度,35)[35] (二季度,45)[45] (三季度,52)[52] (四季度,60)[60]};\n\\addplot[fill=green!50, nodes near coords, point meta=explicit symbolic,\n         every node near coord/.append style={anchor=center, font=\\scriptsize, fill=none, draw=none}]\n    coordinates {(一季度,42)[42] (二季度,48)[48] (三季度,55)[55] (四季度,63)[63]};\n\\addplot[fill=red!50, nodes near coords, point meta=explicit symbolic,\n         every node near coord/.append style={anchor=center, font=\\scriptsize, fill=none, draw=none}]\n    coordinates {(一季度,28)[28] (二季度,36)[36] (三季度,44)[44] (四季度,51)[51]};\n\\legend{北区,中区,南区}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：07-stackedbar-regions.xlsx};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar stacked,\n    width=12cm, hei",
+      "latency_ms": 4245,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 36164,
+        "duration_ms": 2158
+      }
+    },
+    {
+      "id": "08",
+      "name": "大数值柱状图",
+      "ok": true,
+      "history_id": 514,
+      "chart_code_length": 699,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算收入对比},\n    xlabel={城市},\n    ylabel={一般公共预算收入（亿元）},\n    symbolic x coords={上海,北京,深圳,苏州,杭州,广州},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=9000\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(上海,8313) (北京,6182) (深圳,3712) (苏州,2456) (杭州,2017) (广州,1979)};\n\\addlegendentry{一般公共预算收入}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：08-budget-city.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算收入对比},\n",
+      "latency_ms": 18262,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 36725,
+        "duration_ms": 2245
+      }
+    },
+    {
+      "id": "09",
+      "name": "公开数据",
+      "ok": true,
+      "history_id": 515,
+      "chart_code_length": 691,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2019—2023年全国死亡人口统计},\n    xlabel={年份},\n    ylabel={死亡人口（万人）},\n    symbolic x coords={2019, 2020, 2021, 2022, 2023},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=110\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(2019,998) (2020,997) (2021,1014) (2022,1041) (2023,1110)};\n\\addlegendentry{死亡人口}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：国家统计局};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={2019—2023年全国死亡人口",
+      "latency_ms": 5154,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 27532,
+        "duration_ms": 2110
+      }
+    },
+    {
+      "id": "10",
+      "name": "内联数据",
+      "ok": true,
+      "history_id": 516,
+      "chart_code_length": 689,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={某省近五年粮食产量统计},\n    xlabel={年份},\n    ylabel={粮食产量（万吨）},\n    symbolic x coords={2019, 2020, 2021, 2022, 2023},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=3600\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(2019,3200) (2020,3280) (2021,3360) (2022,3450) (2023,3520)};\n\\addlegendentry{粮食产量}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：用户提供的数据};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={某省近五年粮食产量统计},\n  ",
+      "latency_ms": 5250,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 28812,
+        "duration_ms": 2167
+      }
+    },
+    {
+      "id": "11",
+      "name": "面积图",
+      "ok": true,
+      "history_id": 517,
+      "chart_code_length": 1011,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={2015—2024年建成区绿化覆盖率变化},\n    xlabel={年份},\n    ylabel={绿化覆盖率（\\%）},\n    symbolic x coords={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=0, anchor=center},\n    ymin=38, ymax=48,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.1,\n    area style,\n    fill opacity=0.3,\n    draw opacity=1,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    }\n]\n\\addplot[green!60!black, thick, fill=green!40] coordinates {\n    (2015,40.1) (2016,40.8) (2017,41.5) (2018,42.3) (2019,43.0)\n    (2020,43.8) (2021,44.5) (2022,45.2) (2023,46.0) (2024,46.8)\n};\n\\addlegendentry{建成区绿化覆盖率}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：11-area-greening.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "latency_ms": 7294,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 35996,
+        "duration_ms": 2080
+      }
+    },
+    {
+      "id": "12",
+      "name": "水平条形图",
+      "ok": true,
+      "history_id": 518,
+      "chart_code_length": 813,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    xbar,\n    title={各城市轨道交通运营里程对比},\n    xlabel={运营里程（km）},\n    ylabel={城市},\n    symbolic y coords={上海,北京,成都,广州,深圳,杭州,武汉,南京},\n    ytick=data,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=west\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge y limits=0.1,\n    enlarge x limits=0.15,\n    xmin=0\n]\n\\addplot[fill=blue!60, mark=*, thick] coordinates {\n    (831,上海)\n    (807,北京)\n    (632,成都)\n    (621,广州)\n    (567,深圳)\n    (516,杭州)\n    (486,武汉)\n    (459,南京)\n};\n\\addlegendentry{轨道交通运营里程}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：12-hbar-metro.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    xbar,\n    title={各城市轨道交通运营里程对比},\n",
+      "latency_ms": 11031,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 36915,
+        "duration_ms": 2393
+      }
+    },
+    {
+      "id": "13",
+      "name": "直方图",
+      "ok": true,
+      "history_id": 519,
+      "chart_code_length": 557,
+      "chart_code": "\\begin{tikzpicture}\\begin{axis}[\n    ybar,\n    title={某班成绩分数段人数分布},\n    xlabel={分数段},\n    ylabel={人数},\n    symbolic x coords={0-59,60-69,70-79,80-89,90-100},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=25\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(0-59,3) (60-69,8) (70-79,15) (80-89,18) (90-100,12)};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={某班成绩分数段人数分布},\n  ",
+      "latency_ms": 4395,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 24156,
+        "duration_ms": 2097
+      }
+    },
+    {
+      "id": "14",
+      "name": "误差棒柱状图",
+      "ok": true,
+      "history_id": 520,
+      "chart_code_length": 769,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各施肥方案平均亩产及标准差},\n    xlabel={施肥方案},\n    ylabel={平均亩产（公斤）},\n    symbolic x coords={方案A, 方案B, 方案C, 方案D},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=650\n]\n\\addplot+[error bars/.cd, y dir=both, y explicit, mark=*] coordinates {\n    (方案A, 520) +- (0, 28)\n    (方案B, 568) +- (0, 35)\n    (方案C, 602) +- (0, 22)\n    (方案D, 585) +- (0, 30)\n};\n\\addlegendentry{平均亩产}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：14-errorbar-yield.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各施肥方案平均亩产及标准差},\n",
+      "latency_ms": 5455,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 33871,
+        "duration_ms": 2239
+      }
+    },
+    {
+      "id": "15",
+      "name": "对数轴折线",
+      "ok": true,
+      "history_id": 521,
+      "chart_code_length": 1002,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={2015—2024年平台注册用户数增长趋势},\n    xlabel={年份},\n    ylabel={注册用户数（万人），对数刻度},\n    symbolic x coords={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=0, anchor=center},\n    ymode=log,\n    log basis y={10},\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.1,\n    ymin=1, ymax=5000\n]\n\\addplot[blue, mark=*, thick, nodes near coords] coordinates {\n    (2015,2.5) (2016,6.8) (2017,18.4) (2018,46.2) (2019,105.7)\n    (2020,230.5) (2021,468.9) (2022,860.3) (2023,1420.6) (2024,2150.4)\n};\n\\addlegendentry{注册用户数}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：15-logaxis-users.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "latency_ms": 3830,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 38751,
+        "duration_ms": 2147
+      }
+    },
+    {
+      "id": "16",
+      "name": "平滑折线",
+      "ok": true,
+      "history_id": 522,
+      "chart_code_length": 931,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={1-12月平均气温变化趋势},\n    xlabel={月份},\n    ylabel={平均气温（℃）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    x tick label style={font=\\small, rotate=0, anchor=center},\n    smooth,\n    mark=*,\n    thick,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.05,\n    ymin=0, ymax=32\n]\n\\addplot[blue, smooth] coordinates {\n    (1月,2.1) (2月,4.3) (3月,9.6) (4月,15.8) (5月,21.2) (6月,25.4)\n    (7月,28.6) (8月,27.9) (9月,23.1) (10月,17.2) (11月,9.8) (12月,3.5)\n};\n\\addlegendentry{平均气温}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：16-smooth-temp.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "latency_ms": 6725,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 36019,
+        "duration_ms": 2137
+      }
+    },
+    {
+      "id": "17",
+      "name": "堆叠面积图",
+      "skip": true
+    },
+    {
+      "id": "18",
+      "name": "百分比堆积柱状图",
+      "ok": true,
+      "history_id": 523,
+      "chart_code_length": 1637,
+      "chart_code": "\\begin{tikzpicture}\\begin{axis}[\n    ybar stacked,\n    title={各地区财政支出结构占比},\n    xlabel={地区},\n    ylabel={占比（\\%）},\n    symbolic x coords={华北,华东,华南,西部},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=center\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0,\n    ymax=100,\n    point meta=explicit symbolic\n]\n\\addplot[fill=blue!50, nodes near coords, point meta=explicit symbolic,\n         every node near coord/.append style={anchor=center, font=\\scriptsize, fill=none, draw=none}]\n    coordinates {(华北,32)[32] (华东,28)[28] (华南,30)[30] (西部,35)[35]};\n\\addplot[fill=green!50, nodes near coords, point meta=explicit symbolic,\n         every node near coord/.append style={anchor=center, font=\\scriptsize, fill=none, draw=none}]\n    coordinates {(华北,26)[26] (华东,30)[30] (华南,25)[25] (西部,24)[24]};\n\\addplot[fill=orange!50, nodes near coords, point meta=explicit symbolic,\n         every node near coord/.append style={anchor=center, font=\\scriptsize, fill=none, draw=none}]\n    coordinates {(华北,22)[22] (华东,24)[24] (华南,28)[28] (西部,20)[20]};\n\\addplot[fill=red!50, nodes near coords, point meta=explicit symbolic,\n         every node near coord/.append style={anchor=center, font=\\scriptsize, fill=none, draw=none}]\n    coordinates {(华北,20)[20] (华东,18)[18] (华南,17)[17] (西部,21)[21]};\n\\legend{教育,医疗,交通,其他}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：18-pctstack-expense.xlsx};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar stacked,\n    title={各地区财政支出结",
+      "latency_ms": 9291,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 35547,
+        "duration_ms": 2134
+      }
+    },
+    {
+      "id": "19",
+      "name": "图例不遮挡(R1)",
+      "ok": true,
+      "history_id": 524,
+      "chart_code_length": 688,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算收入对比},\n    xlabel={城市},\n    ylabel={一般公共预算收入（亿元）},\n    symbolic x coords={上海,北京,深圳,苏州,杭州,广州},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(上海,8313) (北京,6182) (深圳,3712) (苏州,2456) (杭州,2017) (广州,1979)};\n\\addlegendentry{一般公共预算收入}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：08-budget-city.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算收入对比},\n",
+      "latency_ms": 9809,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 36741,
+        "duration_ms": 2105
+      }
+    },
+    {
+      "id": "20",
+      "name": "轴外无文字(R2)",
+      "ok": true,
+      "history_id": 525,
+      "chart_code_length": 659,
+      "chart_code": "\\begin{tikzpicture}\\begin{axis}[\n    ybar,\n    title={各车间产量对比},\n    xlabel={车间},\n    ylabel={产量（台）},\n    symbolic x coords={一车间,二车间,三车间,四车间,五车间},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(一车间,4520) (二车间,6100) (三车间,3890) (四车间,5230) (五车间,2980)};\n\\addlegendentry{产量}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：某厂 2024 年度统计};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各车间产量对比},\n    xl",
+      "latency_ms": 4708,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 27556,
+        "duration_ms": 2879
+      }
+    },
+    {
+      "id": "21",
+      "name": "标注成对(R3)",
+      "ok": true,
+      "history_id": 526,
+      "chart_code_length": 916,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={1—12月销售额变化趋势},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=0, anchor=center},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.05,\n    ymin=80, ymax=180,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    }\n]\n\\addplot[blue, mark=*, thick, nodes near coords] coordinates {\n    (1月,86) (2月,92) (3月,105) (4月,98) (5月,112) (6月,126)\n    (7月,119) (8月,138) (9月,150) (10月,143) (11月,162) (12月,175)\n};\n\\addlegendentry{销售额}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：01-line-sales.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "latency_ms": 6543,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 34725,
+        "duration_ms": 2379
+      }
+    },
+    {
+      "id": "22",
+      "name": "单位量级(R4)",
+      "ok": true,
+      "history_id": 527,
+      "chart_code_length": 704,
+      "chart_code": "\\begin{tikzpicture}\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算支出对比},\n    xlabel={城市},\n    ylabel={一般公共预算支出（万亿元）},\n    symbolic x coords={上海,北京,重庆,深圳,杭州,苏州},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=1.1\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(上海,0.988) (北京,0.797) (重庆,0.572) (深圳,0.479) (杭州,0.278) (苏州,0.265)};\n\\addlegendentry{一般公共预算支出}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：22-expense-raw.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各城市一般公共预算支出对比},\n",
+      "latency_ms": 4757,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 36776,
+        "duration_ms": 2411
+      }
+    },
+    {
+      "id": "23",
+      "name": "禁误差棒(R5)",
+      "ok": true,
+      "history_id": 528,
+      "chart_code_length": 916,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={1-12月销售额波动情况},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=0, anchor=center},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.05,\n    ymin=80, ymax=180,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    }\n]\n\\addplot[blue, mark=*, thick, nodes near coords] coordinates {\n    (1月,86) (2月,92) (3月,105) (4月,98) (5月,112) (6月,126)\n    (7月,119) (8月,138) (9月,150) (10月,143) (11月,162) (12月,175)\n};\n\\addlegendentry{销售额}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：01-line-sales.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "latency_ms": 3538,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 34659,
+        "duration_ms": 2149
+      }
+    },
+    {
+      "id": "24",
+      "name": "单图结构(R6)",
+      "ok": true,
+      "history_id": 529,
+      "chart_code_length": 762,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=8cm,\n    title={广告费用与销量关系散点图},\n    xlabel={广告费用（万元）},\n    ylabel={销量（件）},\n    only marks,\n    mark=*,\n    mark size=4pt,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.1,\n    enlarge y limits=0.1\n]\n\\addplot coordinates {\n    (5,42) (8,60) (10,75) (12,90) (15,105)\n    (18,128) (20,140) (25,166) (28,188) (30,205)\n};\n\\addlegendentry{销量}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：04-scatter-ad-sales.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=8cm,\n    title",
+      "latency_ms": 20213,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 32020,
+        "duration_ms": 2108
+      }
+    },
+    {
+      "id": "25",
+      "name": "半角逗号(R7)",
+      "ok": true,
+      "history_id": 530,
+      "chart_code_length": 879,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={14省/直辖市GDP对比},\n    xlabel={省份},\n    ylabel={GDP（亿元）},\n    symbolic x coords={广东,江苏,山东,浙江,四川,河南,湖北,福建,湖南,上海,安徽,河北,北京,陕西},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=45, anchor=east},\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=145000\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(广东,135673) (江苏,128222) (山东,92069) (浙江,82553) (四川,60132) (河南,59132) (湖北,55803) (福建,54355) (湖南,50012) (上海,47218) (安徽,47050) (河北,43944) (北京,43760) (陕西,33786)};\n\\addlegendentry{GDP}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：25-provinces-gdp.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={14省/直辖市GDP对比},\n ",
+      "latency_ms": 6444,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 41551,
+        "duration_ms": 2245
+      }
+    },
+    {
+      "id": "26",
+      "name": "标注错开(R8)",
+      "ok": true,
+      "history_id": 531,
+      "chart_code_length": 1295,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={1—12月华北、华东、华南销售额对比},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.05,\n    ymin=80, ymax=310,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    }\n]\n\\addplot[blue, mark=*, thick, nodes near coords] coordinates {\n    (1月,120) (2月,115) (3月,130) (4月,128) (5月,140) (6月,136)\n    (7月,150) (8月,158) (9月,152) (10月,165) (11月,172) (12月,185)\n};\n\\addlegendentry{华北}\n\\addplot[red, mark=square*, thick, nodes near coords] coordinates {\n    (1月,150) (2月,160) (3月,172) (4月,168) (5月,185) (6月,190)\n    (7月,205) (8月,215) (9月,230) (10月,245) (11月,260) (12月,278)\n};\n\\addlegendentry{华东}\n\\addplot[green!60!black, mark=triangle*, thick, nodes near coords] coordinates {\n    (1月,95) (2月,102) (3月,110) (4月,118) (5月,125) (6月,132)\n    (7月,140) (8月,148) (9月,155) (10月,162) (11月,170) (12月,180)\n};\n\\addlegendentry{华南}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：26-multiline3-months.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title",
+      "latency_ms": 5122,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 37900,
+        "duration_ms": 2225
+      }
+    },
+    {
+      "id": "27",
+      "name": "负值",
+      "ok": true,
+      "history_id": 532,
+      "chart_code_length": 1214,
+      "chart_code": "\\begin{tikzpicture}\\begin{axis}[\n    ybar,\n    title={公司 2023—2024 各季度净利润对比},\n    xlabel={季度},\n    ylabel={净利润（万元）},\n    symbolic x coords={2023Q1, 2023Q2, 2023Q3, 2023Q4, 2024Q1, 2024Q2, 2024Q3, 2024Q4},\n    xtick=data,\n    x tick label style={font=\\scriptsize, rotate=45, anchor=east},\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=-100,\n    ymax=350,\n    axis lines*=left,\n    bar width=25pt\n]\n\\addplot[\n    fill=blue!60,\n    mark=*,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    }\n] coordinates {\n    (2023Q1,120)[120]\n    (2023Q2,-85)[-85]\n    (2023Q3,210)[210]\n    (2023Q4,-40)[-40]\n    (2024Q1,260)[260]\n    (2024Q2,180)[180]\n    (2024Q3,-30)[-30]\n    (2024Q4,320)[320]\n};\n\\addlegendentry{净利润}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：27-negative-profit.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={公司 2023—2024 各季度",
+      "latency_ms": 8431,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 36970,
+        "duration_ms": 2463
+      }
+    },
+    {
+      "id": "28",
+      "name": "单数据点",
+      "ok": true,
+      "history_id": 533,
+      "chart_code_length": 622,
+      "chart_code": "\\begin{tikzpicture}\\begin{axis}[\n    ybar,\n    title={项目投资额对比},\n    xlabel={项目},\n    ylabel={投资额（万元）},\n    symbolic x coords={一期工程},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=9000\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(一期工程,8600)};\n\\addlegendentry{投资额}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：28-single-point.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={项目投资额对比},\n    xl",
+      "latency_ms": 15707,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 33186,
+        "duration_ms": 1991
+      }
+    },
+    {
+      "id": "29",
+      "name": "超长中文标签",
+      "ok": true,
+      "history_id": 534,
+      "chart_code_length": 1030,
+      "chart_code": "\\begin{tikzpicture}\\begin{axis}[\n    ybar,\n    title={各区域销售额对比},\n    xlabel={区域},\n    ylabel={销售额（万元）},\n    symbolic x coords={华东·上海市浦东新区科技创新园，华东·江苏省苏州市工业园区，华北·北京市海淀区中关村科学城，华南·广东省深圳市南山区科技园，西南·四川省成都市高新区天府软件园，华中·湖北省武汉市东湖新技术开发区},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    bar width=25pt,\n    ymin=0, ymax=1600,\n    x tick label style={font=\\tiny, rotate=45, anchor=east},\n    width=14cm, height=7cm\n]\n\\addplot[fill=blue!60, mark=*] coordinates {\n    (华东·上海市浦东新区科技创新园,1280)\n    (华东·江苏省苏州市工业园区,1160)\n    (华北·北京市海淀区中关村科学城,1420)\n    (华南·广东省深圳市南山区科技园,1350)\n    (西南·四川省成都市高新区天府软件园,980)\n    (华中·湖北省武汉市东湖新技术开发区,1050)\n};\n\\addlegendentry{销售额}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：29-longlabel-regions.xlsx};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各区域销售额对比},\n    x",
+      "latency_ms": 6694,
+      "violation_free": false,
+      "violations": [
+        "R7_FULLWIDTH_COMMA"
+      ],
+      "compile": {
+        "status": "success",
+        "file_size": 42217,
+        "duration_ms": 2082
+      }
+    },
+    {
+      "id": "30",
+      "name": "极小/极大值",
+      "ok": true,
+      "history_id": 535,
+      "chart_code_length": 810,
+      "chart_code": "\\begin{tikzpicture}\\begin{axis}[\n    ybar,\n    title={各项目投资额对比},\n    xlabel={项目},\n    ylabel={投资额（万元）},\n    symbolic x coords={地铁三期工程,跨江大桥,老旧小区改造,智慧交通平台,城市绿道工程,社区公园},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0,\n    x tick label style={font=\\scriptsize, rotate=45, anchor=east},\n    height=6cm,\n    width=10cm\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(地铁三期工程,980000) (跨江大桥,326000) (老旧小区改造,860) (智慧交通平台,45) (城市绿道工程,12) (社区公园,8)};\n\\addlegendentry{投资额}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：30-extreme-invest.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各项目投资额对比},\n    x",
+      "latency_ms": 20810,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 41232,
+        "duration_ms": 2107
+      }
+    },
+    {
+      "id": "31",
+      "name": "小数/百分比",
+      "ok": true,
+      "history_id": 536,
+      "chart_code_length": 984,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各渠道转化率对比},\n    xlabel={渠道},\n    ylabel={转化率（\\%）},\n    symbolic x coords={官方商城,直播带货,社群团购,线下门店,老客推荐},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0,\n    x tick label style={font=\\scriptsize, rotate=45, anchor=east},\n    height=6cm,\n    width=10cm\n]\n\\addplot[fill=blue!60, mark=*, nodes near coords, point meta=explicit symbolic, every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}] \n    coordinates {(官方商城,3.25)[3.25\\%] (直播带货,5.68)[5.68\\%] (社群团购,7.42)[7.42\\%] (线下门店,2.14)[2.14\\%] (老客推荐,9.36)[9.36\\%]};\n\\addlegendentry{转化率}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：31-conversion-rate.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各渠道转化率对比},\n    x",
+      "latency_ms": 6366,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 36427,
+        "duration_ms": 2196
+      }
+    },
+    {
+      "id": "32",
+      "name": "退化值",
+      "ok": true,
+      "history_id": 537,
+      "chart_code_length": 750,
+      "chart_code": "\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm, height=6cm,\n    title={各季度销量变化},\n    xlabel={季度},\n    ylabel={销量（万件）},\n    symbolic x coords={一季度, 二季度, 三季度, 四季度},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    },\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.15,\n    ymin=0, ymax=110\n]\n\\addplot[blue, mark=*, thick, nodes near coords] coordinates {\n    (一季度,0) (二季度,100) (三季度,100) (四季度,100)\n};\n\\addlegendentry{销量}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：32-equal-quarters.csv};\n\\end{axis}\n\\end{tikzpicture}",
+      "model_used": "qwen",
+      "reply_preview": "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=10cm, height=6cm,\n    title",
+      "latency_ms": 4771,
+      "violation_free": true,
+      "violations": [],
+      "compile": {
+        "status": "success",
+        "file_size": 30083,
+        "duration_ms": 2074
+      }
+    }
+  ]
+}

@@ -301,6 +301,106 @@ class LatexCompilerTest {
         assertTrue(out.contains("point meta=explicit symbolic"), "原有的 point meta 应保留");
     }
 
+    // ---------- [v2.2] 水平条形图坐标顺序（模板 hist477 稳定复现） ----------
+
+    @Test
+    void swapsHorizontalBarCoordinatesWrittenInWrongOrder() {
+        // xbar + symbolic y coords：pgfplots 要求 (数值, 分类)，写成 (分类, 数值) 会让数据点静默全丢
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[\n    xbar,\n"
+                + "    symbolic y coords={上海,北京},\n    ytick=data\n]\n"
+                + "\\addplot[fill=blue!60] coordinates {\n    (上海,831)\n    (北京,807)\n};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        assertTrue(out.contains("(831,上海)"), "应交换为 (数值,分类): " + out);
+        assertTrue(out.contains("(807,北京)"), "所有坐标都应交换: " + out);
+        assertFalse(out.contains("(上海,831)"), "不应残留错误顺序: " + out);
+    }
+
+    @Test
+    void keepsCorrectHorizontalBarCoordinates() {
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[\n    xbar,\n"
+                + "    symbolic y coords={上海,北京}\n]\n"
+                + "\\addplot coordinates {(831,上海) (807,北京)};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        assertTrue(out.contains("(831,上海)"), "已是正确顺序不得被改动: " + out);
+        assertFalse(out.contains("(上海,831)"), "不得反向交换: " + out);
+    }
+
+    @Test
+    void doesNotTouchVerticalBarCoordinates() {
+        // 竖柱（ybar）用的是 symbolic x coords，(分类,数值) 本来就是正确写法 → 绝不能交换
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n"
+                + "    symbolic x coords={广东,江苏}\n]\n"
+                + "\\addplot coordinates {(广东,135673) (江苏,128222)};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        assertTrue(out.contains("(广东,135673)"), "竖柱坐标不得被交换: " + out);
+    }
+
+    // ---------- [v2.2] xcolor 未定义色名（模板 hist477：steelblue 静默变黑） ----------
+
+    @Test
+    void fixesUndefinedLowercaseColorName() {
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[ybar]\n"
+                + "\\addplot[fill=steelblue, draw=steelblue] coordinates {(1,1)};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        assertTrue(out.contains("fill=SteelBlue"), "未定义的小写色名应换成规范写法: " + out);
+        assertTrue(out.contains("draw=SteelBlue"), "draw 同样应替换: " + out);
+        assertFalse(out.contains("steelblue"), "不应残留未定义色名: " + out);
+    }
+
+    @Test
+    void keepsValidColorExpressions() {
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[ybar]\n"
+                + "\\addplot[fill=blue!60, draw=black] coordinates {(1,1)};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        assertTrue(out.contains("fill=blue!60"), "基色混合写法不得被改: " + out);
+        assertTrue(out.contains("draw=black"), "合法基色不得被改: " + out);
+    }
+
+    // ---------- [v2.2] 数据来源注记位置归一（14 份模板中命中 10 例） ----------
+
+    @Test
+    void movesSourceNoteOutOfAxis() {
+        // 写在 axis 内：不报错，但文本进 nullfont → PDF 里能提取到、画面上什么都没有
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[ybar]\n"
+                + "\\addplot coordinates {(1,1)};\n"
+                + "\\node[anchor=north west, font=\\scriptsize] at (axis description cs:0.0,-0.15)"
+                + " {数据来源：内部统计};\n"
+                + "\\end{axis}\n\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        assertFalse(out.contains("axis description cs"), "不应再依赖 axis 坐标系: " + out);
+        assertTrue(out.contains("at (current bounding box.south west)"), "应改用稳定锚点: " + out);
+        assertTrue(out.contains("{数据来源：内部统计}"), "注记文本必须保留: " + out);
+        assertTrue(out.indexOf("\\node[anchor=north west") > out.indexOf("\\end{axis}"),
+                "注记应位于 \\end{axis} 之后: " + out);
+    }
+
+    @Test
+    void normalizesSourceNoteThatIsAlreadyAfterAxis() {
+        // 写在 \\end{axis} 之后：坐标系已失效 → ! Undefined control sequence，位置只是碰巧对
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[ybar]\n"
+                + "\\addplot coordinates {(1,1)};\n"
+                + "\\end{axis}\n"
+                + "\\node[anchor=north west] at (axis description cs:0.0,-0.15) {数据来源：x};\n"
+                + "\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        assertFalse(out.contains("axis description cs"), "写在 axis 之后同样要归一: " + out);
+        assertTrue(out.contains("at (current bounding box.south west)"));
+        assertEquals(1, countOccurrences(out, "数据来源：x"), "注记不得被复制或丢失: " + out);
+    }
+
+    @Test
+    void leavesCodeWithoutSourceNoteUntouched() {
+        String code = "\\begin{tikzpicture}\n\\begin{axis}[ybar]\n"
+                + "\\addplot coordinates {(1,1)};\n\\end{axis}\n\\end{tikzpicture}";
+        String out = LatexCompiler.preprocess(code);
+        assertFalse(out.contains("current bounding box"), "无注记时不得凭空插入: " + out);
+    }
+
     private static int countOccurrences(String s, String sub) {
         int count = 0, idx = 0;
         while ((idx = s.indexOf(sub, idx)) >= 0) {

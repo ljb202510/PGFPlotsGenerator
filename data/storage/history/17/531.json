@@ -1,0 +1,19 @@
+{
+  "history_id" : 531,
+  "user_id" : 17,
+  "data_id" : 173,
+  "file_name" : "26-multiline3-months.csv",
+  "dataset_name" : "26-multiline3-months",
+  "user_input" : "请根据我上传的数据绘制折线图，对比华北、华东、华南三个区域 1—12 月销售额变化趋势；三条折线使用不同颜色与数据点标记，并标注数值（单位：万元）；添加图表标题、X 轴（月份）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={1—12月华北、华东、华南销售额对比},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.05,\n    ymin=80, ymax=310,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    }\n]\n\\addplot[blue, mark=*, thick, nodes near coords] coordinates {\n    (1月,120) (2月,115) (3月,130) (4月,128) (5月,140) (6月,136)\n    (7月,150) (8月,158) (9月,152) (10月,165) (11月,172) (12月,185)\n};\n\\addlegendentry{华北}\n\\addplot[red, mark=square*, thick, nodes near coords] coordinates {\n    (1月,150) (2月,160) (3月,172) (4月,168) (5月,185) (6月,190)\n    (7月,205) (8月,215) (9月,230) (10月,245) (11月,260) (12月,278)\n};\n\\addlegendentry{华东}\n\\addplot[green!60!black, mark=triangle*, thick, nodes near coords] coordinates {\n    (1月,95) (2月,102) (3月,110) (4月,118) (5月,125) (6月,132)\n    (7月,140) (8月,148) (9月,155) (10月,162) (11月,170) (12月,180)\n};\n\\addlegendentry{华南}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：26-multiline3-months.csv};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm, height=7cm,\n    title={1—12月华北、华东、华南销售额对比},\n    xlabel={月份},\n    ylabel={销售额（万元）},\n    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},\n    xtick=data,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    enlarge x limits=0.05,\n    ymin=80, ymax=310,\n    nodes near coords,\n    every node near coord/.append style={\n        font=\\scriptsize,\n        fill=none,\n        draw=none,\n        inner sep=1pt,\n        anchor=south\n    }\n]\n\\addplot[blue, mark=*, thick, nodes near coords] coordinates {\n    (1月,120) (2月,115) (3月,130) (4月,128) (5月,140) (6月,136)\n    (7月,150) (8月,158) (9月,152) (10月,165) (11月,172) (12月,185)\n};\n\\addlegendentry{华北}\n\\addplot[red, mark=square*, thick, nodes near coords] coordinates {\n    (1月,150) (2月,160) (3月,172) (4月,168) (5月,185) (6月,190)\n    (7月,205) (8月,215) (9月,230) (10月,245) (11月,260) (12月,278)\n};\n\\addlegendentry{华东}\n\\addplot[green!60!black, mark=triangle*, thick, nodes near coords] coordinates {\n    (1月,95) (2月,102) (3月,110) (4月,118) (5月,125) (6月,132)\n    (7月,140) (8月,148) (9月,155) (10月,162) (11月,170) (12月,180)\n};\n\\addlegendentry{华南}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：26-multiline3-months.csv};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制折线图，对比华北、华东、华南三个区域 1—12 月销售额变化趋势；三条折线使用不同颜色与数据点标记，并标注数值（单位：万元）；添加图表标题、X 轴（月份）与 Y 轴（销售额/万元）标签，并加上图例。",
+  "created_at" : "2026-09-16T05:29:46.705Z",
+  "metadata" : {
+    "data_ids" : [ 173 ],
+    "has_chart_code" : true,
+    "code_length" : 1295,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

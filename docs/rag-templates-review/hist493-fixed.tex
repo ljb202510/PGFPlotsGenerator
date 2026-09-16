@@ -1,0 +1,28 @@
+\begin{tikzpicture}
+\begin{axis}[
+    ybar,
+    width=14cm,
+    height=7cm,
+    title={各区域销售额对比},
+    ylabel={销售额（万元）},
+    symbolic x coords={华东·上海市浦东新区科技创新园,华东·江苏省苏州市工业园区,华北·北京市海淀区中关村科学城,华南·广东省深圳市南山区科技园,西南·四川省成都市高新区天府软件园,华中·湖北省武汉市东湖新技术开发区},
+    xtick=data,
+    x tick label style={font=\scriptsize, rotate=30, anchor=east},
+    nodes near coords,
+    every node near coord/.append style={font=\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},
+    enlarge x limits=0.15,
+    legend style={at={(1.03,0.5)}, anchor=west},
+    ymin=0,
+    ymax=1600
+]
+\addplot[fill=blue!60, nodes near coords] coordinates {
+    (华东·上海市浦东新区科技创新园,1280)
+    (华东·江苏省苏州市工业园区,1160)
+    (华北·北京市海淀区中关村科学城,1420)
+    (华南·广东省深圳市南山区科技园,1350)
+    (西南·四川省成都市高新区天府软件园,980)
+    (华中·湖北省武汉市东湖新技术开发区,1050)
+};
+\end{axis}
+\node[anchor=north west, font=\scriptsize] at (current bounding box.south west) {数据来源：根据上传数据};
+\end{tikzpicture}

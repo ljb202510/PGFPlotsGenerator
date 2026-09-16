@@ -45,5 +45,18 @@ public class RagVector {
     /** embedding 模型名 */
     private String model;
 
+    /**
+     * [语料治理] 质量等级：golden（人工定义真值）| verified（编译成功且静态零违例）| unverified（默认，不召回）。
+     * <p>由迁移 {@code migrations/alter_rag_vector_quality.sql} 引入；判定与门槛见 {@code service.rag.RagQuality}。</p>
+     */
+    private String quality;
+
+    /**
+     * [语料治理] 数据来源：dataset / no-dataset。
+     * <p><b>只标「有无上传数据集」，不声称能识别「模型自拟示意数据」</b>——「使用公开统计数据」与
+     * 「模型自拟示意数据」都不带数据集，两者无法自动区分，属已知盲区。</p>
+     */
+    private String dataSource;
+
     private LocalDateTime createdAt;
 }

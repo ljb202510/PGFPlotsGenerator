@@ -103,6 +103,97 @@ final class RagTemplates {
             \\end{axis}
             \\end{tikzpicture}""";
 
+
+    private static final String AREA_EXAMPLE = """
+            \\begin{tikzpicture}
+            \\begin{axis}[
+                width=10cm,
+                hei""";
+
+
+    private static final String HBAR_EXAMPLE = """
+            \\begin{tikzpicture}\\begin{axis}[
+                xbar,
+                width=10cm""";
+
+
+    private static final String HISTOGRAM_EXAMPLE = """
+            \\begin{tikzpicture}\\begin{axis}[
+                ybar,
+                title={某""";
+
+
+    private static final String LOG_AXIS_EXAMPLE = """
+            \\begin{tikzpicture}
+            \\begin{axis}
+                [title={2015—2024 """;
+
+
+    private static final String SMOOTH_EXAMPLE = """
+            \\begin{tikzpicture}\\begin{axis}[
+                title={1—12月平�""";
+
+
+    private static final String STACKED_PCT_EXAMPLE = """
+            \\begin{tikzpicture}
+            \\begin{axis}[
+                ybar stacked,
+                t""";
+
+
+    private static final String MANY_CATEGORY_EXAMPLE = """
+            \\begin{tikzpicture}
+            \\begin{axis}[
+                ybar,
+                width=14c""";
+
+
+    private static final String MULTI_LINE_EXAMPLE = """
+            \\begin{tikzpicture}\\begin{axis}[
+                width=12cm,
+                heig""";
+
+
+    private static final String NEGATIVE_BAR_EXAMPLE = """
+            \\begin{tikzpicture}
+            \\begin{axis}[
+                ybar,
+                title={�""";
+
+
+    private static final String SINGLE_POINT_EXAMPLE = """
+            \\begin{tikzpicture}\\begin{axis}[
+                ybar,
+                title={项""";
+
+
+    private static final String LONG_LABEL_EXAMPLE = """
+            \\begin{tikzpicture}
+            \\begin{axis}[
+                ybar,
+                width=14c""";
+
+
+    private static final String EXTREME_SCALE_EXAMPLE = """
+            \\begin{tikzpicture}
+            \\begin{axis}[
+                ybar,
+                title={�""";
+
+
+    private static final String DEGENERATE_EXAMPLE = """
+            \\begin{tikzpicture}
+            \\begin{axis}[
+                title={各季度销""";
+
+
+    private static final String PERCENT_VALUE_EXAMPLE = """
+            \\begin{tikzpicture}
+            \\begin{axis}[
+                ybar,
+                title={�""";
+
+
     static final List<TemplateSeed> SEEDS = List.of(
             new TemplateSeed(1, "柱状图（ybar 数值标注）",
                     "画一个柱状图：ybar 分组柱状图对比各类别数值，nodes near coords 数值标注，图例外置，symbolic x coords 半角逗号",
@@ -124,6 +215,48 @@ final class RagTemplates {
                     "需求：画一个各省 GDP 对比的密集柱状图（长数值标注缩写）\n代码：\n" + DENSE_EXAMPLE),
             new TemplateSeed(7, "误差棒图（error bars）",
                     "画一个带误差棒的柱状图：error bars/.cd y dir=both y explicit + 坐标 +- 误差值写法，展示实验数据波动范围",
-                    "需求：画一个带误差棒的实验数据对比柱状图\n代码：\n" + ERROR_BAR_EXAMPLE)
+                    "需求：画一个带误差棒的实验数据对比柱状图\n代码：\n" + ERROR_BAR_EXAMPLE),
+            new TemplateSeed(8, "面积图（\\closedcycle 填充）",
+                    "画一个面积图：折线下方用 \\closedcycle 填充淡色区域，展示指标随时间的变化趋势",
+                    "需求：面积图：建成区绿化覆盖率 2015—2024 年的变化\n代码：\n" + AREA_EXAMPLE),
+            new TemplateSeed(9, "水平条形图（xbar）",
+                    "画一个水平条形图：xbar 横向条形对比各分类数值，在条形末端标注数值",
+                    "需求：水平条形图：各城市轨道交通运营里程对比\n代码：\n" + HBAR_EXAMPLE),
+            new TemplateSeed(10, "直方图（分数段人数分布）",
+                    "画一个直方图：展示各分数段人数分布，柱子顶标注人数，不要画成填充面积图",
+                    "需求：直方图：某班成绩各分数段人数分布\n代码：\n" + HISTOGRAM_EXAMPLE),
+            new TemplateSeed(11, "对数轴折线图（指数增长）",
+                    "画一个折线图：数据呈指数增长，Y 轴使用对数刻度展示",
+                    "需求：对数轴折线图：平台注册用户数 2015—2024 年指数增长\n代码：\n" + LOG_AXIS_EXAMPLE),
+            new TemplateSeed(12, "平滑曲线图（smooth）",
+                    "画一个平滑曲线图：曲线平滑过渡呈倒 U 形，展示 1—12 月平均气温变化",
+                    "需求：平滑曲线图：1—12 月平均气温（倒 U 形）\n代码：\n" + SMOOTH_EXAMPLE),
+            new TemplateSeed(13, "百分比堆积柱状图（各柱合计 100%）",
+                    "画一个百分比堆积柱状图：展示各地区财政支出结构，每根柱合计 100%，并标注各层原始值",
+                    "需求：百分比堆积柱状图：四地区财政支出结构（合计 100%）\n代码：\n" + STACKED_PCT_EXAMPLE),
+            new TemplateSeed(14, "密集分类柱状图（14 项 + X 轴标签旋转）",
+                    "画一个柱状图：分类有 14 个且名称较长，X 轴标签需要旋转避免重叠",
+                    "需求：密集分类柱状图：14 个省份/直辖市 GDP 对比（X 轴标签旋转）\n代码：\n" + MANY_CATEGORY_EXAMPLE),
+            new TemplateSeed(15, "多系列折线图（三条系列标注错开）",
+                    "画一个多系列折线图：三条折线带数据点标记并标注数值，标注上下错开避免压盖",
+                    "需求：多系列折线图：三区域 1—12 月销售额变化趋势\n代码：\n" + MULTI_LINE_EXAMPLE),
+            new TemplateSeed(16, "负值柱状图（正负值分布在 0 轴上下）",
+                    "画一个含负值的柱状图：数据有正有负，柱子分布在 0 轴上下，负值柱必须清晰可见",
+                    "需求：负值柱状图：公司 8 个季度净利润（正负值）\n代码：\n" + NEGATIVE_BAR_EXAMPLE),
+            new TemplateSeed(17, "单数据点柱状图（退化边界）",
+                    "画一个柱状图：数据只有一个类别一个数据点，在柱子上方标注数值",
+                    "需求：单数据点柱状图：一期工程投资额\n代码：\n" + SINGLE_POINT_EXAMPLE),
+            new TemplateSeed(18, "超长中文分类标签（旋转处理）",
+                    "画一个柱状图：X 轴分类名称是很长的中文，标签需要旋转避免互相重叠",
+                    "需求：超长中文标签柱状图：各区域销售额对比\n代码：\n" + LONG_LABEL_EXAMPLE),
+            new TemplateSeed(19, "极值悬殊柱状图（量级差异极大）",
+                    "画一个柱状图：各项目投资额量级差异极大，最大值与最小值相差很多倍",
+                    "需求：极值悬殊柱状图：各项目投资额（8 万元 ~ 98 亿元）\n代码：\n" + EXTREME_SCALE_EXAMPLE),
+            new TemplateSeed(20, "退化值柱状图（含 0 且其余全相等）",
+                    "画一个柱状图：数据含 0 且其余数值完全相等，Y 轴范围不能退化成一条线",
+                    "需求：退化值柱状图：各季度销量（含 0 且其余全相等）\n代码：\n" + DEGENERATE_EXAMPLE),
+            new TemplateSeed(21, "百分比数值柱状图（两位小数 + \\% 转义）",
+                    "画一个柱状图：展示转化率百分比数值，保留两位小数并带百分号",
+                    "需求：百分比数值柱状图：各渠道转化率（两位小数带百分号）\n代码：\n" + PERCENT_VALUE_EXAMPLE)
     );
 }

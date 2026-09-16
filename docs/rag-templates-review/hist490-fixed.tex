@@ -1,0 +1,69 @@
+\begin{tikzpicture}\begin{axis}[
+    width=12cm,
+    height=7cm,
+    title={1-12月华北、华东、华南销售额趋势对比},
+    xlabel={月份},
+    ylabel={销售额（万元）},
+    symbolic x coords={1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月},
+    xtick=data,
+    x tick label style={font=\scriptsize, rotate=0, anchor=center},
+    ymin=0, ymax=320,
+    nodes near coords,
+    every node near coord/.append style={font=\tiny, fill=none, draw=none, inner sep=1pt, anchor=south},
+    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white, font=\small},
+    legend cell align={left},
+    enlarge x limits=0.15,
+    grid=none
+]
+% 华北数据 (蓝色)
+\addplot+[blue, mark=*, thick, nodes near coords, every node near coord/.append style={font=\tiny, fill=none, draw=none, inner sep=1pt, anchor=south}]
+coordinates {
+(1月,120)
+(2月,115)
+(3月,130)
+(4月,128)
+(5月,140)
+(6月,136)
+(7月,150)
+(8月,158)
+(9月,152)
+(10月,165)
+(11月,172)
+(12月,185)
+};
+% 华东数据 (红色)
+\addplot+[red, mark=*, thick, nodes near coords, every node near coord/.append style={font=\tiny, fill=none, draw=none, inner sep=1pt, anchor=north}]
+coordinates {
+(1月,150)
+(2月,160)
+(3月,172)
+(4月,168)
+(5月,185)
+(6月,190)
+(7月,205)
+(8月,215)
+(9月,230)
+(10月,245)
+(11月,260)
+(12月,278)
+};
+% 华南数据 (绿色)
+\addplot+[green!60!black, mark=*, thick, nodes near coords, every node near coord/.append style={font=\tiny, fill=none, draw=none, inner sep=1pt, anchor=north}]
+coordinates {
+(1月,95)
+(2月,102)
+(3月,110)
+(4月,118)
+(5月,125)
+(6月,132)
+(7月,140)
+(8月,148)
+(9月,155)
+(10月,162)
+(11月,170)
+(12月,180)
+};
+\legend{华北, 华东, 华南}
+\end{axis}
+\node[anchor=north west, font=\scriptsize] at (current bounding box.south west) {数据来源：内部销售统计};
+\end{tikzpicture}

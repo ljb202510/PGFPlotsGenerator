@@ -39,14 +39,38 @@ public class Retriever {
     public List<Retrieved> retrieve(Integer userId, String query, float[] queryVec) {
         AppProperties.Rag rag = appProperties.getRag();
         List<Retrieved> hits = new ArrayList<>();
+        // [语料治理] 历史分区按质量等级过滤：只有 golden / verified 参与召回，unverified 天然不召回。
+        // 过滤在内存中做（存储层只加载一次）：这样「过滤后为空」的回退不需要第二次查询。
+        List<RagVector> historyRows = vectorStore.loadHistory(userId, rag.getHistoryLimit());
+        List<RagVector> recallable = filterByQuality(historyRows, rag.getMinQuality());
+        if (recallable.isEmpty() && !historyRows.isEmpty()
+                && !RagQuality.UNVERIFIED.equals(rag.getMinQuality())) {
+            // 兜底：不得把检索变哑（典型场景：该账号尚未执行离线定级）。
+            // 宁可回退到「包含未验证」，也不要在可用案例存在时召回为空。
+            log.warn("[RAG] 按等级 {} 过滤后历史分区为 0 条（原始 {} 条），已回退为不过滤",
+                    rag.getMinQuality(), historyRows.size());
+            recallable = historyRows;
+        }
         // [v1.4] 闸门1（确定性）：文字与当前提问完全相同的历史案例剔除；
         // 闸门2（启发式）：相似度 ≥ maxHistoryScore 的同样剔除，兜住改写过的同题
-        hits.addAll(topK(dropSameQuery(vectorStore.loadHistory(userId, rag.getHistoryLimit()), query),
+        hits.addAll(topK(dropSameQuery(recallable, query),
                 queryVec, rag.getMinScore(), rag.getMaxHistoryScore(), rag.getTopKHistory()));
-        // 模板库是通用图型示范，描述文本与用户提问不会雷同，不受同题排除影响
+        // 模板库是通用图型示范，描述文本与用户提问不会雷同，不受同题排除影响；
+        // 且模板分区全部为 golden（人工定义真值），恒不参与等级过滤
         hits.addAll(topK(vectorStore.loadTemplates(rag.getTemplateLimit()), queryVec,
                 rag.getMinScore(), Double.MAX_VALUE, rag.getTopKTemplate()));
         return hits;
+    }
+
+    /** [语料治理] 按最低可召回等级过滤；null / 未知等级按最低级处理（保守优先）。 */
+    private static List<RagVector> filterByQuality(List<RagVector> rows, String minQuality) {
+        List<RagVector> kept = new ArrayList<>(rows.size());
+        for (RagVector row : rows) {
+            if (RagQuality.recallable(row.getQuality(), minQuality)) {
+                kept.add(row);
+            }
+        }
+        return kept;
     }
 
     /**

@@ -1,0 +1,19 @@
+{
+  "history_id" : 540,
+  "user_id" : 17,
+  "data_id" : 182,
+  "file_name" : "03-pie-share.xlsx",
+  "dataset_name" : "03-pie-share",
+  "user_input" : "请根据我上传的数据绘制饼图，展示各品牌市场份额占比；为每个扇区标注品牌名称与百分比数值；添加图表标题与图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\pie[radius=2.5, text=legend]{32/品牌A, 26/品牌B, 18/品牌C, 14/品牌D, 10/品牌E}\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"pie\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\pie[radius=2.5, text=legend]{32/品牌A, 26/品牌B, 18/品牌C, 14/品牌D, 10/品牌E}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"展示五大品牌市场份额占比的饼图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\pie[radius=2.5, text=legend]{32/品牌A, 26/品牌B, 18/品牌C, 14/品牌D, 10/品牌E}\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制饼图，展示各品牌市场份额占比；为每个扇区标注品牌名称与百分比数值；添加图表标题与图例。",
+  "created_at" : "2026-09-16T05:39:55.220Z",
+  "metadata" : {
+    "data_ids" : [ 182 ],
+    "has_chart_code" : true,
+    "code_length" : 107,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

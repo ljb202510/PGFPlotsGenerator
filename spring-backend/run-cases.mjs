@@ -13,12 +13,14 @@
  *     node run-cases.mjs --model=siliconflow --only=25,27,32
  *     node run-cases.mjs --compile            # 生成后额外提交 XeLaTeX 编译并轮询 PDF 状态
  *     node run-cases.mjs --no-upload          # 跳过「先上传、用上传得到的 data_id」的整条链路（仅测试用）
+ *     node run-cases.mjs --rag=on --tag=rag-on-32cases   # 仅给本轮打 RAG 开关标记（真正生效靠进程环境变量 RAG_ENABLED）
  *
  * 产出：控制台汇总 + test/results/<tag>.json。
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { detectViolations } from './eval/violations.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -35,6 +37,8 @@ const PASSWORD = process.env.PASSWORD || arg('password', '');
 const MODEL = arg('model', 'qwen');
 const ONLY = arg('only', '').split(',').filter(Boolean);
 const COMPILE = hasFlag('compile');
+// [RAG on/off 对比] 仅为产物打标与留档，不影响服务端行为（开关由进程环境变量 RAG_ENABLED 决定）
+const RAG_TAG = arg('rag', '');
 
 const TESTDATA = path.join(__dirname, '..', 'docs', 'testdata');
 
@@ -122,16 +126,25 @@ async function runCase(token, c) {
   const dataId = await ensureUploaded(token, c.file);
   const json = { message: c.prompt, model: MODEL };
   if (dataId != null) json.data_ids = [dataId];
+  const startedAt = Date.now();
   const res = await request('POST', '/api/chat', { auth: token, json });
+  const latencyMs = Date.now() - startedAt;
   const d = res?.data || {};
+  const chartCode = d.chart_code || '';
+  // 图表质量自动层：复用 eval/eval.mjs 的同一套规则，避免「离线评估口径」与本次口径分裂
+  const violations = chartCode.trim() ? detectViolations(chartCode) : [];
   const rec = {
     id: c.id,
     name: c.name,
-    ok: !!(d.chart_code && d.history_id),
+    ok: !!(chartCode && d.history_id),
     history_id: d.history_id ?? null,
-    chart_code_length: d.chart_code_length ?? (d.chart_code ? d.chart_code.length : 0),
+    chart_code_length: d.chart_code_length ?? chartCode.length,
+    chart_code: chartCode,
     model_used: d.model_used ?? null,
     reply_preview: (d.reply || '').slice(0, 80),
+    latency_ms: latencyMs,
+    violation_free: violations.length === 0,
+    violations: violations.map((v) => v.rule),
   };
   if (COMPILE && rec.history_id) rec.compile = await compileHistory(token, rec.history_id);
   return rec;
@@ -146,7 +159,7 @@ async function compileHistory(token, historyId) {
     const st = await request('GET', `/api/compile/task/${taskId}`, { auth: token });
     const s = st?.data;
     if (s?.status === 'success') return { status: 'success', file_size: s.file_size, duration_ms: s.duration_ms };
-    if (s?.status === 'failed') return { status: 'failed', error: (s.error || '').slice(0, 120) };
+    if (s?.status === 'failed') return { status: 'failed', error: (s.error || '').slice(0, 500) };
     await sleep(1500);
   }
   return { status: 'timeout' };
@@ -188,11 +201,36 @@ async function main() {
   console.error(`\nSUMMARY: executed=${executed.length} passed=${passed} failed=${failed} skipped=${skipped} total=${CASES.length}`);
   console.error(`model=${MODEL} base=${BASE} account=${EMAIL}`);
 
+  // [RAG on/off 对比] 与 eval/eval.mjs 同口径指标：通过 = 有代码 且 编译成功；零违例通过 = 通过 且 无静态违例
+  const compiledOk = (r) => r.compile?.status === 'success';
+  const hasCode = executed.filter((r) => r.ok);
+  const pass = hasCode.filter(compiledOk).length;
+  const zeroViolationPass = hasCode.filter((r) => compiledOk(r) && r.violation_free).length;
+  const lats = executed.map((r) => r.latency_ms).filter((x) => typeof x === 'number');
+  const sortedLats = [...lats].sort((a, b) => a - b);
+  const violationCounts = {};
+  for (const r of executed) for (const rule of r.violations || []) violationCounts[rule] = (violationCounts[rule] || 0) + 1;
+  const metrics = {
+    total: CASES.length,
+    executed: executed.length,
+    code_rate: +(executed.length ? hasCode.length / executed.length : 0).toFixed(3),
+    compile_rate: +(hasCode.length ? pass / hasCode.length : 0).toFixed(3),
+    first_pass_rate: +(executed.length ? pass / executed.length : 0).toFixed(3),
+    zero_violation_rate: +(executed.length ? zeroViolationPass / executed.length : 0).toFixed(3),
+    violation_counts: violationCounts,
+    degraded_count: executed.filter((r) => r.model_used && r.model_used !== MODEL).length,
+    avg_latency_ms: lats.length ? Math.round(lats.reduce((a, b) => a + b, 0) / lats.length) : 0,
+    p95_latency_ms: sortedLats.length ? sortedLats[Math.ceil(sortedLats.length * 0.95) - 1] : 0,
+  };
+  console.error(`METRICS: code=${metrics.code_rate} compile=${metrics.compile_rate} first_pass=${metrics.first_pass_rate} zero_violation=${metrics.zero_violation_rate} avg=${metrics.avg_latency_ms}ms p95=${metrics.p95_latency_ms}ms degraded=${metrics.degraded_count}`);
+  console.error(`VIOLATIONS: ${JSON.stringify(metrics.violation_counts)}`);
+  console.error(`RAG: tag=${RAG_TAG || '(unset)'} RAG_ENABLED(env)=${process.env.RAG_ENABLED ?? '(unset)'}`);
+
   const tag = arg('tag', new Date().toISOString().replace(/[:.]/g, '-'));
   const outDir = path.join(__dirname, 'test', 'results');
   fs.mkdirSync(outDir, { recursive: true });
   const outFile = path.join(outDir, `${tag}.json`);
-  fs.writeFileSync(outFile, JSON.stringify({ runAt: new Date().toISOString(), base: BASE, model: MODEL, email: EMAIL, results }, null, 2), 'utf8');
+  fs.writeFileSync(outFile, JSON.stringify({ runAt: new Date().toISOString(), base: BASE, model: MODEL, email: EMAIL, rag: RAG_TAG || null, rag_env: process.env.RAG_ENABLED ?? null, compile: COMPILE, metrics, results }, null, 2), 'utf8');
   console.error(`results -> ${outFile}`);
 
   // 0 无法准确判断“通过了”与“仅是跑通”，非零仅表示有执行失败/异常

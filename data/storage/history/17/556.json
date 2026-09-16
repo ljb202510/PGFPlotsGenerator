@@ -1,0 +1,19 @@
+{
+  "history_id" : 556,
+  "user_id" : 17,
+  "data_id" : 181,
+  "file_name" : "02-bar-workshop.csv",
+  "dataset_name" : "02-bar-workshop",
+  "user_input" : "请根据我上传的数据绘制柱状图，对比各车间产量；在每根柱子上方标注产量数值（单位：台）；请在图表内部注明「数据来源：某厂 2024 年度统计」；添加图表标题、X 轴（车间）与 Y 轴（产量/台）标签，并加上图例。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各车间产量对比},\n    ylabel={产量（台）},\n    symbolic x coords={一车间,二车间,三车间,四车间,五车间},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    enlarge x limits=0.15,\n    width=10cm,\n    height=6cm\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(一车间,4520) (二车间,6100) (三车间,3890) (四车间,5230) (五车间,2980)};\n\\legend{产量}\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：某厂 2024 年度统计};\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"bar\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    ybar,\\n    title={各车间产量对比},\\n    ylabel={产量（台）},\\n    symbolic x coords={一车间,二车间,三车间,四车间,五车间},\\n    xtick=data,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west},\\n    enlarge x limits=0.15,\\n    width=10cm,\\n    height=6cm\\n]\\n\\\\addplot[fill=blue!60, mark=*] coordinates {(一车间,4520) (二车间,6100) (三车间,3890) (四车间,5230) (五车间,2980)};\\n\\\\legend{产量}\\n\\\\end{axis}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (current bounding box.south west) {数据来源：某厂 2024 年度统计};\\n\\\\end{tikzpicture}\",\n  \"summary\": \"某厂2024年五车间产量对比柱状图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    title={各车间产量对比},\n    ylabel={产量（台）},\n    symbolic x coords={一车间,二车间,三车间,四车间,五车间},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    enlarge x limits=0.15,\n    width=10cm,\n    height=6cm\n]\n\\addplot[fill=blue!60, mark=*] coordinates {(一车间,4520) (二车间,6100) (三车间,3890) (四车间,5230) (五车间,2980)};\n\\legend{产量}\n\\end{axis}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：某厂 2024 年度统计};\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据绘制柱状图，对比各车间产量；在每根柱子上方标注产量数值（单位：台）；请在图表内部注明「数据来源：某厂 2024 年度统计」；添加图表标题、X 轴（车间）与 Y 轴（产量/台）标签，并加上图例。",
+  "created_at" : "2026-09-16T05:43:20.478Z",
+  "metadata" : {
+    "data_ids" : [ 181 ],
+    "has_chart_code" : true,
+    "code_length" : 631,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

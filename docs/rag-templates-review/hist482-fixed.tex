@@ -1,0 +1,23 @@
+\begin{tikzpicture}
+\begin{axis}[
+    ybar stacked,
+    title={各地区财政支出结构占比},
+    ylabel={占比 (\%)},
+    symbolic x coords={华北,华东,华南,西部},
+    xtick=data,
+    ymin=0, ymax=100,
+    enlarge x limits=0.15,
+    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},
+    nodes near coords,
+    point meta=explicit symbolic,
+    every node near coord/.append style={font=\scriptsize, fill=none, draw=none, anchor=center},
+    x tick label style={font=\scriptsize, rotate=30, anchor=east}
+]
+\addplot[fill=blue!50] coordinates {(华北,32)[32\%] (华东,28)[28\%] (华南,30)[30\%] (西部,35)[35\%]};
+\addplot[fill=green!50] coordinates {(华北,26)[26\%] (华东,30)[30\%] (华南,25)[25\%] (西部,24)[24\%]};
+\addplot[fill=orange!50] coordinates {(华北,22)[22\%] (华东,24)[24\%] (华南,28)[28\%] (西部,20)[20\%]};
+\addplot[fill=red!50] coordinates {(华北,20)[20\%] (华东,18)[18\%] (华南,17)[17\%] (西部,21)[21\%]};
+\legend{教育,医疗,交通,其他}
+\end{axis}
+\node[anchor=north west, font=\scriptsize] at (current bounding box.south west) {数据来源：根据上传数据};
+\end{tikzpicture}

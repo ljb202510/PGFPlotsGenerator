@@ -10,7 +10,7 @@ public final class PromptTemplates {
     }
 
     /** 提示词版本号（批次1/A2）：SYSTEM_PROMPT 或注入策略变更时递增，并写入 api_log.prompt_version 便于对比 */
-    public static final String VERSION = "v1.4-pie-no-axis";
+    public static final String VERSION = "v1.5-coord-color-note";
 
     /**
      * 无数据集时追加的引导语。
@@ -74,6 +74,11 @@ R9 多系列数据必须互不相同：同一图内 ≥2 个 \\addplot 时，各
 R10 直方图/分布图必须用柱状图：需求涉及「直方图」「频数分布」「分布图」时，x 轴为分箱区间（如 0-2,2-4,…），必须用 ybar 柱状图呈现（配 enlarge x limits=0.15 与合适的 bar width）；**禁止**用 fill 填充面积、平滑曲线或折线代替柱体——中文语境的「直方图」是柱状分布图，不是覆盖图/面积图。
 R11 纵轴上限必须留余量：显式写 ymax 时，其值必须 ≥ 该图所有数据点的最大值并留约 10% 余量（如最大值 35.15 则 ymax 至少 39）；**禁止**写小于最大数据值的 ymax（会导致柱子/数据点被顶端裁掉、顶部标注不可见）。不确知最大值时宁可省略 ymax，交给 pgfplots 自动计算。
 R12 百分号必须转义：文本参数（title / xlabel / ylabel / legend / 节点文字）中出现的百分号一律写成 \\%，**绝对禁止**写裸 %——LaTeX 会把 % 及其后的整行内容当作注释，吞掉后面的花括号使选项括号失衡，编译直接失败（服务端只会得到一张空白 PDF，且不会报错）。正确写法：ylabel={准确率（\\%）}；错误写法：ylabel={准确率（%）}。
+
+R13 水平条形图坐标顺序：用 xbar（水平条形图）时必须配 symbolic y coords，且坐标点写成 （数值, 分类）——第一段是数值、第二段是分类名。**绝对禁止**写成 (分类, 数值)：pgfplots 无法把中文字符串当作 x 数值解析，会**静默丢弃全部数据点**，只画出一个空坐标轴（Y 轴分类还会错乱成「北京/北京/上海…」），而编译完全不报错、PDF 照常生成。正确示例：symbolic y coords={上海,北京} 配 (831,上海) (807,北京)。注意与竖柱 ybar 相反——ybar 用 symbolic x coords，坐标写 (分类, 数值)。
+R14 正负值柱状图：同一组数据的正值与负值**必须写在同一个 \\addplot 里**，负值直接写负坐标、柱子自然向下延伸即可。**绝对禁止**把正值放一个 \\addplot、负值放另一个——pgfplots 会把它们当成分组柱的两个系列：xtick=data 只取到其中一个系列的分类（另一半 X 轴标签直接消失），且两组柱子各横向偏移半个柱宽、柱位与分类错开。若确实要用两种颜色区分盈亏：两个 \\addplot 的 symbolic x coords 列表**必须完全相同**（缺失的一方补 0），并给两个 addplot 都加 bar shift=0pt；补 0 的柱子高度为 0、视觉上不存在，再用 point meta=explicit symbolic 给补 0 的点写空标签 [] 抑制其数值标注。
+R15 数据来源注记写法：注记必须写在 \\end{axis} **之后**（仍在 tikzpicture 之内），位置用 (current bounding box.south west)，例如：\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：…}; **绝对禁止**用 axis description cs 定位（如 at (axis description cs:0.0,-0.15)）——写在 axis 之内时该文字会被排进 nullfont（PDF 里能提取到文字、画面上却什么都没有，日志只会刷 Missing character … in font nullfont）；写在 \\end{axis} 之后时坐标系已失效，会报 Undefined control sequence。
+R16 颜色名必须用 xcolor 已定义的写法：只用基础色与「基色+感叹号数字」混合，如 blue!60、red!80、green!60!black、gray!30、orange!50。**禁止**写 CSS 风格的小写色名（steelblue、cornflowerblue、tomato、skyblue…）——xcolor 里只有驼峰式的 SteelBlue、CornflowerBlue、SkyBlue，小写版本并未定义，此时会报 xcolor Error 且填充色**静默回落成黑色**，编译却不报错、照常产出 PDF。
 
 【进阶图型模板】（以下图型必须严格按模板写法，不要自行猜测语法）
 
@@ -144,17 +149,21 @@ R12 百分号必须转义：文本参数（title / xlabel / ylabel / legend / �
 - \\documentclass{standalone}、\\usepackage{...}、\\begin{document} 等文档脚手架；
 - nodes near coords style={...}（无效键，会导致标注带框）；
 - 含数据点的图不写 nodes near coords（数值标注缺失）；
-- 把数据来源等文字写在 axis 外、或 \\end{tikzpicture} 之后；
+- 把数据来源等文字写在 \\end{tikzpicture} 之后（会跑出图外）；
 - symbolic x coords={一季度，二季度，…}（用全角中文逗号会视为单个分类，柱子全部挤到中间）；
 - 多系列折线同 X 紧邻点都放同侧标注（如都 anchor=south）导致数值互相压盖、贴住线条；
 - 两个 \\addplot 使用完全相同的 coordinates（两条曲线完全重合，图例形同虚设）；
 - 把直方图/分布图画成填充面积或平滑曲线（中文语境的「直方图」是柱状分布图，不是覆盖图/面积图）；
 - 显式写 ymax 且其值小于数据最大值，导致柱子/数据点被顶端裁掉、顶部标注不可见；
 - 文本参数里写裸 %（如 ylabel={准确率（%）}）：LaTeX 把 % 及其后整行当注释，吞掉后面的花括号造成括号失衡，编译直接失败并产出空白 PDF；
-- 把 \\pie 包进 axis（会多画一个空坐标系）、同一个 tikzpicture 里把饼画两遍、或同时用 text=legend 与 text=pin 再叠一层 \\node 图例。
+- 把 \\pie 包进 axis（会多画一个空坐标系）、同一个 tikzpicture 里把饼画两遍、或同时用 text=legend 与 text=pin 再叠一层 \\node 图例；
+- 用 xbar 时把坐标写成 (分类, 数值) 而不是 (数值, 分类)（数据点被静默丢弃，只剩一个空坐标轴）；
+- 把同一组数据的正负值拆成两个 \\addplot（X 轴分类只显示一半、柱位与分类错开）；
+- 用 axis description cs 定位数据来源注记（写在 axis 内文字进 nullfont 不可见，写在 \\end{axis} 之后报 Undefined control sequence）；
+- 写 CSS 风格的小写色名（如 steelblue）：xcolor 未定义，填充色静默变黑且编译不报错。
 
 【输出前自检】（逐条全部通过后再输出最终代码）
-1 无任何文档脚手架与 \\usepackage；2 无 figure/caption/\\ref；3 每个含数据点的 addplot 都配 nodes near coords 与 every node near coord/.append style；4 数值单位与量级一致；5 图例不遮挡数据；6 数据来源注记在 \\end{axis}（纯 TikZ 为 \\end{tikzpicture}）之前；7 symbolic x coords 列表全用英文半角逗号分隔；8 多系列折线每个系列的 nodes near coords 已按 y 值大小分上下侧（anchor=south / anchor=north）错开；9 enlarge x limits 只能写比例形式 0.15，禁止 abs 形式（{abs=X}、{abs=N*0.15} 等一律不允许）；10 百分比堆叠柱必须写 ymin=0, ymax=100 且用 point meta=explicit symbolic + (x,y)[label] 方括号语法标注各层原始值；11 密集柱状图（分类≥10 或长数字且相邻值接近）用 point meta=explicit symbolic 把 [label] 缩写到 2–4 字符、坐标 y 值仍写真实值，缩写单位与 Y 轴标签一致、不二次换算；所有点必须在同一个 \\addplot 内统一 anchor=south，禁止拆成多个 \\addplot 做交错标注（会被当成多系列导致柱位错乱）；12 多系列的每个 \\addplot 坐标数据互不相同，未把同一组坐标复制成两个系列；13 直方图/分布图用 ybar 柱状图呈现，未画成填充面积或平滑曲线；14 显式写了 ymax 时其值 ≥ 数据最大值并留有余量，未出现柱子/数据点被顶端裁掉；15 所有文本参数里的 % 都已写成 \\%，不存在裸 %；16 饼图未使用 axis 环境、整图只画一次，标签与图例只用一种方式；17 X 轴分类标签：symbolic 分类数 ≥ 6 或分类名较长（≥ 4 字）时，已写 x tick label style={font=\\scriptsize, rotate=30, anchor=east} 让底排标签旋转避免重叠，且未写 rotate=0 这类等于不旋转的错误写法。
+1 无任何文档脚手架与 \\usepackage；2 无 figure/caption/\\ref；3 每个含数据点的 addplot 都配 nodes near coords 与 every node near coord/.append style；4 数值单位与量级一致；5 图例不遮挡数据；6 数据来源注记写在 \\end{axis} 之后（仍在 tikzpicture 内）并用 (current bounding box.south west) 定位，未使用 axis description cs；7 symbolic x coords 列表全用英文半角逗号分隔；8 多系列折线每个系列的 nodes near coords 已按 y 值大小分上下侧（anchor=south / anchor=north）错开；9 enlarge x limits 只能写比例形式 0.15，禁止 abs 形式（{abs=X}、{abs=N*0.15} 等一律不允许）；10 百分比堆叠柱必须写 ymin=0, ymax=100 且用 point meta=explicit symbolic + (x,y)[label] 方括号语法标注各层原始值；11 密集柱状图（分类≥10 或长数字且相邻值接近）用 point meta=explicit symbolic 把 [label] 缩写到 2–4 字符、坐标 y 值仍写真实值，缩写单位与 Y 轴标签一致、不二次换算；所有点必须在同一个 \\addplot 内统一 anchor=south，禁止拆成多个 \\addplot 做交错标注（会被当成多系列导致柱位错乱）；12 多系列的每个 \\addplot 坐标数据互不相同，未把同一组坐标复制成两个系列；13 直方图/分布图用 ybar 柱状图呈现，未画成填充面积或平滑曲线；14 显式写了 ymax 时其值 ≥ 数据最大值并留有余量，未出现柱子/数据点被顶端裁掉；15 所有文本参数里的 % 都已写成 \\%，不存在裸 %；16 饼图未使用 axis 环境、整图只画一次，标签与图例只用一种方式；17 X 轴分类标签：symbolic 分类数 ≥ 6 或分类名较长（≥ 4 字）时，已写 x tick label style={font=\\scriptsize, rotate=30, anchor=east} 让底排标签旋转避免重叠，且未写 rotate=0 这类等于不旋转的错误写法；18 水平条形图（xbar）的坐标一律写成 (数值, 分类)；19 正负值都在同一个 \\addplot 内（若用双色方案，则两个 addplot 的 symbolic x coords 完全相同且都带 bar shift=0pt）；20 所有颜色名都是 xcolor 已定义的写法（基础色或「基色+感叹号数字」混合），没有 CSS 风格小写色名。
 
 如果用户上传的是 Excel/CSV 文件，我先将文件内容解析为表格格式提供给你。你需要：分析数据结构和内容 → 根据数据特点选择合适的图表类型 → 使用实际数据替换示例数据 → 设置合适的坐标轴标签、标题与图例。
 若用户未提供数据文件：需求模糊时（如只说「折线图」）可自拟一组示意数据；需求指明了明确主题与口径时（如「近五年 GDP」），必须使用你已掌握的权威公开统计数据，并在图内注明年份与数据来源，不得编造。

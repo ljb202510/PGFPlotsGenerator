@@ -1,0 +1,440 @@
+[INFO] ä½¿ç”¨ JDK: C:\Program Files\Microsoft\jdk-21.0.2.13-hotspot
+[INFO] é…ç½®ï¼šè‡ªåŠ¨å¤ç”¨ ..\backend\.envï¼ˆè‹¥å­˜åœ¨ï¼‰
+[INFO] æ‰§è¡Œ mvn spring-boot:run ...ï¼ˆç«¯å£ 3000ï¼‰
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------< com.pg:pgfplots-backend >-----------------------
+[INFO] Building pgfplots-backend 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.2.12:run (default-cli) > test-compile @ pgfplots-backend >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ pgfplots-backend ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 6 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ pgfplots-backend ---
+[INFO] Changes detected - recompiling the module! :input tree
+[INFO] Compiling 108 source files with javac [debug release 17] to target\classes
+[INFO] ÓÉÓÚÔÚÀàÂ·¾¶ÖĞ·¢ÏÖÁËÒ»¸ö»ò¶à¸ö´¦Àí³ÌĞò£¬Òò´ËÆôÓÃÁË
+  Åú×¢´¦Àí¡£Î´À´·¢ĞĞ°æµÄ javac ¿ÉÄÜ»á½ûÓÃÅú×¢´¦Àí£¬
+  ³ı·ÇÖÁÉÙ°´Ãû³ÆÖ¸¶¨ÁËÒ»¸ö´¦Àí³ÌĞò (-processor)£¬
+  »òÖ¸¶¨ÁËËÑË÷Â·¾¶ (--processor-path, --processor-module-path)£¬
+  »òÏÔÊ½ÆôÓÃÁËÅú×¢´¦Àí (-proc:only, -proc:full)¡£
+  ¿ÉÊ¹ÓÃ -Xlint:-options Òş²Ø´ËÏûÏ¢¡£
+  ¿ÉÊ¹ÓÃ -proc:none ½ûÓÃÅú×¢´¦Àí¡£
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ pgfplots-backend ---
+[INFO] skip non existing resourceDirectory c:\Users\27710\Desktop\v2\PG\hello\spring-backend\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ pgfplots-backend ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 5 source files with javac [debug release 17] to target\test-classes
+[INFO] ÓÉÓÚÔÚÀàÂ·¾¶ÖĞ·¢ÏÖÁËÒ»¸ö»ò¶à¸ö´¦Àí³ÌĞò£¬Òò´ËÆôÓÃÁË
+  Åú×¢´¦Àí¡£Î´À´·¢ĞĞ°æµÄ javac ¿ÉÄÜ»á½ûÓÃÅú×¢´¦Àí£¬
+  ³ı·ÇÖÁÉÙ°´Ãû³ÆÖ¸¶¨ÁËÒ»¸ö´¦Àí³ÌĞò (-processor)£¬
+  »òÖ¸¶¨ÁËËÑË÷Â·¾¶ (--processor-path, --processor-module-path)£¬
+  »òÏÔÊ½ÆôÓÃÁËÅú×¢´¦Àí (-proc:only, -proc:full)¡£
+  ¿ÉÊ¹ÓÃ -Xlint:-options Òş²Ø´ËÏûÏ¢¡£
+  ¿ÉÊ¹ÓÃ -proc:none ½ûÓÃÅú×¢´¦Àí¡£
+[INFO] 
+[INFO] <<< spring-boot:3.2.12:run (default-cli) < test-compile @ pgfplots-backend <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.2.12:run (default-cli) @ pgfplots-backend ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::               (v3.2.12)
+
+2026-09-16T13:24:22.817+08:00  INFO 70976 --- [pgfplots-backend] [           main] com.pg.pgfplots.PgApplication            : Starting PgApplication using Java 21.0.2 with PID 70976 (C:\Users\27710\Desktop\v2\PG\hello\spring-backend\target\classes started by 27710 in c:\Users\27710\Desktop\v2\PG\hello\spring-backend)
+2026-09-16T13:24:22.820+08:00  INFO 70976 --- [pgfplots-backend] [           main] com.pg.pgfplots.PgApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-09-16T13:24:24.189+08:00  INFO 70976 --- [pgfplots-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 3000 (http)
+2026-09-16T13:24:24.214+08:00  INFO 70976 --- [pgfplots-backend] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-16T13:24:24.214+08:00  INFO 70976 --- [pgfplots-backend] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.33]
+2026-09-16T13:24:24.278+08:00  INFO 70976 --- [pgfplots-backend] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-09-16T13:24:24.278+08:00  INFO 70976 --- [pgfplots-backend] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1370 ms
+ _ _   |_  _ _|_. ___ _ |    _ 
+| | |\/|_)(_| | |_\  |_)||_|_\ 
+     /               |         
+                        3.5.5 
+2026-09-16T13:24:25.220+08:00  WARN 70976 --- [pgfplots-backend] [           main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: abbac7e1-2a3e-4844-aa37-028c3bf13ae5
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-09-16T13:24:25.487+08:00  INFO 70976 --- [pgfplots-backend] [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@48a46b0f, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1426370c, org.springframework.security.web.context.SecurityContextHolderFilter@4cd7d5e1, org.springframework.security.web.header.HeaderWriterFilter@4522d793, org.springframework.web.filter.CorsFilter@9f9146d, org.springframework.security.web.authentication.logout.LogoutFilter@7b44bfb8, com.pg.pgfplots.security.JwtAuthenticationFilter@4d0cc83e, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@46b6701e, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@78318ac2, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2ef041bb, org.springframework.security.web.session.SessionManagementFilter@113eed88, org.springframework.security.web.access.ExceptionTranslationFilter@37c2f0b4, org.springframework.security.web.access.intercept.AuthorizationFilter@6f867b0c]
+2026-09-16T13:24:25.708+08:00  INFO 70976 --- [pgfplots-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 3000 (http) with context path ''
+2026-09-16T13:24:25.708+08:00  INFO 70976 --- [pgfplots-backend] [           main] com.pg.pgfplots.PgApplication            : Started PgApplication in 3.388 seconds (process running for 3.725)
+2026-09-16T13:24:25.717+08:00  INFO 70976 --- [pgfplots-backend] [           main] com.pg.pgfplots.config.WebConfig         : ¹¤×÷Ä¿Â¼: c:\Users\27710\Desktop\v2\PG\hello\spring-backend
+2026-09-16T13:24:25.717+08:00  INFO 70976 --- [pgfplots-backend] [           main] com.pg.pgfplots.config.WebConfig         : uploads Ä¿Â¼ : c:\Users\27710\Desktop\v2\PG\hello\spring-backend\..\data\uploads
+2026-09-16T13:24:25.717+08:00  INFO 70976 --- [pgfplots-backend] [           main] com.pg.pgfplots.config.WebConfig         : history Ä¿Â¼ : c:\Users\27710\Desktop\v2\PG\hello\spring-backend\..\data\storage\history
+2026-09-16T13:24:25.717+08:00  INFO 70976 --- [pgfplots-backend] [           main] com.pg.pgfplots.config.WebConfig         : charts  Ä¿Â¼ : c:\Users\27710\Desktop\v2\PG\hello\spring-backend\..\data\storage\generated_charts
+2026-09-16T13:24:25.717+08:00  INFO 70976 --- [pgfplots-backend] [           main] com.pg.pgfplots.config.WebConfig         : debug   Ä¿Â¼ : c:\Users\27710\Desktop\v2\PG\hello\spring-backend\..\data\storage\debug
+2026-09-16T13:24:25.717+08:00  INFO 70976 --- [pgfplots-backend] [           main] com.pg.pgfplots.config.WebConfig         : generation_path ½âÎö»ù×¼: c:\Users\27710\Desktop\v2\PG\hello\spring-backend\..
+2026-09-16T13:25:14.236+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-16T13:25:14.236+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-16T13:25:14.236+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2026-09-16T13:25:14.370+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-09-16T13:25:14.520+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@12a70c1c
+2026-09-16T13:25:14.527+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-09-16T13:25:22.023+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 2 Ìõ£¨user=17£©
+2026-09-16T13:25:28.623+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [156]
+2026-09-16T13:25:28.630+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 892
+2026-09-16T13:25:28.638+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 507
+2026-09-16T13:25:28.641+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\507.json
+2026-09-16T13:25:28.647+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 705
+2026-09-16T13:25:28.717+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536328715_2868 historyId=507 user=17
+2026-09-16T13:25:28.725+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536328715_2868 Ê£ÓàĞí¿É=1
+2026-09-16T13:25:28.904+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=507 user=17 dataSource=dataset
+2026-09-16T13:25:31.116+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536328715_2868 durationMs=2390
+2026-09-16T13:25:31.986+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 1 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:25:31.990+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 3 Ìõ£¨user=17£©
+2026-09-16T13:25:36.370+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [157]
+2026-09-16T13:25:36.375+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 667
+2026-09-16T13:25:36.429+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 508
+2026-09-16T13:25:36.432+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\508.json
+2026-09-16T13:25:36.437+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 706
+2026-09-16T13:25:36.449+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536336446_26748 historyId=508 user=17
+2026-09-16T13:25:36.449+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536336446_26748 Ê£ÓàĞí¿É=1
+2026-09-16T13:25:36.676+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=508 user=17 dataSource=dataset
+2026-09-16T13:25:38.529+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536336446_26748 durationMs=2082
+2026-09-16T13:25:39.759+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 2 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:25:39.773+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 4 Ìõ£¨user=17£©
+2026-09-16T13:25:42.730+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [158]
+2026-09-16T13:25:42.736+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 303
+2026-09-16T13:25:42.760+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 509
+2026-09-16T13:25:42.769+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\509.json
+2026-09-16T13:25:42.771+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 707
+2026-09-16T13:25:42.779+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-8] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536342779_43581 historyId=509 user=17
+2026-09-16T13:25:42.779+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536342779_43581 Ê£ÓàĞí¿É=1
+2026-09-16T13:25:42.944+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=509 user=17 dataSource=dataset
+2026-09-16T13:25:44.880+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536342779_43581 durationMs=2097
+2026-09-16T13:25:46.096+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 3 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:25:46.105+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:26:06.185+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [159]
+2026-09-16T13:26:06.190+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 762
+2026-09-16T13:26:06.278+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 510
+2026-09-16T13:26:06.278+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\510.json
+2026-09-16T13:26:06.285+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 708
+2026-09-16T13:26:06.285+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536366285_67076 historyId=510 user=17
+2026-09-16T13:26:06.285+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536366285_67076 Ê£ÓàĞí¿É=1
+2026-09-16T13:26:06.518+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=510 user=17 dataSource=dataset
+2026-09-16T13:26:08.376+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536366285_67076 durationMs=2084
+2026-09-16T13:26:09.550+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 4 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:26:09.559+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:26:15.227+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [160]
+2026-09-16T13:26:15.227+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 871
+2026-09-16T13:26:15.261+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 511
+2026-09-16T13:26:15.267+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\511.json
+2026-09-16T13:26:15.267+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 709
+2026-09-16T13:26:15.277+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536375277_83399 historyId=511 user=17
+2026-09-16T13:26:15.277+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536375277_83399 Ê£ÓàĞí¿É=1
+2026-09-16T13:26:15.417+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=511 user=17 dataSource=dataset
+2026-09-16T13:26:17.333+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536375277_83399 durationMs=2055
+2026-09-16T13:26:18.509+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 5 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:26:18.516+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 4 Ìõ£¨user=17£©
+2026-09-16T13:26:26.371+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [161]
+2026-09-16T13:26:26.371+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 1156
+2026-09-16T13:26:26.407+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 512
+2026-09-16T13:26:26.407+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\512.json
+2026-09-16T13:26:26.407+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 710
+2026-09-16T13:26:26.420+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536386420_22924 historyId=512 user=17
+2026-09-16T13:26:26.420+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536386420_22924 Ê£ÓàĞí¿É=1
+2026-09-16T13:26:26.553+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=512 user=17 dataSource=dataset
+2026-09-16T13:26:28.571+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536386420_22924 durationMs=2151
+2026-09-16T13:26:29.681+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 6 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:26:29.685+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:26:33.709+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [162]
+2026-09-16T13:26:33.709+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 1437
+2026-09-16T13:26:33.744+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 513
+2026-09-16T13:26:33.744+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\513.json
+2026-09-16T13:26:33.750+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 711
+2026-09-16T13:26:33.754+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536393754_54683 historyId=513 user=17
+2026-09-16T13:26:33.754+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536393754_54683 Ê£ÓàĞí¿É=1
+2026-09-16T13:26:33.950+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=513 user=17 dataSource=dataset
+2026-09-16T13:26:35.913+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536393754_54683 durationMs=2158
+2026-09-16T13:26:37.165+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 7 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:26:37.171+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:26:55.104+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [163]
+2026-09-16T13:26:55.108+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 699
+2026-09-16T13:26:55.137+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 514
+2026-09-16T13:26:55.137+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\514.json
+2026-09-16T13:26:55.137+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 712
+2026-09-16T13:26:55.147+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-8] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536415147_31023 historyId=514 user=17
+2026-09-16T13:26:55.147+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536415147_31023 Ê£ÓàĞí¿É=1
+2026-09-16T13:26:55.287+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=514 user=17 dataSource=dataset
+2026-09-16T13:26:57.394+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536415147_31023 durationMs=2245
+2026-09-16T13:26:58.348+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 8 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:26:58.359+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:27:03.302+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: ÎŞ
+2026-09-16T13:27:03.302+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 691
+2026-09-16T13:27:03.335+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 515
+2026-09-16T13:27:03.338+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\515.json
+2026-09-16T13:27:03.338+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 713
+2026-09-16T13:27:03.345+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536423345_91287 historyId=515 user=17
+2026-09-16T13:27:03.345+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536423345_91287 Ê£ÓàĞí¿É=1
+2026-09-16T13:27:03.552+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=515 user=17 dataSource=no-dataset
+2026-09-16T13:27:05.455+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536423345_91287 durationMs=2110
+2026-09-16T13:27:06.643+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 9 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:27:06.652+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 3 Ìõ£¨user=17£©
+2026-09-16T13:27:11.583+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: ÎŞ
+2026-09-16T13:27:11.583+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 689
+2026-09-16T13:27:11.616+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 516
+2026-09-16T13:27:11.616+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\516.json
+2026-09-16T13:27:11.616+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 714
+2026-09-16T13:27:11.626+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-8] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536431626_6853 historyId=516 user=17
+2026-09-16T13:27:11.626+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536431626_6853 Ê£ÓàĞí¿É=1
+2026-09-16T13:27:11.867+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=516 user=17 dataSource=no-dataset
+2026-09-16T13:27:13.786+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536431626_6853 durationMs=2167
+2026-09-16T13:27:14.872+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 10 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:27:14.878+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 3 Ìõ£¨user=17£©
+2026-09-16T13:27:21.946+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [164]
+2026-09-16T13:27:21.951+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 1011
+2026-09-16T13:27:21.978+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 517
+2026-09-16T13:27:21.984+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\517.json
+2026-09-16T13:27:21.987+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 715
+2026-09-16T13:27:21.994+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536441994_97010 historyId=517 user=17
+2026-09-16T13:27:21.994+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536441994_97010 Ê£ÓàĞí¿É=1
+2026-09-16T13:27:22.168+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=517 user=17 dataSource=dataset
+2026-09-16T13:27:24.071+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536441994_97010 durationMs=2080
+2026-09-16T13:27:25.241+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 11 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:27:25.241+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 4 Ìõ£¨user=17£©
+2026-09-16T13:27:36.078+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [165]
+2026-09-16T13:27:36.080+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 813
+2026-09-16T13:27:36.111+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 518
+2026-09-16T13:27:36.113+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\518.json
+2026-09-16T13:27:36.116+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 716
+2026-09-16T13:27:36.123+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536456123_5200 Ê£ÓàĞí¿É=1
+2026-09-16T13:27:36.123+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536456123_5200 historyId=518 user=17
+2026-09-16T13:27:36.284+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=518 user=17 dataSource=dataset
+2026-09-16T13:27:38.514+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536456123_5200 durationMs=2393
+2026-09-16T13:27:39.338+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 12 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:27:39.342+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:27:43.539+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [166]
+2026-09-16T13:27:43.539+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 557
+2026-09-16T13:27:43.572+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 519
+2026-09-16T13:27:43.572+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\519.json
+2026-09-16T13:27:43.572+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 717
+2026-09-16T13:27:43.584+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536463584_36026 historyId=519 user=17
+2026-09-16T13:27:43.584+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536463584_36026 Ê£ÓàĞí¿É=1
+2026-09-16T13:27:43.779+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=519 user=17 dataSource=dataset
+2026-09-16T13:27:45.676+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536463584_36026 durationMs=2097
+2026-09-16T13:27:46.880+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 13 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:27:46.887+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:27:52.106+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [167]
+2026-09-16T13:27:52.108+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 769
+2026-09-16T13:27:52.127+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 520
+2026-09-16T13:27:52.127+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\520.json
+2026-09-16T13:27:52.133+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 718
+2026-09-16T13:27:52.138+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536472138_79316 historyId=520 user=17
+2026-09-16T13:27:52.138+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536472138_79316 Ê£ÓàĞí¿É=1
+2026-09-16T13:27:52.272+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=520 user=17 dataSource=dataset
+2026-09-16T13:27:54.379+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536472138_79316 durationMs=2239
+2026-09-16T13:27:55.386+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 14 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:27:55.393+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 4 Ìõ£¨user=17£©
+2026-09-16T13:27:59.017+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [168]
+2026-09-16T13:27:59.017+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 1002
+2026-09-16T13:27:59.027+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 521
+2026-09-16T13:27:59.031+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\521.json
+2026-09-16T13:27:59.038+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 719
+2026-09-16T13:27:59.045+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536479045_63973 Ê£ÓàĞí¿É=1
+2026-09-16T13:27:59.045+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-8] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536479045_63973 historyId=521 user=17
+2026-09-16T13:27:59.193+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=521 user=17 dataSource=dataset
+2026-09-16T13:28:01.190+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536479045_63973 durationMs=2147
+2026-09-16T13:28:02.305+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 15 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:28:02.322+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 4 Ìõ£¨user=17£©
+2026-09-16T13:28:08.816+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [169]
+2026-09-16T13:28:08.817+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 931
+2026-09-16T13:28:08.849+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 522
+2026-09-16T13:28:08.850+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\522.json
+2026-09-16T13:28:08.853+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 720
+2026-09-16T13:28:08.860+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536488860_11323 historyId=522 user=17
+2026-09-16T13:28:08.860+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536488860_11323 Ê£ÓàĞí¿É=1
+2026-09-16T13:28:09.050+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=522 user=17 dataSource=dataset
+2026-09-16T13:28:10.997+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536488860_11323 durationMs=2137
+2026-09-16T13:28:12.183+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 16 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:28:12.191+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 4 Ìõ£¨user=17£©
+2026-09-16T13:28:21.172+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [170]
+2026-09-16T13:28:21.172+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 1637
+2026-09-16T13:28:21.205+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 523
+2026-09-16T13:28:21.205+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\523.json
+2026-09-16T13:28:21.205+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 721
+2026-09-16T13:28:21.215+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536501215_59349 historyId=523 user=17
+2026-09-16T13:28:21.215+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536501215_59349 Ê£ÓàĞí¿É=1
+2026-09-16T13:28:21.455+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=523 user=17 dataSource=dataset
+2026-09-16T13:28:23.348+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536501215_59349 durationMs=2134
+2026-09-16T13:28:24.443+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 17 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:28:24.447+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:28:34.025+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [163]
+2026-09-16T13:28:34.028+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 688
+2026-09-16T13:28:34.059+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 524
+2026-09-16T13:28:34.061+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\524.json
+2026-09-16T13:28:34.065+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 722
+2026-09-16T13:28:34.065+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536514065_26002 historyId=524 user=17
+2026-09-16T13:28:34.065+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536514065_26002 Ê£ÓàĞí¿É=1
+2026-09-16T13:28:34.309+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=524 user=17 dataSource=dataset
+2026-09-16T13:28:36.174+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536514065_26002 durationMs=2105
+2026-09-16T13:28:37.238+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 18 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:28:37.251+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:28:41.787+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [157]
+2026-09-16T13:28:41.791+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 659
+2026-09-16T13:28:41.797+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 525
+2026-09-16T13:28:41.797+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\525.json
+2026-09-16T13:28:41.803+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-9] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 723
+2026-09-16T13:28:41.808+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536521808_76855 Ê£ÓàĞí¿É=1
+2026-09-16T13:28:41.808+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536521808_76855 historyId=525 user=17
+2026-09-16T13:28:41.959+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=525 user=17 dataSource=dataset
+2026-09-16T13:28:44.680+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536521808_76855 durationMs=2879
+2026-09-16T13:28:45.036+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 19 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:28:45.044+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:28:51.345+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [156]
+2026-09-16T13:28:51.347+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 916
+2026-09-16T13:28:51.375+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 526
+2026-09-16T13:28:51.375+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\526.json
+2026-09-16T13:28:51.384+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 724
+2026-09-16T13:28:51.391+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536531391_88643 historyId=526 user=17
+2026-09-16T13:28:51.391+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536531391_88643 Ê£ÓàĞí¿É=1
+2026-09-16T13:28:51.592+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=526 user=17 dataSource=dataset
+2026-09-16T13:28:53.769+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536531391_88643 durationMs=2379
+2026-09-16T13:28:54.624+08:00  WARN 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 20 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:28:54.630+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:28:59.221+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [171]
+2026-09-16T13:28:59.221+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 704
+2026-09-16T13:28:59.221+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 527
+2026-09-16T13:28:59.232+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\527.json
+2026-09-16T13:28:59.232+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 725
+2026-09-16T13:28:59.238+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536539238_50147 historyId=527 user=17
+2026-09-16T13:28:59.238+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536539238_50147 Ê£ÓàĞí¿É=1
+2026-09-16T13:28:59.399+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=527 user=17 dataSource=dataset
+2026-09-16T13:29:01.645+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536539238_50147 durationMs=2411
+2026-09-16T13:29:02.544+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 21 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:29:02.554+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 4 Ìõ£¨user=17£©
+2026-09-16T13:29:05.783+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [156]
+2026-09-16T13:29:05.783+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 916
+2026-09-16T13:29:05.783+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 528
+2026-09-16T13:29:05.783+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\528.json
+2026-09-16T13:29:05.793+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 726
+2026-09-16T13:29:05.800+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536545800_77602 historyId=528 user=17
+2026-09-16T13:29:05.800+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536545800_77602 Ê£ÓàĞí¿É=1
+2026-09-16T13:29:05.967+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=528 user=17 dataSource=dataset
+2026-09-16T13:29:07.947+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536545800_77602 durationMs=2149
+2026-09-16T13:29:09.039+08:00  WARN 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 22 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:29:09.049+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 4 Ìõ£¨user=17£©
+2026-09-16T13:29:29.025+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [159]
+2026-09-16T13:29:29.029+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 762
+2026-09-16T13:29:29.034+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 529
+2026-09-16T13:29:29.034+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\529.json
+2026-09-16T13:29:29.041+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 727
+2026-09-16T13:29:29.051+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536569051_57535 historyId=529 user=17
+2026-09-16T13:29:29.051+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536569051_57535 Ê£ÓàĞí¿É=1
+2026-09-16T13:29:29.228+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=529 user=17 dataSource=dataset
+2026-09-16T13:29:31.161+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536569051_57535 durationMs=2108
+2026-09-16T13:29:32.264+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 23 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:29:32.274+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:29:38.525+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [172]
+2026-09-16T13:29:38.525+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 879
+2026-09-16T13:29:38.525+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 530
+2026-09-16T13:29:38.533+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\530.json
+2026-09-16T13:29:38.536+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 728
+2026-09-16T13:29:38.542+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536578542_49165 historyId=530 user=17
+2026-09-16T13:29:38.542+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536578542_49165 Ê£ÓàĞí¿É=1
+2026-09-16T13:29:38.680+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=530 user=17 dataSource=dataset
+2026-09-16T13:29:40.788+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536578542_49165 durationMs=2245
+2026-09-16T13:29:41.783+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 24 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:29:41.797+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 4 Ìõ£¨user=17£©
+2026-09-16T13:29:46.699+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [173]
+2026-09-16T13:29:46.705+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 1295
+2026-09-16T13:29:46.705+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 531
+2026-09-16T13:29:46.712+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\531.json
+2026-09-16T13:29:46.715+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-4] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 729
+2026-09-16T13:29:46.718+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536586718_48100 historyId=531 user=17
+2026-09-16T13:29:46.718+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536586718_48100 Ê£ÓàĞí¿É=1
+2026-09-16T13:29:46.848+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=531 user=17 dataSource=dataset
+2026-09-16T13:29:48.943+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536586718_48100 durationMs=2225
+2026-09-16T13:29:49.995+08:00  WARN 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 25 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:29:50.010+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:29:58.193+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [174]
+2026-09-16T13:29:58.193+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 1214
+2026-09-16T13:29:58.212+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 532
+2026-09-16T13:29:58.212+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\532.json
+2026-09-16T13:29:58.212+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 730
+2026-09-16T13:29:58.212+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536598212_82670 historyId=532 user=17
+2026-09-16T13:29:58.212+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536598212_82670 Ê£ÓàĞí¿É=1
+2026-09-16T13:29:58.369+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=532 user=17 dataSource=dataset
+2026-09-16T13:30:00.680+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536598212_82670 durationMs=2463
+2026-09-16T13:30:01.458+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 26 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:30:01.465+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:30:16.945+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [175]
+2026-09-16T13:30:16.945+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 622
+2026-09-16T13:30:16.975+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 533
+2026-09-16T13:30:16.980+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\533.json
+2026-09-16T13:30:16.980+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 731
+2026-09-16T13:30:16.985+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-7] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536616985_7237 historyId=533 user=17
+2026-09-16T13:30:16.985+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536616985_7237 Ê£ÓàĞí¿É=1
+2026-09-16T13:30:17.119+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=533 user=17 dataSource=dataset
+2026-09-16T13:30:18.978+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536616985_7237 durationMs=1991
+2026-09-16T13:30:20.235+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 27 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:30:20.245+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:30:26.726+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [176]
+2026-09-16T13:30:26.726+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 1030
+2026-09-16T13:30:26.759+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 534
+2026-09-16T13:30:26.759+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\534.json
+2026-09-16T13:30:26.759+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 732
+2026-09-16T13:30:26.769+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-5] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536626769_38011 historyId=534 user=17
+2026-09-16T13:30:26.769+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536626769_38011 Ê£ÓàĞí¿É=1
+2026-09-16T13:30:26.926+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=534 user=17 dataSource=dataset
+2026-09-16T13:30:28.849+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536626769_38011 durationMs=2082
+2026-09-16T13:30:30.000+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-8] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 28 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:30:30.010+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-8] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:30:50.652+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-8] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [177]
+2026-09-16T13:30:50.652+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-8] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 810
+2026-09-16T13:30:50.657+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-8] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 535
+2026-09-16T13:30:50.657+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-8] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\535.json
+2026-09-16T13:30:50.662+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-8] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 733
+2026-09-16T13:30:50.662+08:00  INFO 70976 --- [pgfplots-backend] [io-3000-exec-10] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536650662_32751 historyId=535 user=17
+2026-09-16T13:30:50.662+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536650662_32751 Ê£ÓàĞí¿É=1
+2026-09-16T13:30:50.868+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=535 user=17 dataSource=dataset
+2026-09-16T13:30:52.774+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536650662_32751 durationMs=2107
+2026-09-16T13:30:54.000+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 29 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:30:54.007+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:31:00.037+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [178]
+2026-09-16T13:31:00.037+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 984
+2026-09-16T13:31:00.067+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 536
+2026-09-16T13:31:00.067+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\536.json
+2026-09-16T13:31:00.072+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-3] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 734
+2026-09-16T13:31:00.078+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-6] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536660078_57570 historyId=536 user=17
+2026-09-16T13:31:00.078+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536660078_57570 Ê£ÓàĞí¿É=1
+2026-09-16T13:31:00.241+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=536 user=17 dataSource=dataset
+2026-09-16T13:31:02.276+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536660078_57570 durationMs=2196
+2026-09-16T13:31:03.327+08:00  WARN 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.rag.Retriever    : [RAG] °´µÈ¼¶ verified ¹ıÂËºóÀúÊ··ÖÇøÎª 0 Ìõ£¨Ô­Ê¼ 30 Ìõ£©£¬ÒÑ»ØÍËÎª²»¹ıÂË
+2026-09-16T13:31:03.328+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÕÙ»Ø 5 Ìõ£¨user=17£©
+2026-09-16T13:31:07.899+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ÓÃ»§ 17 µ÷ÓÃÁË Qwen API£¬¸½´øÊı¾İ¼¯: [179]
+2026-09-16T13:31:07.899+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? ±£´æÍ¼±í´úÂë£¬³¤¶È: 750
+2026-09-16T13:31:07.937+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½Êı¾İ¿â£¬ID: 537
+2026-09-16T13:31:07.937+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? ÀúÊ·¼ÇÂ¼ÒÑ±£´æµ½ÎÄ¼şÏµÍ³: c:\Users\27710\Desktop\v2\PG\hello\data\storage\history\17\537.json
+2026-09-16T13:31:07.941+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-1] com.pg.pgfplots.service.ChatService      : ? APIµ÷ÓÃÈÕÖ¾ÒÑ¼ÇÂ¼£¬call_id: 735
+2026-09-16T13:31:07.941+08:00  INFO 70976 --- [pgfplots-backend] [nio-3000-exec-2] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñÒÑÌá½» taskId=ct_1789536667941_53662 historyId=537 user=17
+2026-09-16T13:31:07.941+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] »ñµÃ±àÒëĞí¿É£¬¿ªÊ¼±àÒë taskId=ct_1789536667941_53662 Ê£ÓàĞí¿É=1
+2026-09-16T13:31:08.165+08:00  INFO 70976 --- [pgfplots-backend] [    rag-index-1] com.pg.pgfplots.service.rag.RagService   : [RAG] ÀúÊ·°¸ÀıÒÑË÷Òı£¨unverified£©historyId=537 user=17 dataSource=dataset
+2026-09-16T13:31:10.019+08:00  INFO 70976 --- [pgfplots-backend] [ compile-task-1] c.p.pgfplots.service.CompileTaskService  : [COMPILE] ÈÎÎñ³É¹¦ taskId=ct_1789536667941_53662 durationMs=2074
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  48:17 min
+[INFO] Finished at: 2026-09-16T14:12:31+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.2.12:run (default-cli) on project pgfplots-backend: Process terminated with exit code: 1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

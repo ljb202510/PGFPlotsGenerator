@@ -1,0 +1,19 @@
+{
+  "history_id" : 560,
+  "user_id" : 17,
+  "data_id" : 183,
+  "file_name" : "04-scatter-ad-sales.csv",
+  "dataset_name" : "04-scatter-ad-sales",
+  "user_input" : "请根据我上传的数据生成一张完整、规范的散点图，观察广告费用与销量之间的相关性；请确保图表包含完整的标题、坐标轴标签，并在图中给出必要说明（如相关关系）；每个数据点使用清晰的圆形标记。",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    title={广告费用与销量相关性散点图},\n    xlabel={广告费用（万元）},\n    ylabel={销量（件）},\n    xmin=0, xmax=32,\n    ymin=0, ymax=220,\n    xtick={5,10,15,20,25,30},\n    ytick={0,50,100,150,200},\n    grid=major,\n    width=10cm,\n    height=7cm,\n    only marks,\n    mark=*,\n    mark size=4pt,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    xticklabel style={font=\\small},\n    yticklabel style={font=\\small}\n]\n\\addplot coordinates {\n(5,42)\n(8,60)\n(10,75)\n(12,90)\n(15,105)\n(18,128)\n(20,140)\n(25,166)\n(28,188)\n(30,205)\n};\n\\end{axis}\n\\node[anchor=south west, font=\\scriptsize] at (current bounding box.south west) {数据来源：内部销售数据};\n\\node[anchor=south, font=\\scriptsize] at (current bounding box.south) {结论：广告费用与销量呈显著正相关};\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"scatter\",\n  \"code\": \"\\\\begin{tikzpicture}\\\\begin{axis}[\\\\n    title={广告费用与销量相关性散点图},\\\\n    xlabel={广告费用（万元）},\\\\n    ylabel={销量（件）},\\\\n    xmin=0, xmax=32,\\\\n    ymin=0, ymax=220,\\\\n    xtick={5,10,15,20,25,30},\\\\n    ytick={0,50,100,150,200},\\\\n    grid=major,\\\\n    width=10cm,\\\\n    height=7cm,\\\\n    only marks,\\\\n    mark=*,\\\\n    mark size=4pt,\\\\n    nodes near coords,\\\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\\\n    legend style={at={(1.03,0.5)}, anchor=west},\\\\n    xticklabel style={font=\\\\small},\\\\n    yticklabel style={font=\\\\small}\\\\n]\\\\n\\\\addplot coordinates {\\\\n(5,42)\\\\n(8,60)\\\\n(10,75)\\\\n(12,90)\\\\n(15,105)\\\\n(18,128)\\\\n(20,140)\\\\n(25,166)\\\\n(28,188)\\\\n(30,205)\\\\n};\\\\n\\\\end{axis}\\\\n\\\\node[anchor=south west, font=\\\\scriptsize] at (current bounding box.south west) {数据来源：内部销售数据};\\\\n\\\\node[anchor=south, font=\\\\scriptsize] at (current bounding box.south) {结论：广告费用与销量呈显著正相关};\\\\n\\\\end{tikzpicture}\",\n  \"summary\": \"广告费用与销量正相关散点图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\\begin{axis}[\n    title={广告费用与销量相关性散点图},\n    xlabel={广告费用（万元）},\n    ylabel={销量（件）},\n    xmin=0, xmax=32,\n    ymin=0, ymax=220,\n    xtick={5,10,15,20,25,30},\n    ytick={0,50,100,150,200},\n    grid=major,\n    width=10cm,\n    height=7cm,\n    only marks,\n    mark=*,\n    mark size=4pt,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    xticklabel style={font=\\small},\n    yticklabel style={font=\\small}\n]\n\\addplot coordinates {\n(5,42)\n(8,60)\n(10,75)\n(12,90)\n(15,105)\n(18,128)\n(20,140)\n(25,166)\n(28,188)\n(30,205)\n};\n\\end{axis}\n\\node[anchor=south west, font=\\scriptsize] at (current bounding box.south west) {数据来源：内部销售数据};\n\\node[anchor=south, font=\\scriptsize] at (current bounding box.south) {结论：广告费用与销量呈显著正相关};\n\\end{tikzpicture}",
+  "generation_description" : " 请根据我上传的数据生成一张完整、规范的散点图，观察广告费用与销量之间的相关性；请确保图表包含完整的标题、坐标轴标签，并在图中给出必要说明（如相关关系）；每个数据点使用清晰的圆形标记。",
+  "created_at" : "2026-09-16T05:44:43.892Z",
+  "metadata" : {
+    "data_ids" : [ 183 ],
+    "has_chart_code" : true,
+    "code_length" : 880,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

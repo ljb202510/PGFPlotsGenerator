@@ -1,0 +1,19 @@
+{
+  "history_id" : 573,
+  "user_id" : 4,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "直方图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=10cm,\n    height=6cm,\n    title={模拟数据：某班级成绩分数段人数分布},\n    xlabel={分数段},\n    ylabel={人数},\n    symbolic x coords={0-59, 60-69, 70-79, 80-89, 90-100},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    ymin=0,\n    ymax=25,\n    enlarge x limits=0.15\n]\n\\addplot[blue, fill=blue!20, thick, mark=*] coordinates {(0-59, 3) (60-69, 8) (70-79, 15) (80-89, 18) (90-100, 12)};\n\\end{axis}\n\\end{tikzpicture}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    ybar,\n    width=10cm,\n    height=6cm,\n    title={模拟数据：某班级成绩分数段人数分布},\n    xlabel={分数段},\n    ylabel={人数},\n    symbolic x coords={0-59, 60-69, 70-79, 80-89, 90-100},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west},\n    ymin=0,\n    ymax=25,\n    enlarge x limits=0.15\n]\n\\addplot[blue, fill=blue!20, thick, mark=*] coordinates {(0-59, 3) (60-69, 8) (70-79, 15) (80-89, 18) (90-100, 12)};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 直方图",
+  "created_at" : "2026-09-16T06:19:06.133Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 598,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

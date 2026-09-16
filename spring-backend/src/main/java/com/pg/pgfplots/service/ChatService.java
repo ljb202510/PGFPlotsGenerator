@@ -22,6 +22,7 @@ import com.pg.pgfplots.mapper.DataFileMapper;
 import com.pg.pgfplots.mapper.GenerationHistoryMapper;
 import com.pg.pgfplots.service.rag.RagService;
 import com.pg.pgfplots.util.ChartCodeExtractor;
+import com.pg.pgfplots.util.ChartCodeValidator;
 import com.pg.pgfplots.util.FileContentReader;
 import com.pg.pgfplots.util.PromptTemplates;
 import com.pg.pgfplots.util.StructuredOutputParser;
@@ -149,6 +150,15 @@ public class ChatService {
             finalChartCode = ChartCodeExtractor.extract(aiReply);
         }
 
+        // [语料治理] 提取兜底收紧：结果必须含 tikz 画布，否则视为提取失败。
+        // 根因：兜底提取过松，模型对「你是谁」这类非图表提问的闲聊回复也会被「提取」成代码，
+        // 进而落库并索引进 RAG 向量库、被当作 few-shot 范例反复喂回（history 27/28/30… 事故）。
+        // 放在此处（三条出口汇聚之后）而非提取器内部，是为了不影响 attemptOn 的纠正重试判定。
+        if (finalChartCode != null && !finalChartCode.trim().isEmpty()
+                && !ChartCodeValidator.hasTikzStructure(finalChartCode)) {
+            finalChartCode = null;
+        }
+
         // [E2] 生成链路走完但拿不到可编译代码 → 归为 CODE_EXTRACT_FAIL（单行落库，禁止双计）
         String errorType = (finalChartCode == null || finalChartCode.trim().isEmpty())
                 ? ErrorTypes.CODE_EXTRACT_FAIL : null;
@@ -169,7 +179,7 @@ public class ChatService {
         data.put("usage", usage);
         data.put("dataset_count", request.getDataIds() == null ? 0 : request.getDataIds().size());
         data.put("history_id", saved == null ? null : saved.historyId());
-        data.put("chart_code_length", finalChartCode.length());
+        data.put("chart_code_length", finalChartCode == null ? 0 : finalChartCode.length());
         // [批次3.5] 本次实际完成通道：与请求的 model 不同即表示发生过降级，供前端与评测自证
         data.put("model_used", usedModel);
         // [A3] 结构化输出可用时附加（为 null 时不放入，保持旧客户端兼容）
@@ -376,6 +386,13 @@ public class ChatService {
             if (finalChartCode.isEmpty() && aiResponse != null) {
                 finalChartCode = ChartCodeExtractor.extract(aiResponse);
             }
+            // [语料治理] 兜底提取结果同样必须含 tikz 画布，否则视为提取失败（不落库、不入向量索引）。
+            // 这里是第二条独立路径：即使调用方已判为 null，本方法仍会从 aiResponse 再提取一次，
+            // 若只改调用方，闲聊内容仍会经此路径落库并被索引（history 27/28/30… 事故根因之一）。
+            if (!finalChartCode.isEmpty() && !ChartCodeValidator.hasTikzStructure(finalChartCode)) {
+                log.warn("[CHAT] 兜底提取结果不含 tikz 画布，按提取失败处理（长度 {}）", finalChartCode.length());
+                finalChartCode = "";
+            }
             log.info("💾 保存图表代码，长度: {}", finalChartCode.length());
 
             GenerationHistory history = new GenerationHistory();
@@ -435,8 +452,10 @@ public class ChatService {
             log.info("✅ API调用日志已记录，call_id: {}", apiLog.getCallId());
 
             // [RAG] 异步索引历史成功案例（fire-and-forget，内部全吞异常，不阻断主流程）
-            if (historyId != null && finalChartCode != null && !finalChartCode.isEmpty()) {
-                ragService.indexHistoryAsync(userId, historyId, generationDescription, finalChartCode);
+            if (historyId != null && !finalChartCode.isEmpty()) {
+                // [语料治理] 只标「有无上传数据集」：无法区分「使用公开统计数据」与「模型自拟示意数据」
+                String dataSource = (dataIds == null || dataIds.isEmpty()) ? "no-dataset" : "dataset";
+                ragService.indexHistoryAsync(userId, historyId, generationDescription, finalChartCode, dataSource);
             }
 
             return new SavedHistory(historyId, apiLog.getCallId(), historyFile.toString(), finalChartCode.length());

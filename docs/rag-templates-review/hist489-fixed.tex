@@ -1,0 +1,43 @@
+\begin{tikzpicture}
+\begin{axis}[
+    ybar,
+    width=14cm,
+    height=8cm,
+    title={2023年部分省份/直辖市GDP对比},
+    ylabel={GDP（亿元）},
+    symbolic x coords={广东,江苏,山东,浙江,四川,河南,湖北,福建,湖南,上海,安徽,河北,北京,陕西},
+    xtick=data,
+    x tick label style={font=\scriptsize, rotate=45, anchor=east},
+    ymin=0,
+    ymax=150000,
+    scaled y ticks=false,
+    ytick={0,50000,100000,150000},
+    yticklabels={0,5万,10万,15万},
+    enlarge x limits=0.15,
+    nodes near coords,
+    every node near coord/.append style={font=\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},
+    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},
+    legend entries={GDP（亿元）},
+    point meta=explicit symbolic
+]
+\addplot[fill=blue!60, nodes near coords, point meta=explicit symbolic,
+    every node near coord/.append style={font=\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south}]
+    coordinates {
+        (广东,135673)[13.57万]
+        (江苏,128222)[12.82万]
+        (山东,92069)[9.21万]
+        (浙江,82553)[8.26万]
+        (四川,60132)[6.01万]
+        (河南,59132)[5.91万]
+        (湖北,55803)[5.58万]
+        (福建,54355)[5.44万]
+        (湖南,50012)[5.00万]
+        (上海,47218)[4.72万]
+        (安徽,47050)[4.71万]
+        (河北,43944)[4.39万]
+        (北京,43760)[4.38万]
+        (陕西,33786)[3.38万]
+    };
+\end{axis}
+\node[anchor=north west, font=\scriptsize] at (current bounding box.south west) {数据来源：2023年各省统计公报};
+\end{tikzpicture}

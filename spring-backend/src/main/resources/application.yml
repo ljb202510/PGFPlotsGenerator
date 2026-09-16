@@ -119,6 +119,10 @@ app:
     timeout-ms: ${RAG_TIMEOUT_MS:3000}
     history-limit: 500
     template-limit: 200
+    # [语料治理] 历史分区最低可召回等级：golden | verified | unverified。
+    # 默认 verified —— 只有「编译成功 且 静态零违例」的案例参与召回；未定级的天然不召回。
+    # 设为 unverified 即等价于「不过滤」，可用于一键回退；模板分区恒不受影响（全为 golden）。
+    min-quality: ${RAG_MIN_QUALITY:verified}
   embedding:
     api-key: ${EMBEDDING_API_KEY:}
     api-url: ${EMBEDDING_API_URL:https://api.siliconflow.cn/v1}

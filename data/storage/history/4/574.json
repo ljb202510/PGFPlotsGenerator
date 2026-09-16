@@ -1,0 +1,19 @@
+{
+  "history_id" : 574,
+  "user_id" : 4,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "饼图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\pie[\n    radius=3,\n    text=legend,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    sum=auto,\n    style={post},\n    label position=middle\n]{\n    35/产品A,\n    25/产品B,\n    20/产品C,\n    10/产品D,\n    10/其他\n}\n\\node[anchor=north, font=\\scriptsize] at (current bounding box.south) {数据来源：示意数据};\n\\end{tikzpicture}\n```\n```json\n{\n  \"chart_type\": \"pie\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\pie[\\n    radius=3,\\n    text=legend,\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\\n    sum=auto,\\n    style={post},\\n    label position=middle\\n]{\\n    35/产品A,\\n    25/产品B,\\n    20/产品C,\\n    10/产品D,\\n    10/其他\\n}\\n\\\\node[anchor=north, font=\\\\scriptsize] at (current bounding box.south) {数据来源：示意数据};\\n\\\\end{tikzpicture}\",\n  \"summary\": \"基于示意数据的五类占比饼图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\pie[\n    radius=3,\n    text=legend,\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white},\n    sum=auto,\n    style={post},\n    label position=middle\n]{\n    35/产品A,\n    25/产品B,\n    20/产品C,\n    10/产品D,\n    10/其他\n}\n\\node[anchor=north, font=\\scriptsize] at (current bounding box.south) {数据来源：示意数据};\n\\end{tikzpicture}",
+  "generation_description" : " 饼图",
+  "created_at" : "2026-09-16T06:19:11.120Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 351,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}
