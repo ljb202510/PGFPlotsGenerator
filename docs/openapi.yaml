@@ -1,21 +1,20 @@
 # PGFPlotsGenerator REST API 契约（OpenAPI 3.0）
 #
-# 范围：后端实际存在的主要接口（backend/app.js 挂载的 13 个前缀）。
-# 依据：2026-09-05 对 backend/routes/*.js 的逐文件核实，与 docs/architecture.md 一致。
+# 范围：spring-backend（Spring Boot，唯一后端）实际存在的 13 个路由前缀 / 55 个操作。
+# 依据：2026-09-18 对 spring-backend/src/main/java/com/pg/pgfplots/controller/ 逐文件核实（原 Node/Express 版已于 2026-09-13 退役删除）。
 # 说明：
-#   - 【Node 版】响应存在两种风格：{success, data?, message} 与 {code, message, data?}，下方如实标注。
-#   - 【Java 版 spring-backend（2026-09-13）】已统一为 {success, data, message}：
-#       * 原 {code,message,data}（notice、AdminNotice）与 {success,code,message,data}（AdminUser）均收敛；
-#       * 登录/注册的 user、token 由顶层移入 data；validate 的用户信息在 data.user；
-#       * 数据集上传/更新统一返回 DatasetVO；反馈列表 data 由数组改为 {records, pagination}。
-#     使用 Java 后端时，下方示例中 code 风格字段可按上述规则理解（详见 spring-backend/README.md）。
+#   - 所有 JSON 响应统一为 {success, data, message}（common/Result.java）；HTTP 状态码语义保留 400/401/403/404/429/500/502。
+#   - 登录/注册的 user、token 在 data 内；validate 的用户信息在 data.user；
+#     数据集上传/更新统一返回 DatasetVO；用户反馈列表 data 为 {records, pagination}。
+#   - /api/auth 的 register/login/admin-login 与 /api/verification/* 免 token；其余默认需 Bearer JWT。
+#   - /api/admin/** 由 SecurityConfig 统一要求 ADMIN 角色（角色查库装配）；反馈管理员接口另加 @PreAuthorize 双校验。
+#   - 编译为异步任务契约：POST /api/compile/{history_id} 立即返回 task_id，GET /api/compile/task/{task_id} 轮询终态。
 #   - 未实现的接口（如 /api/chat/fix、/api/compile 的 body.code 覆盖）不在此列。
-#   - /api/admin/* 四个模块在 Node 与 Java 两版均强制 Bearer + 管理员角色（服务端强制）。
 openapi: 3.0.3
 info:
   title: PGFPlotsGenerator API
   description: '智能图表生成系统后端接口。除标注外均需 `Authorization: Bearer <token>`。'
-  version: "1.0"
+  version: "1.1"
   contact:
     name: PGFPlotsGenerator
 servers:
@@ -235,8 +234,9 @@ paths:
                 model:
                   type: string
                   description: >-
-                    生成通道。qwen=Qwen3.5(NSCC，主通道)；siliconflow=GLM-4.9(硅基流动，降级链第二层)；
-                    deepseek=deepseek-v4-flash(当前已停用，选中会返回 400)。缺省或未知值回落 qwen。
+                    生成通道。qwen=Qwen3.5(NSCC，主通道)；siliconflow=THUDM/GLM-4-9B-0414(硅基流动，降级链第二层)；
+                    deepseek=deepseek-v4-flash(降级链第三层)。缺省或未知值回落 qwen。
+                    通道可用性由 `*_ENABLED` 开关驱动：`false` 的通道不可选为主模型(返回 400)且在降级链中整层跳过。
                     主通道失败时按固定优先级 qwen → siliconflow → deepseek 接力，到链尾即止不回绕。
                   enum: [qwen, siliconflow, deepseek]
                   default: qwen
@@ -481,13 +481,13 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: 成功（code 风格）
+          description: 成功
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  code: { type: integer, example: 200 }
+                  success: { type: boolean, example: true }
                   message: { type: string }
                   data:
                     type: array
@@ -508,20 +508,20 @@ paths:
                 file: { type: string, format: binary }
       responses:
         "200":
-          description: 上传成功（code 风格）
+          description: 上传成功
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  code: { type: integer, example: 200 }
+                  success: { type: boolean, example: true }
                   message: { type: string }
                   data: { $ref: "#/components/schemas/DataFile" }
         "400":
           description: 名称/描述为空或未选择文件
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/CodeFail" }
+              schema: { $ref: "#/components/schemas/MessageFail" }
   /api/datasets/{id}/update:
     post:
       tags: [数据集]
@@ -548,14 +548,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  code: { type: integer, example: 200 }
+                  success: { type: boolean, example: true }
                   message: { type: string }
-                  data: { type: object }
+                  data: { $ref: "#/components/schemas/DataFile" }
         "400":
           description: 未提供任何可更新字段
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/CodeFail" }
+              schema: { $ref: "#/components/schemas/MessageFail" }
   /api/datasets/{id}:
     delete:
       tags: [数据集]
@@ -570,7 +570,7 @@ paths:
           description: 删除成功
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/CodeSuccess" }
+              schema: { $ref: "#/components/schemas/MessageSuccess" }
   /api/datasets/download/{id}:
     get:
       tags: [数据集]
@@ -859,7 +859,7 @@ paths:
     get:
       tags: [通知]
       summary: 通知列表（系统广播 + 反馈回复）+ unreadCount
-      description: 返回 code 风格；isRead 由 LEFT JOIN notice_read 判定。
+      description: isRead 由 LEFT JOIN notice_read 判定；响应统一 {success,data,message}。
       responses:
         "200":
           description: 成功
@@ -868,7 +868,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  code: { type: integer, example: 200 }
+                  success: { type: boolean, example: true }
                   message: { type: string }
                   data:
                     type: object
@@ -892,7 +892,7 @@ paths:
           description: 成功
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/CodeSuccess" }
+              schema: { $ref: "#/components/schemas/MessageSuccess" }
   /api/notice/read-all:
     post:
       tags: [通知]
@@ -902,7 +902,7 @@ paths:
           description: 成功
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/CodeSuccess" }
+              schema: { $ref: "#/components/schemas/MessageSuccess" }
   /api/notice/unread-count:
     get:
       tags: [通知]
@@ -915,7 +915,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  code: { type: integer, example: 200 }
+                  success: { type: boolean, example: true }
                   message: { type: string }
                   data:
                     type: object
@@ -982,12 +982,11 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/MessageFail" }
 
-  # ===================== 管理员 /api/admin/*（2026-09-07 起服务端强制 authenticateToken + requireAdmin） =====================
+  # ===================== 管理员 /api/admin/*（SecurityConfig 统一要求 Bearer + ADMIN 角色，角色查库装配；响应统一 {success,data,message}，业务数据在 data 内） =====================
   /api/admin/static:
     get:
       tags: [管理员]
       summary: 全库计数概览（users/files/generations/feedback）
-      security: []
       responses:
         "200":
           description: 成功
@@ -996,15 +995,23 @@ paths:
               schema:
                 type: object
                 properties:
-                  users: { type: integer }
-                  files: { type: integer }
-                  generations: { type: integer }
-                  feedback: { type: integer }
+                  success: { type: boolean, example: true }
+                  message: { type: string, example: 统计数据获取成功 }
+                  data:
+                    type: object
+                    properties:
+                      users: { type: integer }
+                      files: { type: integer }
+                      generations: { type: integer }
+                      feedback: { type: integer }
   /api/admin/users:
     get:
       tags: [管理员]
-      summary: 用户列表
-      security: []
+      summary: 用户列表（分页，data 为 {users, pagination}）
+      parameters:
+        - { name: page, in: query, schema: { type: integer } }
+        - { name: pageSize, in: query, schema: { type: integer } }
+        - { name: keyword, in: query, schema: { type: string, description: 用户名/邮箱模糊搜索 } }
       responses:
         "200":
           description: 成功
@@ -1017,7 +1024,6 @@ paths:
     patch:
       tags: [管理员]
       summary: 重置用户密码为 666666
-      security: []
       parameters:
         - name: id
           in: path
@@ -1035,7 +1041,6 @@ paths:
     delete:
       tags: [管理员]
       summary: 删除用户（代码内级联删除关联数据）
-      security: []
       parameters:
         - name: id
           in: path
@@ -1053,7 +1058,6 @@ paths:
     get:
       tags: [管理员]
       summary: 用户统计总览
-      security: []
       responses:
         "200":
           description: 成功
@@ -1065,8 +1069,13 @@ paths:
   /api/admin/notices:
     get:
       tags: [管理员]
-      summary: 系统通知列表（已排除反馈通知，含已读统计）
-      security: []
+      summary: 系统通知列表（已排除反馈通知，含已读统计；data 为 {notices, pagination, statistics}）
+      parameters:
+        - { name: page, in: query, schema: { type: integer } }
+        - { name: pageSize, in: query, schema: { type: integer } }
+        - { name: keyword, in: query, schema: { type: string } }
+        - { name: startDate, in: query, schema: { type: string, format: date } }
+        - { name: endDate, in: query, schema: { type: string, format: date } }
       responses:
         "200":
           description: 成功
@@ -1078,7 +1087,6 @@ paths:
     post:
       tags: [管理员]
       summary: 发布系统通知（广播 target_user_id=NULL）
-      security: []
       requestBody:
         required: true
         content:
@@ -1097,11 +1105,30 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
+    delete:
+      tags: [管理员]
+      summary: 批量删除通知
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids]
+              properties:
+                ids:
+                  type: array
+                  items: { type: integer }
+      responses:
+        "200":
+          description: 批量删除成功
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageSuccess" }
   /api/admin/notices/{id}:
     get:
       tags: [管理员]
       summary: 通知详情
-      security: []
       parameters:
         - name: id
           in: path
@@ -1118,7 +1145,6 @@ paths:
     put:
       tags: [管理员]
       summary: 更新通知
-      security: []
       parameters:
         - name: id
           in: path
@@ -1144,7 +1170,6 @@ paths:
     delete:
       tags: [管理员]
       summary: 删除通知
-      security: []
       parameters:
         - name: id
           in: path
@@ -1162,7 +1187,6 @@ paths:
     get:
       tags: [管理员]
       summary: 通知统计总览
-      security: []
       responses:
         "200":
           description: 成功
@@ -1181,7 +1205,9 @@ paths:
         responseTime（生成链路 LLM 耗时 avg/p95/sample_count，编译耗时不计入）、
         errorTypes（失败分类计数，批次3/E2）、responseTimeSeries（按日 avg/p95/count，批次3/E3）。
         后两者无数据时为空数组。
-      security: []
+      parameters:
+        - { name: startDate, in: query, schema: { type: string, format: date } }
+        - { name: endDate, in: query, schema: { type: string, format: date } }
       responses:
         "200":
           description: 成功
@@ -1194,7 +1220,13 @@ paths:
     get:
       tags: [管理员]
       summary: 系统日志列表
-      security: []
+      parameters:
+        - { name: page, in: query, schema: { type: integer } }
+        - { name: pageSize, in: query, schema: { type: integer } }
+        - { name: status, in: query, schema: { type: string, enum: [normal, warning, error] } }
+        - { name: startDate, in: query, schema: { type: string, format: date } }
+        - { name: endDate, in: query, schema: { type: string, format: date } }
+        - { name: search, in: query, schema: { type: string } }
       responses:
         "200":
           description: 成功
@@ -1207,7 +1239,6 @@ paths:
     get:
       tags: [管理员]
       summary: 健康概览
-      security: []
       responses:
         "200":
           description: 成功
@@ -1220,7 +1251,6 @@ paths:
     get:
       tags: [管理员]
       summary: 数据表状态检查
-      security: []
       responses:
         "200":
           description: 成功
@@ -1233,7 +1263,6 @@ paths:
     post:
       tags: [管理员]
       summary: 添加一条测试系统日志
-      security: []
       responses:
         "200":
           description: 成功
@@ -1273,17 +1302,6 @@ components:
       type: object
       properties:
         success: { type: boolean, example: false }
-        message: { type: string }
-    CodeSuccess:
-      type: object
-      properties:
-        code: { type: integer, example: 200 }
-        message: { type: string }
-        data: { nullable: true }
-    CodeFail:
-      type: object
-      properties:
-        code: { type: integer, example: 400 }
         message: { type: string }
     ChatSuccess:
       type: object

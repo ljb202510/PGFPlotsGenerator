@@ -7,7 +7,7 @@ This file gives immediate, repo-specific guidance for AI coding agents to be pro
 ## Big picture
 
 - **Frontend**: Vue 3 SPA under `src/` (entry: `src/main.js`). Router: `src/router/index.js` (uses dynamic imports). State: `src/store/index.js` (Vuex-based, token/user persisted to `localStorage` or `sessionStorage`). Key views: `src/views/*` (e.g. `MyHistory.vue`, `ChartGenerator.vue`).
-- **Backend**: Spring Boot app in `spring-backend/` (entry: `PgApplication.java`, port 3000). Controllers in `controller/`, business logic in `service/`, DB access via MyBatis-Plus (`mapper/` + `resources/mapper/*.xml`), auth via `security/` (stateless JWT, roles loaded from DB). There is no public static hosting of `backend/storage` — PDFs are streamed through authenticated endpoints.
+- **Backend**: Spring Boot app in `spring-backend/` (entry: `PgApplication.java`, port 3000). Controllers in `controller/`, business logic in `service/` (incl. `service/rag/` for RAG retrieval), DB access via MyBatis-Plus (`mapper/` + `resources/mapper/*.xml`), auth via `security/` (stateless JWT, roles loaded from DB). There is no public static hosting of `data/storage` — PDFs are streamed through authenticated endpoints. Compilation runs through an async task queue (`CompileTaskService`) with a `Semaphore`-limited XeLaTeX concurrency cap.
 - **Shared data directory**: `data/` (formerly `backend/`) holds `.env` (read at startup via `spring.config.import`), `uploads/` and `storage/`. Java defaults point there (`UPLOADS_DIR/HISTORY_DIR/CHARTS_DIR`, `RELATIVE_BASE=..`).
 
 ## Run & debug (developer workflows)
@@ -20,20 +20,20 @@ npm run serve     # http://localhost:8080
 
 # backend (requires JDK 17+; scripts auto-select JDK)
 cd hello/spring-backend
-build.cmd         # mvn clean package (auto JDK selection)
-run.cmd           # start jar (builds first if missing), port 3000
-mvn-run.cmd       # dev mode: mvn spring-boot:run
-verify.cmd        # start + full API regression, prints PASS/FAIL (baseline PASS=27 FAIL=0)
+scripts\build.cmd      # mvn clean package (auto JDK selection)
+scripts\run.cmd        # start jar (builds first if missing), port 3000
+scripts\mvn-run.cmd    # dev mode: mvn spring-boot:run
+scripts\verify.cmd     # start + full API regression, prints PASS/FAIL (baseline PASS=42 FAIL=0 WARN=0)
 ```
 
 - Linting: `cd hello && npm run lint` (frontend lint via Vue CLI).
 - Build frontend for production: `cd hello && npm run build`.
-- IDE: repo root `.vscode/launch.json` runs `PgApplication` with working directory fixed to `spring-backend/` (required so `../backend/.env` and storage paths resolve).
+- IDE: repo root has `.vscode/settings.json` only (no `launch.json`). When running `PgApplication` from an IDE, set the working directory to `spring-backend/` — required so `../data/.env` and the storage paths resolve.
 
 ## Environment & secrets
 
 - Config is auto-imported from `../data/.env` (`spring.config.import: optional:file:../data/.env[.properties]`); env vars override it, then `application.yml` defaults.
-- Required: `JWT_SECRET` (startup fails fast if missing). Optional per feature: `SMTP_*` (verification emails), `DEEPSEEK_API_KEY/URL`, `NSCC_API_KEY/URL` (LLM calls), `DB_HOST/DB_PORT/DB_USER/DB_PASSWORD/DB_NAME` (fallback `localhost/3306/root/000/X`).
+- Required: `JWT_SECRET` (startup fails fast if missing). Optional per feature: `SMTP_*` (verification emails), `NSCC_*` (Qwen3.5, primary LLM channel), `SILICONFLOW_*` (THUDM/GLM-4-9B-0414, fallback #2), `DEEPSEEK_*` (fallback #3, gated by `DEEPSEEK_ENABLED`), `EMBEDDING_*` (RAG vectorization, bge-m3, billed separately), `DB_HOST/DB_PORT/DB_USER/DB_PASSWORD/DB_NAME` (fallback `localhost/3306/root/000/X`).
 - Never commit `.env` or paste its real values (JWT secret, SMTP auth code, LLM API keys) into docs, scripts, or commits.
 
 ## Project-specific patterns & conventions
@@ -52,7 +52,7 @@ verify.cmd        # start + full API regression, prints PASS/FAIL (baseline PASS
 - Email delivery: `JavaMailSender` in `service/VerificationService` — ensure SMTP env vars are set before testing email flows.
 - Authentication: JWT issued by `security/JwtTokenProvider` (user 24h / admin 7d). Frontend stores/attaches tokens per existing patterns (check `src/store` and `TheAuth.vue` / auth-related components).
 - File upload: Spring `MultipartFile` (≤100MB) — uploads land under `data/uploads` (see `DatasetController`).
-- LLM calls: `client/LlmClient` (OpenAI-compatible `/chat/completions` via Spring `RestClient`) for Qwen3.5 (NSCC) and DeepSeek.
+- LLM calls: `client/LlmClient` (OpenAI-compatible `/chat/completions` via Spring `RestClient`) with a 3-channel fallback chain `qwen (NSCC) → siliconflow (GLM-4-9B) → deepseek` (each layer gated by `*_ENABLED`). RAG few-shot retrieval lives in `service/rag/` (`EmbeddingClient` uses a separate `EMBEDDING_*` OpenAI-compatible `/embeddings` endpoint; vectors stored in the `rag_vector` MySQL table).
 - LaTeX compile: `util/LatexCompiler` runs `xelatex -interaction=nonstopmode` with a 30s timeout and always cleans the temp dir.
 
 ## How AI agents should modify code here (practical tips)

@@ -1,6 +1,6 @@
 # PGFPlotsGenerator 系统架构与设计文档
 
-> **文档说明**：本文档为 **PGFPlotsGenerator 智能图表生成系统** 的架构视图文档，聚焦**系统架构、核心模块与关键数据流**。内容基于 `2026-09-05` 对 `hello/` 目录下实际源码的逐文件核实，所有结论均可追溯到代码行号。与 `README.md`（API/部署细节）互补，两者不一致处见文末「与 README 差异清单」。
+> **文档说明**：本文档为 **PGFPlotsGenerator 智能图表生成系统** 的架构视图文档，聚焦**系统架构、核心模块与关键数据流**。内容以 `hello/` 目录实际源码为准（2026-09-18 全量复核，历史基准为 2026-09-05 逐文件核实）。与 `README.md`（总入口）互补。
 
 ## 1. 系统概述
 
@@ -8,11 +8,11 @@ PGFPlotsGenerator 是一个「AI 图表生成系统」：普通用户用自然�
 
 - **产品定位**：自然语言 → 图表 PDF 的一站式生成工具
 - **用户角色**：普通用户（生成/历史/数据集/对话/反馈/通知/个人信息）与管理员（用户、通知、反馈回复、系统日志/API 统计）
-- **核心链路**：`自然语言(±数据集) → AI 生成 LaTeX → XeLaTeX 编译 → PDF 预览/下载`
+- **核心链路**：`自然语言(±数据集) → RAG 召回 few-shot → AI 生成 LaTeX → 结构化解析 → 编译前预处理 → XeLaTeX 异步编译 → PDF 预览/下载`
 
 ## 2. 总体架构
 
-系统为**前后端分离的经典分层架构**：浏览器端 Vue 3 SPA（`hello/src`），服务端 Spring Boot 应用（`hello/spring-backend`；原 Node/Express 版已于 2026-09-13 退役删除），数据层为 MySQL（库名 `X`）+ 本地文件系统，外部依赖为两家 LLM 服务、XeLaTeX 编译器与 SMTP 邮件服务。
+系统为**前后端分离的经典分层架构**：浏览器端 Vue 3 SPA（`hello/src`），服务端 Spring Boot 应用（`hello/spring-backend`；原 Node/Express 版已于 2026-09-13 退役删除），数据层为 MySQL（库名 `X`）+ 本地文件系统，外部依赖为三通道 LLM 服务（Qwen3.5/NSCC → THUDM/GLM-4-9B-0414/硅基流动 → DeepSeek，降级链）、Embedding 服务（`BAAI/bge-m3`，RAG 用）、XeLaTeX 编译器与 SMTP 邮件服务。
 
 ### 2.1 逻辑架构
 
@@ -49,15 +49,16 @@ flowchart TD
             R12["/api/admin/log"]
             R13["/api/admin/static"]
         end
-        SVC["支撑件<br/>util/SystemLogWriter · service/VerificationService"]
+        SVC["支撑件<br/>util/SystemLogWriter · service/VerificationService · service/rag/*（RAG 召回）"]
         DB["MyBatis-Plus Mapper + HikariCP"]
     end
 
     subgraph Data["数据与外部依赖"]
-        MYSQL[("MySQL 库 X<br/>11 张表")]
+        MYSQL[("MySQL 库 X<br/>12 张表（含 rag_vector）")]
         FS[("文件系统<br/>data/uploads · data/storage")]
         TEX["XeLaTeX 编译器<br/>(ProcessBuilder, 30s)"]
-        LLM["LLM<br/>DeepSeek / Qwen3.5(NSCC·RestClient)"]
+        LLM["LLM 三通道降级链（RestClient）<br/>Qwen3.5(NSCC) → GLM-4-9B(硅基流动) → DeepSeek"]
+        EMB["Embedding<br/>BAAI/bge-m3（RAG 向量化）"]
         SMTP["SMTP 邮件服务<br/>(JavaMailSender)"]
     end
 
@@ -65,7 +66,8 @@ flowchart TD
     API --> AUTH
     JAVA --> DB --> MYSQL
     JAVA --> FS
-    R2 -- "LlmClient（RestClient）" --> LLM
+    R2 -- "LlmClient（降级链）" --> LLM
+    SVC -- "EmbeddingClient" --> EMB
     R6 -- "xelatex -interaction=nonstopmode" --> TEX
     R4 -- "JavaMailSender" --> SMTP
     JAVA -- "读写 storage/uploads（服务端内部，无公开静态托管）" --> FS
@@ -79,14 +81,14 @@ flowchart LR
     subgraph Dev["开发机"]
         FE["npm run serve<br/>(vue-cli-service, 8080)"]
         BE["cd spring-backend && run.cmd<br/>(:3000)"]
-        MYSQL_LOCAL["MySQL localhost/root/000/X<br/>(读 ../backend/.env / 默认)"]
+        MYSQL_LOCAL["MySQL localhost/root/000/X<br/>(读 ../data/.env / 默认)"]
         TEX_LOCAL["TeX Live：xelatex + SimSun/Times New Roman"]
     end
     FE -- "API_BASE_URL 代理目标 :3000" --> BE
     BE --> MYSQL_LOCAL
     BE --> TEX_LOCAL
     FE -- "GET /api/compile/:id/pdf（Bearer 鉴权，Blob 预览）" --> BE
-    BE -- "SMTP QQ / DeepSeek / NSCC-Qwen" --> EXT["互联网服务"]
+    BE -- "SMTP QQ / NSCC-Qwen / 硅基流动GLM / DeepSeek / bge-m3" --> EXT["互联网服务"]
 ```
 
 ## 3. 核心模块说明
@@ -96,7 +98,8 @@ flowchart LR
 | 模块 | 后端入口 | 前端对应 | 职责与关键实现 |
 |---|---|---|---|
 | 认证 | `controller/AuthController` → `service/AuthService` | LoginForm / RegisterForm / AdminLogin / ChangeInformation | 注册、用户/管理员登录、改密码/用户名/邮箱、token 校验；BCrypt 哈希 + JWT |
-| AI 生成 | `controller/ChatController` → `service/ChatService` | ChartGenerator | 接收自然语言+数据集 → 拼提示词 → 调 DeepSeek/Qwen → 提取代码 → 落库 |
+| AI 生成 | `controller/ChatController` → `service/ChatService`（+ `service/rag/*`） | ChartGenerator | 接收自然语言+数据集 → RAG 召回 few-shot 拼提示词 → 三通道降级调用（qwen→siliconflow→deepseek）→ 结构化解析/提取代码 → 落库 |
+| RAG 检索增强 | `service/rag/`（`EmbeddingClient`/`VectorStore`/`Retriever`/`PromptComposer`/`RagService`）+ `tools/RagCli` | —（无独立页面，随 chat 生效） | `rag_vector` 表暴力余弦召回；template/history 两分区；同题断链 + 语料分级准入（golden/verified/unverified）；失败自动降级为无 RAG |
 | 编译 | `controller/CompileController` → `service/CompileService` | ChartGenerator（生成 PDF 按钮） | 读库内代码 → 包中文文档 → XeLaTeX → 移动 PDF、更新路径 |
 | 历史 | `controller/HistoryController` → `service/HistoryService` | MyHistory | 列表/详情/删除/统计/CSV 导出 |
 | 数据集 | `controller/DatasetController` → `service/DatasetService` | DataUpload / ChartGenerator | 上传(≤100MB)/列表/改名/删除/下载 |
@@ -130,14 +133,13 @@ flowchart LR
 - 入口：`controller/ChatController` → `service/ChatService`，单路由 `POST /api/chat`（需认证）
 - 处理流水线：
   1. 数据集拼接：从 `data_file` 按 user_id 隔离查询，逐一用 `util/FileContentReader`（支持 xlsx/csv/文本，上限 100MB）把数据拼入 system 提示词；无数据集时追加提示「用已知公开统计数据出图」
-  2. 按 `model` 分派（均经 `client/LlmClient`，Spring 6 RestClient）：
-     - `model === 'qwen'`：指向 `NSCC_API_URL`（湖大超算 MaaS），模型 `Qwen3.5`，`max_tokens: 8192`、关闭 thinking
-     - 否则（deepseek）：调 `DEEPSEEK_API_URL`，模型 `deepseek-v4-flash`，`max_tokens: 4096`，超时 30s
-  3. **空回复兜底**：`content` 为 null/空/非字符串时打印原始响应、写系统日志并返回 `502「AI 返回内容为空」`
-  4. `util/ChartCodeExtractor`：优先匹配「```latex / ```tex 代码块围栏」，兜底裸 `\begin{tikzpicture}...\end{tikzpicture}`（防截断围栏不闭合）；返回值即入库代码
-  5. 生成成功后：INSERT `generation_history` → 写 `storage/history/{userId}/{historyId}.json`（含 ai_response 全文）→ INSERT `api_log`(success)
-  6. 若请求带 `conversation_id`：写 user/assistant 两条 `conversation_messages`（assistant 消息带 chart_code/history_id），首条自动回填标题
-  7. 失败路径：模型异常时记录 `api_log`(failed, call_error 截断 500) 并按错误类型返回
+  2. **RAG 召回 few-shot**：`service/rag/` 从 `rag_vector` 表（template/history 两分区）向量召回，经 `PromptComposer` 拼入 system 提示词；embedding 失败自动降级为无 RAG（见 README §5.2）
+  3. **三通道降级链**（均经 `client/LlmClient`，Spring 6 RestClient，OpenAI 兼容 `/chat/completions`）：`qwen`（`NSCC_API_URL`，模型 `Qwen3.5`，`max_tokens: 8192`、关闭 thinking）→ `siliconflow`（`THUDM/GLM-4-9B-0414`）→ `deepseek`（`deepseek-v4-flash`）；仅对可换通道重试的错误接力，`*_ENABLED=false` 整层跳过，实际通道写 `model_used`
+  4. **空回复兜底**：`content` 为 null/空/非字符串时按降级链接力；仍失败打印原始响应、写系统日志并返回 `502「AI 返回内容为空」`
+  5. `util/StructuredOutputParser`（JSON 结构化输出）→ `util/ChartCodeExtractor`（```latex / ```tex 围栏块优先，兜底裸 `\begin{tikzpicture}...`，并做字面 `\n` 转义还原）双层兜底；返回值即入库代码
+  6. 生成成功后：INSERT `generation_history` → 写 `storage/history/{userId}/{historyId}.json`（含 ai_response 全文与 `metadata.model_used`）→ INSERT `api_log`(success)
+  7. 若请求带 `conversation_id`：写 user/assistant 两条 `conversation_messages`（assistant 消息带 chart_code/history_id），首条自动回填标题
+  8. 失败路径：模型异常时记录 `api_log`(failed, call_error 截断 500) 并按错误类型返回
 - 返回结构 `{ success, data: { reply, chart_code, usage, dataset_count, history_id } }`
 
 #### 3.2.3 编译（compile）
@@ -148,6 +150,7 @@ flowchart LR
   - **POST 只读取库内 `generation_history.generation_code`**，**不接受请求体 code 覆盖**；历史存在性与归属校验在工作线程内完成
   - **异步执行（G1）**：内存任务表（`queued→running→success/failed`，重启丢失为已知取舍）+ `compileTaskExecutor`（core2/max4/queue100）；队列满**不静默丢弃**，任务标记 failed 并返回 503
   - **并发上限（G2）**：`Semaphore` 限流真实 XeLaTeX 进程并发 = `app.latex.max-concurrency`（默认 2），等待时长计入任务 `duration_ms`
+  - **编译前预处理（`preprocess`）**：12 条确定性修复规则（坐标交换/色名规范/`at={(x,y)}` 补括号/`ymax` 抬升/直方图补 `ybar`/空 axis 剔除/标签旋转/密集柱缩写 等），详见 README §5.5
   - 若代码含完整 `document` 结构则抽取文档体并清理 documentclass/usepackage
   - 中文文档：`standalone` 文档类 + `pgfplots/compat=1.18` + `xeCJK`，**中文字体 SimSun、西文 Times New Roman**
   - `util/LatexCompiler`：`xelatex -interaction=nonstopmode`，超时 **30s**；以 PDF 是否存在判成败；代码长度上限由 `app.latex.max-code-length` 驱动
@@ -243,7 +246,7 @@ sequenceDiagram
     actor U as 用户
     participant CG as ChartGenerator.vue
     participant CHAT as POST /api/chat
-    participant LLM as LLM(DeepSeek/Qwen)
+    participant LLM as LLM(qwen→siliconflow→deepseek)
     participant DB as MySQL + storage/history
     participant COM as POST /api/compile/:id
     participant TEX as XeLaTeX
@@ -251,8 +254,8 @@ sequenceDiagram
 
     U->>CG: 输入自然语言 + 选择数据集(可选) + 选模型
     CG->>CHAT: {message, data_ids?, model, conversation_id?} + Bearer JWT
-    CHAT->>CHAT: buildMessagesWithDataset：查 data_file、readFileContent 拼提示词
-    CHAT->>LLM: 调模型（LlmClient：qwen→NSCC；其他→DeepSeek）
+    CHAT->>CHAT: buildMessagesWithDataset：查 data_file、readFileContent 拼提示词 + RAG 召回 few-shot
+    CHAT->>LLM: 调模型（LlmClient：qwen → siliconflow → deepseek 降级链）
     alt content 为空/null
         CHAT-->>CG: 502「AI 返回内容为空」（写 system_log）
     else 正常返回
@@ -301,7 +304,7 @@ flowchart LR
 flowchart LR
     A["ChartGenerator<br/>发送消息(带 conversation_id)"] --> B["POST /api/chat"]
     B --> C["生成成功"]
-    C --> D["persistConversation<br/>(chat.js:284-316)"]
+    C --> D["persistConversation<br/>(ChatService)"]
     D --> E["INSERT conversation_messages<br/>user + assistant(chart_code/history_id)"]
     E --> F["首条消息自动回填标题<br/>(用户输入前 20 字)"]
     G["切换/新建会话<br/>(ConversationService)"] --> H["GET /:id/messages<br/>按序恢复聊天记录"]
@@ -353,6 +356,8 @@ erDiagram
     conversations ||--o{ conversation_messages : "conversation_id (无FK)"
     generation_history ||--o{ conversation_messages : "history_id (无FK)"
     feedback ||--o| notice : "feedback_id 唯一索引"
+    users |o--o{ rag_vector : "user_id (history 分区隔离；template 为 NULL，无FK)"
+    generation_history |o--o{ rag_vector : "ref_id (history 分区 → history_id，无FK)"
 
     users {
         int user_id PK
@@ -435,11 +440,25 @@ erDiagram
         int history_id
         text selected_files
     }
+    rag_vector {
+        bigint vector_id PK
+        enum source_type "history|template"
+        int user_id "history 归属；template NULL"
+        int ref_id "→history_id 或模板编号"
+        varchar title
+        mediumtext embed_text
+        mediumtext content "召回注入提示词片段"
+        longtext embedding "JSON 数组向量"
+        int dim
+        varchar model "embedding 模型名"
+        enum quality "golden|verified|unverified"
+        varchar data_source "dataset|no-dataset"
+    }
 ```
 
 ### 5.2 表与建表来源
 
-库名 `X`，共 **11 张表**：
+库名 `X`，共 **12 张表**：
 
 | 表 | 关键列 | 来源 | 备注 |
 |---|---|---|---|
@@ -454,6 +473,7 @@ erDiagram
 | `notice_read` | id/user_id/notice_id/read_time | `migrations/create_notice_read_table.sql:8-17` | user+notice 唯一索引 |
 | `conversations` | conversation_id/user_id/title/created_at/updated_at | `migrations/create_conversations_tables.sql`（自 Node 迁移脚本归档） | **无外键**，事务维护 |
 | `conversation_messages` | message_id/conversation_id/user_id/role/content/chart_code/history_id/selected_files | `migrations/create_conversations_tables.sql`（自 Node 迁移脚本归档） | **无外键** |
+| `rag_vector` | vector_id/source_type/user_id/ref_id/embed_text/content/embedding(JSON)/dim/model + **quality/data_source** | `migrations/create_rag_vector.sql` + `migrations/alter_rag_vector_quality.sql` | RAG 向量表；`uk_source_ref(source_type,ref_id)` 唯一；quality 分级 `golden/verified/unverified`（见 `docs/rag-corpus-quality.md`） |
 
 > 实现事实：基础表部分外键在 DDL 中声明；`conversations`/`conversation_messages` 之间及与历史/用户之间**不设外键**，会话删除由 `ConversationService` 在事务内先删消息再删会话。
 
@@ -464,8 +484,12 @@ mysql -u root -p000 X < 1.sql
 mysql -u root -p000 X < migrations/add_notice_feedback_columns.sql
 mysql -u root -p000 X < migrations/create_notice_read_table.sql
 mysql -u root -p000 X < migrations/create_conversations_tables.sql
+mysql -u root -p000 X < migrations/alter_api_log_prompt_version.sql
 mysql -u root -p000 X < migrations/alter_api_log_duration_ms.sql
 mysql -u root -p000 X < migrations/alter_api_log_error_type.sql
+mysql -u root -p000 X < migrations/create_rag_vector.sql
+mysql -u root -p000 X < migrations/alter_rag_vector_quality.sql
+mysql -u root -p000 X < migrations/alter_data_file_data_name.sql
 ```
 
 ## 6. 技术栈清单
@@ -478,17 +502,18 @@ mysql -u root -p000 X < migrations/alter_api_log_error_type.sql
 | HTTP | axios（组件内直调，无统一封装）；部分 fetch | `ChartGenerator.vue:434` 等 |
 | 后端框架 | Spring Boot `3.2.12` + MyBatis-Plus `3.5.5`（`spring-backend/`，Java 17） | `spring-backend/pom.xml` |
 | 数据库 | MySQL（HikariCP 连接池） | `application.yml` |
-| LLM 调用 | Spring 6 `RestClient`（Qwen3.5/NSCC、DeepSeek `deepseek-v4-flash`） | `client/LlmClient.java` |
-| 编译 | ProcessBuilder 调 **xelatex**（TeX Live + SimSun/Times New Roman 字体，30s 超时） | `util/LatexCompiler.java` |
+| LLM 调用 | Spring 6 `RestClient`，三通道降级链：Qwen3.5/NSCC → THUDM/GLM-4-9B-0414/硅基流动 → DeepSeek（`*_ENABLED` 开关） | `client/LlmClient.java`、`service/ChatService.java` |
+| RAG 检索 | 自实现向量检索：`EmbeddingClient`（OpenAI 兼容 `/embeddings`，`BAAI/bge-m3` 1024 维）+ `VectorStore`（`rag_vector` 表暴力余弦，无向量库中间件）+ `Retriever` + `PromptComposer` | `service/rag/` |
+| 编译 | ProcessBuilder 调 **xelatex**（TeX Live + SimSun/Times New Roman 字体，30s 超时）+ 编译前 `preprocess` 12 条确定性修复 + 异步任务队列/`Semaphore` 限流 | `util/LatexCompiler.java`、`service/CompileTaskService.java` |
 | 邮件 | spring-boot-starter-mail（QQ SMTP） | `service/VerificationService.java` |
 | 上传/解析 | Spring `MultipartFile`（≤100MB）+ Apache POI 5.2.5（xlsx） | `controller/DatasetController.java`、`util/FileContentReader.java` |
 | 安全 | Spring Security 无状态 JWT（jjwt 0.12.6）+ BCrypt | `security/` |
 
 > 前后端位于同一工程 `hello/`：根 `package.json` 为前端依赖（已移除仅供 Node 后端使用的 bcryptjs/cors/express/jsonwebtoken/multer 五项）；后端依赖见 `spring-backend/pom.xml`。
 
-## 7. 与 README.md 差异清单（2026-09-05 复核）
+## 7. 与 README.md 差异清单（2026-09-05 复核，已归档）
 
-> README v2.0 基准日期 2026-07-16。以下差异以代码为准。
+> ⚠️ **存档说明**：本清单针对 README v2.0（2026-07-16）与当时的 Node/Express 后端（`app.js`、`routes/`、`chat.js`、`compile.js`、`backend/package.json`）逐条核对。Node 后端已于 **2026-09-13 整体退役删除**（Java 版 `ChatService`/`CompileService` 行为等价且已落地为空回复兜底、`/api/admin/**` 服务端鉴权等修复），故下表所述文件均已不存在，仅保留作历史差异记录；当前事实以本文件 §3–§6 与 `spring-backend/README.md` 为准。
 
 | # | 主题 | README/plan 声称 | 代码实证（本文件基准） |
 |---|---|---|---|
@@ -508,14 +533,14 @@ mysql -u root -p000 X < migrations/alter_api_log_error_type.sql
 - ✅ `/api/admin/*` 四个模块（AdminUser/AdminNotice/AdminLog/AdminStatic）由 `SecurityConfig` 统一要求 ADMIN 角色（查库装配，不信任 JWT 声明）；feedback 管理员接口另加 `@PreAuthorize` 双校验；均为服务端强制鉴权，不再依赖前端隐藏
 - ✅ PDF 已移除 `/storage` 静态托管与 `/storage` 反代，改 `GET /api/compile/:id/pdf` 按 user_id 归属校验后流式返回（history JSON 目录不再可被 HTTP 访问）
 - ✅ LaTeX 编译前拦截 `\write18`/`\input`/`\include`/`\usepackage` 等危险序列并限制长度
-- ✅ DB 凭据读 `../backend/.env`（缺省回退本地默认值）；`JWT_SECRET` 缺失启动即失败（fail-fast）
+- ✅ DB 凭据读 `../data/.env`（缺省回退本地默认值）；`JWT_SECRET` 缺失启动即失败（fail-fast）
 - ✅ 密码规则收紧为仅字母数字 6–16 位（`AuthService` 校验），预置管理员 `admin123/666666` 与重置密码均满足
-- ⚠️ 运维注意：`backend/.env` 明文含 SMTP 授权码与两家 LLM API Key，须加入 `.gitignore` 且勿提交；`1.sql` 预置管理员哈希未经明文验证（重置密码统一 `666666` 见 `AdminUserService`）
+- ⚠️ 运维注意：`data/.env` 明文含 SMTP 授权码、三通道 LLM（NSCC/SiliconFlow/DeepSeek）与 Embedding API Key，须加入 `.gitignore` 且勿提交；`1.sql` 预置管理员哈希未经明文验证（重置密码统一 `666666` 见 `AdminUserService`）
 - 系统日志与 API 日志分离：`system_log` 记录服务端异常/越权告警，`api_log` 记录每次 AI 调用成败
 
 ## 9. Java 后端（spring-backend，2026-09-13 起为唯一后端）
 
-Spring Boot 后端 `hello/spring-backend/`（**唯一后端**；原 Node/Express 版 `hello/backend/` 已于 2026-09-13 退役删除，其数据目录已改名为 `hello/data/`，现仅保留 `.env`、`uploads/`、`storage/` 共享运行时数据，请勿删除），与前端**共用同一 MySQL 库（`X`，11 张表，schema 不变）**。详见 `spring-backend/README.md`。
+Spring Boot 后端 `hello/spring-backend/`（**唯一后端**；原 Node/Express 版 `hello/backend/` 已于 2026-09-13 退役删除，其数据目录已改名为 `hello/data/`，现仅保留 `.env`、`uploads/`、`storage/` 共享运行时数据，请勿删除），与前端**共用同一 MySQL 库（`X`，12 张表，schema 不变）**。详见 `spring-backend/README.md`。
 
 ### 9.1 逻辑架构
 
@@ -526,9 +551,10 @@ flowchart TD
     CTRL --> RES["统一响应 Result 与全局异常"]
     CTRL --> SVC["Service（事务）"]
     SVC --> MAP["MyBatis-Plus Mapper"]
-    MAP --> DB["MySQL 库 X（11 张表，schema 不变）"]
+    MAP --> DB["MySQL 库 X（12 张表，schema 不变）"]
     SVC --> FS["uploads 与 storage 文件"]
-    SVC --> LLM["DeepSeek / Qwen3.5（RestClient）"]
+    SVC --> LLM["三通道降级链 qwen→siliconflow→deepseek（LlmClient/RestClient）"]
+    SVC --> EMB["Embedding（bge-m3，RAG 向量化）"]
     SVC --> TEX["XeLaTeX（ProcessBuilder，30s）"]
     SVC --> MAIL["SMTP 邮件（JavaMailSender）"]
 ```
@@ -548,13 +574,13 @@ flowchart TD
 
 | 文档 | 说明 |
 |---|---|
-| `hello/README.md` | 项目文档 v2.0（模块/API/部署细节，差异见 §7） |
+| `hello/README.md` | 项目文档总入口 v3.10（模块/API/部署细节，历史差异见 §7） |
 | `hello/spring-backend/README.md` | Java 后端（Spring Boot 3.2 + MyBatis-Plus 3.5）模块文档：构建/配置/映射/响应契约/验收 |
-| `hello/plan.md` | 优化功能清单（部分契约未落地，见 §7#3-5） |
-| `hello/log.md` | 开发日志 |
-| `hello/1.sql`、`hello/migrations/`（含自 Node 迁移脚本归档的 `create_conversations_tables.sql`） | 数据库 schema 与迁移 |
+| `hello/docs/process/plan-AI.md`（及批次1/2/3 执行方案） | AI 优化功能清单与分批落地方案（§7 中「plan 声称」的历史出处；Node 文件已随退役删除） |
+| `hello/docs/log.md` | 开发与部署日志 |
+| `hello/1.sql`、`hello/migrations/`（9 个迁移，含自 Node 迁移脚本归档的 `create_conversations_tables.sql` 与 `create_rag_vector.sql`） | 数据库 schema 与迁移 |
 
 ---
-**文档版本**：1.2（架构视图）
-**基准日期**：2026-09-13
-**基准**：`hello/` 下源码实证（行号引用如上）
+**文档版本**：1.3（架构视图）
+**基准日期**：2026-09-18
+**基准**：`hello/` 下源码实证（行号引用如上；2026-09-18 全量一致性复核）

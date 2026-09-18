@@ -1,7 +1,7 @@
 # PGFPlotsGenerator Java 后端（spring-backend）
 
 > Spring Boot 3 + MyBatis-Plus 后端（**本项目唯一后端**；原 Node/Express 版已于 2026-09-13 退役删除，接口路径与行为等价），
-> 共享同一套 MySQL 库（`X`，11 张表，schema 不变）与同一 Vue 3 前端，仅需切换 `src/config.js` 的 `API_BASE_URL`。
+> 共享同一套 MySQL 库（`X`，12 张表 = 8 基础表 + notice_read + conversations 两表 + rag_vector）与同一 Vue 3 前端，仅需切换 `src/config.js` 的 `API_BASE_URL`。
 
 ## 1. 技术栈
 
@@ -12,10 +12,10 @@
 | ORM | MyBatis-Plus 3.5.5（复杂聚合查询走 `resources/mapper/*.xml`） |
 | 鉴权 | Spring Security 无状态 JWT（jjwt 0.12.6）+ BCrypt |
 | 文件解析 | Apache POI 5.2.5（xlsx）+ 原生读取（csv/txt） |
-| HTTP 客户端 | Spring 6 `RestClient`（三通道共用 OpenAI 兼容 `/chat/completions`：Qwen3.5 / GLM-4.9 / DeepSeek） |
+| HTTP 客户端 | Spring 6 `RestClient`（三通道共用 OpenAI 兼容 `/chat/completions`：Qwen3.5 / THUDM/GLM-4-9B-0414 / DeepSeek） |
 | RAG 检索 | 自实现向量检索：`EmbeddingClient`（`/embeddings`，`bge-m3` 1024 维）+ `VectorStore`（`rag_vector` 表，暴力余弦）+ `Retriever` + `PromptComposer` |
 | 邮件 | spring-boot-starter-mail（JavaMailSender） |
-| 编译 | `ProcessBuilder` 调 XeLaTeX（30s 超时）+ 编译前 `preprocess` 五步确定性修复 + 异步任务队列与 `Semaphore` 限流 |
+| 编译 | `ProcessBuilder` 调 XeLaTeX（30s 超时）+ 编译前 `preprocess` 12 条确定性修复规则 + 异步任务队列与 `Semaphore` 限流 |
 
 ## 2. 与 Node 版的映射（历史对照：Node 代码已于 2026-09-13 删除）
 
@@ -88,11 +88,11 @@ mvn spring-boot:run
 
 ### 4.3 VS Code 直接运行（开发期推荐，不用脚本）
 
-仓库根已提供 `.vscode/launch.json` 与 `.vscode/settings.json`：
+仓库根 `.vscode/` 目前仅提供 `settings.json`（**无 `launch.json`**）：
 
 1. 用 VS Code 打开仓库根目录，装好 Java 扩展；
-2. 在「运行和调试」里选 **PG 后端（spring-backend，端口 3000）** 直接启动 —— 该配置已把**工作目录固定为 `hello/spring-backend`**，控制台用集成终端（UTF-8，中文日志不会乱码）；
-3. `settings.json` 已把 JDK 21 设为默认运行时（`C:\Program Files\Microsoft\jdk-21.0.2.13-hotspot`），如本机路径不同请改成自己的。
+2. 通过「运行和调试」直接启动 `PgApplication` 时，务必把**工作目录固定为 `hello/spring-backend`**——否则读不到 `../data/.env`、存储目录也会跑偏；控制台建议用集成终端（UTF-8，中文日志不乱码）；
+3. 如本机 JDK 非 `C:\Program Files\Microsoft\jdk-21.0.2.13-hotspot`，需先 `set "JAVA_HOME=..."` 或改脚本中的候选路径。
 
 纯终端等价方式（不用 `scripts\run.cmd`）：
 
@@ -120,7 +120,7 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 | `SMTP_*` | — | 邮件验证码 |
 | `NSCC_API_KEY/URL`、`SILICONFLOW_API_KEY/URL/MODEL`、`DEEPSEEK_API_KEY/URL/MODEL` | — | 三个模型通道（见下） |
 | `EMBEDDING_API_KEY/URL/MODEL/DIM` | — / `https://api.siliconflow.cn/v1` / `BAAI/bge-m3` / `1024` | RAG 向量化（**与生成通道的 key 分开**，见下注） |
-| `QWEN_ENABLED` / `SILICONFLOW_ENABLED` / `DEEPSEEK_ENABLED` | `true` | 通道开关；`false` 时该层整层跳过且不可选为主模型（当前 DeepSeek 因余额为 0 设 `false`） |
+| `QWEN_ENABLED` / `SILICONFLOW_ENABLED` / `DEEPSEEK_ENABLED` | `true` | 通道开关；`false` 时该层整层跳过且不可选为主模型（DeepSeek 余额为 0 时可置 `false`；当前本地 `data/.env` 为 `true`） |
 | `UPLOADS_DIR` | `../data/uploads` | 数据集目录（复用历史文件） |
 | `HISTORY_DIR` | `../data/storage/history` | 生成记录 JSON |
 | `CHARTS_DIR` | `../data/storage/generated_charts` | 编译产物 PDF |
@@ -128,8 +128,9 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 | `XELATEX` / `LATEX_TIMEOUT_MS` | `xelatex` / 30000 | 编译器与超时 |
 | `LATEX_MAX_CONCURRENCY` | `2` | XeLaTeX 并发编译上限（批次2/G2，`Semaphore` 限流） |
 | `COMPILE_QUEUE_CAPACITY` | `100` | 编译任务队列容量（批次3.6 起可注入）；满载阈值 = `maxPoolSize(4) + 该值`，调小可用于验证「队列满 → 503」 |
-| `RAG_ENABLED` | `false` | RAG 检索增强总开关（开启需配置 `EMBEDDING_*` 并执行 `rag_seed` / `rag_backfill`） |
+| `RAG_ENABLED` | `false` | RAG 检索增强总开关（当前本地 `data/.env` 为 `true`；开启需配置 `EMBEDDING_*` 并执行 `rag_seed` / `rag_backfill`） |
 | `RAG_MIN_SCORE` / `RAG_MAX_HISTORY_SCORE` | `0.55` / `0.98` | 召回下限 / 历史分区相似度**上限**（≥ 上限视为同题，剔除以防照抄上一次的错误） |
+| `RAG_MIN_QUALITY` | `verified` | 历史分区最低可召回等级（`golden`/`verified`/`unverified`）；设 `unverified` 等价不过滤；模板分区恒不受影响 |
 | `RAG_TIMEOUT_MS` | `3000` | embedding 调用超时；超时或失败自动降级为无 RAG 提示词 |
 
 ### 模型通道与降级链（批次3.5）
@@ -140,7 +141,7 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 |---|---|---|---|
 | `qwen` | `Qwen3.5` | NSCC（`NSCC_API_URL`） | 启用（主通道） |
 | `siliconflow` | `THUDM/GLM-4-9B-0414` | `https://api.siliconflow.cn/v1` | 启用（免费档，降级链第二层） |
-| `deepseek` | `deepseek-v4-flash` | `https://api.deepseek.com/v1` | **停用**（`DEEPSEEK_ENABLED=false`，账户余额为 0） |
+| `deepseek` | `deepseek-v4-flash` | `https://api.deepseek.com/v1` | 开关控制（`DEEPSEEK_ENABLED`，当前本地 `data/.env` 为 `true`；余额为 0 时置 `false` 整层跳过） |
 
 降级规则：
 
@@ -149,7 +150,7 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
   `400`/`401`/`403` 等确定性错误**直接报错、不重试**（避免把 45s 超时叠成 90s）。
 - `enabled=false` 或未配置 key 的层**整层跳过**，不发请求（空 key 请求会被上游回 401，误记成上游鉴权失败）。
 - 响应 `data.model_used` 与历史 `metadata.model_used` 记录**实际完成通道**；与请求的 `model` 不同即表示发生过降级。
-- 已知取舍：主模型选 `siliconflow` 时其后再无可用通道（deepseek 停用），即**无兜底**。
+- 已知取舍：主模型选 `siliconflow` 时兜底仅剩 `deepseek` 一层；若 `DEEPSEEK_ENABLED=false` 则**无兜底**。
 
 > 注：`siliconflow` 用于生成的 key 与 embedding 用的 `EMBEDDING_API_KEY` **须分开**，避免配额混用后无法定位问题。
 
@@ -160,6 +161,7 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 - **实现**：`EmbeddingClient`（OpenAI 兼容 `/embeddings`）+ `VectorStore`（`rag_vector` 表，暴力余弦，**不引入 pgvector**）+ `Retriever` + `PromptComposer`；分区 `template`（内置示范）与 `history`（按 `user_id` 隔离）。
 - **同题断链**：历史分区剔除「`embed_text` 与本次提问文字完全相同」及「相似度 ≥ `app.rag.max-history-score`（默认 0.98）」的记录；**模板库不受影响**。用于切断「照抄上一次结果、连错误一起复制」的自我强化循环。
 - **入库准入**：`util/ChartCodeValidator.hasDuplicateSeries`（多系列坐标完全相同）的代码不入库，避免错误案例被当作范例反复喂回。
+- **语料分级准入（v3.9 / 2026-09-16）**：`rag_vector.quality` 分 `golden`（模板库）/ `verified`（编译成功 + 静态零违例，`--rag-cli=verify:<userId>` 离线定级）/ `unverified`（默认，不进召回）；`app.rag.min-quality`（默认 `verified`）只过滤历史分区，过滤后为空自动回退空召回。详见 `docs/rag-corpus-quality.md`。
 - **CLI**：`scripts/rag_seed.cmd`（模板库）/ `rag_demo.cmd`（带 query 看召回）/ `rag_backfill.cmd`（历史回填）/ `rag_purge.cmd`（清理污染向量）。
 - **降级**：未配置 `EMBEDDING_*`、超时或调用失败 → 自动退回无 RAG 提示词，**主链路不因 RAG 失败而失败**。
 
@@ -170,14 +172,14 @@ com.pg.pgfplots
 ├── common/     Result / BusinessException / GlobalExceptionHandler
 ├── config/     SecurityConfig / MybatisPlusConfig / WebConfig / AppProperties
 ├── security/   JwtTokenProvider / JwtAuthenticationFilter / LoginUser / SecurityUtils
-├── entity/     11 张表实体
+├── entity/     12 张表实体
 ├── mapper/     MyBatis-Plus Mapper（+ resources/mapper/*.xml）
 ├── dto/        请求/响应 DTO（字段名保持 Node 契约）
 ├── client/     LlmClient（三通道统一 OpenAI 兼容调用）
-├── util/       FileStorage / FileContentReader / LatexCompiler（含 preprocess 五步修复）/ ChartCodeExtractor（含字面 \n 还原）/ ChartCodeValidator（RAG 入库准入）/ StructuredOutputParser / PromptTemplates（R1-R12，v1.4）/ SystemLogWriter / TimeFormat
+├── util/       FileStorage / FileContentReader / LatexCompiler（含 preprocess 12 条确定性修复规则）/ ChartCodeExtractor（含字面 \n 还原）/ ChartCodeValidator（RAG 入库准入）/ StructuredOutputParser / PromptTemplates（R1–R16，v1.5-coord-color-note）/ SystemLogWriter / TimeFormat
 ├── service/    业务服务（ChatService 三通道降级链 / CompileService / CompileTaskService 异步编译队列 / VerificationService …）
-│   └── rag/    EmbeddingClient / VectorStore / Retriever / PromptComposer / RagService
-├── tools/      RagCli（--rag-cli=seed|demo|backfill|purge）
+│   └── rag/    EmbeddingClient / VectorStore / Retriever / PromptComposer / RagService / RagQuality（语料分级）
+├── tools/      RagCli（--rag-cli=seed|demo|backfill|purge|verify）/ RagTemplates（内置模板库 SEEDS 21 条）
 └── controller/ 13 个控制器
 ```
 
@@ -189,7 +191,7 @@ com.pg.pgfplots
 cd hello\spring-backend
 scripts\build.cmd        :: 先确保能构建
 scripts\verify.cmd       :: 自动启动后端 + 回归全部接口，输出 PASS/FAIL
-mvn test                 :: 单测 39 例（LatexCompiler 14 / ChartCodeValidator 6 / Retriever 7 / ChartCodeExtractor 7 / StructuredOutputParser 5）
+mvn test                 :: 单测 79 例（LatexCompiler 31 / ChartCodeValidator 20 / Retriever 12 / ChartCodeExtractor 11 / StructuredOutputParser 5）
 ```
 
 `verify.js` 覆盖：鉴权（401/403/管理员登录）、管理后台（static / users / notices / log 统计，含 **responseTime 真实聚合、errorTypes 失败分类、responseTimeSeries 按日耗时序列**三条断言）、用户侧（notice / history / conversations / feedback / validate）、**数据集上传·列表·改名·下载·删除**、**XeLaTeX 异步编译（提交 task_id → 轮询终态 → duration_ms）+ PDF 鉴权流式返回**、**降级链语义**（内置 Node `http` stub，零密钥零外网：可降级 500 接力成功 / 不可降级 401 不重试 / 不传 model 回落主通道）、**编译队列满 → 503 且落库 `COMPILE_QUEUE_FULL`**。

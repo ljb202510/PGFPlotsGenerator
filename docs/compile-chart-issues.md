@@ -3,7 +3,7 @@
 > 面向 **AI 图表生成 → PGFPlots 代码 → XeLaTeX 编译 PDF** 全链路的历史问题总结。
 > 仅覆盖图表生成链路（不含 Maven / ESLint / 部署等工程构建层）。
 > 数据来源：`docs/log.md`、`docs/test/manual-test-cases.md`（§7.1、§9.5）、`docs/test/manual-test-cases-checklist.md`（§D、§E）。
-> 汇总日期：2026-09-15。状态图例：✅ 已修复　🟡 已兜底（编译前预处理）　❌ 已放弃　⏳ 仍待办
+> 汇总日期：2026-09-15；2026-09-18 随提示词 `v1.5-coord-color-note`（R1–R16）与 `preprocess` 12 条规则同步口径。状态图例：✅ 已修复　🟡 已兜底（编译前预处理）　❌ 已放弃　⏳ 仍待办
 
 ---
 
@@ -44,22 +44,22 @@
 | Q12 | 递减序列所有数据堆在一起，一根柱撑满画布 | `symbolic x coords` 全角逗号把整串当单个分类 | 同 C3 全角逗号兜底 | ✅ |
 | Q13 | `ybar stacked` 编译成功但渲染为空白 | axis 级 `nodes near coords` 与多层 `ybar stacked` 语法-渲染路径冲突 | 补堆叠柱模板（`point meta=explicit symbolic` + `(x,y)[原始值]` + `ymin=0,ymax=100` 防裁剪） | ✅ |
 | Q14 | 散点图渲染出点但无任何数值标注 | `scatter src=explicit` 要求显式第三维散点数据，AI 未提供 | 补散点模板：不用 `scatter`/`scatter src=explicit`，只用 `only marks, mark=*` + axis 级 `nodes near coords` | ✅ |
-| Q15 | 生成图表形状空白（只有标题、无柱形/折线） | 改提示词引入渲染规则后出现的新 bug 类 | 编译前预处理兜底 + 规则回归（R1–R12）；遇空白按单位/结构排查（见下节防线） | 🟡 |
+| Q15 | 生成图表形状空白（只有标题、无柱形/折线） | 改提示词引入渲染规则后出现的新 bug 类 | 编译前预处理兜底 + 规则回归（R1–R16）；遇空白按单位/结构排查（见下节防线） | 🟡 |
 
 ---
 
 ## 三、沉淀的防线（按层归纳）
 
-**1. 提示词渲染规则（R1–R12）**——约束 AI 输出：
-R1 图例不遮挡 / R2 轴外无文字 / R3 数据点与数值标注成对 / R4 数值与坐标轴量纲一致 / R5 无误差列不启 error bars / R6 单 tikzpicture、禁浮动体与交叉引用 / R7 symbolic x 用半角逗号 / R8 多系列标注错开 / R9 多系列坐标互不相同 / R10 直方图必须 ybar、禁填充面积 / R11 ymax ≥ 最大值并留约 10% 余量 / R12 文本参数里的 `%` 必须写 `\%`；另有饼图专项、输出边界、上下文独立、密集柱缩写等规则。
+**1. 提示词渲染规则（R1–R16，当前版本 `v1.5-coord-color-note`）**——约束 AI 输出：
+R1 图例不遮挡 / R2 轴外无文字 / R3 数据点与数值标注成对 / R4 数值与坐标轴量纲一致 / R5 无误差列不启 error bars / R6 单 tikzpicture、禁浮动体与交叉引用 / R7 symbolic x 用半角逗号 / R8 多系列标注错开 / R9 多系列坐标互不相同 / R10 直方图必须 ybar、禁填充面积 / R11 ymax ≥ 最大值并留约 10% 余量 / R12 文本参数里的 `%` 必须写 `\%` / R13 xbar 坐标序为（数值, 分类）且配 symbolic y coords / R14 正负值柱必须写同一 `\addplot` / R15 数据来源注记写在 `\end{axis}` 之后用 `current bounding box`（禁 `axis description cs`）/ R16 颜色名必须用 xcolor 已定义写法（驼峰基色 + `!` 混合，禁 CSS 小写色名）；另有饼图专项、输出边界、上下文独立、密集柱缩写等规则。
 
-**2. 编译前确定性预处理（`LatexCompiler.preprocess`，模型写错也能出对图）**：
-`dropInvalidColorKey` / `braceAtCoordinates` / `stripEmptyAxes` / `addYbarForHistogram` / `ensureYmaxCoversData`，外加三件套：`fixXTickLabels`（Q7）/ `mergeSplitYbarAddplots`（Q8）/ `abbreviateDenseYbarLabels`（Q6）。
+**2. 编译前确定性预处理（`LatexCompiler.preprocess`，12 条规则按序执行，模型写错也能出对图）**：
+`fixHorizontalBarCoords`（R13 坐标序）/ `fixUndefinedColors`（R16 色名）/ `dropInvalidColorKey`（C5）/ `braceAtCoordinates`（C6）/ `ensureYmaxCoversData`（R11）/ `addYbarForHistogram`（R10/C8）/ `stripEmptyAxes`（C7）/ `fixYbarEnlargeLimits`（Q10）/ `fixXTickLabels`（Q7）/ `mergeSplitYbarAddplots`（Q8）/ `abbreviateDenseYbarLabels`（Q6）/ `normalizeSourceNote`（R15 注记搬运）；入口处另有字面 `\n` 还原（`ChartCodeExtractor.normalizeEscapes`）与全角逗号替换（C3）。
 
 **3. 编译链路加固**：
 `ChartCodeExtractor.normalizeEscapes`（C2）、`validateLatexCode` 编译前拦截 `\write18`/`\input`/`\includegraphics`/`\usepackage`/超长代码等（安全 + 稳定性）、外壳预置 pgfplots/pgf-pie 及 `fillbetween`/`errorbars` 子库（C9）。
 
-**4. 静态合规检测（`eval/violations.mjs`）**：R1/R2/R3/R5/R6/R7/R8/R9/R12 离线检测；刻意不做 R4/R10/R11（量纲需语义理解会误报；后两者已被预处理在编译阶段消除，检测恒零违例会虚高零违例率）。
+**4. 静态合规检测（`spring-backend/eval/violations.mjs`）**：R1/R2/R3/R5/R6/R7/R8/R9/R12 离线检测；刻意不做 R4/R10/R11（量纲需语义理解会误报；后两者已被预处理在编译阶段消除，检测恒零违例会虚高零违例率）；R13–R16（v1.5 新增）暂不在静态检测范围。
 
 **5. 校验兜底（`ChartCodeValidator` / `Retriever`）**：重复系列不入 RAG 库；RAG 同题断链（文字相同 / 相似度≥0.98 剔除），防「照抄上一次错误代码」的自污染循环。
 

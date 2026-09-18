@@ -15,9 +15,9 @@
 | Node.js | ≥ 16（前端 Vue CLI 5 构建） | 用宝塔 Node 版本管理或 nvm；仅服务前端构建 |
 | MySQL | 5.7+（库名 `X`） | 宝塔面板内创建 |
 | XeLaTeX | **完整/中等版 TeX Live（约 3G）**；apt 精简版约 1G 编译会缺包 | 见 §2.7 |
-| 网络 | 服务器需可访问 DeepSeek API、NSCC(Qwen)、QQ SMTP | 三家均为公网 HTTPS |
+| 网络 | 服务器需可访问 NSCC(Qwen)、SiliconFlow(GLM)、（可选）DeepSeek API、Embedding 服务与 QQ SMTP | 均为公网 HTTPS |
 | 前端 | `API_BASE_URL` 需指向后端实际地址 | `src/config.js`，见 §2.2 |
-| 凭据 | SMTP 授权码、DeepSeek/NSCC API Key | 存 `data/.env`，勿入库 |
+| 凭据 | SMTP 授权码、NSCC/SiliconFlow（可选 DeepSeek）API Key、Embedding Key | 存 `data/.env`，勿入库 |
 
 > 本项目前后端同目录：前端根 `hello/`，后端 `hello/spring-backend/`；`hello/data/`（原 `backend/` 改名而来）为共享运行时数据目录（`.env` + `uploads/` + `storage/`，Java 仍在读写），请勿删除。
 
@@ -57,7 +57,7 @@ mvn -DskipTests package          # 产物 target/pgfplots-backend-1.0.0.jar
 
 ### 2.4 配置环境变量
 
-Java 后端启动时自动读取 `hello/data/.env`（`spring.config.import`），无需复制模板。按需填写：`JWT_SECRET`、`DB_HOST/DB_USER/DB_PASSWORD/DB_NAME`、`SMTP_USER/PASS/FROM`、`DEEPSEEK_API_KEY/URL`、`NSCC_API_KEY/URL`。
+Java 后端启动时自动读取 `hello/data/.env`（`spring.config.import`），无需复制模板。按需填写：`JWT_SECRET`、`DB_HOST/DB_USER/DB_PASSWORD/DB_NAME`、`SMTP_USER/PASS/FROM`、`NSCC_API_KEY/URL`（主通道 Qwen3.5）、`SILICONFLOW_API_KEY/URL/MODEL`（降级第二层 GLM-4-9B）、`DEEPSEEK_API_KEY/URL`（第三层，`DEEPSEEK_ENABLED` 开关）、`EMBEDDING_API_KEY/URL/MODEL/DIM`（RAG 向量化）；启用 RAG 时另配 `RAG_ENABLED=true` 并在上线后执行 RagCli 的 seed 模式初始化模板向量库（Windows 即 `scripts/rag_seed.cmd`，Linux 用等价的 `java -jar ... --rag-cli=seed`）。各通道 `*_ENABLED` 开关与默认值详见 `spring-backend/README.md` §5。
 
 > 数据库 `DB_*` 未设置时回退 `localhost/3306/root/000/X`；服务器部署请直接在 `data/.env` 填线上真实凭据，无需改代码。`JWT_SECRET` 缺失启动即失败（fail-fast）。
 
@@ -66,13 +66,19 @@ Java 后端启动时自动读取 `hello/data/.env`（`spring.config.import`）�
 在宝塔或命令行 MySQL 执行，顺序固定（`docs/architecture.md` §5.3）：
 
 ```bash
-mysql -u root -p X < hello/1.sql                                      # 建库建表 + 预置管理员
+mysql -u root -p X < hello/1.sql                                       # 建库建表 + 预置管理员
 mysql -u root -p X < hello/migrations/add_notice_feedback_columns.sql  # notice 加定向/反馈字段
 mysql -u root -p X < hello/migrations/create_notice_read_table.sql     # notice_read 已读表
 mysql -u root -p X < hello/migrations/create_conversations_tables.sql  # 建 conversations / conversation_messages
+mysql -u root -p X < hello/migrations/alter_api_log_prompt_version.sql # api_log 加 prompt_version（批次1/A2）
 mysql -u root -p X < hello/migrations/alter_api_log_duration_ms.sql    # api_log 加 duration_ms（批次2/O1 耗时拆解）
 mysql -u root -p X < hello/migrations/alter_api_log_error_type.sql     # api_log 加 error_type（批次3/E2 失败归类）
+mysql -u root -p X < hello/migrations/create_rag_vector.sql            # rag_vector 向量表（RAG）
+mysql -u root -p X < hello/migrations/alter_rag_vector_quality.sql     # rag_vector 加 quality 分级列
+mysql -u root -p X < hello/migrations/alter_data_file_data_name.sql    # data_file.data_name 扩至 50
 ```
+
+> 全部执行完共 **12 张表**。
 
 > 部署常踩坑（log.md）：`1.sql` 首行是 `DROP DATABASE IF EXISTS X;`，会**清空重建**，切勿在生产已有数据时直接执行；建议导出为纯建表语句或先备份。
 
@@ -148,7 +154,7 @@ server {
 curl -I http://127.0.0.1:3000/api/auth/validate        # 后端存活（未带 token 返回 401 即正常）
 curl http://127.0.0.1:3000/                             # nginx 是否转发
 ps aux | grep pgfplots-backend                          # 后端进程存活
-mysql -u root -p -e "USE X; SHOW TABLES;"               # 11 张表
+mysql -u root -p -e "USE X; SHOW TABLES;"               # 12 张表
 ```
 
 浏览器验证：
@@ -214,7 +220,7 @@ tar xzf /backup/storage.tar.gz  -C hello/data
 | 3 | 能登录但业务接口 500「数据库无法连接」 | `.env` 中 `DB_*` 与服务器 MySQL 不一致（log.md：需与宝塔数据库统一 + 导入 1.sql） | 在 `data/.env` 填 host/user/password/database，重启后端进程 |
 | 4 | 删除用户/关联数据报「外键依赖错误」 | `users` 被多表 FK 引用，未按代码级联删除路径操作 | 用 AdminUser 删除接口（代码内级联）；或先清子表 |
 | 5 | 图表编译失败「缺宏包」/某 package not found | XeLaTeX 安装不完整（apt 约 1G 精简版） | 补装 texlive-latex-extra / texlive-fonts-extra / texlive-lang-chinese，或装完整 TeX Live（约 3G） |
-| 6 | 编译后中文不显示/乱码 | Linux 无 `SimSun`/`Times New Roman` 字体 | 装 `fonts-noto-cjk` 或导入字体并改 `compile.js` 的 `\setCJKmainfont`，`fc-cache -f` 后重启 |
+| 6 | 编译后中文不显示/乱码 | Linux 无 `SimSun`/`Times New Roman` 字体 | 装 `fonts-noto-cjk` 或导入字体并改 `util/LatexCompiler` 文档模板的 `\setCJKmainfont`，`fc-cache -f` 后重启后端 |
 | 7 | 前端刷新/直达子路由 404 | nginx 未配 history 回退 | `location / { try_files $uri $uri/ /index.html; }` |
 | 8 | 改了代码重启后接口仍走旧逻辑 | 旧 3000 端口进程残留 | `lsof -i:3000`/`ss -ltnp` 查占用进程并清理，确保只有一个后端进程 |
 | 9 | AI 回复为空（空气泡） | 模型空 content：推理/超长提示词耗尽 max_tokens（log.md 2026-09-03） | 已加兜底：Qwen 关闭 thinking + `max_tokens:8192`；空返回会得到 502「AI 返回内容为空」明确错误 |
@@ -229,7 +235,7 @@ tar xzf /backup/storage.tar.gz  -C hello/data
 - [ ] `git status` 无 `.env`、无 `node_modules` 提交；`.env` 已加入 `.gitignore`
 - [ ] `data/.env` 全部真实值，`JWT_SECRET` 已改随机
 - [ ] `src/config.js` 指向线上地址并重新 build
-- [ ] 数据库 11 张表齐全（含迁移）
+- [ ] 数据库 12 张表齐全（含迁移）
 - [ ] `data/.env` 的 `DB_*` 与线上库一致
 - [ ] `xelatex --version` 通过；`fc-list :lang=zh` 有中文字体
 - [ ] 后端进程自启已配置（systemd / pm2 / 宝塔「Java 项目」）
@@ -237,4 +243,4 @@ tar xzf /backup/storage.tar.gz  -C hello/data
 - [ ] 走完 §2.10 浏览器验证清单
 
 ---
-**文档版本**：1.2　**基准日期**：2026-09-13　**经验来源**：docs/log.md（2025-12 ~ 2026-09 部署记录）
+**文档版本**：1.3　**基准日期**：2026-09-18　**经验来源**：docs/log.md（2025-12 ~ 2026-09 部署记录）

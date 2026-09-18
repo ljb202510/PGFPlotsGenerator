@@ -1480,3 +1480,37 @@ const response = await fetch(`${API\_BASE\_URL}/datasets/${row.id}`, {
 6. **提示词 / 检索消融实验仍延后**：在语料分级完成前做该实验，结论会被脏语料污染，故先治理后测量。
 
 **回退方式**：把 `app.rag.min-quality` 设为 `unverified`（或环境变量 `RAG_MIN_QUALITY=unverified`）即等价于「不过滤」，行为回到改造前；`verify` 可重复执行、可随时重算。
+
+---
+
+### 2026-09-16 编译提交延迟复测（G1 异步契约）与并发触发条件更正
+
+**目的**：批次2 验收的「4 任务并发提交 POST 响应 14–19ms」（见上文「批次2 落地 §5」，2026-09-14）只有手测记录、**没有脚本固化**，无法重复执行。本次补一个脚本把该测量变成一条命令，并复测一次。
+
+**新增脚本**：`spring-backend/measure-submit-latency.mjs`（Node，零第三方依赖，与 `verify.js` 同风格）
+
+```bash
+# 在 spring-backend 目录（后端已启动；账号需名下有 ≥ --count 条带代码的历史）
+node measure-submit-latency.mjs --email=<user@example.com> --password=<pwd> --count=4 --rounds=3
+# 可选：--base=http://localhost:3000 / --timeout=10000 / --no-wait（不等任务终态）
+```
+
+**实测（2026-09-16 20:47，本机 Windows，账号 user_id=17，历史 #565–#568）**：
+
+| 项 | 结果 |
+|---|---|
+| 提交样本 | 4 并发 × 3 轮 = **12 次** `POST /api/compile/{id}` |
+| 提交耗时 | min **7ms** / median **12ms** / p95 **24ms** / max **24ms**（单轮墙钟 11–24ms） |
+| 任务终态 | **12/12 全部 success**，`duration_ms` 2280–6332ms（首轮 2 个任务偏慢，为 6.3s；其余约 2.3–2.5s） |
+| 对照 | 改造前同步等待编译，最长 30s（`LATEX_TIMEOUT_MS=30000`） |
+
+**结论**：与 2026-09-14 手测的 14–19ms 同量级；该数字**现在可一键复现**（脚本 + 上面的命令），不必再引用旧手测记录。
+
+#### 更正：原并发缺陷的「触发路径」写错了
+
+上文「批次2 落地 §8」写过「前端双击「生成PDF」即可触发」——**这句不成立**，本次核实后更正：
+
+- `src/views/ChartGenerator.vue:145` 的「生成PDF」按钮绑的是 **`compiling` 这一个全局 ref**（定义在 `:473`），而 Element Plus 按钮在 `loading` 时会被禁用并吞掉点击：`node_modules/element-plus/es/components/button/src/use-button.mjs:47`（`disabled: _disabled.value || props.loading`）与 `:66-69`（`handleClick` 在 disabled/loading 时提前 return）。→ **一个编译在跑时，同页所有消息的「生成PDF」按钮全部点不动**，单标签页正常操作**不会**产生第二个并发编译。
+- 真实触发路径 = **同一账号的多个并发请求**：多标签页 / 多设备 / 直接调接口 / 脚本（本次复测就用脚本一次性提交了 12 个任务）。
+- 修复后的代码在 `CompileService.java:77-79` 用 `Files.createTempDirectory` 原子创建唯一目录，「同毫秒进入编译」已不再有害；但**该窗口本身确实可达**：本次 12 次提交形成 6 组两两并行编译，其中 **20:47:50.705 一组两个任务在同一毫秒拿到编译许可**（日志两行「获得编译许可，开始编译 … 剩余信号量=0」时间戳相同），约占 1/6。
+- 口径不变：修复前那个 500 **未能稳定复现**（见上文 §8 的诚实口径）；现在能说的是「窗口可达 + 修复后并发全绿」，**不是**「已复现原 bug」。
