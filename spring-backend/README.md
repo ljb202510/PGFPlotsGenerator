@@ -91,7 +91,7 @@ mvn spring-boot:run
 仓库根 `.vscode/` 目前仅提供 `settings.json`（**无 `launch.json`**）：
 
 1. 用 VS Code 打开仓库根目录，装好 Java 扩展；
-2. 通过「运行和调试」直接启动 `PgApplication` 时，务必把**工作目录固定为 `hello/spring-backend`**——否则读不到 `../data/.env`、存储目录也会跑偏；控制台建议用集成终端（UTF-8，中文日志不乱码）；
+2. 通过「运行和调试」直接启动 `PgApplication` 时，务必把**工作目录固定为 `hello/spring-backend`**——否则读不到 `../.env`、存储目录也会跑偏；控制台建议用集成终端（UTF-8，中文日志不乱码）；
 3. 如本机 JDK 非 `C:\Program Files\Microsoft\jdk-21.0.2.13-hotspot`，需先 `set "JAVA_HOME=..."` 或改脚本中的候选路径。
 
 纯终端等价方式（不用 `scripts\run.cmd`）：
@@ -110,17 +110,17 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 ## 5. 配置（环境变量覆盖 application.yml）
 
 **配置优先级**：命令行环境变量 > `..\data\.env`（自动导入，`optional`）> `application.yml` 默认值。
-因此 DB 连接、LLM / Embedding 密钥、SMTP 统一放在共享数据目录 `data/.env` 中，无需重复配置；文件不存在时回退下表默认值。
+因此 DB 连接、LLM / Embedding 密钥、SMTP 统一放在共享数据目录 `.env` 中，无需重复配置；文件不存在时回退下表默认值。
 
 | 变量 | 默认 | 说明 |
 |---|---|---|
 | `PORT` | 3000 | 服务端口 |
 | `JWT_SECRET` | 空（必填） | JWT 密钥，缺失启动失败 |
-| `DB_HOST/DB_PORT/DB_USER/DB_PASSWORD/DB_NAME` | localhost/3306/root/000/X | 与 `data/.env` 默认值一致 |
+| `DB_HOST/DB_PORT/DB_USER/DB_PASSWORD/DB_NAME` | localhost/3306/root/000/X | 与 `.env` 默认值一致 |
 | `SMTP_*` | — | 邮件验证码 |
 | `NSCC_API_KEY/URL`、`SILICONFLOW_API_KEY/URL/MODEL`、`DEEPSEEK_API_KEY/URL/MODEL` | — | 三个模型通道（见下） |
 | `EMBEDDING_API_KEY/URL/MODEL/DIM` | — / `https://api.siliconflow.cn/v1` / `BAAI/bge-m3` / `1024` | RAG 向量化（**与生成通道的 key 分开**，见下注） |
-| `QWEN_ENABLED` / `SILICONFLOW_ENABLED` / `DEEPSEEK_ENABLED` | `true` | 通道开关；`false` 时该层整层跳过且不可选为主模型（DeepSeek 余额为 0 时可置 `false`；当前本地 `data/.env` 为 `true`） |
+| `QWEN_ENABLED` / `SILICONFLOW_ENABLED` / `DEEPSEEK_ENABLED` | `true` | 通道开关；`false` 时该层整层跳过且不可选为主模型（DeepSeek 余额为 0 时可置 `false`；当前本地 `.env` 为 `true`） |
 | `UPLOADS_DIR` | `../data/uploads` | 数据集目录（复用历史文件） |
 | `HISTORY_DIR` | `../data/storage/history` | 生成记录 JSON |
 | `CHARTS_DIR` | `../data/storage/generated_charts` | 编译产物 PDF |
@@ -128,7 +128,7 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 | `XELATEX` / `LATEX_TIMEOUT_MS` | `xelatex` / 30000 | 编译器与超时 |
 | `LATEX_MAX_CONCURRENCY` | `2` | XeLaTeX 并发编译上限（批次2/G2，`Semaphore` 限流） |
 | `COMPILE_QUEUE_CAPACITY` | `100` | 编译任务队列容量（批次3.6 起可注入）；满载阈值 = `maxPoolSize(4) + 该值`，调小可用于验证「队列满 → 503」 |
-| `RAG_ENABLED` | `false` | RAG 检索增强总开关（当前本地 `data/.env` 为 `true`；开启需配置 `EMBEDDING_*` 并执行 `rag_seed` / `rag_backfill`） |
+| `RAG_ENABLED` | `false` | RAG 检索增强总开关（当前本地 `.env` 为 `true`；开启需配置 `EMBEDDING_*` 并执行 `rag_seed` / `rag_backfill`） |
 | `RAG_MIN_SCORE` / `RAG_MAX_HISTORY_SCORE` | `0.55` / `0.98` | 召回下限 / 历史分区相似度**上限**（≥ 上限视为同题，剔除以防照抄上一次的错误） |
 | `RAG_MIN_QUALITY` | `verified` | 历史分区最低可召回等级（`golden`/`verified`/`unverified`）；设 `unverified` 等价不过滤；模板分区恒不受影响 |
 | `RAG_TIMEOUT_MS` | `3000` | embedding 调用超时；超时或失败自动降级为无 RAG 提示词 |
@@ -141,7 +141,7 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 |---|---|---|---|
 | `qwen` | `Qwen3.5` | NSCC（`NSCC_API_URL`） | 启用（主通道） |
 | `siliconflow` | `THUDM/GLM-4-9B-0414` | `https://api.siliconflow.cn/v1` | 启用（免费档，降级链第二层） |
-| `deepseek` | `deepseek-v4-flash` | `https://api.deepseek.com/v1` | 开关控制（`DEEPSEEK_ENABLED`，当前本地 `data/.env` 为 `true`；余额为 0 时置 `false` 整层跳过） |
+| `deepseek` | `deepseek-v4-flash` | `https://api.deepseek.com/v1` | 开关控制（`DEEPSEEK_ENABLED`，当前本地 `.env` 为 `true`；余额为 0 时置 `false` 整层跳过） |
 
 降级规则：
 
@@ -161,7 +161,7 @@ mvn spring-boot:run                                 :: 或 java -jar target\pgfp
 - **实现**：`EmbeddingClient`（OpenAI 兼容 `/embeddings`）+ `VectorStore`（`rag_vector` 表，暴力余弦，**不引入 pgvector**）+ `Retriever` + `PromptComposer`；分区 `template`（内置示范）与 `history`（按 `user_id` 隔离）。
 - **同题断链**：历史分区剔除「`embed_text` 与本次提问文字完全相同」及「相似度 ≥ `app.rag.max-history-score`（默认 0.98）」的记录；**模板库不受影响**。用于切断「照抄上一次结果、连错误一起复制」的自我强化循环。
 - **入库准入**：`util/ChartCodeValidator.hasDuplicateSeries`（多系列坐标完全相同）的代码不入库，避免错误案例被当作范例反复喂回。
-- **语料分级准入（v3.9 / 2026-09-16）**：`rag_vector.quality` 分 `golden`（模板库）/ `verified`（编译成功 + 静态零违例，`--rag-cli=verify:<userId>` 离线定级）/ `unverified`（默认，不进召回）；`app.rag.min-quality`（默认 `verified`）只过滤历史分区，过滤后为空自动回退空召回。详见 `docs/rag-corpus-quality.md`。
+- **语料分级准入（v3.9 / 2026-09-16）**：`rag_vector.quality` 分 `golden`（模板库）/ `verified`（编译成功 + 静态零违例，`--rag-cli=verify:<userId>` 离线定级）/ `unverified`（默认，不进召回）；`app.rag.min-quality`（默认 `verified`）只过滤历史分区，过滤后为空自动回退空召回。详见 `docs/rag/rag-corpus-quality.md`。
 - **CLI**：`scripts/rag_seed.cmd`（模板库）/ `rag_demo.cmd`（带 query 看召回）/ `rag_backfill.cmd`（历史回填）/ `rag_purge.cmd`（清理污染向量）。
 - **降级**：未配置 `EMBEDDING_*`、超时或调用失败 → 自动退回无 RAG 提示词，**主链路不因 RAG 失败而失败**。
 

@@ -4,7 +4,7 @@ node_modules
 
 
 # local env files
-data/.env
+.env
 .env.local
 .env.*.local
 
@@ -22,8 +22,15 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
-backend/.env
-spring-backend/.env
 spring-backend/verify-app.log
 spring-backend/verify-app-err.log
 spring-backend/target/
+
+# 评测/冒烟运行产物（本地保留，不入库）
+spring-backend/test/results/
+spring-backend/eval/results/
+
+# RAG 模板人工复核的产物（仅 README.md 入库）
+docs/rag/templates-review/*.pdf
+docs/rag/templates-review/*.png
+docs/rag/templates-review/*.tex

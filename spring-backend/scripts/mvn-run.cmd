@@ -1,12 +1,14 @@
 @echo off
-chcp 65001 >nul
+chcp 65001 >/dev/null
 REM ============================================================
-REM  PGFPlotsGenerator Java 后端 - 以 Maven 方式启动开发服务（# mvn spring-boot:run 开发启动）
-REM  修复：直接执行 mvn spring-boot:run 会报
-REM        "RunMojo ... class file version 61.0 ... only recognizes up to 52.0"
-REM        原因是 Maven 运行在 JDK 8 上（Spring Boot 3 插件需 JDK 17+）。
-REM  本脚本自动挑选 JDK 17+ 后再调用 mvn spring-boot:run。
-REM  用法：双击本文件，或在 spring-backend 目录执行  mvn-run.cmd
+REM  PGFPlotsGenerator Java backend - dev mode (mvn spring-boot:run)
+REM  Why this wrapper: plain "mvn spring-boot:run" may fail with
+REM    "RunMojo ... class file version 61.0 ... only recognizes up to 52.0"
+REM    when Maven runs on JDK 8 (Spring Boot 3 plugin needs JDK 17+).
+REM  This script auto-picks JDK 17+, forces UTF-8 console IO, then runs Maven.
+REM  Usage: double-click, or run  scripts\mvn-run.cmd  from spring-backend
+REM  NOTE: keep this file ASCII-only; cmd.exe misparses UTF-8 batch
+REM        after "chcp 65001" and may run comment text as commands.
 REM ============================================================
 setlocal
 cd /d "%~dp0.."
@@ -28,14 +30,18 @@ if not defined JAVA_HOME (
 )
 
 if not defined JAVA_HOME (
-  echo [ERROR] 未找到 JDK 17+。请安装 JDK 17/21，或设置 PG_JAVA_HOME 后重试。
+  echo [ERROR] JDK 17+ not found. Install JDK 17/21 or set PG_JAVA_HOME.
   exit /b 1
 )
 
 set "PATH=%JAVA_HOME%\bin;%PATH%"
-echo [INFO] 使用 JDK: %JAVA_HOME%
-echo [INFO] 配置：自动复用 ..\backend\.env（若存在）
-echo [INFO] 执行 mvn spring-boot:run ...（端口 3000）
+REM Force UTF-8 for the Maven JVM itself: it relays the forked app's output
+REM through its own stdout; on a GBK default it would re-encode Chinese logs.
+if not defined MAVEN_OPTS set "MAVEN_OPTS="
+set "MAVEN_OPTS=-Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 %MAVEN_OPTS%"
+echo [INFO] Using JDK: %JAVA_HOME%
+echo [INFO] Config: auto-import spring-backend/.env ^(if present^)
+echo [INFO] Running mvn spring-boot:run ... (port 3000)
 
 call mvn -B spring-boot:run %*
 endlocal

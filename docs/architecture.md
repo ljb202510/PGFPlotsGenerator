@@ -81,7 +81,7 @@ flowchart LR
     subgraph Dev["开发机"]
         FE["npm run serve<br/>(vue-cli-service, 8080)"]
         BE["cd spring-backend && run.cmd<br/>(:3000)"]
-        MYSQL_LOCAL["MySQL localhost/root/000/X<br/>(读 ../data/.env / 默认)"]
+        MYSQL_LOCAL["MySQL localhost/root/000/X<br/>(读 spring-backend/.env / 默认)"]
         TEX_LOCAL["TeX Live：xelatex + SimSun/Times New Roman"]
     end
     FE -- "API_BASE_URL 代理目标 :3000" --> BE
@@ -462,25 +462,25 @@ erDiagram
 
 | 表 | 关键列 | 来源 | 备注 |
 |---|---|---|---|
-| `users` | user_id/username/email/password/role | `1.sql:5-12` | 预置管理员 `admin123/666666`（`1.sql:14-20`） |
-| `data_file` | data_id/user_id/data_name/data_size/file_path/... | `1.sql:22-34` | user_id FK ON DELETE CASCADE |
-| `generation_history` | history_id/user_id/data_id/generation_code/generation_path | `1.sql:36-46` | data_id FK SET NULL |
-| `api_log` | call_id/user_id/history_id/call_status/call_error + **prompt_version**（批次1/A2）+ **duration_ms**（批次2/O1）+ **error_type**（批次3/E2） | `1.sql:48-57` + `migrations/alter_api_log_prompt_version.sql` + `migrations/alter_api_log_duration_ms.sql` + `migrations/alter_api_log_error_type.sql` | 关联历史；批次3 起语义为「**AI 链路失败事件日志**」（含编译失败）；duration_ms 供聚合 avg/P95（只统计生成链路，编译耗时不混算），error_type 供失败归类计数 |
-| `feedback` | feedback_id/user_id/type/content/answer/answer_time | `1.sql:59-68` | — |
-| `system_log` | sys_id/system_status/error | `1.sql:70-75` | writeSystemLog 写入 |
-| `email_verification_codes` | email/code/expires_at | `1.sql:77-85` | 10 分钟过期 |
-| `notice` | notice_id/title/content/admin_id + **target_user_id/feedback_id/feedback_time/feedback_type/reply** | `1.sql:87-95` + `migrations/add_notice_feedback_columns.sql` | 后 5 列迁移追加；`feedback_id` 唯一索引 |
+| `users` | user_id/username/email/password/role | `migrations/000_init.sql:5-12` | 预置管理员 `admin123/666666`（`migrations/000_init.sql:14-20`） |
+| `data_file` | data_id/user_id/data_name/data_size/file_path/... | `migrations/000_init.sql:22-34` | user_id FK ON DELETE CASCADE |
+| `generation_history` | history_id/user_id/data_id/generation_code/generation_path | `migrations/000_init.sql:36-46` | data_id FK SET NULL |
+| `api_log` | call_id/user_id/history_id/call_status/call_error + **prompt_version**（批次1/A2）+ **duration_ms**（批次2/O1）+ **error_type**（批次3/E2） | `migrations/000_init.sql:48-57` + `migrations/alter_api_log_prompt_version.sql` + `migrations/alter_api_log_duration_ms.sql` + `migrations/alter_api_log_error_type.sql` | 关联历史；批次3 起语义为「**AI 链路失败事件日志**」（含编译失败）；duration_ms 供聚合 avg/P95（只统计生成链路，编译耗时不混算），error_type 供失败归类计数 |
+| `feedback` | feedback_id/user_id/type/content/answer/answer_time | `migrations/000_init.sql:59-68` | — |
+| `system_log` | sys_id/system_status/error | `migrations/000_init.sql:70-75` | writeSystemLog 写入 |
+| `email_verification_codes` | email/code/expires_at | `migrations/000_init.sql:77-85` | 10 分钟过期 |
+| `notice` | notice_id/title/content/admin_id + **target_user_id/feedback_id/feedback_time/feedback_type/reply** | `migrations/000_init.sql:87-95` + `migrations/add_notice_feedback_columns.sql` | 后 5 列迁移追加；`feedback_id` 唯一索引 |
 | `notice_read` | id/user_id/notice_id/read_time | `migrations/create_notice_read_table.sql:8-17` | user+notice 唯一索引 |
 | `conversations` | conversation_id/user_id/title/created_at/updated_at | `migrations/create_conversations_tables.sql`（自 Node 迁移脚本归档） | **无外键**，事务维护 |
 | `conversation_messages` | message_id/conversation_id/user_id/role/content/chart_code/history_id/selected_files | `migrations/create_conversations_tables.sql`（自 Node 迁移脚本归档） | **无外键** |
-| `rag_vector` | vector_id/source_type/user_id/ref_id/embed_text/content/embedding(JSON)/dim/model + **quality/data_source** | `migrations/create_rag_vector.sql` + `migrations/alter_rag_vector_quality.sql` | RAG 向量表；`uk_source_ref(source_type,ref_id)` 唯一；quality 分级 `golden/verified/unverified`（见 `docs/rag-corpus-quality.md`） |
+| `rag_vector` | vector_id/source_type/user_id/ref_id/embed_text/content/embedding(JSON)/dim/model + **quality/data_source** | `migrations/create_rag_vector.sql` + `migrations/alter_rag_vector_quality.sql` | RAG 向量表；`uk_source_ref(source_type,ref_id)` 唯一；quality 分级 `golden/verified/unverified`（见 `docs/rag/rag-corpus-quality.md`） |
 
 > 实现事实：基础表部分外键在 DDL 中声明；`conversations`/`conversation_messages` 之间及与历史/用户之间**不设外键**，会话删除由 `ConversationService` 在事务内先删消息再删会话。
 
 ### 5.3 建表/迁移执行顺序
 
 ```bash
-mysql -u root -p000 X < 1.sql
+mysql -u root -p000 X < migrations/000_init.sql
 mysql -u root -p000 X < migrations/add_notice_feedback_columns.sql
 mysql -u root -p000 X < migrations/create_notice_read_table.sql
 mysql -u root -p000 X < migrations/create_conversations_tables.sql
@@ -518,7 +518,7 @@ mysql -u root -p000 X < migrations/alter_data_file_data_name.sql
 | # | 主题 | README/plan 声称 | 代码实证（本文件基准） |
 |---|---|---|---|
 | 1 | 后端路由数量 | 多处称「**14 个**路由前缀/模块」（README §1/§5/§7/§11#8） | **实际 13 个前缀**（app.js:27-39），routes/ 下 13 个 js；无 `/api/user` 等额外前缀 |
-| 2 | `notice` 表 `is_read` 字段 | §8 表未提 | `1.sql:92` 存在 `is_read BOOLEAN`（旧机制字段），迁移引入 `notice_read` 后实际按每用户已读记录工作，README 未明确该字段废弃状态 |
+| 2 | `notice` 表 `is_read` 字段 | §8 表未提 | `migrations/000_init.sql:92` 存在 `is_read BOOLEAN`（旧机制字段），迁移引入 `notice_read` 后实际按每用户已读记录工作，README 未明确该字段废弃状态 |
 | 3 | plan「后端待实现」· 改码重编译 | 期望 `POST /api/compile` 接受 `{history_id, code}` 覆盖 | 未实现：compile.js 仅读库内 `generation_code`（:132）；前端编译请求 body 为空（`ChartGenerator.vue:986`） |
 | 4 | plan「后端待实现」· AI 修复 | 期望 `POST /api/chat/fix` | 未实现：chat.js 无该路由（仅 `POST /`）；前端无对应调用 |
 | 5 | plan「前端已做」改码重编译 | 声称前端「编辑代码→重编译」已做 | ChartGenerator 消息代码区未见编辑入口；编译仅对 `message.historyId` 发起（:986） |
@@ -533,9 +533,9 @@ mysql -u root -p000 X < migrations/alter_data_file_data_name.sql
 - ✅ `/api/admin/*` 四个模块（AdminUser/AdminNotice/AdminLog/AdminStatic）由 `SecurityConfig` 统一要求 ADMIN 角色（查库装配，不信任 JWT 声明）；feedback 管理员接口另加 `@PreAuthorize` 双校验；均为服务端强制鉴权，不再依赖前端隐藏
 - ✅ PDF 已移除 `/storage` 静态托管与 `/storage` 反代，改 `GET /api/compile/:id/pdf` 按 user_id 归属校验后流式返回（history JSON 目录不再可被 HTTP 访问）
 - ✅ LaTeX 编译前拦截 `\write18`/`\input`/`\include`/`\usepackage` 等危险序列并限制长度
-- ✅ DB 凭据读 `../data/.env`（缺省回退本地默认值）；`JWT_SECRET` 缺失启动即失败（fail-fast）
+- ✅ DB 凭据读 `spring-backend/.env`（缺省回退本地默认值）；`JWT_SECRET` 缺失启动即失败（fail-fast）
 - ✅ 密码规则收紧为仅字母数字 6–16 位（`AuthService` 校验），预置管理员 `admin123/666666` 与重置密码均满足
-- ⚠️ 运维注意：`data/.env` 明文含 SMTP 授权码、三通道 LLM（NSCC/SiliconFlow/DeepSeek）与 Embedding API Key，须加入 `.gitignore` 且勿提交；`1.sql` 预置管理员哈希未经明文验证（重置密码统一 `666666` 见 `AdminUserService`）
+- ⚠️ 运维注意：`.env` 明文含 SMTP 授权码、三通道 LLM（NSCC/SiliconFlow/DeepSeek）与 Embedding API Key，须加入 `.gitignore` 且勿提交；`migrations/000_init.sql` 预置管理员哈希未经明文验证（重置密码统一 `666666` 见 `AdminUserService`）
 - 系统日志与 API 日志分离：`system_log` 记录服务端异常/越权告警，`api_log` 记录每次 AI 调用成败
 
 ## 9. Java 后端（spring-backend，2026-09-13 起为唯一后端）
@@ -576,9 +576,9 @@ flowchart TD
 |---|---|
 | `hello/README.md` | 项目文档总入口 v3.10（模块/API/部署细节，历史差异见 §7） |
 | `hello/spring-backend/README.md` | Java 后端（Spring Boot 3.2 + MyBatis-Plus 3.5）模块文档：构建/配置/映射/响应契约/验收 |
-| `hello/docs/process/plan-AI.md`（及批次1/2/3 执行方案） | AI 优化功能清单与分批落地方案（§7 中「plan 声称」的历史出处；Node 文件已随退役删除） |
+| `hello/docs/plans/plan-AI.md`（及批次1/2/3 执行方案） | AI 优化功能清单与分批落地方案（§7 中「plan 声称」的历史出处；Node 文件已随退役删除） |
 | `hello/docs/log.md` | 开发与部署日志 |
-| `hello/1.sql`、`hello/migrations/`（9 个迁移，含自 Node 迁移脚本归档的 `create_conversations_tables.sql` 与 `create_rag_vector.sql`） | 数据库 schema 与迁移 |
+| `hello/migrations/000_init.sql`、`hello/migrations/`（9 个迁移，含自 Node 迁移脚本归档的 `create_conversations_tables.sql` 与 `create_rag_vector.sql`） | 数据库 schema 与迁移 |
 
 ---
 **文档版本**：1.3（架构视图）

@@ -82,7 +82,7 @@ public class RagCli implements CommandLineRunner {
             }
         } catch (RagUnavailableException e) {
             System.err.println(e.getMessage());
-            System.err.println("提示：请确认已配置 EMBEDDING_API_KEY / EMBEDDING_API_URL / EMBEDDING_MODEL（../data/.env 或环境变量）。");
+            System.err.println("提示：请确认已配置 EMBEDDING_API_KEY / EMBEDDING_API_URL / EMBEDDING_MODEL（spring-backend/.env 或环境变量）。");
         } finally {
             System.exit(0); // CLI 执行完立即退出，不进入 Web 服务
         }

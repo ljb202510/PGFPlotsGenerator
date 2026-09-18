@@ -10,10 +10,14 @@ spring:
   application:
     name: pgfplots-backend
   config:
-    # 复用共享数据目录 hello/data/.env（DB/密钥/SMTP 配置）；
-    # 文件不存在时自动跳过（optional），此时回退下方各项默认值。
-    # 注意：需在 spring-backend 目录下启动，相对路径才能解析到 hello/data/.env
-    import: optional:file:../data/.env[.properties]
+    # 导入后端环境文件 spring-backend/.env（DB/密钥/SMTP 配置），不放仓库根目录：
+    # 根 .env 会被前端 vue-cli 自动加载（PORT/NODE_ENV 会干扰 devServer 与 build）。
+    # 两条路径分别对应在 spring-backend / 仓库根 下启动；文件不存在时自动跳过（optional），
+    # 回退下方各项默认值。注意：存储目录（app.storage.*）仍默认相对 spring-backend，
+    # 推荐以 spring-backend 为工作目录启动（scripts/run.cmd 已处理）。
+    import:
+      - optional:file:.env[.properties]
+      - optional:file:spring-backend/.env[.properties]
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:X}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
@@ -131,8 +135,9 @@ app:
 
 logging:
   charset:
-    # 控制台日志按 GBK 输出，以匹配 Windows 终端/预览面板的 GBK 解码（避免中文乱码）。
+    # 控制台日志按 UTF-8 输出（与脚本 chcp 65001 / Windows Terminal 匹配）。
+    # 若必须在 GBK（936）旧式控制台看日志，可改回 GBK 或设环境变量 LOG_CONSOLE_CHARSET=GBK。
     # 仅影响日志输出的控制台编码，文件读写、HTTP 报文等仍保持 UTF-8。
-    console: GBK
+    console: ${LOG_CONSOLE_CHARSET:GBK}
   level:
     com.pg.pgfplots: info

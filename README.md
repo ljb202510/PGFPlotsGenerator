@@ -1,7 +1,7 @@
-<!-- 本地使用说明：后端 cd spring-backend && scripts\run.cmd（开发模式 scripts\mvn-run.cmd）；前端在 hello 根目录 npm run serve；数据库 mysql -u root -p 登录输入密码 000; use X; source 1.sql; 并执行下方迁移（见 §4 快速开始）。 -->
-<!-- AI 接口配置在 data/.env（Java 后端启动时自动读取 ../data/.env）：NSCC_* → Qwen3.5（主通道）、SILICONFLOW_* → THUDM/GLM-4-9B-0414（降级链第二层）、DEEPSEEK_* → DeepSeek（第三层，DEEPSEEK_ENABLED 开关控制，本地 .env 当前为 true；余额为 0 时置 false 整层跳过）；EMBEDDING_* → RAG 向量化（bge-m3，与生成通道分开计费）。 -->
-<!-- 注意：data/ 目录现仅保留 .env、uploads/、storage/ 共享运行时数据（Java 后端仍在使用），请勿删除。 -->
-<!-- 管理员账号预置：admin123 / 666666（见 1.sql 与 §9 版本说明）。admin@pgfplots.com user_id=1 -->
+<!-- 本地使用说明：后端 cd spring-backend && scripts\run.cmd（开发模式 scripts\mvn-run.cmd）；前端在 hello 根目录 npm run serve；数据库 mysql -u root -p 登录输入密码 000; use X; source migrations/000_init.sql; 并执行下方迁移（见 §4 快速开始）。 -->
+<!-- AI 接口配置在 .env（Java 后端启动时自动读取 spring-backend/.env）：NSCC_* → Qwen3.5（主通道）、SILICONFLOW_* → THUDM/GLM-4-9B-0414（降级链第二层）、DEEPSEEK_* → DeepSeek（第三层，DEEPSEEK_ENABLED 开关控制，本地 .env 当前为 true；余额为 0 时置 false 整层跳过）；EMBEDDING_* → RAG 向量化（bge-m3，与生成通道分开计费）。 -->
+<!-- 注意：data/ 目录现仅保留 uploads/、storage/ 共享运行时数据（Java 后端仍在使用），请勿删除；.env 在 spring-backend/ 下（根 .env 会被前端 vue-cli 误读 PORT/NODE_ENV）。 -->
+<!-- 管理员账号预置：admin123 / 666666（见 migrations/000_init.sql 与 §9 版本说明）。admin@pgfplots.com user_id=1 -->
 # PGFPlotsGenerator 智能图表生成系统
 
 > 通过自然语言（可附带 Excel/CSV 数据集）生成 PGFPlots/TikZ 图表代码，再用 XeLaTeX 编译为 PDF 在线预览与下载的全栈应用。前端 Vue 3 + 后端 Spring Boot（`spring-backend/`）+ MySQL。
@@ -10,7 +10,7 @@
 - **管理员**：用户管理、系统通知发布、反馈处理、系统日志与 API 统计
 - **核心链路**：`自然语言(±数据集) → RAG 召回 few-shot → AI 生成 LaTeX → 结构化解析 → 编译前预处理 → XeLaTeX 异步编译 → PDF 预览/下载`
 
-> **版本**：本文档 v3.10，最近更新 2026-09-18；实证数据来源为 `spring-backend/eval/results/` 与 `spring-backend/verify.js` 实际运行结果，结论以 `hello/` 下源码为准。
+> **版本**：本文档 v3.10，最近更新 2026-09-18；实证数据来源为 `spring-backend/eval/results/` 与 `spring-backend/scripts/verify.js` 实际运行结果，结论以 `hello/` 下源码为准。
 
 ## 1. 文档导航
 
@@ -23,9 +23,9 @@
 | 本地开发、编码规范、二次开发/新增接口 | `docs/development.md` |
 | **完整 API 接口契约（OpenAPI 3.0）** | `docs/openapi.yaml` |
 | 迭代与部署流水记录 | `docs/log.md` |
-| 测试资产总览与手动用例集（32 例 → 有效 31）、RAG on/off 实跑对比 | `docs/test/test-assets.md`（索引）、`manual-test-cases-checklist.md`、`eval-rag-onoff-comparison-32cases.md`（同目录） |
-| AI 能力路线图（RAG / 结构化输出 / 评估集 / 质量改进） | `docs/process/plan-AI.md`；落地对照见 `docs/plan-AI-落地清单.md` |
-| 各批次详细执行方案 | `docs/process/plan-AI-批次1-执行方案.md`｜`plan-AI-批次2-执行方案.md`｜`plan-AI-批次3-执行方案.md`；同目录另有 `plan-AI-LangChain4j-评估与落地方案.md` |
+| 测试资产总览与手动用例集（32 例 → 有效 31）、RAG on/off 实跑对比 | `docs/testing/test-assets.md`（索引）、`manual-test-cases-checklist.md`、`eval-rag-onoff-comparison-32cases.md`（同目录） |
+| AI 能力路线图（RAG / 结构化输出 / 评估集 / 质量改进） | `docs/plans/plan-AI.md`；落地对照见 `docs/plans/plan-AI-落地清单.md` |
+| 各批次详细执行方案 | `docs/plans/plan-AI-批次1-执行方案.md`｜`plan-AI-批次2-执行方案.md`｜`plan-AI-批次3-执行方案.md`；同目录另有 `plan-AI-LangChain4j-评估与落地方案.md` |
 | 后端细节（构建、配置、降级链、包结构、验证） | `spring-backend/README.md` |
 | AI 编码代理协作规则 | `.github/copilot-instructions.md` |
 
@@ -43,21 +43,24 @@
 | 质量保障 | 提示词规则 R1–R16 + `ChartCodeValidator`（RAG 入库准入）+ `eval/violations.mjs`（离线静态违例检测）+ 16 例离线评估集 | `util/PromptTemplates.java`、`spring-backend/eval/` |
 | 邮件 | spring-boot-starter-mail（JavaMailSender，QQ SMTP 发送验证码） | `service/VerificationService.java` |
 | 上传/解析 | Spring `MultipartFile`（≤100MB）+ Apache POI 5.2.5（xlsx） | `controller/DatasetController.java`、`util/FileContentReader.java` |
-| 存储 | MySQL（库名 `X`，**12 张表**，含 RAG 向量表 `rag_vector`）+ 文件系统（`data/uploads/`、`data/storage/`，Java 默认沿用） | `1.sql` + `migrations/` |
+| 存储 | MySQL（库名 `X`，**12 张表**，含 RAG 向量表 `rag_vector`）+ 文件系统（`data/uploads/`、`data/storage/`，Java 默认沿用） | `migrations/000_init.sql` + `migrations/` |
 
-> 注意：`data/` 目录现为**共享运行时数据目录**，仅保留 `.env`（Java 启动依赖）、`uploads/`、`storage/`，请勿删除该目录。
+> 注意：`data/` 目录现为**共享运行时数据目录**，仅含 `uploads/`、`storage/`（`.env` 位于 `spring-backend/`，不放仓库根——根 `.env` 会被前端 vue-cli 误读 PORT/NODE_ENV），请勿删除该目录。
 
 ## 3. 目录结构
 
 ```
 hello/
 ├── README.md                # 本文档（总入口）
-├── 1.sql                    # 建库 X + 8 张基础表 + 预置管理员
-├── migrations/              # SQL 迁移：notice 定向字段、notice_read 已读表、conversations 两表、
-│                            #   api_log 扩展列（prompt_version / duration_ms / error_type）、
-│                            #   rag_vector 表（+ quality 列）、data_file.data_name 扩列
-├── docs/                    # 专项文档：architecture / deployment / development / openapi.yaml / log / plan-AI-落地清单
-│   └── process/             # plan-AI 各批次执行方案（过程文档，只读存档）
+├── migrations/              # SQL：000_init.sql（建库 X + 8 张基础表 + 预置管理员）+ 增量迁移
+│                            #   （notice 定向/反馈字段、notice_read 已读表、conversations 两表、
+│                            #     api_log 扩展列 prompt_version / duration_ms / error_type、
+│                            #     rag_vector 表 + quality 列、data_file.data_name 扩列）
+├── docs/                    # 专项文档
+│   ├── architecture.md / development.md / deployment.md / openapi.yaml / log.md / compile-chart-issues.md
+│   ├── rag/                 # RAG 语料治理（corpus-quality / l1-candidates / templates-review 人工复核，产物不入库仅存 README）
+│   ├── testing/             # 手动测试用例、用例清单、评估报告 + testdata/（用例 01–32 配套数据）
+│   └── plans/               # plan-AI 路线图、落地清单与各批次执行方案（过程存档，只读）
 ├── public/                  # 前端模板（npm run build 产物输出到 dist/，不入库）
 ├── src/                     # 前端 Vue 3 SPA
 │   ├── main.js              # 入口：ElementPlus/Vuex/router + 全局注册 ui/ 组件 + ResizeObserver 防抖补丁
@@ -70,12 +73,11 @@ hello/
 │   ├── components/          # TheAuth/Login/Register/AdminLogin/CommonNavbar/AdminNavbar/AdminSidebar + ui/（AppCard 等）
 │   └── views/               # ChartGenerator、MyHistory、DataUpload、MyFeedback、MyNotice、ChangeInformation、AdminFeedback/AdminLog/AdminNotice/AdminUser
 ├── spring-backend/          # ★ 后端：Spring Boot + MyBatis-Plus（唯一后端，见 spring-backend/README.md）
-│   ├── scripts/             # 一键脚本：build / run / mvn-run / verify / rag_seed / rag_demo / rag_backfill / rag_purge
-│   ├── verify.js            # 全量接口回归脚本（verify.cmd 调用，Node 零依赖）
-│   ├── eval/                # 离线评估：cases.json（16 例）+ eval.mjs + violations.mjs + compare*.mjs + render-charts.mjs + results/*.json
+│   ├── .env                 # 后端环境配置（启动自动导入；含 DB/SMTP/LLM/Embedding 密钥，已 gitignore 勿提交；不放仓库根——vue-cli 会误读）
+│   ├── scripts/             # 一键脚本 build/run/mvn-run/verify/rag_* + verify.js（全量接口回归，Node 零依赖）+ measure-submit-latency.mjs
+│   ├── eval/                # 评估与批量回归：cases.json（16 例）+ eval.mjs + run-cases.mjs（32 用例集）+ violations/compare/render-charts + results/（产物不入库）
 │   └── src/main/java/com/pg/pgfplots/service/rag/   # RAG：EmbeddingClient / VectorStore / Retriever / PromptComposer
 └── data/                    # 共享运行时数据目录（Java 后端使用，请勿删除）
-    ├── .env                 # 环境配置（Java 启动时自动读取；含 DB/SMTP/LLM/Embedding 密钥，勿提交 .env）
     ├── uploads/             # 数据集原文件（Java 默认 UPLOADS_DIR 指向此处）
     └── storage/             # history/{uid}/{id}.json、generated_charts/user{uid}/hist{id}.pdf
 ```
@@ -84,15 +86,15 @@ hello/
 
 ### 4.1 前置依赖
 
-- JDK 17+（构建/运行后端）、Node.js ≥ 16（前端构建与零依赖评估脚本）、MySQL（本地密码默认 `000`，读 `data/.env` 的 `DB_*`）、XeLaTeX（TeX Live，需含中文字体）
+- JDK 17+（构建/运行后端）、Node.js ≥ 16（前端构建与零依赖评估脚本）、MySQL（本地密码默认 `000`，读 `.env` 的 `DB_*`）、XeLaTeX（TeX Live，需含中文字体）
 
 ### 4.2 初始化数据库（库名 X，8 + 3 + 1(rag_vector) = 12 张表）
 
 以下命令默认在**项目根（README 所在目录，即 hello/）**执行：
 
 ```bash
-mysql -u root -p000          # 密码 000 与 data/.env 默认值一致
-mysql> source 1.sql;                                      # 建库建表 + 预置管理员（注意会 DROP 重建）
+mysql -u root -p000          # 密码 000 与 .env 默认值一致
+mysql> source migrations/000_init.sql;                                      # 建库建表 + 预置管理员（注意会 DROP 重建）
 mysql> source migrations/add_notice_feedback_columns.sql; # notice 表追加定向/反馈字段
 mysql> source migrations/create_notice_read_table.sql;    # notice_read 每用户已读表
 mysql> source migrations/create_conversations_tables.sql; # conversations / conversation_messages
@@ -109,7 +111,7 @@ mysql> exit;
 
 ```bash
 cd spring-backend
-# 配置自动读取 ../data/.env（DB/SMTP/LLM/Embedding 密钥），无需复制模板；JWT_SECRET 缺失会启动失败（fail-fast）
+# 配置自动读取 spring-backend/.env（DB/SMTP/LLM/Embedding 密钥），无需复制模板；JWT_SECRET 缺失会启动失败（fail-fast）
 scripts\run.cmd               # 自动选 JDK 17+ 启动 jar（jar 不存在则先构建），默认 http://localhost:3000
 # 开发模式用 scripts\mvn-run.cmd（mvn spring-boot:run）；详见 spring-backend/README.md §4
 ```
@@ -272,9 +274,9 @@ node eval/eval.mjs --tag=<tag> --model=qwen   # 离线评估集（需后端已�
 
 | 配置 | 位置 | 事实说明 |
 |---|---|---|
-| 环境变量 | `data/.env`（Java 启动时经 `application.yml` 自动导入，可用环境变量覆盖） | `JWT_SECRET`、`SMTP_*`（QQ 授权码）、`NSCC_*`（Qwen3.5）、`SILICONFLOW_*`（THUDM/GLM-4-9B-0414）、`DEEPSEEK_*`（`DEEPSEEK_ENABLED` 开关）、`EMBEDDING_*`（RAG 向量化），以及各通道 `*_ENABLED` 开关；详见 `spring-backend/README.md` §5 |
+| 环境变量 | `.env`（Java 启动时经 `application.yml` 自动导入，可用环境变量覆盖） | `JWT_SECRET`、`SMTP_*`（QQ 授权码）、`NSCC_*`（Qwen3.5）、`SILICONFLOW_*`（THUDM/GLM-4-9B-0414）、`DEEPSEEK_*`（`DEEPSEEK_ENABLED` 开关）、`EMBEDDING_*`（RAG 向量化），以及各通道 `*_ENABLED` 开关；详见 `spring-backend/README.md` §5 |
 | 后端地址 | `src/config.js` 的 `API_BASE_URL` | 默认 `http://localhost:3000`；前端所有页面统一从这里取值 |
-| 数据库连接 | `data/.env` 的 `DB_HOST/DB_USER/DB_PASSWORD/DB_NAME` | 未设置时回退本地默认值 `localhost/root/000/X`（`application.yml`） |
+| 数据库连接 | `.env` 的 `DB_HOST/DB_USER/DB_PASSWORD/DB_NAME` | 未设置时回退本地默认值 `localhost/root/000/X`（`application.yml`） |
 | 编译与队列 | `LATEX_MAX_CONCURRENCY`（2）、`COMPILE_QUEUE_CAPACITY`（100）、`LATEX_TIMEOUT_MS`（30000） | 见 §5.6；队列容量调小可用于演示「队列满 → 503」 |
 | RAG | `app.rag.enabled`、`app.rag.max-history-score`（0.98）、`app.rag.min-quality`（verified，只作用于历史分区）、`app.embedding.api-key/api-url/model/dim` | 未配置 embedding 时自动降级为无 RAG；向量写 `rag_vector` 表 |
 
@@ -287,14 +289,14 @@ node eval/eval.mjs --tag=<tag> --model=qwen   # 离线评估集（需后端已�
 - AI 失败可见：空回复/上游错误按降级链接力，仍失败返回 `502` 并写系统日志；`model_used` 记录实际完成通道，降级不静默
 - 编译失败：返回 stderr、临时目录 `safeCleanup` 必清理
 - ✅ 已加固（2026-09-07，详见 `docs/log.md`）：`/api/admin/*` 四个模块统一挂 `authenticateToken + requireAdmin`；PDF 移除 `/storage` 无鉴权静态托管，改 `GET /api/compile/:id/pdf` 归属校验流式返回；LaTeX 编译前危险序列校验；数据库凭据统一改读 `.env`（缺省回退本地默认）；JWT 去除兜底密钥（缺失启动即退出）；密码下限 6 位
-- ⚠️ 运维注意：`.env` 含 SMTP/LLM/Embedding 密钥须保密勿提交；`1.sql` 预置管理员哈希未经明文验证（重置密码统一 `666666` 见 `service/AdminUserService`）
+- ⚠️ 运维注意：`.env` 含 SMTP/LLM/Embedding 密钥须保密勿提交；`migrations/000_init.sql` 预置管理员哈希未经明文验证（重置密码统一 `666666` 见 `service/AdminUserService`）
 
 ## 9. 版本说明
 
 | 版本 | 日期 | 说明 |
 |---|---|---|
 | v3.10 | 2026-09-18 | **全量文档一致性核查修订**（无代码变更）：数据库表数 11 → **12**（补 `rag_vector`）；§4.2 迁移清单补全（prompt_version / rag_vector / quality / data_name 扩列）；`docs/openapi.yaml` 与 13 控制器逐一对齐（补批量删除 `DELETE /api/admin/notices`、修正管理员区鉴权标注与 `{success,data,message}` 包装、清除 Node 版 `code` 风格残留）；architecture/development/deployment/spring-backend README/copilot-instructions 同步过时基线（PASS=27 → 42、mvn test 79 例、preprocess 12 规则、R1–R16 v1.5、三通道等） |
-| v3.9 | 2026-09-16 | **RAG 语料质量治理 + L1 模板库扩容 + 六类缺陷修复**：入库与可召回解耦，按 `golden` / `verified` / `unverified` 三级分级（`RagQuality` + `app.rag.min-quality` 默认 `verified`，只作用于历史分区），`loadHistory` 补 `ORDER BY vector_id DESC`；模板库 `RagTemplates.SEEDS` 由 7 条扩到 **21 条**（候选逐张目视复核推翻了 checklist 自评，14 条里 13 条有真实缺陷）；`LatexCompiler` 新增 `fixHorizontalBarCoords` / `fixUndefinedColors` / `normalizeSourceNote` 等确定性修复，`preprocess` 改顺序写法共 **12 条规则**；提示词新增 **R13–R16** + 4 条反例 + 自检 18–20，`VERSION` → `v1.5-coord-color-note`；编译后校验 PDF 体积（< 2048 字节判为空白产物）；`mvn test` 67 → **79 例**全绿，`verify.js` **PASS=42**（详见 `docs/log.md` 2026-09-16 与 `docs/rag-corpus-quality.md`） |
+| v3.9 | 2026-09-16 | **RAG 语料质量治理 + L1 模板库扩容 + 六类缺陷修复**：入库与可召回解耦，按 `golden` / `verified` / `unverified` 三级分级（`RagQuality` + `app.rag.min-quality` 默认 `verified`，只作用于历史分区），`loadHistory` 补 `ORDER BY vector_id DESC`；模板库 `RagTemplates.SEEDS` 由 7 条扩到 **21 条**（候选逐张目视复核推翻了 checklist 自评，14 条里 13 条有真实缺陷）；`LatexCompiler` 新增 `fixHorizontalBarCoords` / `fixUndefinedColors` / `normalizeSourceNote` 等确定性修复，`preprocess` 改顺序写法共 **12 条规则**；提示词新增 **R13–R16** + 4 条反例 + 自检 18–20，`VERSION` → `v1.5-coord-color-note`；编译后校验 PDF 体积（< 2048 字节判为空白产物）；`mvn test` 67 → **79 例**全绿，`verify.js` **PASS=42**（详见 `docs/log.md` 2026-09-16 与 `docs/rag/rag-corpus-quality.md`） |
 | v3.8 | 2026-09-15 | **视觉回归硬修复**：X 轴分类标签重叠（`fixXTickLabels` 按分类数与标签长度决定是否旋转）、密集柱顶数值标注重叠（`abbreviateDenseYbarLabels` 缩写为「万」）、为区分正负值拆 addplot 导致柱位错乱（`mergeSplitYbarAddplots` 合并 x 不重叠的系列）；`mvn test` 全绿（详见 `docs/log.md` 2026-09-15） |
 | v3.7 | 2026-09-14 | **生成质量硬修复 + 规则口径对齐**：RAG 同题断链（文字相同 / 相似度 ≥0.98 剔除）+ 入库准入 + `rag_purge` 清理 9 条污染向量；`LatexCompiler.preprocess` 五步确定性修复；提示词升 `v1.4-pie-no-axis`（R9–R12 + 饼图专项）；修复文档外壳 xcolor 选项位置（命名色恢复渲染）；`eval/violations.mjs` 补 R9/R12 与提示词口径对齐；README 补齐 AI 链路与实测数据，重跑评估集产出 `v3.0-qwen-rag-on`（16 例全通过、零违例） |
 | v3.6 | 2026-09-14 | **压平转义还原 + 生命周期 + 队列满验收**：`ChartCodeExtractor.normalizeEscapes` 修复字面 `\n`（`bar_dense` 首轮通过率 0.938 → 1.0）；`AdminLog.vue` 三个 `ResizeObserver` 登记与 `onUnmounted` 释放；`COMPILE_QUEUE_CAPACITY` 可注入并实测「队列满 → 503 + 落库」 |
@@ -305,9 +307,9 @@ node eval/eval.mjs --tag=<tag> --model=qwen   # 离线评估集（需后端已�
 | v3.0 | 2026-09-05 | **精简重构为总入口**；修正与代码不一致处（如后端路由前缀实为 **13 个**，非 v2.0 所述 14 个）；详细 API/部署/架构内容迁至 docs/ 专项文档，避免多份重复维护 |
 | v2.0 | 2026-07-16 | 旧版主文档（API 明细等已迁移，其「与旧文档差异」并入 `docs/architecture.md` §7） |
 
-**预置管理员账号**：`admin123` / `666666`（`1.sql:14-20`）。
+**预置管理员账号**：`admin123` / `666666`（`migrations/000_init.sql:14-20`）。
 
 ---
 **文档版本**：3.10
 **最后更新**：2026-09-18
-**基准**：`hello/` 下实际源码、SQL/迁移文件，以及 `spring-backend/verify.js`、`mvn test`、`eval/results/*.json` 的实测输出
+**基准**：`hello/` 下实际源码、SQL/迁移文件，以及 `spring-backend/scripts/verify.js`、`mvn test`、`eval/results/*.json` 的实测输出

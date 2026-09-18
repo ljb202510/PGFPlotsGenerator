@@ -17,12 +17,12 @@
 | MySQL | 5.7+ | 库名 `X` |
 | XeLaTeX（TeX Live） | 完整版 | 编译 PDF（本地 Windows 可装 TeX Live/TeXstudio，log.md：下载 arm 版会导致无法运行） |
 
-### 1.2 初始化数据库（Windows 示例，密码见 `data/.env`）
+### 1.2 初始化数据库（Windows 示例，密码见 `.env`）
 
 ```bash
 cd hello
 mysql -u root -p        # 输入密码 000
-mysql> source 1.sql;                                    # 建库 X + 8 张表 + 预置管理员 admin123/666666
+mysql> source migrations/000_init.sql;                                    # 建库 X + 8 张表 + 预置管理员 admin123/666666
 mysql> source migrations/add_notice_feedback_columns.sql;   # notice 定向/反馈字段迁移
 mysql> source migrations/create_notice_read_table.sql;      # notice_read 表
 mysql> source migrations/create_conversations_tables.sql;   # conversations / conversation_messages（自 Node 迁移脚本归档）
@@ -37,7 +37,7 @@ mysql> exit;
 
 > 全部迁移执行完共 **12 张表**。完整说明见 `README.md` §4.2。
 
-> 提醒：`1.sql` 首行 `DROP DATABASE IF EXISTS X;` 会清库重建，仅首次/重建使用。
+> 提醒：`migrations/000_init.sql` 首行 `DROP DATABASE IF EXISTS X;` 会清库重建，仅首次/重建使用。
 
 ### 1.3 双终端启动
 
@@ -53,7 +53,7 @@ scripts\mvn-run.cmd    # 开发模式（mvn spring-boot:run，热改 Java 需重
 # 或 scripts\run.cmd（启动 jar，jar 不存在则先构建）
 ```
 
-后端配置自动读取 `../data/.env`（JWT_SECRET 缺失会启动失败；SMTP/AI 密钥按需补填）。
+后端配置自动读取 `spring-backend/.env`（JWT_SECRET 缺失会启动失败；SMTP/AI 密钥按需补填）。
 
 ### 1.4 验证
 
@@ -65,7 +65,7 @@ scripts\mvn-run.cmd    # 开发模式（mvn spring-boot:run，热改 Java 需重
 
 ```
 hello/
-├── 1.sql                      # 基础建表（users/data_file/generation_history/api_log/feedback/system_log/email_verification_codes/notice）
+├── migrations/000_init.sql                      # 基础建表（users/data_file/generation_history/api_log/feedback/system_log/email_verification_codes/notice）
 ├── migrations/                # SQL 迁移（notice 字段、notice_read、conversations 两表归档、api_log 扩展列、rag_vector、data_name 扩列）
 ├── docs/                      # 文档（README 补充：architecture / deployment / development / openapi.yaml / log / test / process）
 ├── public/                    # 前端模板（npm run build 产物输出到 dist/，不入库）
@@ -87,11 +87,12 @@ hello/
 │   ├── util/                  # LatexCompiler（30s + preprocess 12 条确定性修复）/ ChartCodeExtractor / ChartCodeValidator / StructuredOutputParser / PromptTemplates（R1–R16）/ SystemLogWriter / FileStorage / FileContentReader
 │   ├── tools/                 # RagCli / RagTemplates（内置模板库 SEEDS）
 │   ├── scripts/               # build / run / mvn-run / verify / rag_seed / rag_demo / rag_backfill / rag_purge（.cmd）
-│   ├── verify.js              # 全量接口回归脚本（verify.cmd 调用）
-│   ├── eval/                  # 离线评估集（cases.json 16 例 + eval.mjs + violations.mjs + results/）
-│   └── application.yml        # 默认配置；自动导入 ../data/.env
+│   │   ├── verify.js          # 全量接口回归脚本（verify.cmd 调用）
+│   │   └── measure-submit-latency.mjs  # 提交链路耗时测量
+│   ├── eval/                  # 离线评估与批量回归（cases.json 16 例 + eval.mjs + run-cases.mjs 32 用例集 + violations.mjs + results/，产物不入库）
+│   ├── .env                   # 后端环境变量（启动时自动导入，勿提交；勿放仓库根——vue-cli 会误读 PORT/NODE_ENV）
+│   └── application.yml        # 默认配置；自动导入同目录 .env
 └── data/                      # 共享运行时数据目录（原 backend/ 改名而来，请勿删除）
-    ├── .env                   # 环境变量（Java 启动时自动读取，勿提交 .env）
     ├── uploads/               # 数据集文件
     └── storage/               # history/{uid}/{id}.json、generated_charts/user{uid}/hist{id}.pdf（仅服务端内部读写，经鉴权接口访问）
 ```
@@ -211,14 +212,14 @@ cd hello && npm run serve              # 开发服务器 :8080
 cd hello && npm run build              # 产物 dist/
 cd hello && npm run lint
 # 数据库
-mysql -u root -p X < 1.sql             # 重建（危险，会 DROP）
+mysql -u root -p X < migrations/000_init.sql             # 重建（危险，会 DROP）
 # 编译验证（手动）
 cd <temp> && xelatex -interaction=nonstopmode test.tex
 ```
 
 ## 6. 常见开发易错点
 
-- 改 `data/.env`/`config.js` 后需重启对应进程（Java 后端需重启应用，前端改 config 需刷新）。
+- 改 `.env`/`config.js` 后需重启对应进程（Java 后端需重启应用，前端改 config 需刷新）。
 - 新增表后忘执行 `migrations/` 下迁移 SQL，接口会报「table doesn't exist」。
 - `uploads`、`storage` 目录不存在时上传/编译会失败——Java 启动时会自动创建目录，若权限不足需手工 mkdir。
 - 删除用户/数据走 AdminUser/MyHistory 接口（内部级联），避免直接 SQL 触发外键错误。
@@ -239,7 +240,7 @@ set "JWT_SECRET=your-super-secret-jwt-key-change-me"   # 缺失即启动失败
 java -jar target/pgfplots-backend-1.0.0.jar            # 或 mvn spring-boot:run
 ```
 
-数据库沿用同一个库 `X`（Java 迁移本身无需重跑 `1.sql`，但需按 §1.2 补齐 `migrations/` 下的全部迁移，当前共 12 张表）；`DB_*` 缺省回退 `localhost/root/000/X`（`application.yml`）。
+数据库沿用同一个库 `X`（Java 迁移本身无需重跑 `migrations/000_init.sql`，但需按 §1.2 补齐 `migrations/` 下的全部迁移，当前共 12 张表）；`DB_*` 缺省回退 `localhost/root/000/X`（`application.yml`）。
 
 ### 7.2 新增一个接口（示例）
 

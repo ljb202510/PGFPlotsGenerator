@@ -2,7 +2,7 @@
 
 > 面向 **AI 图表生成 → PGFPlots 代码 → XeLaTeX 编译 PDF** 全链路的历史问题总结。
 > 仅覆盖图表生成链路（不含 Maven / ESLint / 部署等工程构建层）。
-> 数据来源：`docs/log.md`、`docs/test/manual-test-cases.md`（§7.1、§9.5）、`docs/test/manual-test-cases-checklist.md`（§D、§E）。
+> 数据来源：`docs/log.md`、`docs/testing/manual-test-cases.md`（§7.1、§9.5）、`docs/testing/manual-test-cases-checklist.md`（§D、§E）。
 > 汇总日期：2026-09-15；2026-09-18 随提示词 `v1.5-coord-color-note`（R1–R16）与 `preprocess` 12 条规则同步口径。状态图例：✅ 已修复　🟡 已兜底（编译前预处理）　❌ 已放弃　⏳ 仍待办
 
 ---

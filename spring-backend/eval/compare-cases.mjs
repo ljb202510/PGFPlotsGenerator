@@ -10,14 +10,14 @@
  *     node eval/compare-cases.mjs
  *     node eval/compare-cases.mjs --on=rag-on-32cases.json --off=rag-off-32cases.json
  *
- * 产出：控制台 markdown 表格 + test/results/<onTag>-vs-<offTag>.md（供报告直接引用）。
+ * 产出：控制台 markdown 表格 + eval/results/<onTag>-vs-<offTag>.md（供报告直接引用）。
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const RESULTS_DIR = path.join(__dirname, '..', 'test', 'results');
+const RESULTS_DIR = path.join(__dirname, 'results');
 
 function arg(name, def) {
   const hit = process.argv.find((a) => a.startsWith(`--${name}=`));

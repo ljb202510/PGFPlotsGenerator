@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 把某一轮 run-cases.mjs 产物（test/results/<tag>.json）里编译成功的用例，
+ * 把某一轮 run-cases.mjs 产物（eval/results/<tag>.json）里编译成功的用例，
  * 逐个下载 PDF 并用 pdftoppm 转成 PNG，供「图表质量」逐张目视复核。
  *
  * 数据来源：GET /api/compile/{history_id}/pdf（CompileController 已提供的鉴权下载接口，
@@ -12,8 +12,8 @@
  *     node eval/render-charts.mjs --tag=rag-on-32cases --email=x@x.com --password=xxx
  *     node eval/render-charts.mjs --tag=rag-off-32cases --dpi=150
  *
- * 产出：test/results/<tag>/pdf/hist<history_id>.pdf
- *       test/results/<tag>/png/case<id>-hist<history_id>.png
+ * 产出：eval/results/<tag>/pdf/hist<history_id>.pdf
+ *       eval/results/<tag>/png/case<id>-hist<history_id>.png
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -21,7 +21,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const RESULTS_DIR = path.join(__dirname, '..', 'test', 'results');
+const RESULTS_DIR = path.join(__dirname, 'results');
 
 function arg(name, def) {
   const hit = process.argv.find((a) => a.startsWith(`--${name}=`));
@@ -37,7 +37,7 @@ const DPI = arg('dpi', '150');
 const ONLY = arg('only', '').split(',').filter(Boolean);
 
 if (!TAG) {
-  console.error('缺少 --tag（对应 test/results/<tag>.json）');
+  console.error('缺少 --tag（对应 eval/results/<tag>.json）');
   process.exit(2);
 }
 if (!EMAIL || !PASSWORD) {

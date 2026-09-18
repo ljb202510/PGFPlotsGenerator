@@ -28,11 +28,11 @@ scripts\verify.cmd     # start + full API regression, prints PASS/FAIL (baseline
 
 - Linting: `cd hello && npm run lint` (frontend lint via Vue CLI).
 - Build frontend for production: `cd hello && npm run build`.
-- IDE: repo root has `.vscode/settings.json` only (no `launch.json`). When running `PgApplication` from an IDE, set the working directory to `spring-backend/` — required so `../data/.env` and the storage paths resolve.
+- IDE: repo root has `.vscode/settings.json` only (no `launch.json`). When running `PgApplication` from an IDE, set the working directory to `spring-backend/` — required so the storage paths (`../data/...`) resolve; `spring-backend/.env` is auto-imported from either `spring-backend/` or repo root as cwd.
 
 ## Environment & secrets
 
-- Config is auto-imported from `../data/.env` (`spring.config.import: optional:file:../data/.env[.properties]`); env vars override it, then `application.yml` defaults.
+- Config is auto-imported from `spring-backend/.env` (`spring.config.import: optional:file:.env[.properties]` + `spring-backend/.env`, covering both launch cwds); env vars override it, then `application.yml` defaults. Never put it at the repo root: vue-cli auto-loads root `.env` and its `PORT`/`NODE_ENV` would hijack the frontend dev server / build.
 - Required: `JWT_SECRET` (startup fails fast if missing). Optional per feature: `SMTP_*` (verification emails), `NSCC_*` (Qwen3.5, primary LLM channel), `SILICONFLOW_*` (THUDM/GLM-4-9B-0414, fallback #2), `DEEPSEEK_*` (fallback #3, gated by `DEEPSEEK_ENABLED`), `EMBEDDING_*` (RAG vectorization, bge-m3, billed separately), `DB_HOST/DB_PORT/DB_USER/DB_PASSWORD/DB_NAME` (fallback `localhost/3306/root/000/X`).
 - Never commit `.env` or paste its real values (JWT secret, SMTP auth code, LLM API keys) into docs, scripts, or commits.
 

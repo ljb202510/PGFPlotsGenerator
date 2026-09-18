@@ -1,0 +1,19 @@
+{
+  "history_id" : 578,
+  "user_id" : 1,
+  "data_id" : null,
+  "file_name" : "",
+  "dataset_name" : "",
+  "user_input" : "生成一个折线图",
+  "ai_response" : "```latex\n\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7cm,\n    title={示例数据趋势折线图},\n    xlabel={年份},\n    ylabel={数值},\n    symbolic x coords={2019, 2020, 2021, 2022, 2023, 2024},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n\\addplot[blue, thick, mark=*, mark size=2pt] coordinates {\n    (2019, 45)\n    (2020, 52)\n    (2021, 48)\n    (2022, 60)\n    (2023, 75)\n    (2024, 82)\n};\n\\addlegendentry{示例系列}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：示意数据};\n\\end{axis}\n\\end{tikzpicture}\n```\n\n```json\n{\n  \"chart_type\": \"line\",\n  \"code\": \"\\\\begin{tikzpicture}\\n\\\\begin{axis}[\\n    width=12cm,\\n    height=7cm,\\n    title={示例数据趋势折线图},\\n    xlabel={年份},\\n    ylabel={数值},\\n    symbolic x coords={2019, 2020, 2021, 2022, 2023, 2024},\\n    xtick=data,\\n    nodes near coords,\\n    every node near coord/.append style={font=\\\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\\n]\\n\\\\addplot[blue, thick, mark=*, mark size=2pt] coordinates {\\n    (2019, 45)\\n    (2020, 52)\\n    (2021, 48)\\n    (2022, 60)\\n    (2023, 75)\\n    (2024, 82)\\n};\\n\\\\addlegendentry{示例系列}\\n\\\\node[anchor=north west, font=\\\\scriptsize] at (current bounding box.south west) {数据来源：示意数据};\\n\\\\end{axis}\\n\\\\end{tikzpicture}\",\n  \"summary\": \"2019至2024年示例数据趋势折线图\"\n}\n```",
+  "chart_code" : "\\begin{tikzpicture}\n\\begin{axis}[\n    width=12cm,\n    height=7cm,\n    title={示例数据趋势折线图},\n    xlabel={年份},\n    ylabel={数值},\n    symbolic x coords={2019, 2020, 2021, 2022, 2023, 2024},\n    xtick=data,\n    nodes near coords,\n    every node near coord/.append style={font=\\scriptsize, fill=none, draw=none, inner sep=1pt, anchor=south},\n    legend style={at={(1.03,0.5)}, anchor=west, draw=black, fill=white}\n]\n\\addplot[blue, thick, mark=*, mark size=2pt] coordinates {\n    (2019, 45)\n    (2020, 52)\n    (2021, 48)\n    (2022, 60)\n    (2023, 75)\n    (2024, 82)\n};\n\\addlegendentry{示例系列}\n\\node[anchor=north west, font=\\scriptsize] at (current bounding box.south west) {数据来源：示意数据};\n\\end{axis}\n\\end{tikzpicture}",
+  "generation_description" : " 生成一个折线图",
+  "created_at" : "2026-09-18T14:52:06.693Z",
+  "metadata" : {
+    "data_ids" : [ ],
+    "has_chart_code" : true,
+    "code_length" : 702,
+    "code_source" : "from_request",
+    "model_used" : "qwen"
+  }
+}

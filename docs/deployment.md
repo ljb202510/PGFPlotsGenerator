@@ -1,7 +1,7 @@
 # PGFPlotsGenerator 部署运维手册
 
 > **定位**：生产部署全流程 + 备份恢复 + 日志定位 + 故障排查。面向运维/部署执行者，快速实用版。
-> **依据**：`data/.env`（配置键位）、`docs/log.md` 实战部署经验（2025-12 ~ 2026-01，华为云 + 宝塔/Debian）、`docs/architecture.md`（架构事实）。
+> **依据**：`.env`（配置键位）、`docs/log.md` 实战部署经验（2025-12 ~ 2026-01，华为云 + 宝塔/Debian）、`docs/architecture.md`（架构事实）。
 > **适用 OS**：以 Debian/Ubuntu（宝塔面板）为主，本地/Windows 环节会单独标注。
 
 ---
@@ -17,7 +17,7 @@
 | XeLaTeX | **完整/中等版 TeX Live（约 3G）**；apt 精简版约 1G 编译会缺包 | 见 §2.7 |
 | 网络 | 服务器需可访问 NSCC(Qwen)、SiliconFlow(GLM)、（可选）DeepSeek API、Embedding 服务与 QQ SMTP | 均为公网 HTTPS |
 | 前端 | `API_BASE_URL` 需指向后端实际地址 | `src/config.js`，见 §2.2 |
-| 凭据 | SMTP 授权码、NSCC/SiliconFlow（可选 DeepSeek）API Key、Embedding Key | 存 `data/.env`，勿入库 |
+| 凭据 | SMTP 授权码、NSCC/SiliconFlow（可选 DeepSeek）API Key、Embedding Key | 存 `.env`，勿入库 |
 
 > 本项目前后端同目录：前端根 `hello/`，后端 `hello/spring-backend/`；`hello/data/`（原 `backend/` 改名而来）为共享运行时数据目录（`.env` + `uploads/` + `storage/`，Java 仍在读写），请勿删除。
 
@@ -57,16 +57,16 @@ mvn -DskipTests package          # 产物 target/pgfplots-backend-1.0.0.jar
 
 ### 2.4 配置环境变量
 
-Java 后端启动时自动读取 `hello/data/.env`（`spring.config.import`），无需复制模板。按需填写：`JWT_SECRET`、`DB_HOST/DB_USER/DB_PASSWORD/DB_NAME`、`SMTP_USER/PASS/FROM`、`NSCC_API_KEY/URL`（主通道 Qwen3.5）、`SILICONFLOW_API_KEY/URL/MODEL`（降级第二层 GLM-4-9B）、`DEEPSEEK_API_KEY/URL`（第三层，`DEEPSEEK_ENABLED` 开关）、`EMBEDDING_API_KEY/URL/MODEL/DIM`（RAG 向量化）；启用 RAG 时另配 `RAG_ENABLED=true` 并在上线后执行 RagCli 的 seed 模式初始化模板向量库（Windows 即 `scripts/rag_seed.cmd`，Linux 用等价的 `java -jar ... --rag-cli=seed`）。各通道 `*_ENABLED` 开关与默认值详见 `spring-backend/README.md` §5。
+Java 后端启动时自动读取 `hello/spring-backend/.env`（`spring.config.import`），无需复制模板。按需填写：`JWT_SECRET`、`DB_HOST/DB_USER/DB_PASSWORD/DB_NAME`、`SMTP_USER/PASS/FROM`、`NSCC_API_KEY/URL`（主通道 Qwen3.5）、`SILICONFLOW_API_KEY/URL/MODEL`（降级第二层 GLM-4-9B）、`DEEPSEEK_API_KEY/URL`（第三层，`DEEPSEEK_ENABLED` 开关）、`EMBEDDING_API_KEY/URL/MODEL/DIM`（RAG 向量化）；启用 RAG 时另配 `RAG_ENABLED=true` 并在上线后执行 RagCli 的 seed 模式初始化模板向量库（Windows 即 `scripts/rag_seed.cmd`，Linux 用等价的 `java -jar ... --rag-cli=seed`）。各通道 `*_ENABLED` 开关与默认值详见 `spring-backend/README.md` §5。
 
-> 数据库 `DB_*` 未设置时回退 `localhost/3306/root/000/X`；服务器部署请直接在 `data/.env` 填线上真实凭据，无需改代码。`JWT_SECRET` 缺失启动即失败（fail-fast）。
+> 数据库 `DB_*` 未设置时回退 `localhost/3306/root/000/X`；服务器部署请直接在 `.env` 填线上真实凭据，无需改代码。`JWT_SECRET` 缺失启动即失败（fail-fast）。
 
 ### 2.5 初始化数据库（库名 `X`）
 
 在宝塔或命令行 MySQL 执行，顺序固定（`docs/architecture.md` §5.3）：
 
 ```bash
-mysql -u root -p X < hello/1.sql                                       # 建库建表 + 预置管理员
+mysql -u root -p X < hello/migrations/000_init.sql                                       # 建库建表 + 预置管理员
 mysql -u root -p X < hello/migrations/add_notice_feedback_columns.sql  # notice 加定向/反馈字段
 mysql -u root -p X < hello/migrations/create_notice_read_table.sql     # notice_read 已读表
 mysql -u root -p X < hello/migrations/create_conversations_tables.sql  # 建 conversations / conversation_messages
@@ -80,13 +80,13 @@ mysql -u root -p X < hello/migrations/alter_data_file_data_name.sql    # data_fi
 
 > 全部执行完共 **12 张表**。
 
-> 部署常踩坑（log.md）：`1.sql` 首行是 `DROP DATABASE IF EXISTS X;`，会**清空重建**，切勿在生产已有数据时直接执行；建议导出为纯建表语句或先备份。
+> 部署常踩坑（log.md）：`migrations/000_init.sql` 首行是 `DROP DATABASE IF EXISTS X;`，会**清空重建**，切勿在生产已有数据时直接执行；建议导出为纯建表语句或先备份。
 
 ### 2.6 配置数据库凭据
 
-Java 后端读取 `data/.env` 的 `DB_HOST/DB_USER/DB_PASSWORD/DB_NAME`，未设置时回退本地默认 `localhost/3306/root/000/X`。
+Java 后端读取 `.env` 的 `DB_HOST/DB_USER/DB_PASSWORD/DB_NAME`，未设置时回退本地默认 `localhost/3306/root/000/X`。
 
-服务器上若库名/账号不同，在 `data/.env` 填写对应值即可（log.md 曾因数据库配置与宝塔建库不一致导致登录后接口 500）。
+服务器上若库名/账号不同，在 `.env` 填写对应值即可（log.md 曾因数据库配置与宝塔建库不一致导致登录后接口 500）。
 
 ### 2.7 安装 XeLaTeX（Debian/Ubuntu）
 
@@ -115,7 +115,7 @@ java -jar target/pgfplots-backend-1.0.0.jar
 # 建议用 systemd / pm2（pm2 start "java -jar ..."）或宝塔「Java 项目」托管并设置开机自启
 ```
 
-> ⚠️ 必须以 `spring-backend/` 为**工作目录**启动（或托管时把 cwd 设成它），否则读不到 `../data/.env`、存储目录也会跑偏。
+> ⚠️ `.env` 位于 `spring-backend/`（不放仓库根目录，避免前端 vue-cli 误读其中 `PORT`/`NODE_ENV`），在 `spring-backend/` 或仓库根下启动都会自动导入；存储目录默认值按 `spring-backend/` 为工作目录解析（`../data/...`），部署时仍建议以其为 cwd（或显式设置 `UPLOADS_DIR/HISTORY_DIR/CHARTS_DIR/DEBUG_DIR` 绝对路径）。
 
 ### 2.9 nginx 站点配置
 
@@ -175,7 +175,7 @@ mysql -u root -p -e "USE X; SHOW TABLES;"               # 12 张表
 | MySQL 库 `X` | 数据库 | 每日 |
 | 数据集文件 | `hello/data/uploads/` | 随数据上传 |
 | 生成产物 PDF/JSON | `hello/data/storage/`（`history/` + `generated_charts/`） | 每周 |
-| 配置 | `hello/data/.env` | 变更即备份 |
+| 配置 | `hello/spring-backend/.env` | 变更即备份 |
 
 ### 3.2 备份命令
 
@@ -215,9 +215,9 @@ tar xzf /backup/storage.tar.gz  -C hello/data
 
 | # | 现象 | 原因 | 解决 |
 |---|---|---|---|
-| 1 | 后端启动即失败（fail-fast：`JWT_SECRET` 缺失） | `data/.env` 未配置，或未以 `spring-backend/` 为工作目录启动导致未读到 | 在 `data/.env` 填 `JWT_SECRET`，并确保工作目录为 `spring-backend/` |
+| 1 | 后端启动即失败（fail-fast：`JWT_SECRET` 缺失） | `spring-backend/.env` 未配置，或启动 cwd 在仓库根与 `spring-backend/` 之外（找不到 `.env`） | 在 `spring-backend/.env` 填 `JWT_SECRET`（或以环境变量注入） |
 | 2 | 前端部分页面/接口仍连不上后端，报网络错误 | `src/config.js` 里 `API_BASE_URL` 漏改/有的文件仍用反引号拼接不一致 | 全局替换为 `config.js` 统一地址，重新 `npm run build` |
-| 3 | 能登录但业务接口 500「数据库无法连接」 | `.env` 中 `DB_*` 与服务器 MySQL 不一致（log.md：需与宝塔数据库统一 + 导入 1.sql） | 在 `data/.env` 填 host/user/password/database，重启后端进程 |
+| 3 | 能登录但业务接口 500「数据库无法连接」 | `.env` 中 `DB_*` 与服务器 MySQL 不一致（log.md：需与宝塔数据库统一 + 导入 migrations/000_init.sql） | 在 `.env` 填 host/user/password/database，重启后端进程 |
 | 4 | 删除用户/关联数据报「外键依赖错误」 | `users` 被多表 FK 引用，未按代码级联删除路径操作 | 用 AdminUser 删除接口（代码内级联）；或先清子表 |
 | 5 | 图表编译失败「缺宏包」/某 package not found | XeLaTeX 安装不完整（apt 约 1G 精简版） | 补装 texlive-latex-extra / texlive-fonts-extra / texlive-lang-chinese，或装完整 TeX Live（约 3G） |
 | 6 | 编译后中文不显示/乱码 | Linux 无 `SimSun`/`Times New Roman` 字体 | 装 `fonts-noto-cjk` 或导入字体并改 `util/LatexCompiler` 文档模板的 `\setCJKmainfont`，`fc-cache -f` 后重启后端 |
@@ -233,10 +233,10 @@ tar xzf /backup/storage.tar.gz  -C hello/data
 ## 6. 上线检查清单（Checklist）
 
 - [ ] `git status` 无 `.env`、无 `node_modules` 提交；`.env` 已加入 `.gitignore`
-- [ ] `data/.env` 全部真实值，`JWT_SECRET` 已改随机
+- [ ] `.env` 全部真实值，`JWT_SECRET` 已改随机
 - [ ] `src/config.js` 指向线上地址并重新 build
 - [ ] 数据库 12 张表齐全（含迁移）
-- [ ] `data/.env` 的 `DB_*` 与线上库一致
+- [ ] `.env` 的 `DB_*` 与线上库一致
 - [ ] `xelatex --version` 通过；`fc-list :lang=zh` 有中文字体
 - [ ] 后端进程自启已配置（systemd / pm2 / 宝塔「Java 项目」）
 - [ ] nginx 已配 `/api` 反代与 `try_files`
